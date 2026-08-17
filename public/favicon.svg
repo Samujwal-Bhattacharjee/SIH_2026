@@ -1,7 +1,67 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" fill="#111215"/>
-  <rect x="6" y="6" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
-  <rect x="12" y="12" width="8" height="8" fill="#D9381E"/>
-  <line x1="6" y1="16" x2="12" y2="16" stroke="#D9381E" stroke-width="1.5"/>
-  <line x1="20" y1="16" x2="26" y2="16" stroke="#FFFFFF" stroke-width="1.5"/>
+  <defs>
+    <clipPath id="badgeClip">
+      <rect x="1" y="1" width="30" height="30" rx="6" />
+    </clipPath>
+  </defs>
+
+  <!-- Base Badge Background with Subtle Border -->
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="#FFFFFF" stroke="#CBD2DE" stroke-width="1" />
+
+  <!-- Tricolour Flag Bands (Clipped to Rounded Rectangle) -->
+  <g clip-path="url(#badgeClip)">
+    <!-- Top Saffron Band -->
+    <rect x="1" y="1" width="30" height="10" fill="#FF9933" />
+    
+    <!-- Middle White Band -->
+    <rect x="1" y="11" width="30" height="10" fill="#FFFFFF" />
+    
+    <!-- Bottom India Green Band -->
+    <rect x="1" y="21" width="30" height="10" fill="#138808" />
+
+    <!-- Center Navy Blue Ashoka Chakra -->
+    <g id="ashokaChakra">
+      <!-- Outer Chakra Rim -->
+      <circle cx="16" cy="16" r="4.3" fill="none" stroke="#000080" stroke-width="0.9" />
+      
+      <!-- Inner Hub -->
+      <circle cx="16" cy="16" r="1.1" fill="#000080" />
+
+      <!-- 24 Radial Spokes -->
+      <!-- 0 deg / 180 deg -->
+      <line x1="16" y1="11.8" x2="16" y2="20.2" stroke="#000080" stroke-width="0.5" />
+      <!-- 90 deg / 270 deg -->
+      <line x1="11.8" y1="16" x2="20.2" y2="16" stroke="#000080" stroke-width="0.5" />
+      <!-- 15 deg -->
+      <line x1="16" y1="16" x2="19.96" y2="17.06" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="12.04" y2="14.94" stroke="#000080" stroke-width="0.5" />
+      <!-- 30 deg -->
+      <line x1="16" y1="16" x2="19.64" y2="18.1" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="12.36" y2="13.9" stroke="#000080" stroke-width="0.5" />
+      <!-- 45 deg -->
+      <line x1="16" y1="16" x2="18.97" y2="18.97" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="13.03" y2="13.03" stroke="#000080" stroke-width="0.5" />
+      <!-- 60 deg -->
+      <line x1="16" y1="16" x2="18.1" y2="19.64" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="13.9" y2="12.36" stroke="#000080" stroke-width="0.5" />
+      <!-- 75 deg -->
+      <line x1="16" y1="16" x2="17.06" y2="19.96" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="14.94" y2="12.04" stroke="#000080" stroke-width="0.5" />
+      <!-- 105 deg -->
+      <line x1="16" y1="16" x2="14.94" y2="19.96" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="17.06" y2="12.04" stroke="#000080" stroke-width="0.5" />
+      <!-- 120 deg -->
+      <line x1="16" y1="16" x2="13.9" y2="19.64" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="18.1" y2="12.36" stroke="#000080" stroke-width="0.5" />
+      <!-- 135 deg -->
+      <line x1="16" y1="16" x2="13.03" y2="18.97" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="18.97" y2="13.03" stroke="#000080" stroke-width="0.5" />
+      <!-- 150 deg -->
+      <line x1="16" y1="16" x2="12.36" y2="18.1" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="19.64" y2="13.9" stroke="#000080" stroke-width="0.5" />
+      <!-- 165 deg -->
+      <line x1="16" y1="16" x2="12.04" y2="17.06" stroke="#000080" stroke-width="0.5" />
+      <line x1="16" y1="16" x2="19.96" y2="14.94" stroke="#000080" stroke-width="0.5" />
+    </g>
+  </g>
 </svg>
