@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #F8F8F5;
+  --color-paper-light: #FFFFFF;
+  --color-paper-dark: #EEEEEC;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F2F3F5;
+  --color-surface-hover: #ECEEF2;
+
+  --color-ink-950: #0B0C0E;
+  --color-ink-900: #111215;
+  --color-ink-800: #1F2329;
+  --color-ink-700: #2E3440;
+  --color-ink-600: #475060;
+  --color-ink-500: #647082;
+  --color-ink-400: #8E99A8;
+  --color-ink-300: #C2C8D1;
+  --color-ink-200: #E2E5EB;
+  --color-ink-100: #F1F3F6;
+
+  --color-border-hairline: #E2E5EB;
+  --color-border-subtle: #D1D6E0;
+  --color-border-dark: #1F2329;
+
+  --color-vermilion: #D9381E;
+  --color-vermilion-hover: #C22D15;
+  --color-vermilion-subtle: #FEF2F0;
+  --color-vermilion-border: #F8A99B;
+
+  --color-amberRisk: #D97706;
+  --color-amberRisk-subtle: #FFFBEB;
+  --color-amberRisk-border: #FDE68A;
+
+  --color-sageSuccess: #15803D;
+  --color-sageSuccess-subtle: #F0FDF4;
+  --color-sageSuccess-border: #BBF7D0;
+
+  --color-navyInfo: #1D4ED8;
+  --color-navyInfo-subtle: #EFF6FF;
+  --color-navyInfo-border: #BFDBFE;
+
+  --font-sans: "Inter", "Geist", "IBM Plex Sans", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "Geist Mono", "Space Mono", monospace;
+  --font-display: "Inter", "Geist", sans-serif;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 0.875rem;
+  --text-3xs: 0.625rem;
+  --text-3xs--line-height: 0.75rem;
+
+  --shadow-subtle-1: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-subtle-2: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+:root {
+  --bg-paper: #F8F8F5;
+  --border-hairline: #E2E5EB;
+  --ink-primary: #111215;
+  --ink-secondary: #5A6270;
+  --vermilion: #D9381E;
+}
+
+body {
+  background-color: #F8F8F5;
+  color: #111215;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F2F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD2DE;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9AA6B8;
+}
+
+.tech-grid-bg {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+}
+
+.tech-cross-bg {
+  background-size: 40px 40px;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+}
+
+/* React Flow custom technical styles */
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__handle {
+  width: 7px !important;
+  height: 7px !important;
+  background-color: #111215 !important;
+  border: 1.5px solid #FFFFFF !important;
+  border-radius: 0px !important;
+}
