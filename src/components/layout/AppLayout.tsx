@@ -1,27 +1,41 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { AppSidebar } from './AppSidebar';
-import { AppHeader } from './AppHeader';
+import { GovTopStrip } from './GovTopStrip';
+import { GovMainHeader } from './GovMainHeader';
+import { GovHorizontalNav } from './GovHorizontalNav';
+import { GovNotificationTicker } from './GovNotificationTicker';
+import { GovBreadcrumb } from './GovBreadcrumb';
+import { GovFooter } from './GovFooter';
 import { GlobalSearchModal } from './GlobalSearchModal';
-import { SystemStatusDrawer } from './SystemStatusDrawer';
 
 export const AppLayout: React.FC = () => {
   return (
-    <div className="flex min-h-screen bg-paper text-ink-900 selection:bg-vermilion selection:text-white">
-      {/* Swiss Numbered Navigation Sidebar */}
-      <AppSidebar />
+    <div className="flex flex-col min-h-screen bg-[#F5F6F8] text-[#202124] selection:bg-[#0B2A4A] selection:text-white">
+      {/* 1. Top Utility Strip (Accessibility, Language, Font Size) */}
+      <GovTopStrip />
 
-      {/* Main Execution View */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <AppHeader />
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-          <Outlet />
-        </main>
-      </div>
+      {/* 2. Main Institutional Header (Emblem, Title, Officer Profile) */}
+      <GovMainHeader />
 
-      {/* Global Modals & System Drawers */}
+      {/* 3. Horizontal Government Navigation Bar */}
+      <GovHorizontalNav />
+
+      {/* 4. Official Government Notification & Circular Marquee Bar */}
+      <GovNotificationTicker />
+
+      {/* 5. Breadcrumb & Operational Status Strip */}
+      <GovBreadcrumb />
+
+      {/* 6. Main Execution View */}
+      <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        <Outlet />
+      </main>
+
+      {/* 7. Official Government Footer */}
+      <GovFooter />
+
+      {/* Global Modals */}
       <GlobalSearchModal />
-      <SystemStatusDrawer />
     </div>
   );
 };

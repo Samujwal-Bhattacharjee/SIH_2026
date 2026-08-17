@@ -1,232 +1,237 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   FileText,
-  UploadCloud,
   Search,
+  Upload,
   Download,
-  CheckCircle2,
+  ScanLine,
+  RefreshCw,
   ExternalLink,
+  ShieldCheck,
   Filter,
-  Eye,
-  Layers,
-  Sparkles,
+  PlusCircle,
 } from 'lucide-react';
 import { documentsService } from '../services/api';
-import { DocumentRecord, DocumentType } from '../types';
+import { DocumentRecord } from '../types';
+import { GovTable, TableColumn } from '../components/common/GovTable';
+import { StatusBadge } from '../components/common/GovBadge';
+import { GovButton } from '../components/common/GovButton';
+import { GovCard } from '../components/common/GovCard';
+import { inputBaseClasses } from '../components/common/FormField';
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal';
-import { DocumentUploadModal } from '../components/documents/DocumentUploadModal';
-import { TableSkeleton } from '../components/common/LoadingSkeleton';
-import { EmptyState } from '../components/common/EmptyState';
-
-const DOC_TYPES = [
-  'ALL',
-  'Application Form',
-  'Legal Opinion',
-  'Identity Proof',
-  'Site Inspection Report',
-  'Clearance Certificate',
-  'Court Order',
-  'Affidavit',
-];
 
 export const Documents: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [typeFilter, setTypeFilter] = useState('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const [ocrStatusFilter, setOcrStatusFilter] = useState('ALL');
   const [selectedDoc, setSelectedDoc] = useState<DocumentRecord | null>(null);
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const navigate = useNavigate();
 
-  const fetchDocs = async () => {
+  const fetchDocuments = async () => {
     setLoading(true);
     try {
       const data = await documentsService.getDocuments({
         search: searchQuery,
+        ocrStatus: ocrStatusFilter,
       });
       setDocuments(data);
-    } catch (e) {
-      console.error('Failed to load documents:', e);
+    } catch (err) {
+      console.error('Failed to fetch documents:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDocs();
-  }, [searchQuery]);
+    fetchDocuments();
+  }, [ocrStatusFilter, searchQuery]);
 
-  const filteredDocs = documents.filter((doc) => {
-    if (typeFilter !== 'ALL' && doc.documentType !== typeFilter) return false;
-    return true;
-  });
+  const handleDownload = async (e: React.MouseEvent, docId: string) => {
+    e.stopPropagation();
+    try {
+      const { blob, fileName } = await documentsService.downloadDocument(docId);
+      const url = window.URL.createObjectURL(blob);
+      const a = window.document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      window.document.body.appendChild(a);
+      a.click();
+      window.document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download document:', err);
+    }
+  };
+
+  const columns: TableColumn<DocumentRecord>[] = [
+    {
+      key: 'title',
+      header: 'Document Title & File Name',
+      sortable: true,
+      render: (item) => (
+        <div className="space-y-0.5 max-w-sm">
+          <button
+            onClick={() => setSelectedDoc(item)}
+            className="font-bold text-xs text-[#0B2A4A] hover:underline text-left cursor-pointer flex items-center space-x-1.5"
+          >
+            <FileText className="w-3.5 h-3.5 flex-shrink-0 text-[#0B2A4A]" />
+            <span>{item.title}</span>
+          </button>
+          <div className="text-[11px] font-mono text-[#5F6368]">
+            {item.fileName} • {item.metadata.fileSize}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'caseId',
+      header: 'Associated File Ref',
+      width: '180px',
+      sortable: true,
+      render: (item) => (
+        <Link
+          to={`/files/${item.caseId}`}
+          className="font-mono font-bold text-xs text-[#0B2A4A] hover:underline flex items-center space-x-1"
+        >
+          <span>{item.caseId}</span>
+          <ExternalLink className="w-3 h-3 text-gray-400" />
+        </Link>
+      ),
+    },
+    {
+      key: 'documentType',
+      header: 'Classification',
+      width: '160px',
+      sortable: true,
+      render: (item) => (
+        <span className="px-2 py-0.5 bg-[#F0F5FA] border border-[#CBD2DE] text-[#0B2A4A] rounded-[2px] text-[11px] font-medium">
+          {item.documentType}
+        </span>
+      ),
+    },
+    {
+      key: 'ocrStatus',
+      header: 'OCR Text Status',
+      width: '130px',
+      align: 'center',
+      render: (item) => <StatusBadge status={item.ocrStatus} size="sm" />,
+    },
+    {
+      key: 'uploadDate',
+      header: 'Uploaded Date & Officer',
+      width: '200px',
+      render: (item) => (
+        <div>
+          <div className="text-xs text-[#202124]">{item.uploadDate}</div>
+          <div className="text-[11px] text-[#5F6368]">{item.uploadedBy}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      width: '160px',
+      align: 'right',
+      render: (item) => (
+        <div className="flex items-center justify-end space-x-1.5">
+          <GovButton
+            variant="secondary"
+            size="sm"
+            onClick={() => setSelectedDoc(item)}
+          >
+            View / OCR
+          </GovButton>
+          <GovButton
+            variant="secondary"
+            size="sm"
+            onClick={(e) => handleDownload(e, item.id)}
+            title="Download Document"
+          >
+            <Download className="w-3.5 h-3.5 text-[#0B2A4A]" />
+          </GovButton>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border-hairline pb-4 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-3">
         <div>
-          <div className="flex items-center space-x-2 font-mono text-3xs text-ink-500 uppercase tracking-widest">
-            <span>GOIP</span>
-            <span>/</span>
-            <span>DOCUMENT REPOSITORY</span>
-            <span>/</span>
-            <span>AUTOMATED OCR INGESTION</span>
-          </div>
-          <h1 className="font-sans font-extrabold text-2xl text-ink-950 tracking-tight mt-1">
-            GOVERNMENT CASE RECORD &amp; OCR ENGINE
+          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
+            Central Government Document Repository
           </h1>
+          <p className="text-xs text-[#5F6368] mt-0.5">
+            Indexed government records, gazette orders, survey sketches, and optical text data.
+          </p>
         </div>
 
-        <div className="flex items-center space-x-3 font-mono text-2xs">
-          <button
-            onClick={() => setIsUploadOpen(true)}
-            className="px-4 py-2 bg-ink-900 hover:bg-ink-800 text-white uppercase tracking-wider font-bold flex items-center space-x-2 shadow-subtle-2 transition-colors"
-          >
-            <UploadCloud className="w-3.5 h-3.5 text-vermilion" />
-            <span>INGEST OFFICIAL DOCUMENT</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="bg-surface border border-border-hairline p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-2xs shadow-subtle-1">
         <div className="flex items-center space-x-2">
-          <span className="text-ink-500 text-3xs uppercase">FILTER CLASSIFICATION:</span>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-2.5 py-1 bg-surface-subtle border border-border-hairline text-ink-950 focus:outline-none"
+          <GovButton
+            variant="primary"
+            size="sm"
+            onClick={() => navigate('/documents/upload')}
+            icon={<ScanLine className="w-3.5 h-3.5" />}
           >
-            {DOC_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="relative">
-          <Search className="w-3.5 h-3.5 text-ink-400 absolute left-2.5 top-2.5" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search document title, Case ID, or filename..."
-            className="pl-8 pr-3 py-1 bg-surface-subtle border border-border-hairline text-xs font-mono text-ink-950 focus:outline-none w-72"
-          />
+            Upload &amp; Scan Document
+          </GovButton>
         </div>
       </div>
 
-      {/* Documents Table */}
-      {loading ? (
-        <TableSkeleton rows={5} cols={6} />
-      ) : filteredDocs.length === 0 ? (
-        <EmptyState
-          title="NO DOCUMENTS FOUND"
-          description="No official records matched your search query or document type filter."
-          actionText="INGEST NEW RECORD"
-          onAction={() => setIsUploadOpen(true)}
-        />
-      ) : (
-        <div className="bg-surface border border-border-hairline shadow-subtle-1 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border-hairline bg-surface-subtle/70 font-mono text-3xs text-ink-500 uppercase tracking-wider">
-                  <th className="py-2.5 px-4">DOCUMENT TITLE</th>
-                  <th className="py-2.5 px-4">CLASSIFICATION</th>
-                  <th className="py-2.5 px-4">ASSOCIATED CASE</th>
-                  <th className="py-2.5 px-4">FILE SIZE</th>
-                  <th className="py-2.5 px-4">OCR STATUS</th>
-                  <th className="py-2.5 px-4">INGESTION DATE</th>
-                  <th className="py-2.5 px-4 text-right">ACTION</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-hairline font-sans text-xs">
-                {filteredDocs.map((doc) => (
-                  <tr
-                    key={doc.id}
-                    onClick={() => setSelectedDoc(doc)}
-                    className="hover:bg-surface-hover cursor-pointer transition-colors"
-                  >
-                    <td className="py-3 px-4 max-w-sm">
-                      <div className="flex items-start space-x-2.5">
-                        <FileText className="w-4 h-4 text-ink-500 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className="font-semibold text-ink-950 truncate">
-                            {doc.title}
-                          </div>
-                          <div className="font-mono text-3xs text-ink-500 mt-0.5 truncate">
-                            {doc.fileName}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="font-mono text-2xs px-2 py-0.5 bg-surface-subtle border border-border-hairline text-ink-800">
-                        {doc.documentType}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 font-mono font-bold text-ink-950 text-xs">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/cases/${doc.caseId}`);
-                        }}
-                        className="text-vermilion hover:underline flex items-center space-x-1"
-                      >
-                        <span>{doc.caseId}</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </button>
-                    </td>
-                    <td className="py-3 px-4 font-mono text-2xs text-ink-600">
-                      {doc.metadata.fileSize}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-1.5 font-mono text-2xs text-sageSuccess">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span className="font-bold">OCR {( (doc.ocrResult?.confidenceScore || 0.95) * 100 ).toFixed(0)}%</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 font-mono text-2xs text-ink-500">
-                      {new Date(doc.uploadDate).toLocaleDateString('en-GB')}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedDoc(doc);
-                        }}
-                        className="px-2.5 py-1 bg-ink-900 hover:bg-ink-800 text-white font-mono text-3xs uppercase tracking-wider inline-flex items-center space-x-1"
-                      >
-                        <Eye className="w-2.5 h-2.5" />
-                        <span>INSPECT OCR</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Filter & Search Bar */}
+      <GovCard noPadding>
+        <div className="p-4 bg-[#F8F9FA] border-b border-[#D9DDE3] flex flex-wrap items-center justify-between gap-3">
+          {/* Search */}
+          <div className="relative flex-1 min-w-[240px] max-w-md">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search document title, OCR text, or file reference..."
+              className={`${inputBaseClasses} pl-9`}
+            />
+          </div>
+
+          {/* OCR Filter Buttons */}
+          <div className="flex items-center space-x-2 text-xs">
+            <span className="text-[#5F6368] font-semibold">OCR Status:</span>
+            {(['ALL', 'COMPLETED', 'PROCESSING', 'PENDING'] as const).map((status) => (
+              <button
+                key={status}
+                onClick={() => setOcrStatusFilter(status)}
+                className={`px-2.5 py-1 rounded-[2px] font-semibold text-[11px] transition-colors cursor-pointer ${
+                  ocrStatusFilter === status
+                    ? 'bg-[#0B2A4A] text-white'
+                    : 'bg-white border border-[#CBD2DE] text-[#202124] hover:bg-gray-100'
+                }`}
+              >
+                {status === 'ALL' ? 'All Records' : status}
+              </button>
+            ))}
           </div>
         </div>
+
+        <GovTable
+          columns={columns}
+          data={documents}
+          keyExtractor={(item) => item.id}
+          loading={loading}
+          pageSize={10}
+        />
+      </GovCard>
+
+      {/* Document Viewer Modal */}
+      {selectedDoc && (
+        <DocumentViewerModal
+          document={selectedDoc}
+          onClose={() => setSelectedDoc(null)}
+        />
       )}
-
-      {/* Modals */}
-      <DocumentViewerModal
-        document={selectedDoc}
-        onClose={() => setSelectedDoc(null)}
-      />
-
-      <DocumentUploadModal
-        isOpen={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-        onSuccess={(newDoc) => {
-          setDocuments((prev) => [newDoc, ...prev]);
-          setSelectedDoc(newDoc);
-        }}
-      />
     </div>
   );
 };

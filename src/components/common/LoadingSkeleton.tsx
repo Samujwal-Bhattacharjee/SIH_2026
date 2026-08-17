@@ -1,21 +1,20 @@
 import React from 'react';
 
-export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows = 6, cols = 6 }) => {
+export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({
+  rows = 5,
+  cols = 6,
+}) => {
   return (
-    <div className="w-full animate-pulse border border-border-hairline bg-surface">
-      <div className="h-10 bg-surface-subtle border-b border-border-hairline flex items-center px-4 space-x-4">
-        {Array.from({ length: cols }).map((_, i) => (
-          <div key={i} className="h-3 bg-ink-200 rounded-sm flex-1" />
-        ))}
-      </div>
-      <div className="divide-y divide-border-hairline">
+    <div className="border border-[#D9DDE3] rounded-[4px] bg-white overflow-hidden">
+      <div className="h-10 bg-[#0B2A4A] animate-pulse" />
+      <div className="divide-y divide-[#D9DDE3]">
         {Array.from({ length: rows }).map((_, r) => (
-          <div key={r} className="h-12 px-4 flex items-center space-x-4">
+          <div key={r} className="p-3.5 flex items-center space-x-4 animate-pulse">
             {Array.from({ length: cols }).map((_, c) => (
               <div
                 key={c}
-                className="h-3.5 bg-ink-100 rounded-sm"
-                style={{ width: `${Math.floor(40 + (c * 15) % 50)}%` }}
+                className="h-3.5 bg-gray-200 rounded-[2px]"
+                style={{ width: `${Math.floor(60 + (c * 17) % 35)}%` }}
               />
             ))}
           </div>
@@ -25,21 +24,19 @@ export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows
   );
 };
 
-export const GraphSkeleton: React.FC = () => {
+export const CardSkeleton: React.FC<{ count?: number }> = ({ count = 3 }) => {
   return (
-    <div className="w-full h-96 bg-surface border border-border-hairline flex flex-col items-center justify-center p-8 animate-pulse tech-grid-bg">
-      <div className="flex items-center space-x-8">
-        <div className="w-28 h-20 bg-ink-100 border border-border-hairline rounded-sm" />
-        <div className="w-12 h-0.5 bg-ink-300" />
-        <div className="w-28 h-20 bg-ink-100 border border-border-hairline rounded-sm" />
-        <div className="w-12 h-0.5 bg-ink-300" />
-        <div className="w-32 h-24 bg-vermilion-subtle border border-vermilion-border rounded-sm" />
-        <div className="w-12 h-0.5 bg-ink-300" />
-        <div className="w-28 h-20 bg-ink-100 border border-border-hairline rounded-sm" />
-      </div>
-      <p className="font-mono text-3xs text-ink-500 uppercase tracking-widest mt-6">
-        MINING WORKFLOW GRAPH TOPOLOGY...
-      </p>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="p-4 bg-white border border-[#D9DDE3] rounded-[4px] space-y-3 animate-pulse"
+        >
+          <div className="h-4 bg-gray-200 rounded w-1/3" />
+          <div className="h-8 bg-gray-300 rounded w-1/2" />
+          <div className="h-3 bg-gray-100 rounded w-2/3" />
+        </div>
+      ))}
     </div>
   );
 };

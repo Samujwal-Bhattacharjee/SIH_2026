@@ -4,7 +4,11 @@ export type Department =
   | 'Social Welfare'
   | 'Public Works'
   | 'Environment & Forests'
-  | 'Commerce & Industry';
+  | 'Commerce & Industry'
+  | 'Health & Family Welfare'
+  | 'Transport & Highways'
+  | 'Finance & Expenditure'
+  | 'Administrative Reforms';
 
 export type CaseStage =
   | 'Application Received'
@@ -15,9 +19,25 @@ export type CaseStage =
   | 'Approval'
   | 'Closure';
 
+export type PriorityLevel = 'IMMEDIATE' | 'URGENT' | 'ROUTINE';
+
 export type RiskLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 
+export type GovFileStatus =
+  | 'RECEIVED'
+  | 'REGISTERED'
+  | 'UNDER_SCRUTINY'
+  | 'FORWARDED'
+  | 'UNDER_PROCESSING'
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'DISPOSED'
+  | 'OVERDUE';
+
+// Support legacy CaseStatus as well for backward compatibility
 export type CaseStatus =
+  | GovFileStatus
   | 'IN_PROGRESS'
   | 'SLA_BREACHED'
   | 'AT_RISK'
@@ -32,7 +52,12 @@ export interface CaseEvent {
   durationDays: number;
   waitDays: number;
   officer: string;
-  status: 'COMPLETED' | 'IN_PROGRESS' | 'REWORK_TRIGGERED';
+  fromOfficer?: string;
+  toOfficer?: string;
+  fromDesk?: string;
+  toDesk?: string;
+  action?: string;
+  status: 'COMPLETED' | 'IN_PROGRESS' | 'REWORK_TRIGGERED' | 'FORWARDED';
   notes?: string;
   isDelayed?: boolean;
   isRework?: boolean;
@@ -56,13 +81,18 @@ export interface RiskPrediction {
   recommendedAction: string;
   shapAttribution: RiskFactor[];
   confidenceScore: number;
+  historicalBaselineDays?: number;
+  excessPercentage?: number;
 }
 
 export interface Case {
   id: string;
+  fileNumber?: string; // e.g. KA/REV/2026/001284
   title: string;
+  subject?: string;
   caseType: string;
   department: Department;
+  section?: string;
   currentStage: CaseStage;
   ageDays: number;
   statutoryDeadlineDays: number;
@@ -70,15 +100,22 @@ export interface Case {
   riskScore: number;
   riskLevel: RiskLevel;
   status: CaseStatus;
+  priority?: PriorityLevel;
   applicant: string;
+  origin?: string;
   assignedOfficer: string;
+  currentDesk?: string;
   flaggedForReview: boolean;
   createdAt: string;
   updatedAt: string;
+  lastMovementDate?: string;
   documentIds: string[];
   events?: CaseEvent[];
   riskPrediction?: RiskPrediction;
 }
+
+// Alias for clean naming
+export type FileRecord = Case;
 
 export interface WorkflowNodeData {
   [key: string]: unknown;
@@ -108,7 +145,10 @@ export interface WorkflowEdgeData {
 }
 
 export interface BottleneckAnalysis {
+  id?: string;
   stage: string;
+  department?: string;
+  desk?: string;
   severity: 'CRITICAL' | 'MODERATE' | 'LOW';
   avgWaitDays: number;
   baselineDays: number;
@@ -147,6 +187,9 @@ export interface DocumentMetadata {
   pageCount: number;
   author?: string;
   checksum?: string;
+  referenceNumber?: string;
+  documentDate?: string;
+  issuingAuthority?: string;
 }
 
 export interface OCRField {
@@ -154,6 +197,7 @@ export interface OCRField {
   value: string;
   confidence: number;
   isExtracted: boolean;
+  label?: string;
 }
 
 export interface OCRResult {
@@ -164,6 +208,7 @@ export interface OCRResult {
   processingTimeMs: number;
   ocrEngine: string;
   status: 'READY' | 'PROCESSING' | 'FAILED';
+  rawOcrUrl?: string;
 }
 
 export type DocumentType =
@@ -173,7 +218,9 @@ export type DocumentType =
   | 'Site Inspection Report'
   | 'Clearance Certificate'
   | 'Court Order'
-  | 'Affidavit';
+  | 'Affidavit'
+  | 'Gazette Notification'
+  | 'Office Note Sheet';
 
 export interface DocumentRecord {
   id: string;
@@ -189,6 +236,47 @@ export interface DocumentRecord {
   ocrStatus: 'COMPLETED' | 'PROCESSING' | 'PENDING' | 'FAILED';
   metadata: DocumentMetadata;
   ocrResult?: OCRResult;
+}
+
+export interface DepartmentInfo {
+  id: string;
+  name: Department;
+  nameHi: string;
+  code: string;
+  headOfficer: string;
+  location: string;
+  activeFilesCount: number;
+  pendingFilesCount: number;
+  avgDisposalDays: number;
+  slaCompliancePct: number;
+}
+
+export interface OfficerInfo {
+  id: string;
+  name: string;
+  designation: string;
+  department: Department;
+  section: string;
+  email: string;
+  phone: string;
+  activeFilesCount: number;
+  pendingFilesCount: number;
+  deskNumber: string;
+}
+
+export interface AuditLog {
+  id: string;
+  timestamp: string;
+  officerId: string;
+  officerName: string;
+  action: 'FILE_REGISTERED' | 'FILE_FORWARDED' | 'DOCUMENT_UPLOADED' | 'OCR_PROCESSED' | 'FILE_APPROVED' | 'FILE_REJECTED' | 'FILE_DISPOSED' | 'FLAGGED_REVIEW' | 'NOTE_ADDED';
+  fileId: string;
+  fileNumber?: string;
+  previousState?: string;
+  newState?: string;
+  ipAddress: string;
+  terminalId: string;
+  remarks?: string;
 }
 
 export type SimulationIntervention =
@@ -246,9 +334,12 @@ export interface SimulationResult {
 
 export interface DashboardMetrics {
   totalActiveCases: number;
+  todayReceivedCount?: number;
+  inProcessCount?: number;
   pendingQueue: number;
   slaAtRiskCount: number;
   slaBreachedCount: number;
+  disposedCount?: number;
   avgProcessingDays: number;
   primaryBottleneck: BottleneckAnalysis;
   recentHighRiskCases: Case[];
@@ -287,8 +378,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'ADMINISTRATOR' | 'OPERATIONS_OFFICER' | 'DEPARTMENT_HEAD';
+  role: 'ADMINISTRATOR' | 'OPERATIONS_OFFICER' | 'DEPARTMENT_HEAD' | 'SECTION_OFFICER';
   department: string;
+  designation?: string;
   badgeNumber: string;
   sessionExpiry: string;
 }

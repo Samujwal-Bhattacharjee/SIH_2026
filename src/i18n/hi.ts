@@ -1,0 +1,90 @@
+export const hi = {
+  // Top utility & header
+  'gov.india': 'भारत सरकार',
+  'gov.ministry': 'प्रशासनिक सुधार एवं लोक शिकायत विभाग',
+  'gov.systemTitle': 'सरकारी फ़ाइल ट्रैकिंग एवं प्रशासनिक आसूचना प्रणाली',
+  'gov.systemSubtitle': 'डिजिटल शासन • फ़ाइल संचलन • प्रशासनिक आसूचना',
+  'gov.accessibility': 'सुगम्यता विकल्प',
+  'gov.skipToMain': 'मुख्य सामग्री पर जाएं',
+  'gov.fontSize': 'फ़ॉन्ट आकार',
+  'gov.language': 'भाषा',
+  'gov.english': 'English',
+  'gov.hindi': 'हिन्दी',
+
+  // Navigation
+  'nav.dashboard': 'डैशबोर्ड (मुख्य पृष्ठ)',
+  'nav.files': 'फ़ाइल रजिस्टर',
+  'nav.pending': 'लंबित फ़ाइलें',
+  'nav.documents': 'दस्तावेज़ भंडार',
+  'nav.upload': 'दस्तावेज़ अपलोड व OCR',
+  'nav.search': 'उन्नत खोज',
+  'nav.intelligence': 'प्रशासनिक आसूचना',
+  'nav.workflow': 'कार्यप्रवाह मानचित्र',
+  'nav.risk': 'विलंब जोखिम पूर्वानुमान',
+  'nav.simulation': 'सिमुलेशन विश्लेषण',
+  'nav.reports': 'प्रतिवेदन एवं SLA',
+  'nav.auditLogs': 'ऑडिट रजिस्टर',
+  'nav.departments': 'विभाग एवं अधिकारी',
+  'nav.settings': 'प्रणाली विन्यास',
+
+  // Common Actions
+  'action.view': 'डॉक़ेट देखें',
+  'action.track': 'संचलन ट्रैक करें',
+  'action.forward': 'फ़ाइल अग्रेषित करें',
+  'action.approve': 'स्वीकृत एवं निस्तारित',
+  'action.reject': 'अस्वीकृत / वापस',
+  'action.upload': 'दस्तावेज़ अपलोड करें',
+  'action.download': 'डाउनलोड',
+  'action.ocrScan': 'OCR स्कैन प्रारंभ करें',
+  'action.search': 'खोजें',
+  'action.filter': 'फ़िल्टर',
+  'action.reset': 'रीसेट',
+  'action.exportCsv': 'CSV निर्यात करें',
+  'action.print': 'विवरण प्रिंट करें',
+  'action.save': 'परिवर्तन सहेजें',
+  'action.cancel': 'रद्द करें',
+  'action.confirm': 'पुष्टि करें एवं पंजीकृत करें',
+  'action.login': 'लॉग इन करें',
+  'action.logout': 'लॉग आउट',
+
+  // Statuses
+  'status.received': 'प्राप्त',
+  'status.registered': 'पंजीकृत',
+  'status.underScrutiny': 'संवीक्षाधीन',
+  'status.forwarded': 'अग्रेषित',
+  'status.underProcessing': 'प्रक्रियाधीन',
+  'status.pending': 'लंबित',
+  'status.approved': 'स्वीकृत',
+  'status.rejected': 'अस्वीकृत',
+  'status.disposed': 'निस्तारित',
+  'status.overdue': 'समयसीमा पार (> SLA)',
+
+  // Priority
+  'priority.immediate': 'अति आवश्यक (Immediate)',
+  'priority.urgent': 'तत्काल (Urgent)',
+  'priority.routine': 'सामान्य (Routine)',
+
+  // Table Headers
+  'th.fileNo': 'फ़ाइल संख्या',
+  'th.subject': 'विषय / विवरण',
+  'th.department': 'विभाग',
+  'th.officer': 'वर्तमान पटल / अधिकारी',
+  'th.receivedDate': 'आवक तिथि',
+  'th.lastMovement': 'अंतिम संचलन',
+  'th.daysPending': 'लंबित दिवस',
+  'th.slaStatus': 'SLA स्थिति',
+  'th.priority': 'प्राथमिकता',
+  'th.action': 'कार्रवाई',
+
+  // Statistics
+  'stat.totalFiles': 'कुल सक्रिय फ़ाइलें',
+  'stat.todayReceived': 'आज प्राप्त आवक',
+  'stat.inProcess': 'प्रक्रियाधीन',
+  'stat.pendingTotal': 'कुल लंबित',
+  'stat.slaOverdue': 'अतिदेय (> SLA)',
+  'stat.disposedTotal': 'कुल निस्तारित',
+
+  // Disclaimer
+  'footer.prototypeNotice': 'प्रदर्शन एवं प्रोटोटाइप प्रशासनिक प्रणाली • भारत सरकार आंतरिक कार्यप्रणाली (2026)',
+  'footer.nicAttribution': 'प्रशासनिक कार्यप्रवाह हेतु अभिकल्पित एवं विकसित',
+};

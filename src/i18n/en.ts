@@ -1,0 +1,90 @@
+export const en = {
+  // Top utility & header
+  'gov.india': 'Government of India',
+  'gov.ministry': 'Department of Administrative Reforms & Public Grievances',
+  'gov.systemTitle': 'Government File Tracking & Administrative Intelligence System',
+  'gov.systemSubtitle': 'Digital Governance • File Movement • Administrative Intelligence',
+  'gov.accessibility': 'Accessibility Options',
+  'gov.skipToMain': 'Skip to Main Content',
+  'gov.fontSize': 'Font Size',
+  'gov.language': 'Language',
+  'gov.english': 'English',
+  'gov.hindi': 'हिन्दी',
+
+  // Navigation
+  'nav.dashboard': 'Dashboard',
+  'nav.files': 'File Register',
+  'nav.pending': 'Pending Files',
+  'nav.documents': 'Document Repository',
+  'nav.upload': 'Upload & Scan OCR',
+  'nav.search': 'Advanced Search',
+  'nav.intelligence': 'Admin Intelligence',
+  'nav.workflow': 'Workflow Process Map',
+  'nav.risk': 'Delay Risk Forecast',
+  'nav.simulation': 'What-If Simulation',
+  'nav.reports': 'Reports & SLA',
+  'nav.auditLogs': 'Audit Register',
+  'nav.departments': 'Departments & Officers',
+  'nav.settings': 'System Settings',
+
+  // Common Actions
+  'action.view': 'View Docket',
+  'action.track': 'Track Movement',
+  'action.forward': 'Forward File',
+  'action.approve': 'Approve & Dispose',
+  'action.reject': 'Reject / Return',
+  'action.upload': 'Upload Document',
+  'action.download': 'Download',
+  'action.ocrScan': 'Run OCR Scan',
+  'action.search': 'Search Records',
+  'action.filter': 'Filter',
+  'action.reset': 'Reset',
+  'action.exportCsv': 'Export CSV',
+  'action.print': 'Print Summary',
+  'action.save': 'Save Changes',
+  'action.cancel': 'Cancel',
+  'action.confirm': 'Confirm & Register',
+  'action.login': 'Sign In',
+  'action.logout': 'Sign Out',
+
+  // Statuses
+  'status.received': 'Received',
+  'status.registered': 'Registered',
+  'status.underScrutiny': 'Under Scrutiny',
+  'status.forwarded': 'Forwarded',
+  'status.underProcessing': 'Under Processing',
+  'status.pending': 'Pending',
+  'status.approved': 'Approved',
+  'status.rejected': 'Rejected',
+  'status.disposed': 'Disposed',
+  'status.overdue': 'Overdue (> SLA)',
+
+  // Priority
+  'priority.immediate': 'Immediate',
+  'priority.urgent': 'Urgent',
+  'priority.routine': 'Routine',
+
+  // Table Headers
+  'th.fileNo': 'File Number',
+  'th.subject': 'Subject / Description',
+  'th.department': 'Department',
+  'th.officer': 'Current Desk / Officer',
+  'th.receivedDate': 'Inward Date',
+  'th.lastMovement': 'Last Movement',
+  'th.daysPending': 'Days Pending',
+  'th.slaStatus': 'SLA Status',
+  'th.priority': 'Priority',
+  'th.action': 'Action',
+
+  // Statistics
+  'stat.totalFiles': 'Total Active Files',
+  'stat.todayReceived': 'Today Received',
+  'stat.inProcess': 'In Process',
+  'stat.pendingTotal': 'Total Pending',
+  'stat.slaOverdue': 'Overdue (> SLA)',
+  'stat.disposedTotal': 'Total Disposed',
+
+  // Disclaimer
+  'footer.prototypeNotice': 'Demonstration & Prototype Administrative System • Government of India Internal Operations (2026)',
+  'footer.nicAttribution': 'Designed and Developed for Government Administrative Workflows',
+};

@@ -1,114 +1,234 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #F8F8F5;
-  --color-paper-light: #FFFFFF;
-  --color-paper-dark: #EEEEEC;
-  --color-surface: #FFFFFF;
-  --color-surface-subtle: #F2F3F5;
-  --color-surface-hover: #ECEEF2;
+  /* Government Navy Brand Palette */
+  --color-gov-navy-950: #071A2E;
+  --color-gov-navy-900: #0B2A4A;
+  --color-gov-navy-800: #123B63;
+  --color-gov-navy-700: #173F67;
+  --color-gov-navy-600: #1E4E79;
+  --color-gov-navy-500: #2C6496;
+  --color-gov-navy-100: #E6EEF5;
+  --color-gov-navy-50: #F0F5FA;
 
-  --color-ink-950: #0B0C0E;
-  --color-ink-900: #111215;
-  --color-ink-800: #1F2329;
-  --color-ink-700: #2E3440;
-  --color-ink-600: #475060;
-  --color-ink-500: #647082;
-  --color-ink-400: #8E99A8;
-  --color-ink-300: #C2C8D1;
-  --color-ink-200: #E2E5EB;
-  --color-ink-100: #F1F3F6;
+  /* Surface & Backgrounds */
+  --color-gov-bg: #F5F6F8;
+  --color-gov-surface: #FFFFFF;
+  --color-gov-surface-subtle: #F0F2F5;
+  --color-gov-surface-hover: #E9ECF0;
+  --color-gov-surface-muted: #E2E6EC;
 
-  --color-border-hairline: #E2E5EB;
-  --color-border-subtle: #D1D6E0;
-  --color-border-dark: #1F2329;
+  /* Government Text Hierarchy */
+  --color-gov-text-primary: #202124;
+  --color-gov-text-secondary: #5F6368;
+  --color-gov-text-muted: #7D838C;
+  --color-gov-text-inverted: #FFFFFF;
 
-  --color-vermilion: #D9381E;
-  --color-vermilion-hover: #C22D15;
-  --color-vermilion-subtle: #FEF2F0;
-  --color-vermilion-border: #F8A99B;
+  /* Borders & Dividers */
+  --color-gov-border: #D9DDE3;
+  --color-gov-border-subtle: #E6E9EF;
+  --color-gov-border-strong: #BAC1CC;
+  --color-gov-border-navy: #123B63;
 
-  --color-amberRisk: #D97706;
-  --color-amberRisk-subtle: #FFFBEB;
-  --color-amberRisk-border: #FDE68A;
+  /* Government Operational Status Colors */
+  --color-gov-red: #B72025;
+  --color-gov-red-hover: #991B1B;
+  --color-gov-red-subtle: #FEF2F2;
+  --color-gov-red-border: #FCA5A5;
 
-  --color-sageSuccess: #15803D;
-  --color-sageSuccess-subtle: #F0FDF4;
-  --color-sageSuccess-border: #BBF7D0;
+  --color-gov-saffron: #D97706;
+  --color-gov-saffron-subtle: #FFFBEB;
+  --color-gov-saffron-border: #FDE68A;
 
-  --color-navyInfo: #1D4ED8;
-  --color-navyInfo-subtle: #EFF6FF;
-  --color-navyInfo-border: #BFDBFE;
+  --color-gov-green: #15803D;
+  --color-gov-green-subtle: #F0FDF4;
+  --color-gov-green-border: #BBF7D0;
 
-  --font-sans: "Inter", "Geist", "IBM Plex Sans", -apple-system, sans-serif;
-  --font-mono: "IBM Plex Mono", "Geist Mono", "Space Mono", monospace;
-  --font-display: "Inter", "Geist", sans-serif;
+  --color-gov-blue: #1D4ED8;
+  --color-gov-blue-subtle: #EFF6FF;
+  --color-gov-blue-border: #BFDBFE;
 
-  --text-2xs: 0.6875rem;
-  --text-2xs--line-height: 0.875rem;
-  --text-3xs: 0.625rem;
-  --text-3xs--line-height: 0.75rem;
+  /* Traditional Government Note-Sheet Accent */
+  --color-gov-notesheet: #FAF8F2;
+  --color-gov-notesheet-green: #1C5A3E;
 
-  --shadow-subtle-1: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --shadow-subtle-2: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  /* Institutional Typography */
+  --font-sans: "Noto Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Source Serif 4", "Times New Roman", Georgia, serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+
+  /* Shadows (Subtle, Clean, Official) */
+  --shadow-gov-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-gov-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-gov-modal: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
 :root {
-  --bg-paper: #F8F8F5;
-  --border-hairline: #E2E5EB;
-  --ink-primary: #111215;
-  --ink-secondary: #5A6270;
-  --vermilion: #D9381E;
+  --gov-navy-900: #0B2A4A;
+  --gov-navy-800: #123B63;
+  --gov-bg: #F5F6F8;
+  --gov-surface: #FFFFFF;
+  --gov-border: #D9DDE3;
+  --gov-text-primary: #202124;
+  --gov-text-secondary: #5F6368;
+}
+
+/* Base resets & clean government public-sector aesthetic */
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 15px;
+  }
 }
 
 body {
-  background-color: #F8F8F5;
-  color: #111215;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-color: #F5F6F8;
+  color: #202124;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
-/* Custom subtle scrollbar */
+/* Accessibility: Visible high-contrast focus rings */
+:focus-visible {
+  outline: 2px solid #0B2A4A;
+  outline-offset: 2px;
+}
+
+/* Subtle standard scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F1F2F5;
+  background: #F0F2F5;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #CBD2DE;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9AA6B8;
 }
 
-.tech-grid-bg {
-  background-size: 24px 24px;
-  background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+/* Indian Tricolour top strip line */
+.gov-tricolour-bar {
+  background: linear-gradient(
+    to right,
+    #FF9933 0%,
+    #FF9933 33.33%,
+    #FFFFFF 33.33%,
+    #FFFFFF 66.66%,
+    #138808 66.66%,
+    #138808 100%
+  );
+  height: 3px;
+  width: 100%;
 }
 
-.tech-cross-bg {
-  background-size: 40px 40px;
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+/* Authentic Government Notification Marquee Track */
+@keyframes govMarquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-/* React Flow custom technical styles */
-.react-flow__attribution {
-  display: none !important;
+.gov-marquee-track {
+  display: inline-flex;
+  will-change: transform;
+  animation: govMarquee 38s linear infinite;
 }
 
-.react-flow__handle {
-  width: 7px !important;
-  height: 7px !important;
-  background-color: #111215 !important;
-  border: 1.5px solid #FFFFFF !important;
-  border-radius: 0px !important;
+.gov-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+
+/* Official Government Note-Sheet / Docket Styling */
+.gov-notesheet {
+  background-color: #FAF8F2;
+  border: 1px solid #D9D4C7;
+  position: relative;
+}
+
+.gov-notesheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 36px;
+  width: 1.5px;
+  background-color: #D98880;
+  opacity: 0.5;
+}
+
+/* Clean dense government table styles */
+.gov-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.gov-table th {
+  background-color: #0B2A4A;
+  color: #FFFFFF;
+  font-weight: 600;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  border-bottom: 2px solid #071A2E;
+  white-space: nowrap;
+}
+
+.gov-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #D9DDE3;
+  color: #202124;
+  vertical-align: middle;
+}
+
+.gov-table tbody tr:nth-child(even) {
+  background-color: #F8F9FA;
+}
+
+.gov-table tbody tr:hover {
+  background-color: #EEF2F7;
+}
+
+/* Print stylesheets for official reports and file summaries */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 12pt;
+  }
+
+  header, nav, .gov-no-print {
+    display: none !important;
+  }
+
+  .gov-print-only {
+    display: block !important;
+  }
+
+  .gov-table th {
+    background-color: #EEEEEE !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+  }
+
+  .gov-table td {
+    border: 1px solid #CCCCCC !important;
+  }
 }
