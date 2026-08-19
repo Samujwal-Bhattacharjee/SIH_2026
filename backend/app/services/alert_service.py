@@ -146,7 +146,7 @@ def run_global_alert_refresh():
                 .not_.in_("status", ["RECEIVED", "CLOSED"])\
                 .maybe_single()\
                 .execute()
-            legal_opinion = lo_result.data
+            legal_opinion = lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None
 
             # Inject computed fields
             from app.services.deadline_service import enrich_case_with_deadlines

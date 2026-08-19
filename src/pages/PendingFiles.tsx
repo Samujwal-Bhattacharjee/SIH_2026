@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { casesService } from '../services/api';
-import { Case } from '../types';
+import { casesService, departmentService } from '../services/api';
+import { Case, DepartmentInfo } from '../types';
 import { GovTable, TableColumn } from '../components/common/GovTable';
 import { GovButton } from '../components/common/GovButton';
 import { GovCard } from '../components/common/GovCard';
 import { selectBaseClasses } from '../components/common/FormField';
 import { FileForwardModal } from '../components/files/FileForwardModal';
-import { MOCK_DEPARTMENTS } from '../mock/data';
 
 export const PendingFiles: React.FC = () => {
   const [pendingCases, setPendingCases] = useState<Case[]>([]);
+  const [departments, setDepartments] = useState<DepartmentInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [departmentFilter, setDepartmentFilter] = useState('ALL');
   const [ageBucket, setAgeBucket] = useState<'ALL' | '<3' | '3-7' | '7-15' | '>15'>('ALL');
@@ -41,6 +41,12 @@ export const PendingFiles: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    departmentService.getDepartments().then((depts) => {
+      if (depts && depts.length > 0) setDepartments(depts);
+    }).catch(console.error);
+  }, []);
 
   useEffect(() => {
     fetchPending();
@@ -267,7 +273,7 @@ export const PendingFiles: React.FC = () => {
                 className={selectBaseClasses}
               >
                 <option value="ALL">All Departments</option>
-                {MOCK_DEPARTMENTS.map((d) => (
+                {departments.map((d) => (
                   <option key={d.id} value={d.name}>
                     {d.name}
                   </option>

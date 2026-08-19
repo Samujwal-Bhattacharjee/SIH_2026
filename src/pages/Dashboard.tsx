@@ -9,8 +9,8 @@ import {
   ArrowRight,
   TrendingUp,
 } from 'lucide-react';
-import { dashboardService, casesService } from '../services/api';
-import { DashboardMetrics, Case } from '../types';
+import { dashboardService, casesService, auditService, departmentService } from '../services/api';
+import { DashboardMetrics, Case, AuditLog, DepartmentInfo } from '../types';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
 import { StatusBadge } from '../components/common/GovBadge';
@@ -18,11 +18,12 @@ import { TableSkeleton } from '../components/common/LoadingSkeleton';
 import { FileForwardModal } from '../components/files/FileForwardModal';
 import { FileRegisterModal } from '../components/files/FileRegisterModal';
 import { useLanguage } from '../context/LanguageContext';
-import { MOCK_CASE_EVENTS, MOCK_DEPARTMENTS } from '../mock/data';
 
 export const Dashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [overdueCases, setOverdueCases] = useState<Case[]>([]);
+  const [recentAuditLogs, setRecentAuditLogs] = useState<AuditLog[]>([]);
+  const [departments, setDepartments] = useState<DepartmentInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCaseForForward, setSelectedCaseForForward] = useState<Case | null>(null);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -32,9 +33,11 @@ export const Dashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const [dashMetrics, casesRes] = await Promise.all([
+      const [dashMetrics, casesRes, auditRes, deptsRes] = await Promise.all([
         dashboardService.getMetrics(),
         casesService.getCases(),
+        auditService.getAuditLogs(),
+        departmentService.getDepartments(),
       ]);
       setMetrics(dashMetrics);
       // Filter overdue cases
@@ -42,6 +45,8 @@ export const Dashboard: React.FC = () => {
         (c) => c.status === 'OVERDUE' || c.daysRemaining < 0 || c.riskLevel === 'HIGH'
       );
       setOverdueCases(overdue);
+      setRecentAuditLogs(auditRes.slice(0, 4));
+      if (deptsRes && deptsRes.length > 0) setDepartments(deptsRes);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
     } finally {
@@ -66,12 +71,6 @@ export const Dashboard: React.FC = () => {
       </div>
     );
   }
-
-  // Aggregate recent movement events across cases
-  const allEvents = Object.values(MOCK_CASE_EVENTS)
-    .flat()
-    .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
-    .slice(0, 4);
 
   return (
     <div className="space-y-6">
@@ -215,9 +214,8 @@ export const Dashboard: React.FC = () => {
                   {overdueCases.slice(0, 4).map((item, idx) => (
                     <tr
                       key={item.id}
-                      className={`hover:bg-[#FFF8F8] transition-colors ${
-                        idx % 2 === 1 ? 'bg-[#FCFDFD]' : 'bg-white'
-                      }`}
+                      className={`hover:bg-[#FFF8F8] transition-colors ${idx % 2 === 1 ? 'bg-[#FCFDFD]' : 'bg-white'
+                        }`}
                     >
                       <td className="p-2.5 font-mono font-bold text-[#0B2A4A]">
                         <Link to={`/files/${item.id}`} className="hover:underline">
@@ -279,7 +277,7 @@ export const Dashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#D9DDE3]">
-                  {MOCK_DEPARTMENTS.slice(0, 5).map((dept, idx) => (
+                  {departments.slice(0, 5).map((dept, idx) => (
                     <tr
                       key={dept.id}
                       className={idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'}
@@ -389,22 +387,26 @@ export const Dashboard: React.FC = () => {
             }
           >
             <div className="space-y-2.5">
-              {allEvents.map((ev, index) => (
-                <div
-                  key={ev.id || index}
-                  className="p-2.5 bg-[#F8F9FA] border border-[#D9DDE3] rounded-[3px] space-y-1 text-xs"
-                >
-                  <div className="flex items-center justify-between text-[11px] text-[#5F6368]">
-                    <span className="font-bold text-[#0B2A4A]">Docket: {ev.caseId}</span>
-                    <span className="font-mono text-[10px]">{ev.timestamp}</span>
+              {recentAuditLogs.length > 0 ? (
+                recentAuditLogs.map((log, index) => (
+                  <div
+                    key={log.id || index}
+                    className="p-2.5 bg-[#F8F9FA] border border-[#D9DDE3] rounded-[3px] space-y-1 text-xs"
+                  >
+                    <div className="flex items-center justify-between text-[11px] text-[#5F6368]">
+                      <span className="font-bold text-[#0B2A4A]">Docket: {log.fileNumber || log.fileId}</span>
+                      <span className="font-mono text-[10px]">{log.timestamp ? log.timestamp.substring(0, 10) : ''}</span>
+                    </div>
+                    <div className="text-[#202124] font-medium text-xs">
+                      <span>{log.action}</span>
+                      <span className="text-gray-400 mx-1.5">•</span>
+                      <span className="text-[#5F6368] text-[11px]">Officer: {log.officerName}</span>
+                    </div>
                   </div>
-                  <div className="text-[#202124] font-medium text-xs">
-                    <span>{ev.stage}</span>
-                    <span className="text-gray-400 mx-1.5">•</span>
-                    <span className="text-[#5F6368] text-[11px]">Officer: {ev.officer}</span>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="p-3 text-center text-xs text-[#5F6368]">No recent movements logged.</div>
+              )}
             </div>
           </GovCard>
         </div>

@@ -28,8 +28,25 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info(f"Debug mode: {settings.DEBUG}")
     logger.info(f"CORS origins: {settings.cors_origins_list}")
+
+    # Ensure Supabase Storage bucket exists so document uploads never fail
+    try:
+        from app.core.database import get_supabase
+        from app.core.config import settings as _s
+        sb = get_supabase()
+        bucket_name = _s.SUPABASE_STORAGE_BUCKET
+        existing = sb.storage.list_buckets()
+        if not any(b.name == bucket_name for b in existing):
+            sb.storage.create_bucket(bucket_name, options={"public": False})
+            logger.info(f"Storage bucket '{bucket_name}' created on startup.")
+        else:
+            logger.info(f"Storage bucket '{bucket_name}' already exists.")
+    except Exception as e:
+        logger.warning(f"Could not verify/create storage bucket on startup: {e}")
+
     yield
     logger.info("Shutting down GOIP backend")
+
 
 
 app = FastAPI(

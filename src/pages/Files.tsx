@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link, useLocation } from 'react-router-dom';
 import {
   Search,
   Download,
@@ -7,8 +7,8 @@ import {
   Bookmark,
   BookmarkCheck,
 } from 'lucide-react';
-import { casesService } from '../services/api';
-import { Case } from '../types';
+import { casesService, departmentService } from '../services/api';
+import { Case, DepartmentInfo } from '../types';
 import { GovTable, TableColumn } from '../components/common/GovTable';
 import { StatusBadge } from '../components/common/GovBadge';
 import { GovButton } from '../components/common/GovButton';
@@ -16,7 +16,6 @@ import { GovCard } from '../components/common/GovCard';
 import { inputBaseClasses, selectBaseClasses } from '../components/common/FormField';
 import { FileForwardModal } from '../components/files/FileForwardModal';
 import { FileRegisterModal } from '../components/files/FileRegisterModal';
-import { MOCK_DEPARTMENTS } from '../mock/data';
 
 const STAGES: string[] = [
   'ALL',
@@ -45,6 +44,7 @@ const STATUSES: string[] = [
 export const Files: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [cases, setCases] = useState<Case[]>([]);
+  const [departments, setDepartments] = useState<DepartmentInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [departmentFilter, setDepartmentFilter] = useState(searchParams.get('department') || 'ALL');
@@ -73,8 +73,24 @@ export const Files: React.FC = () => {
     }
   };
 
+  const location = useLocation();
+
+  useEffect(() => {
+    departmentService.getDepartments().then((depts) => {
+      if (depts && depts.length > 0) setDepartments(depts);
+    }).catch(console.error);
+  }, []);
+
+  // Re-fetch whenever the user navigates TO this page (e.g., after registering a new case)
   useEffect(() => {
     fetchFiles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
+
+  // Re-fetch whenever a filter changes
+  useEffect(() => {
+    fetchFiles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departmentFilter, stageFilter, statusFilter, priorityFilter, searchQuery]);
 
   const handleResetFilters = () => {
@@ -315,8 +331,8 @@ export const Files: React.FC = () => {
                 onChange={(e) => setDepartmentFilter(e.target.value)}
                 className={selectBaseClasses}
               >
-                <option value="ALL">All Departments (8)</option>
-                {MOCK_DEPARTMENTS.map((d) => (
+                <option value="ALL">All Departments</option>
+                {departments.map((d) => (
                   <option key={d.id} value={d.name}>
                     {d.name} ({d.code})
                   </option>

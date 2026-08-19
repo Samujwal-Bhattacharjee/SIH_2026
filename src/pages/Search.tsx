@@ -6,19 +6,19 @@ import {
   FileText,
   ArrowRight,
 } from 'lucide-react';
-import { casesService } from '../services/api';
-import { Case, DocumentRecord } from '../types';
+import { casesService, departmentService } from '../services/api';
+import { Case, DocumentRecord, DepartmentInfo } from '../types';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
 import { StatusBadge } from '../components/common/GovBadge';
 import { inputBaseClasses, inputErrorClasses, selectBaseClasses } from '../components/common/FormField';
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal';
-import { MOCK_DEPARTMENTS } from '../mock/data';
 
 export const Search: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [departmentFilter, setDepartmentFilter] = useState('ALL');
+  const [departments, setDepartments] = useState<DepartmentInfo[]>([]);
   const [searchType, setSearchType] = useState<'ALL' | 'FILES' | 'DOCUMENTS'>('ALL');
   const [validationError, setValidationError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,6 +52,12 @@ export const Search: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    departmentService.getDepartments().then((depts) => {
+      if (depts && depts.length > 0) setDepartments(depts);
+    }).catch(console.error);
+  }, []);
 
   useEffect(() => {
     const q = searchParams.get('q');
@@ -123,8 +129,8 @@ export const Search: React.FC = () => {
                 onChange={(e) => setDepartmentFilter(e.target.value)}
                 className={selectBaseClasses}
               >
-                <option value="ALL">All Departments (8)</option>
-                {MOCK_DEPARTMENTS.map((d) => (
+                <option value="ALL">All Departments</option>
+                {departments.map((d) => (
                   <option key={d.id} value={d.name}>
                     {d.name} ({d.code})
                   </option>

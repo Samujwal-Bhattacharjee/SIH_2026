@@ -148,23 +148,31 @@ def extract_fields_from_text(text: str) -> list[dict]:
     """
     fields = []
 
-    # --- Case Number ---
+    # --- Case / File / Report / Reference Number ---
     case_number_patterns = [
-        r'(?:W\.?A\.?|W\.?P\.?|O\.?S\.?|C\.?A\.?|S\.?B\.?\s*)?(?:No\.?|NUMBER)?\s*(\d{1,6}/\d{4})',
-        r'(?:Writ Appeal|Writ Petition|Civil Appeal)\s+(?:No\.?)?\s*(\d+\s*/\s*\d{4})',
-        r'Case\s+(?:No\.?|Number)\s*[:\-]?\s*([A-Z0-9\-/]+)',
+        # 1. Government and administrative document labels with explicit number indicator
+        r'\b(?:Case|Report|Information\s+Report|File|Reference|Ref|Application|App|Petition|Docket|Diary|FIR|Order|G\.?O\.?|Sanction|Dispatch)\s+(?:No\.?|Number|Nos\.?|Num\.?|#)\s*[:\-]?\s*([A-Za-z0-9][A-Za-z0-9\-_./\(\)]{1,40})\b',
+        # 2. Case Number / Case No label
+        r'\bCase\s+(?:Number|No\.?|#)\s*[:\-]?\s*([A-Za-z0-9][A-Za-z0-9\-_./\(\)]{1,40})\b',
+        # 3. Court and litigation case identifiers (Writ Petition, Appeal, etc.)
+        r'\b(?:W\.?A\.?|W\.?P\.?(?:\s*\([A-Za-z]+\))?|O\.?S\.?|C\.?A\.?|S\.?B\.?|S\.?L\.?P\.?(?:\s*\([A-Za-z]+\))?|O\.?A\.?|M\.?A\.?|Writ\s+Appeal|Writ\s+Petition|Civil\s+Appeal)\s*(?:No\.?|Number|Nos\.?)?\s*[:\-]?\s*([A-Za-z0-9\-_./\(\)]+\s*/\s*\d{2,4})\b',
+        # 4. Standalone explicit No. / Number with slash docket
+        r'\b(?:No\.?|Number)\s*[:\-]\s*([A-Za-z0-9\-_.]+\s*/\s*\d{2,4})\b',
     ]
     for pattern in case_number_patterns:
         match = re.search(pattern, text, re.IGNORECASE)
         if match:
-            fields.append({
-                "key": "caseNumber",
-                "label": "Case Number",
-                "value": match.group(1).strip().replace(" ", ""),
-                "confidence": 0.82,
-                "isExtracted": True,
-            })
-            break
+            candidate_val = match.group(1).strip().replace(" ", "").rstrip(".,;:")
+            # Candidate must contain at least one digit and be at least 2 characters long
+            if any(c.isdigit() for c in candidate_val) and len(candidate_val) >= 2:
+                fields.append({
+                    "key": "caseNumber",
+                    "label": "Case Number",
+                    "value": candidate_val,
+                    "confidence": 0.85,
+                    "isExtracted": True,
+                })
+                break
 
     # --- Court Name ---
     court_patterns = [

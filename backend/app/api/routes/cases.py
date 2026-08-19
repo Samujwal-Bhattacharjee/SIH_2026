@@ -95,7 +95,7 @@ async def update_case(
     supabase = get_supabase()
 
     existing = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not existing.data:
+    if not existing or not getattr(existing, "data", None):
         raise HTTPException(status_code=404, detail="Case not found")
 
     updates = {k: v for k, v in body.model_dump().items() if v is not None}
@@ -154,7 +154,7 @@ async def update_status(
     supabase = get_supabase()
 
     existing = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not existing.data:
+    if not existing or not getattr(existing, "data", None):
         raise HTTPException(status_code=404, detail="Case not found")
 
     now = datetime.now(timezone.utc).isoformat()
@@ -176,7 +176,7 @@ async def toggle_flag(
     supabase = get_supabase()
 
     existing = supabase.table("cases").select("flagged_for_review").eq("id", case_id).maybe_single().execute()
-    if not existing.data:
+    if not existing or not getattr(existing, "data", None):
         raise HTTPException(status_code=404, detail="Case not found")
 
     new_flag = not existing.data.get("flagged_for_review", False)

@@ -15,6 +15,7 @@ import {
   OCRResult,
   SimulationScenarioOption,
 } from '../../types';
+import { supabase, isSupabaseConfigured, mapSupabaseUserToAppUser } from '../../lib/supabaseClient';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -48,32 +49,146 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const realApi = {
   auth: {
     async signIn(email: string, password?: string): Promise<{ user: User; token: string }> {
-      const data = await request<{ user: User; token: string }>('/api/v1/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
+      // If direct Supabase client is configured, we can also use supabase.auth.signInWithPassword as fallback
+      try {
+        const data = await request<{ user: User; token: string }>('/api/v1/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+        localStorage.setItem('gov_session_token', data.token);
+        return data;
+      } catch (err) {
+        if (isSupabaseConfigured() && password) {
+          const { data: authData, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (error) throw error;
+          if (authData.session && authData.user) {
+            localStorage.setItem('gov_session_token', authData.session.access_token);
+            const user = mapSupabaseUserToAppUser(authData.user);
+            return { user, token: authData.session.access_token };
+          }
+        }
+        throw err;
+      }
+    },
+
+    async signUp(
+      email: string,
+      password: string,
+      name?: string,
+      department?: string,
+      designation?: string,
+      role?: string
+    ): Promise<{ user: User; token: string }> {
+      try {
+        const data = await request<{ user: User; token: string }>('/api/v1/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ email, password, name, department, designation, role }),
+        });
+        if (data.token) {
+          localStorage.setItem('gov_session_token', data.token);
+        }
+        return data;
+      } catch (err) {
+        if (isSupabaseConfigured()) {
+          const { data: authData, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: name || email.split('@')[0],
+                department: department || 'General Administration',
+                designation: designation || 'Section Officer',
+                role: role || 'SECTION_OFFICER',
+              },
+            },
+          });
+          if (error) throw error;
+          if (authData.user) {
+            const user = mapSupabaseUserToAppUser(authData.user);
+            const token = authData.session?.access_token || '';
+            if (token) localStorage.setItem('gov_session_token', token);
+            return { user, token };
+          }
+        }
+        throw err;
+      }
+    },
+
+    async signInWithGoogle(): Promise<void> {
+      if (!isSupabaseConfigured()) {
+        throw new Error(
+          'Supabase credentials are not configured in your .env file (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY).'
+        );
+      }
+
+      const redirectUrl = `${window.location.origin}/login`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account',
+          },
+        },
       });
-      localStorage.setItem('gov_session_token', data.token);
-      return data;
+
+      if (error) {
+        throw error;
+      }
     },
 
     async signOut(): Promise<void> {
       try {
+        if (isSupabaseConfigured()) {
+          await supabase.auth.signOut();
+        }
         await request('/api/v1/auth/logout', { method: 'POST' });
+      } catch (e) {
+        console.warn('Sign out cleanup warning:', e);
       } finally {
         localStorage.removeItem('gov_session_token');
+        localStorage.removeItem('gov_session_user');
       }
     },
 
     async getCurrentUser(): Promise<User | null> {
+      // Try backend endpoint first
       try {
-        return await request<User>('/api/v1/auth/me');
+        const user = await request<User>('/api/v1/auth/me');
+        if (user) return user;
       } catch {
-        return null;
+        // Backend not reachable or error; fallback to direct Supabase session
       }
+
+      if (isSupabaseConfigured()) {
+        try {
+          const { data: { user: sbUser } } = await supabase.auth.getUser();
+          if (sbUser) {
+            return mapSupabaseUserToAppUser(sbUser);
+          }
+        } catch (err) {
+          console.warn('Error reading Supabase user:', err);
+        }
+      }
+
+      return null;
     },
 
     async getSession(): Promise<{ user: User | null; token: string | null }> {
-      const token = localStorage.getItem('gov_session_token');
+      let token = localStorage.getItem('gov_session_token');
+      
+      if (!token && isSupabaseConfigured()) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          token = session.access_token;
+          localStorage.setItem('gov_session_token', token);
+        }
+      }
+
       if (!token) return { user: null, token: null };
       const user = await this.getCurrentUser();
       return { user, token };
@@ -238,7 +353,7 @@ export const realApi = {
       return request<DepartmentInfo[]>('/api/v1/departments');
     },
     async getOfficers(): Promise<OfficerInfo[]> {
-      return request<OfficerInfo[]>('/api/v1/officers');
+      return request<OfficerInfo[]>('/api/v1/departments/officers');
     },
   },
 

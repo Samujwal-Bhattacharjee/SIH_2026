@@ -1,14 +1,16 @@
 {
-  "include": ["."],
+  "include": ["backend"],
   "exclude": [
+    "**/node_modules",
     "**/__pycache__",
     "**/.pytest_cache",
+    "**/dist",
     "**/pyrefly_virtual/**",
     "**/_inmemory/**"
   ],
   "pythonVersion": "3.10",
   "pythonPath": "C:/Users/Samujwal/AppData/Local/Programs/Python/Python310/python.exe",
-  "extraPaths": ["."],
+  "extraPaths": ["backend"],
   "reportMissingImports": "warning",
   "reportMissingModuleSource": "none"
 }

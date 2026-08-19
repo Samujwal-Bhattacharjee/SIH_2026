@@ -8,8 +8,57 @@ Assumption: limitation_days is stored per case in the database.
 The relevant start date is received_date (when the department
 received the court order / document), not a global constant.
 """
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import datetime, date, timedelta, timezone
+from typing import Optional, Union
+from dateutil import parser as date_parser
+
+
+def parse_iso_datetime(dt_val: Optional[Union[str, datetime, date]]) -> datetime:
+    """Parse an ISO date/datetime string or date object into a timezone-aware datetime."""
+    if dt_val is None:
+        return datetime.now(timezone.utc)
+    if isinstance(dt_val, datetime):
+        return dt_val if dt_val.tzinfo is not None else dt_val.replace(tzinfo=timezone.utc)
+    if isinstance(dt_val, date):
+        return datetime(dt_val.year, dt_val.month, dt_val.day, tzinfo=timezone.utc)
+    if not isinstance(dt_val, str) or not dt_val.strip():
+        return datetime.now(timezone.utc)
+
+    cleaned = dt_val.strip()
+    try:
+        parsed = date_parser.isoparse(cleaned)
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed
+    except Exception:
+        try:
+            parsed = date_parser.parse(cleaned)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed
+        except Exception:
+            return datetime.now(timezone.utc)
+
+
+def parse_iso_date(d_val: Optional[Union[str, datetime, date]]) -> date:
+    """Parse an ISO date/datetime string or datetime object into a datetime.date."""
+    if d_val is None:
+        return datetime.now(timezone.utc).date()
+    if isinstance(d_val, date) and not isinstance(d_val, datetime):
+        return d_val
+    if isinstance(d_val, datetime):
+        return d_val.date()
+    if not isinstance(d_val, str) or not d_val.strip():
+        return datetime.now(timezone.utc).date()
+
+    cleaned = d_val.strip()
+    try:
+        return date_parser.isoparse(cleaned).date()
+    except Exception:
+        try:
+            return date_parser.parse(cleaned).date()
+        except Exception:
+            return datetime.now(timezone.utc).date()
 
 
 def calculate_deadline(
@@ -27,7 +76,7 @@ def calculate_deadline(
     Returns:
         ISO date string of the deadline
     """
-    start = datetime.fromisoformat(start_date).replace(tzinfo=timezone.utc)
+    start = parse_iso_datetime(start_date)
     deadline = start + timedelta(days=limitation_days)
     return deadline.date().isoformat()
 
@@ -44,7 +93,7 @@ def calculate_days_remaining(deadline_str: str) -> int:
         Integer days remaining (can be negative)
     """
     today = datetime.now(timezone.utc).date()
-    deadline = datetime.fromisoformat(deadline_str).date()
+    deadline = parse_iso_date(deadline_str)
     return (deadline - today).days
 
 
@@ -59,7 +108,7 @@ def calculate_age_days(created_at: str) -> int:
         Integer number of days since creation
     """
     today = datetime.now(timezone.utc).date()
-    created = datetime.fromisoformat(created_at.replace("Z", "+00:00")).date()
+    created = parse_iso_date(created_at)
     return (today - created).days
 
 

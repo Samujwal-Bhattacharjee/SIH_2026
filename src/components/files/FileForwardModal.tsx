@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { GovModal } from '../common/GovModal';
 import { FormField, selectBaseClasses, textareaBaseClasses } from '../common/FormField';
 import { GovButton } from '../common/GovButton';
-import { casesService } from '../../services/api';
-import { Case, CaseStage } from '../../types';
-import { MOCK_OFFICERS, MOCK_DEPARTMENTS } from '../../mock/data';
+import { casesService, departmentService } from '../../services/api';
+import { Case, CaseStage, OfficerInfo } from '../../types';
+import { MOCK_OFFICERS } from '../../mock/data';
 
 interface FileForwardModalProps {
   isOpen: boolean;
@@ -19,6 +19,7 @@ export const FileForwardModal: React.FC<FileForwardModalProps> = ({
   caseItem,
   onForwarded,
 }) => {
+  const [officers, setOfficers] = useState<OfficerInfo[]>(MOCK_OFFICERS);
   const [selectedOfficer, setSelectedOfficer] = useState(
     MOCK_OFFICERS[0] ? `${MOCK_OFFICERS[0].name} (${MOCK_OFFICERS[0].designation})` : ''
   );
@@ -27,6 +28,16 @@ export const FileForwardModal: React.FC<FileForwardModalProps> = ({
   const [remarks, setRemarks] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    departmentService.getOfficers().then((o) => {
+      if (o && o.length > 0) {
+        setOfficers(o);
+        setSelectedOfficer(`${o[0].name} (${o[0].designation})`);
+        setTargetDesk(o[0].deskNumber || 'DESK-LEGAL-01');
+      }
+    }).catch(console.error);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,12 +95,12 @@ export const FileForwardModal: React.FC<FileForwardModalProps> = ({
             value={selectedOfficer}
             onChange={(e) => {
               setSelectedOfficer(e.target.value);
-              const found = MOCK_OFFICERS.find((o) => `${o.name} (${o.designation})` === e.target.value);
+              const found = officers.find((o) => `${o.name} (${o.designation})` === e.target.value);
               if (found) setTargetDesk(found.deskNumber);
             }}
             className={selectBaseClasses}
           >
-            {MOCK_OFFICERS.map((o) => (
+            {officers.map((o) => (
               <option key={o.id} value={`${o.name} (${o.designation})`}>
                 {o.name} — {o.designation} ({o.department})
               </option>

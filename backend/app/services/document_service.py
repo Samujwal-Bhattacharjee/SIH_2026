@@ -54,14 +54,14 @@ def upload_document(
     document_type: str,
     uploaded_by: str,
 ) -> dict:
-    # Lazy imports so pure validate_file() tests don't need Supabase
-    from app.core.database import get_supabase  # noqa: F401
-    from app.core.config import settings  # noqa: F401
-    from app.services import ocr_service  # noqa: F401
     """
     Upload a document to Supabase Storage and create a database record.
     Returns the created document row.
     """
+    # Lazy imports so pure validate_file() tests don't need Supabase
+    from app.core.database import get_supabase
+    from app.core.config import settings
+
     supabase = get_supabase()
     now = datetime.now(timezone.utc).isoformat()
 
@@ -95,6 +95,9 @@ def upload_document(
         "document_type": document_type,
         "ocr_status": "PENDING",
         "extracted_text": None,
+        "extracted_fields": None,
+        "processed_at": None,
+        "error_message": None,
         "uploaded_by": uploaded_by,
         "created_at": now,
     }
@@ -103,7 +106,7 @@ def upload_document(
 
     # Update case document_ids array
     case_result = supabase.table("cases").select("document_ids").eq("id", case_id).maybe_single().execute()
-    if case_result.data:
+    if case_result and getattr(case_result, "data", None):
         existing_ids = case_result.data.get("document_ids") or []
         existing_ids.append(doc["id"])
         supabase.table("cases").update({"document_ids": existing_ids, "updated_at": now}).eq("id", case_id).execute()
@@ -115,13 +118,20 @@ def process_ocr(document_id: str) -> dict:
     """
     Run OCR on a stored document and update the database record.
     Returns the OCR result dict matching the frontend OCRResult interface.
+
+    Stores extracted_fields (JSONB), processed_at, and error_message in the
+    documents table so results are retrievable on subsequent GET requests.
     """
+    from app.core.database import get_supabase
+    from app.core.config import settings
+    from app.services import ocr_service
+
     supabase = get_supabase()
     start_time = time.time()
 
     # Get document record
     doc_result = supabase.table("documents").select("*").eq("id", document_id).maybe_single().execute()
-    if not doc_result.data:
+    if not doc_result or not getattr(doc_result, "data", None):
         raise ValueError(f"Document {document_id} not found")
 
     doc = doc_result.data
@@ -134,7 +144,7 @@ def process_ocr(document_id: str) -> dict:
         file_bytes = supabase.storage.from_(settings.SUPABASE_STORAGE_BUCKET)\
             .download(doc["storage_path"])
 
-        # Extract text
+        # Extract text (returns text, confidence, engine_name)
         text, confidence, engine = ocr_service.extract_text_from_document(
             file_bytes=file_bytes,
             mime_type=doc.get("file_type", "application/pdf"),
@@ -144,6 +154,7 @@ def process_ocr(document_id: str) -> dict:
         fields = ocr_service.extract_fields_from_text(text)
 
         processing_ms = int((time.time() - start_time) * 1000)
+        processed_at = datetime.now(timezone.utc).isoformat()
 
         ocr_result = {
             "documentId": document_id,
@@ -155,17 +166,25 @@ def process_ocr(document_id: str) -> dict:
             "status": "READY" if text else "FAILED",
         }
 
-        # Update document record
+        # Persist OCR results back to the document record
         supabase.table("documents").update({
             "ocr_status": "COMPLETED" if text else "FAILED",
             "extracted_text": text,
+            "extracted_fields": fields,   # Stored as JSONB array
+            "processed_at": processed_at,
+            "error_message": None,        # Clear any previous error
         }).eq("id", document_id).execute()
 
         return ocr_result
 
     except Exception as e:
         logger.error(f"OCR processing failed for document {document_id}: {e}")
-        supabase.table("documents").update({"ocr_status": "FAILED"}).eq("id", document_id).execute()
+        error_msg = str(e)[:500]  # Truncate to avoid DB overflow
+        supabase.table("documents").update({
+            "ocr_status": "FAILED",
+            "error_message": error_msg,
+            "processed_at": datetime.now(timezone.utc).isoformat(),
+        }).eq("id", document_id).execute()
         raise
 
 
@@ -173,7 +192,10 @@ def process_ocr_from_bytes(file_bytes: bytes, filename: str, content_type: str) 
     """
     Run OCR directly on uploaded bytes (without storing first).
     Used by the /api/v1/ocr/process endpoint for the upload+scan workflow.
+    Results are NOT persisted — this is a preview-only operation.
     """
+    from app.services import ocr_service
+
     start_time = time.time()
 
     text, confidence, engine = ocr_service.extract_text_from_document(
@@ -196,9 +218,12 @@ def process_ocr_from_bytes(file_bytes: bytes, filename: str, content_type: str) 
 
 def get_download_url(document_id: str) -> tuple[bytes, str]:
     """Return file bytes and filename for download."""
+    from app.core.database import get_supabase
+    from app.core.config import settings
+
     supabase = get_supabase()
     doc_result = supabase.table("documents").select("*").eq("id", document_id).maybe_single().execute()
-    if not doc_result.data:
+    if not doc_result or not getattr(doc_result, "data", None):
         raise ValueError(f"Document {document_id} not found")
     doc = doc_result.data
     file_bytes = supabase.storage.from_(settings.SUPABASE_STORAGE_BUCKET).download(doc["storage_path"])

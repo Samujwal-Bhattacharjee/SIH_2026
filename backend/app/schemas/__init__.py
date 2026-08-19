@@ -5,7 +5,7 @@ Designed to match the TypeScript interfaces in src/types/index.ts
 """
 from datetime import datetime, date
 from typing import Optional, List, Any, Dict
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from enum import Enum
 
 
@@ -99,6 +99,8 @@ class MovementStatus(str, Enum):
 # ============================================================
 
 class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     email: str
     name: str
@@ -108,9 +110,6 @@ class UserOut(BaseModel):
     badgeNumber: str
     sessionExpiry: str
 
-    class Config:
-        from_attributes = True
-
 
 # ============================================================
 # AUTH SCHEMAS
@@ -119,6 +118,15 @@ class UserOut(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=6)
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+    name: Optional[str] = None
+    department: Optional[str] = "General Administration"
+    designation: Optional[str] = "Section Officer"
+    role: Optional[str] = "SECTION_OFFICER"
 
 
 class LoginResponse(BaseModel):

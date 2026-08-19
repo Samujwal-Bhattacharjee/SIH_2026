@@ -16,7 +16,7 @@ Maximum theoretical score: ~130 (capped at 100)
 """
 from datetime import datetime, timezone
 from typing import List, Dict
-from app.services.deadline_service import calculate_days_remaining
+from app.services.deadline_service import calculate_days_remaining, parse_iso_datetime
 
 
 # Stage criticality weights (higher = more critical stage to be stuck in)
@@ -49,7 +49,7 @@ def calculate_stage_dwell_days(case: dict) -> int:
     if not stage_start:
         return 0
     try:
-        start = datetime.fromisoformat(stage_start.replace("Z", "+00:00"))
+        start = parse_iso_datetime(stage_start)
         now = datetime.now(timezone.utc)
         return max(0, (now - start).days)
     except Exception:

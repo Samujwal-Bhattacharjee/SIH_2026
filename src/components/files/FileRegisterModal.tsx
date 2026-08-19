@@ -30,6 +30,19 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [departments, setDepartments] = useState<any[]>(MOCK_DEPARTMENTS);
+  const [officers, setOfficers] = useState<OfficerInfo[]>(MOCK_OFFICERS);
+
+  React.useEffect(() => {
+    departmentService.getDepartments().then((d) => {
+      if (d && d.length > 0) setDepartments(d);
+    }).catch(console.error);
+
+    departmentService.getOfficers().then((o) => {
+      if (o && o.length > 0) setOfficers(o);
+    }).catch(console.error);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim()) {
@@ -94,7 +107,7 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
               onChange={(e) => setDepartment(e.target.value as Department)}
               className={selectBaseClasses}
             >
-              {MOCK_DEPARTMENTS.map((d) => (
+              {departments.map((d) => (
                 <option key={d.id} value={d.name}>
                   {d.name} ({d.code})
                 </option>
@@ -131,7 +144,7 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
               onChange={(e) => setAssignedOfficer(e.target.value)}
               className={selectBaseClasses}
             >
-              {MOCK_OFFICERS.map((o) => (
+              {officers.map((o) => (
                 <option key={o.id} value={`${o.name} (${o.designation})`}>
                   {o.name} - {o.designation}
                 </option>

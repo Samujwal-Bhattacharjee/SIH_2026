@@ -66,6 +66,49 @@ export const mockApi = {
       return { user, token: 'gov_nic_session_token_2026' };
     },
 
+    async signUp(
+      email: string,
+      _password: string,
+      name?: string,
+      department?: string,
+      designation?: string,
+      role?: string
+    ): Promise<{ user: User; token: string }> {
+      await delay(350);
+      const user: User = {
+        ...MOCK_USER,
+        id: `usr-${Date.now()}`,
+        email: email,
+        name: name || email.split('@')[0].replace('.', ' ').replace(/(^\w|\s\w)/g, (m) => m.toUpperCase()),
+        department: (department as any) || 'General Administration',
+        designation: designation || 'Section Officer',
+        role: (role as any) || 'SECTION_OFFICER',
+        badgeNumber: `GOI-REG-${Math.floor(1000 + Math.random() * 9000)}`,
+      };
+      sessionUser = user;
+      localStorage.setItem('gov_session_user', JSON.stringify(user));
+      localStorage.setItem('gov_session_token', 'gov_nic_session_token_2026');
+      return { user, token: 'gov_nic_session_token_2026' };
+    },
+
+    async signInWithGoogle(): Promise<{ user: User; token: string }> {
+      await delay(400);
+      const user: User = {
+        ...MOCK_USER,
+        id: 'usr-google-officer-01',
+        email: 'officer.google@goip.gov.in',
+        name: 'Dr. Anand S. Shastry (Chief Technical Advisor)',
+        designation: 'Chief Technical Advisor & Data Officer',
+        department: 'Administrative Reforms',
+        role: 'OPERATIONS_OFFICER',
+        badgeNumber: 'GOI-GGL-8821',
+      };
+      sessionUser = user;
+      localStorage.setItem('gov_session_user', JSON.stringify(user));
+      localStorage.setItem('gov_session_token', 'gov_nic_session_token_2026');
+      return { user, token: 'gov_nic_session_token_2026' };
+    },
+
     async signOut(): Promise<void> {
       await delay(150);
       sessionUser = null;

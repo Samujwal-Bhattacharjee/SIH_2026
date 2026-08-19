@@ -19,6 +19,17 @@ import {
 export const authService = {
   signIn: (email: string, password?: string): Promise<{ user: User; token: string }> =>
     apiClient.auth.signIn(email, password),
+  signUp: (
+    email: string,
+    password: string,
+    name?: string,
+    department?: string,
+    designation?: string,
+    role?: string
+  ): Promise<{ user: User; token: string }> =>
+    apiClient.auth.signUp(email, password, name, department, designation, role),
+  signInWithGoogle: (): Promise<{ user: User; token: string } | void> =>
+    apiClient.auth.signInWithGoogle(),
   signOut: (): Promise<void> => apiClient.auth.signOut(),
   getCurrentUser: (): Promise<User | null> => apiClient.auth.getCurrentUser(),
   getSession: (): Promise<{ user: User | null; token: string | null }> =>

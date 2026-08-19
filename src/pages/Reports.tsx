@@ -13,6 +13,8 @@ import {
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
 import { FormField, selectBaseClasses } from '../components/common/FormField';
+import { departmentService, analyticsService } from '../services/api';
+import { DepartmentInfo, OfficerInfo, ProcessPerformanceMetrics } from '../types';
 import { MOCK_DEPARTMENTS, MOCK_PERFORMANCE_METRICS, MOCK_OFFICERS } from '../mock/data';
 
 type ReportType =
@@ -25,6 +27,23 @@ export const Reports: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<ReportType>('DISPOSAL_REPORT');
   const [departmentFilter, setDepartmentFilter] = useState('ALL');
   const [dateRange, setDateRange] = useState('2026-Q3');
+  const [departments, setDepartments] = useState<DepartmentInfo[]>(MOCK_DEPARTMENTS);
+  const [officers, setOfficers] = useState<OfficerInfo[]>(MOCK_OFFICERS);
+  const [metrics, setMetrics] = useState<ProcessPerformanceMetrics>(MOCK_PERFORMANCE_METRICS);
+
+  useEffect(() => {
+    departmentService.getDepartments().then((d) => {
+      if (d && d.length > 0) setDepartments(d);
+    }).catch(console.error);
+
+    departmentService.getOfficers().then((o) => {
+      if (o && o.length > 0) setOfficers(o);
+    }).catch(console.error);
+
+    analyticsService.getPerformanceMetrics().then((m) => {
+      if (m) setMetrics(m);
+    }).catch(console.error);
+  }, []);
 
   const handleExportCsv = () => {
     let headers: string[] = [];
@@ -32,16 +51,16 @@ export const Reports: React.FC = () => {
 
     if (selectedReport === 'DISPOSAL_REPORT') {
       headers = ['Department', 'Active Files', 'Pending Files', 'Avg Disposal Days', 'SLA Compliance %'];
-      rows = MOCK_DEPARTMENTS.map((d) => [d.name, d.activeFilesCount, d.pendingFilesCount, d.avgDisposalDays, `${d.slaCompliancePct}%`]);
+      rows = departments.map((d) => [d.name, d.activeFilesCount, d.pendingFilesCount, d.avgDisposalDays, `${d.slaCompliancePct}%`]);
     } else if (selectedReport === 'SLA_COMPLIANCE') {
       headers = ['Month', 'On-Time Adherence %', 'At-Risk %', 'Breached %'];
-      rows = MOCK_PERFORMANCE_METRICS.slaAdherenceTrends.map((t) => [t.month, `${t.onTimePct}%`, `${t.atRiskPct}%`, `${t.breachedPct}%`]);
+      rows = metrics.slaAdherenceTrends.map((t) => [t.month, `${t.onTimePct}%`, `${t.atRiskPct}%`, `${t.breachedPct}%`]);
     } else if (selectedReport === 'PENDING_AGING') {
       headers = ['Stage', 'Active Scrutiny Days', 'Queue Waiting Days', 'Total Days', 'Pending Files'];
-      rows = MOCK_PERFORMANCE_METRICS.stageBreakdown.map((s) => [s.stage, s.activeProcessingDays, s.waitingDays, s.totalDays, s.queueCount]);
+      rows = metrics.stageBreakdown.map((s) => [s.stage, s.activeProcessingDays, s.waitingDays, s.totalDays, s.queueCount]);
     } else {
       headers = ['Officer Name', 'Designation', 'Department', 'Desk', 'Active Files', 'Pending Files'];
-      rows = MOCK_OFFICERS.map((o) => [o.name, o.designation, o.department, o.deskNumber, o.activeFilesCount, o.pendingFilesCount]);
+      rows = officers.map((o) => [o.name, o.designation, o.department, o.deskNumber, o.activeFilesCount, o.pendingFilesCount]);
     }
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
@@ -159,7 +178,7 @@ export const Reports: React.FC = () => {
                 className="px-2.5 py-1 bg-white border border-[#CBD2DE] rounded-[2px] text-xs text-[#202124]"
               >
                 <option value="ALL">All Departments (State Total)</option>
-                {MOCK_DEPARTMENTS.map((d) => (
+                {departments.map((d) => (
                   <option key={d.id} value={d.name}>
                     {d.name}
                   </option>
@@ -201,7 +220,7 @@ export const Reports: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#D9DDE3]">
-                  {MOCK_DEPARTMENTS.map((d, idx) => (
+                  {departments.map((d, idx) => (
                     <tr key={d.id} className={idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'}>
                       <td className="p-2.5 font-bold text-[#0B2A4A]">{d.name}</td>
                       <td className="p-2.5 text-center font-mono">{d.activeFilesCount.toLocaleString()}</td>
@@ -228,7 +247,7 @@ export const Reports: React.FC = () => {
                 Monthly SLA Compliance Progression
               </h4>
               <div className="space-y-2">
-                {MOCK_PERFORMANCE_METRICS.slaAdherenceTrends.map((trend) => (
+                {metrics.slaAdherenceTrends.map((trend) => (
                   <div key={trend.month} className="p-3 bg-[#F8F9FA] border border-[#D9DDE3] rounded-[3px] text-xs space-y-1">
                     <div className="flex justify-between font-semibold">
                       <span>{trend.month}</span>
@@ -267,7 +286,7 @@ export const Reports: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#D9DDE3]">
-                  {MOCK_PERFORMANCE_METRICS.stageBreakdown.map((s, idx) => (
+                  {metrics.stageBreakdown.map((s, idx) => (
                     <tr key={s.stage} className={idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'}>
                       <td className="p-2.5 font-bold text-[#0B2A4A]">{s.stage}</td>
                       <td className="p-2.5 text-center font-mono">{s.activeProcessingDays}d</td>
@@ -297,7 +316,7 @@ export const Reports: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#D9DDE3]">
-                  {MOCK_OFFICERS.map((o, idx) => (
+                  {officers.map((o, idx) => (
                     <tr key={o.id} className={idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'}>
                       <td className="p-2.5 font-bold text-[#0B2A4A]">
                         {o.name} <span className="font-normal text-[#5F6368]">({o.designation})</span>

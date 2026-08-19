@@ -46,6 +46,40 @@ CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_users_department ON users(department);
 
 -- ============================================================
+-- AUTOMATIC PROFILE TRIGGER FOR SUPABASE AUTH & GOOGLE OAUTH
+-- Automatically creates a row in `users` when a user logs in with Google/Supabase
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.users (id, email, name, role, department, designation, badge_number)
+  VALUES (
+    new.id,
+    new.email,
+    COALESCE(
+      new.raw_user_meta_data->>'full_name',
+      new.raw_user_meta_data->>'name',
+      split_part(new.email, '@', 1)
+    ),
+    'OPERATIONS_OFFICER',
+    'General Administration',
+    'Operations Officer',
+    'GOI-' || UPPER(SUBSTRING(new.id::text, 1, 8))
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    name = COALESCE(EXCLUDED.name, public.users.name);
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Drop and recreate trigger to ensure freshness
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ============================================================
 -- CASES
 -- ============================================================
 CREATE TABLE IF NOT EXISTS cases (
@@ -216,21 +250,80 @@ ALTER TABLE alerts ENABLE ROW LEVEL SECURITY;
 -- Allow backend (service role) full access
 -- (Service role automatically bypasses RLS — no policy needed for it)
 
--- Allow authenticated users to read cases
+-- Allow authenticated users full operations on cases
 CREATE POLICY "Authenticated users can view cases"
     ON cases FOR SELECT
     TO authenticated
     USING (true);
 
+CREATE POLICY "Authenticated users can insert cases"
+    ON cases FOR INSERT
+    TO authenticated
+    WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can update cases"
+    ON cases FOR UPDATE
+    TO authenticated
+    USING (true);
+
+-- Documents policies
 CREATE POLICY "Authenticated users can view documents"
     ON documents FOR SELECT
     TO authenticated
     USING (true);
 
+CREATE POLICY "Authenticated users can insert documents"
+    ON documents FOR INSERT
+    TO authenticated
+    WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can update documents"
+    ON documents FOR UPDATE
+    TO authenticated
+    USING (true);
+
+-- Alerts policies
 CREATE POLICY "Authenticated users can view their alerts"
     ON alerts FOR SELECT
     TO authenticated
     USING (true);
+
+CREATE POLICY "Authenticated users can insert alerts"
+    ON alerts FOR INSERT
+    TO authenticated
+    WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can update alerts"
+    ON alerts FOR UPDATE
+    TO authenticated
+    USING (true);
+
+-- Users table policies
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can select users"
+    ON users FOR SELECT
+    TO authenticated, anon
+    USING (true);
+
+CREATE POLICY "Users can insert users"
+    ON users FOR INSERT
+    TO authenticated, anon
+    WITH CHECK (true);
+
+CREATE POLICY "Users can update users"
+    ON users FOR UPDATE
+    TO authenticated, anon
+    USING (true);
+
+-- Movements and audit log policies
+ALTER TABLE case_movements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can view case_movements" ON case_movements FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can insert case_movements" ON case_movements FOR INSERT TO authenticated WITH CHECK (true);
+
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can view audit_logs" ON audit_logs FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can insert audit_logs" ON audit_logs FOR INSERT TO authenticated WITH CHECK (true);
 
 -- ============================================================
 -- SUPABASE STORAGE BUCKET SETUP
@@ -239,3 +332,18 @@ CREATE POLICY "Authenticated users can view their alerts"
 -- INSERT INTO storage.buckets (id, name, public)
 -- VALUES ('gov-documents', 'gov-documents', false)
 -- ON CONFLICT DO NOTHING;
+
+-- ============================================================
+-- MIGRATION: Document OCR Pipeline additions (Person 2)
+-- Adds structured OCR storage columns to the documents table.
+-- Run once in the Supabase SQL editor AFTER the initial schema.
+-- Safe to re-run (IF NOT EXISTS guards).
+-- ============================================================
+ALTER TABLE documents
+  ADD COLUMN IF NOT EXISTS extracted_fields   JSONB,
+  ADD COLUMN IF NOT EXISTS processed_at       TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS error_message      TEXT;
+
+-- Index for querying documents that have been processed
+CREATE INDEX IF NOT EXISTS idx_documents_processed_at ON documents(processed_at);
+

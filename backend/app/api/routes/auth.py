@@ -5,12 +5,116 @@ Delegates to Supabase Auth for actual credential verification.
 import logging
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, HTTPException, status, Depends, Request
-from app.core.database import get_supabase
+from app.core.database import get_supabase, get_supabase_anon
 from app.core.security import get_current_user
-from app.schemas import LoginRequest, LoginResponse, UserOut
+from app.schemas import LoginRequest, RegisterRequest, LoginResponse, UserOut
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+@router.post("/register", response_model=LoginResponse, summary="Register a new officer and receive JWT")
+async def register(request_body: RegisterRequest):
+    """
+    Register using Supabase Auth and initialize user record in `users` table.
+    """
+    supabase = get_supabase()
+
+    # 1. Sign up with Supabase Auth (admin create_user auto-confirms email for instant access)
+    supabase_user = None
+    access_token = ""
+
+    try:
+        admin_resp = supabase.auth.admin.create_user({
+            "email": request_body.email,
+            "password": request_body.password,
+            "email_confirm": True,
+            "user_metadata": {
+                "full_name": request_body.name or request_body.email.split("@")[0].title(),
+                "department": request_body.department or "General Administration",
+                "designation": request_body.designation or "Section Officer",
+                "role": request_body.role or "SECTION_OFFICER",
+            }
+        })
+        if admin_resp and admin_resp.user:
+            supabase_user = admin_resp.user
+    except Exception as e:
+        logger.info(f"Admin create_user fallback to sign_up: {e}")
+        try:
+            supabase_anon = get_supabase_anon()
+            auth_response = supabase_anon.auth.sign_up({
+                "email": request_body.email,
+                "password": request_body.password,
+                "options": {
+                    "data": {
+                        "full_name": request_body.name or request_body.email.split("@")[0].title(),
+                        "department": request_body.department or "General Administration",
+                        "designation": request_body.designation or "Section Officer",
+                        "role": request_body.role or "SECTION_OFFICER",
+                    }
+                }
+            })
+            if auth_response and auth_response.user:
+                supabase_user = auth_response.user
+                if auth_response.session:
+                    access_token = auth_response.session.access_token
+        except Exception as signup_err:
+            logger.warning(f"Registration failed for {request_body.email}: {signup_err}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Registration failed: {str(signup_err)}",
+            )
+
+    if not supabase_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Registration failed. Could not create user.",
+        )
+
+    # Obtain session access token
+    if not access_token:
+        try:
+            supabase_anon = get_supabase_anon()
+            login_resp = supabase_anon.auth.sign_in_with_password({
+                "email": request_body.email,
+                "password": request_body.password,
+            })
+            if login_resp.session:
+                access_token = login_resp.session.access_token
+        except Exception as login_err:
+            logger.warning(f"Auto-login after register failed: {login_err}")
+
+    # 2. Insert user profile into `users` table
+    name = request_body.name or request_body.email.split("@")[0].replace(".", " ").title()
+    profile = {
+        "id": str(supabase_user.id),
+        "email": request_body.email,
+        "name": name,
+        "role": request_body.role or "SECTION_OFFICER",
+        "department": request_body.department or "General Administration",
+        "designation": request_body.designation or "Section Officer",
+        "badge_number": f"GOI-{str(supabase_user.id)[:8].upper()}",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    try:
+        supabase.table("users").upsert(profile).execute()
+    except Exception as e:
+        logger.warning(f"Profile creation warning: {e}")
+
+    expiry = (datetime.now(timezone.utc) + timedelta(hours=8)).isoformat()
+    user_out = UserOut(
+        id=profile["id"],
+        email=profile["email"],
+        name=profile["name"],
+        role=profile["role"],
+        department=profile["department"],
+        designation=profile.get("designation"),
+        badgeNumber=profile["badge_number"],
+        sessionExpiry=expiry,
+    )
+
+    logger.info(f"Officer registered: {request_body.email} ({profile['role']})")
+    return LoginResponse(user=user_out, token=access_token)
 
 
 @router.post("/login", response_model=LoginResponse, summary="Authenticate and receive JWT")
@@ -24,9 +128,10 @@ async def login(request_body: LoginRequest):
     """
     supabase = get_supabase()
 
-    # 1. Authenticate with Supabase Auth
+    # 1. Authenticate with Supabase Auth using anon client so admin client is not contaminated
+    supabase_auth = get_supabase_anon()
     try:
-        auth_response = supabase.auth.sign_in_with_password({
+        auth_response = supabase_auth.auth.sign_in_with_password({
             "email": request_body.email,
             "password": request_body.password,
         })
@@ -53,9 +158,8 @@ async def login(request_body: LoginRequest):
         .maybe_single()\
         .execute()
 
-    if not profile_result.data:
+    if not profile_result or not getattr(profile_result, "data", None):
         # First-time login: create a basic profile
-        # In production, profiles should be pre-created by the admin
         profile = _create_default_profile(supabase, supabase_user)
     else:
         profile = profile_result.data
@@ -122,5 +226,8 @@ def _create_default_profile(supabase, supabase_user) -> dict:
         "badge_number": f"GOI-{str(supabase_user.id)[:8].upper()}",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
-    supabase.table("users").upsert(profile).execute()
+    try:
+        supabase.table("users").upsert(profile).execute()
+    except Exception as e:
+        logger.warning(f"Could not persist default profile to users table: {e}")
     return profile

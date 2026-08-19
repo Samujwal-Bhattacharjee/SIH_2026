@@ -9,7 +9,7 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = ConfigDict(env_file=[".env", "backend/.env"], env_file_encoding="utf-8", extra="ignore")
 
     # Application
     APP_NAME: str = "GOIP Government File Tracking System"

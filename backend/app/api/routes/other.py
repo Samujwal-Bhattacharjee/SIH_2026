@@ -138,7 +138,7 @@ async def search(
 
 
 # ============================================================
-# RISK
+# RISK & CASE INTELLIGENCE
 # ============================================================
 risk_router = APIRouter()
 
@@ -150,16 +150,64 @@ async def get_risk_cases(user: dict = Depends(get_current_user)):
     return result["cases"]
 
 
+@risk_router.get("/ranked-cases", summary="Get all active cases ranked by SLA risk priority")
+async def get_ranked_cases(
+    department: Optional[str] = Query(None),
+    user: dict = Depends(get_current_user),
+):
+    """
+    Return all active cases ranked by multi-factor priority hierarchy:
+    1. Overdue cases first
+    2. Descending calculated risk_score
+    3. Ascending days_remaining
+    4. Descending case age
+    """
+    from app.services.intelligence import rank_cases
+    supabase = get_supabase()
+    query = supabase.table("cases").select("*")
+    if department and department != "ALL":
+        query = query.eq("department", department)
+    result = query.execute()
+    raw_cases = result.data or []
+    
+    # Also fetch active legal opinions
+    lo_res = supabase.table("legal_opinions").select("*").execute()
+    opinions_by_case = {lo["case_id"]: lo for lo in (lo_res.data or []) if "case_id" in lo}
+
+    ranked = rank_cases(raw_cases, legal_opinions_by_case=opinions_by_case)
+    return [_map_db_case_to_frontend(c) for c in ranked]
+
+
+@risk_router.get("/intelligence/{case_id}", summary="Get detailed rule-based intelligence for a case")
+async def get_case_intelligence_detail(case_id: str, user: dict = Depends(get_current_user)):
+    """Compute and return explainable intelligence result including bottleneck and recommendation."""
+    from app.services.intelligence import compute_case_intelligence
+    supabase = get_supabase()
+    case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
+    if not case_result or not getattr(case_result, "data", None):
+        raise HTTPException(status_code=404, detail="Case not found")
+    
+    lo_result = supabase.table("legal_opinions").select("*").eq("case_id", case_id).maybe_single().execute()
+    mov_result = supabase.table("case_movements").select("*").eq("case_id", case_id).order("started_at", desc=False).execute()
+    
+    intel = compute_case_intelligence(
+        case_data=case_result.data,
+        legal_opinion=lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None,
+        movements=mov_result.data or [],
+    )
+    return intel.model_dump()
+
+
 @risk_router.get("/predictions/{case_id}", summary="Get risk prediction for a case")
 async def get_risk_prediction(case_id: str, user: dict = Depends(get_current_user)):
     """Compute and return detailed risk prediction with attribution factors."""
     supabase = get_supabase()
     case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not case_result.data:
+    if not case_result or not getattr(case_result, "data", None):
         raise HTTPException(status_code=404, detail="Case not found")
     case = enrich_case_with_deadlines(case_result.data)
     lo_result = supabase.table("legal_opinions").select("*").eq("case_id", case_id).maybe_single().execute()
-    legal_opinion = lo_result.data
+    legal_opinion = lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None
     risk_result = calculate_risk(case, legal_opinion=legal_opinion)
     return build_risk_prediction(case, risk_result, legal_opinion=legal_opinion)
 
@@ -195,7 +243,7 @@ async def request_legal_opinion(
 async def get_legal_opinion(case_id: str, user: dict = Depends(get_current_user)):
     supabase = get_supabase()
     result = supabase.table("legal_opinions").select("*").eq("case_id", case_id).maybe_single().execute()
-    if not result.data:
+    if not result or not getattr(result, "data", None):
         raise HTTPException(status_code=404, detail="No legal opinion found for this case")
     return result.data
 

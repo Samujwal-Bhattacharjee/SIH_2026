@@ -18,23 +18,45 @@ bearer_scheme = HTTPBearer(auto_error=False)
 def decode_supabase_jwt(token: str) -> dict:
     """
     Decode and verify a Supabase-issued JWT.
-    Returns the payload dict if valid, raises HTTPException if not.
+    1. Attempts local signature verification if SUPABASE_JWT_SECRET is configured.
+    2. Falls back to direct Supabase Auth API token verification (works for all Supabase key types).
+    Returns the payload dict with 'sub', 'email', 'user_metadata' if valid.
     """
+    # 1. Attempt local JWT decode if secret is provided
+    if settings.SUPABASE_JWT_SECRET and len(settings.SUPABASE_JWT_SECRET.strip()) > 5:
+        try:
+            payload = jwt.decode(
+                token,
+                settings.SUPABASE_JWT_SECRET.strip(),
+                algorithms=["HS256"],
+                options={"verify_aud": False},
+            )
+            if payload.get("sub"):
+                return payload
+        except Exception as e:
+            logger.debug(f"Local JWT secret decode failed, attempting Supabase Auth API: {e}")
+
+    # 2. Direct Supabase Auth API token verification
     try:
-        payload = jwt.decode(
-            token,
-            settings.SUPABASE_JWT_SECRET,
-            algorithms=["HS256"],
-            options={"verify_aud": False},  # Supabase does not set aud by default
-        )
-        return payload
-    except JWTError as e:
-        logger.warning(f"JWT decode failed: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired authentication token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        supabase = get_supabase()
+        user_resp = supabase.auth.get_user(token)
+        if user_resp and user_resp.user:
+            u = user_resp.user
+            return {
+                "sub": str(u.id),
+                "email": u.email or "",
+                "user_metadata": u.user_metadata or {},
+                "app_metadata": u.app_metadata or {},
+                "role": u.role,
+            }
+    except Exception as e:
+        logger.warning(f"Supabase Auth API token verification failed: {e}")
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or expired authentication token",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
 
 async def get_current_user_id(
@@ -59,20 +81,59 @@ async def get_current_user_id(
 
 
 async def get_current_user(
-    user_id: str = Depends(get_current_user_id),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ) -> dict:
     """
-    FastAPI dependency: fetch full user profile from the `users` table.
-    Returns the user row dict.
+    FastAPI dependency: fetch user profile from `users` table.
+    If the user authenticated via Supabase OAuth (e.g. Google) for the first time,
+    automatically provisions their default officer profile row.
     """
-    supabase = get_supabase()
-    result = supabase.table("users").select("*").eq("id", user_id).maybe_single().execute()
-    if not result.data:
+    if not credentials:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User profile not found. Please contact your system administrator.",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication credentials are required",
         )
-    return result.data
+    payload = decode_supabase_jwt(credentials.credentials)
+    user_id: str = payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token does not contain a valid user identifier",
+        )
+
+    supabase = get_supabase()
+    try:
+        result = supabase.table("users").select("*").eq("id", user_id).maybe_single().execute()
+        if result and getattr(result, "data", None):
+            return result.data
+    except Exception as e:
+        logger.debug(f"User profile lookup from table failed for {user_id}: {e}")
+
+    # First-time Google OAuth / Supabase login: auto-provision user profile
+    email = payload.get("email", "")
+    user_metadata = payload.get("user_metadata", {})
+    name = (
+        user_metadata.get("full_name")
+        or user_metadata.get("name")
+        or (email.split("@")[0].replace(".", " ").title() if email else "Officer User")
+    )
+    from datetime import datetime, timezone
+    new_profile = {
+        "id": user_id,
+        "email": email or f"{user_id[:8]}@gov.local",
+        "name": name,
+        "role": "OPERATIONS_OFFICER",
+        "department": "General Administration",
+        "designation": "Operations Officer",
+        "badge_number": f"GOI-{user_id[:8].upper()}",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    try:
+        supabase.table("users").upsert(new_profile).execute()
+        return new_profile
+    except Exception as e:
+        logger.warning(f"Could not auto-insert profile for OAuth user {user_id}: {e}")
+        return new_profile
 
 
 def require_role(*allowed_roles: str):

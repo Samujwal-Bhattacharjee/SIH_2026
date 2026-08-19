@@ -126,7 +126,7 @@ def get_case_by_id(case_id: str) -> Optional[dict]:
 
     # Case
     case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not case_result.data:
+    if not case_result or not getattr(case_result, "data", None):
         return None
     row = case_result.data
 
@@ -155,7 +155,7 @@ def get_case_by_id(case_id: str) -> Optional[dict]:
         .not_.in_("status", ["RECEIVED", "CLOSED"])\
         .maybe_single()\
         .execute()
-    legal_opinion = lo_result.data
+    legal_opinion = lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None
 
     row = enrich_case_with_deadlines(row)
     risk_result = calculate_risk(row, legal_opinion=legal_opinion, movement_count=len(raw_events))
@@ -251,7 +251,7 @@ def forward_case(case_id: str, user: dict, target_officer: str, target_desk: str
 
     # Get current case
     case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not case_result.data:
+    if not case_result or not getattr(case_result, "data", None):
         return None
     current = case_result.data
 
@@ -319,13 +319,34 @@ def _map_movement_to_event(m: dict) -> dict:
 
 
 def _map_db_doc_to_frontend(d: dict) -> dict:
-    """Map a database documents row to a DocumentRecord for the frontend."""
+    """Map a database documents row to a DocumentRecord for the frontend.
+
+    Includes extracted_fields and extracted_text when OCR has been completed,
+    so the DocumentViewerModal can display structured results without a
+    separate API call.
+    """
     metadata = {
         "fileSize": str(d.get("file_size", 0)),
         "fileType": d.get("file_type", ""),
         "mimeType": d.get("file_type", ""),
         "pageCount": d.get("page_count", 0),
     }
+
+    # Reconstruct ocrResult from persisted DB data when available
+    ocr_result = None
+    extracted_fields = d.get("extracted_fields")  # JSONB list or None
+    extracted_text = d.get("extracted_text")
+    if extracted_fields is not None or extracted_text:
+        ocr_result = {
+            "documentId": d.get("id", ""),
+            "extractedText": extracted_text or "",
+            "confidenceScore": 0.0,   # Not stored separately; 0 indicates persisted result
+            "extractedFields": extracted_fields or [],
+            "processingTimeMs": 0,
+            "ocrEngine": "stored",
+            "status": "READY" if extracted_text else "FAILED",
+        }
+
     return {
         "id": d.get("id"),
         "caseId": d.get("case_id"),
@@ -337,9 +358,15 @@ def _map_db_doc_to_frontend(d: dict) -> dict:
         "uploadedBy": d.get("uploaded_by", ""),
         "status": "READY" if d.get("ocr_status") == "COMPLETED" else "PROCESSING",
         "ocrStatus": d.get("ocr_status", "PENDING"),
+        # OCR content — None until OCR has been run
+        "extractedText": extracted_text,
+        "extractedFields": extracted_fields,
+        "processedAt": d.get("processed_at"),
+        "errorMessage": d.get("error_message"),
         "metadata": metadata,
-        "ocrResult": None,  # Fetched separately on demand
+        "ocrResult": ocr_result,
     }
+
 
 
 def _create_audit_log(
