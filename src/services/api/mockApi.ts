@@ -1053,6 +1053,18 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
       await delay(150);
       return [];
     },
+    async getDocuments(): Promise<any[]> {
+      await delay(100);
+      return [];
+    },
+    async getDocumentEvidence(documentId: string): Promise<any> {
+      await delay(100);
+      return { id: documentId, extracted_fields: [], extracted_text: '' };
+    },
+    async reviewRequirement(bidderId: string, requirementId: string, status: string): Promise<any> {
+      await delay(100);
+      return { bidder_id: bidderId, requirement_id: requirementId, status };
+    },
     async uploadBidderDocument(bidderId: string, file: File, documentType: string = 'auto'): Promise<any> {
       await delay(400);
       return {

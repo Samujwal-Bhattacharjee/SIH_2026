@@ -9,6 +9,12 @@
 -- A tender is a procurement notice. Uses cases table for
 -- the base record; tender-specific fields stored here.
 -- ============================================================
+
+-- Existing generic documents are reused for procurement files.  These two
+-- fields preserve the actual extraction method and confidence for evidence.
+ALTER TABLE documents
+  ADD COLUMN IF NOT EXISTS ocr_engine TEXT,
+  ADD COLUMN IF NOT EXISTS ocr_confidence NUMERIC(5,4);
 CREATE TABLE IF NOT EXISTS tenders (
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     case_id             UUID REFERENCES cases(id) ON DELETE CASCADE,  -- Optional link to cases

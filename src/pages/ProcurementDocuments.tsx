@@ -10,7 +10,6 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
-import { ocrService } from '../services/api';
 
 interface ExtractedField {
   key: string;
@@ -19,66 +18,14 @@ interface ExtractedField {
   confidence: number;
 }
 
-interface ProcessedDoc {
-  fileName: string;
-  bidderName: string;
-  docType: string;
-  engine: string;
-  confidence: string;
-  fields: ExtractedField[];
-  status: 'Verified' | 'Needs Review' | 'Pending';
-  uploadedAt: string;
-}
-
 export const ProcurementDocuments: React.FC = () => {
-  const { bidders, uploadDocument } = useProcurement();
+  const { bidders, uploadDocument, documents, error } = useProcurement();
   const [bidderId, setBidderId] = useState(bidders[0]?.id ?? 'BID-001');
   const [docTypeSelect, setDocTypeSelect] = useState('GST Registration Certificate');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [processingState, setProcessingState] = useState<'idle' | 'uploading' | 'ocr' | 'extracting' | 'completed'>('idle');
   const [lastExtractedFields, setLastExtractedFields] = useState<ExtractedField[]>([]);
-  const [processedDocs, setProcessedDocs] = useState<ProcessedDoc[]>([
-    {
-      fileName: 'Triveni_GST_Certificate.pdf',
-      bidderName: 'Triveni Infotech Solutions Pvt. Ltd.',
-      docType: 'GST Registration Certificate',
-      engine: 'PyMuPDF + Regex Parser',
-      confidence: '96%',
-      status: 'Verified',
-      uploadedAt: 'Today, 10:45 IST',
-      fields: [
-        { key: 'legalName', label: 'Legal Name', value: 'Triveni Infotech Solutions Pvt. Ltd.', confidence: 0.98 },
-        { key: 'gstin', label: 'GSTIN', value: '27AABCT4180Q1ZV', confidence: 0.96 },
-        { key: 'pan', label: 'PAN', value: 'AABCT4180Q', confidence: 0.97 },
-      ],
-    },
-    {
-      fileName: 'Expired_OEM_Letter.pdf',
-      bidderName: 'Narmada Systems & Services Pvt. Ltd.',
-      docType: 'OEM Authorization Letter',
-      engine: 'Tesseract OCR + Date Extractor',
-      confidence: '92%',
-      status: 'Needs Review',
-      uploadedAt: 'Today, 10:48 IST',
-      fields: [
-        { key: 'oemReference', label: 'OEM Reference', value: 'MAF/2024/991', confidence: 0.92 },
-        { key: 'expiryDate', label: 'Expiry Date', value: '31/03/2025 (Expired)', confidence: 0.95 },
-      ],
-    },
-    {
-      fileName: 'Triveni_Udyam_Registration.pdf',
-      bidderName: 'Triveni Infotech Solutions Pvt. Ltd.',
-      docType: 'Udyam Registration Certificate',
-      engine: 'PyMuPDF Parser',
-      confidence: '94%',
-      status: 'Verified',
-      uploadedAt: 'Today, 10:50 IST',
-      fields: [
-        { key: 'udyamNumber', label: 'Udyam Number', value: 'UDYAM-MH-19-0042186', confidence: 0.94 },
-        { key: 'category', label: 'Enterprise Category', value: 'Small Enterprise', confidence: 0.90 },
-      ],
-    },
-  ]);
+  const [evidenceDoc, setEvidenceDoc] = useState<any | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -143,19 +90,6 @@ export const ProcurementDocuments: React.FC = () => {
 
       setLastExtractedFields(extractedList);
 
-      const targetBidder = bidders.find((b) => b.id === bidderId);
-      const newDocRecord: ProcessedDoc = {
-        fileName: selectedFile.name,
-        bidderName: targetBidder?.name || 'Bidder',
-        docType: docClassification,
-        engine: engineName,
-        confidence: confidenceStr,
-        status: statusStr,
-        uploadedAt: 'Today, Just now',
-        fields: extractedList,
-      };
-
-      setProcessedDocs((prev) => [newDocRecord, ...prev]);
       setProcessingState('completed');
     } catch (err) {
       console.error('Document upload and process error:', err);
@@ -177,6 +111,8 @@ export const ProcurementDocuments: React.FC = () => {
           Upload bidder documents and review extracted evidence before compliance assessment.
         </p>
       </div>
+
+      {error && <div className="border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-xs text-[#B72025]">{error}</div>}
 
       {/* Horizontal Document Processing Workflow Indicator */}
       <section className="bg-white border border-[#D9DDE3] rounded-[2px] p-3 text-xs" aria-label="Processing workflow">
@@ -349,7 +285,7 @@ export const ProcurementDocuments: React.FC = () => {
             </p>
           </div>
           <span className="text-[11px] font-mono font-semibold text-[#0B2A4A] bg-[#F8F9FA] px-2 py-0.5 border border-[#CBD2DE]">
-            {processedDocs.length} records active
+            {documents.length} records active
           </span>
         </div>
 
@@ -366,24 +302,24 @@ export const ProcurementDocuments: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {processedDocs.map((doc, idx) => (
-                <tr key={idx}>
+              {documents.map((doc: any) => (
+                <tr key={doc.id}>
                   <td>
                     <div className="flex items-start gap-1.5">
                       <FileText className="w-3.5 h-3.5 text-[#0B2A4A] shrink-0 mt-0.5" />
                       <div>
-                        <strong className="text-xs text-[#202124] block">{doc.docType}</strong>
-                        <span className="text-[11px] font-mono text-[#475569]">{doc.fileName}</span>
+                        <strong className="text-xs text-[#202124] block">{doc.document_type}</strong>
+                        <span className="text-[11px] font-mono text-[#475569]">{doc.file_name}</span>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <span className="text-xs text-[#202124] font-medium block">{doc.bidderName}</span>
-                    <span className="text-[10px] text-[#475569]">{doc.uploadedAt}</span>
+                    <span className="text-xs text-[#202124] font-medium block">{doc.bidder_name}</span>
+                    <span className="text-[10px] text-[#475569]">{new Date(doc.created_at).toLocaleString('en-IN')}</span>
                   </td>
                   <td>
                     <div className="space-y-0.5">
-                      {doc.fields.slice(0, 3).map((f, i) => (
+                      {(doc.extracted_fields || []).slice(0, 3).map((f: ExtractedField, i: number) => (
                         <div key={i} className="text-[11px]">
                           <span className="text-[#475569]">{f.label || f.key}:</span>{' '}
                           <strong className="font-mono text-[#0B2A4A]">{f.value}</strong>
@@ -392,23 +328,24 @@ export const ProcurementDocuments: React.FC = () => {
                     </div>
                   </td>
                   <td>
-                    <span className="text-[11px] text-[#202124]">{doc.engine}</span>
+                    <span className="text-[11px] text-[#202124]">{doc.ocr_engine || 'Stored OCR result'}</span>
                   </td>
                   <td>
                     <span className="font-mono text-xs font-semibold text-[#15803D]">
-                      {doc.confidence}
+                      {Math.round(Number(doc.ocr_confidence ?? doc.confidence ?? 0) * 100)}%
                     </span>
                   </td>
                   <td>
                     <span
                       className={`inline-block px-2 py-0.5 border text-[10px] font-semibold rounded-[2px] ${
-                        doc.status === 'Verified'
+                        doc.ocr_status === 'COMPLETED'
                           ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
                           : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
                       }`}
                     >
-                      {doc.status === 'Verified' ? '[✓] Verified' : '[!] Review'}
+                      {doc.ocr_status === 'COMPLETED' ? '[✓] Processed' : '[!] Review'}
                     </span>
+                    <button onClick={() => setEvidenceDoc(doc)} className="block mt-1 text-[10px] font-semibold text-[#0B2A4A] underline">View evidence</button>
                   </td>
                 </tr>
               ))}
@@ -416,6 +353,7 @@ export const ProcurementDocuments: React.FC = () => {
           </table>
         </div>
       </section>
+      {evidenceDoc && <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"><section className="max-w-2xl w-full max-h-[85vh] overflow-auto bg-white border-2 border-[#0B2A4A] p-4"><div className="flex justify-between gap-4"><div><h2 className="font-serif font-bold text-lg text-[#0B2A4A]">Document evidence</h2><p className="text-xs text-[#475569]">{evidenceDoc.file_name} • {evidenceDoc.bidder_name}</p></div><button onClick={() => setEvidenceDoc(null)} className="text-xs underline">Close</button></div><dl className="grid grid-cols-2 gap-3 text-xs my-4"><div><dt className="text-[#475569]">Type</dt><dd>{evidenceDoc.document_type}</dd></div><div><dt className="text-[#475569]">OCR status</dt><dd>{evidenceDoc.ocr_status}</dd></div><div><dt className="text-[#475569]">Uploaded</dt><dd>{new Date(evidenceDoc.created_at).toLocaleString('en-IN')}</dd></div><div><dt className="text-[#475569]">Processing method</dt><dd>{evidenceDoc.ocr_engine || 'Stored OCR result'}</dd></div></dl><table className="w-full text-xs border border-[#D9DDE3]"><thead><tr className="bg-[#F8F9FA]"><th className="text-left p-2">Field</th><th className="text-left p-2">Value</th><th className="text-left p-2">Confidence</th></tr></thead><tbody>{(evidenceDoc.extracted_fields || []).map((field: ExtractedField) => <tr key={field.key} className="border-t border-[#E6E9EF]"><td className="p-2">{field.label || field.key}</td><td className="p-2 font-mono break-all">{field.value}</td><td className="p-2">{Math.round(field.confidence * 100)}%</td></tr>)}</tbody></table><details className="mt-4"><summary className="cursor-pointer text-xs font-semibold text-[#0B2A4A]">View extracted text</summary><pre className="mt-2 p-3 whitespace-pre-wrap text-[11px] bg-[#F8F9FA] border border-[#D9DDE3]">{evidenceDoc.extracted_text || 'No extracted text is available.'}</pre></details></section></div>}
     </div>
   );
 };

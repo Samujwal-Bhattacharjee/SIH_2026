@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiClient } from '../services/api/apiClient';
+import { apiClient, isUsingMockApi } from '../services/api/apiClient';
 
 export type CheckStatus = 'Verified' | 'Failed' | 'Pending' | 'Needs Review' | 'Not Applicable';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -54,8 +54,11 @@ interface ProcurementContextValue {
   uploadDocument: (bidderId: string, fileName: string, file?: File, documentType?: string) => Promise<any>;
   runVerification: (bidderId: string) => Promise<any>;
   decide: (bidderId: string, decision: string, note: string) => Promise<void>;
-  updateRequirement: (bidderId: string, requirementId: string, status: CheckStatus) => void;
+  updateRequirement: (bidderId: string, requirementId: string, status: CheckStatus) => Promise<void>;
   refreshData: () => Promise<void>;
+  tenderId: string | null;
+  documents: any[];
+  error: string | null;
 }
 
 const compliantRequirements: Requirement[] = [
@@ -128,46 +131,67 @@ const ProcurementContext = createContext<ProcurementContextValue | undefined>(un
 const nowTime = () => new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
 
 export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [bidders, setBidders] = useState<Bidder[]>(initialBidders);
+  const [bidders, setBidders] = useState<Bidder[]>(isUsingMockApi() ? initialBidders : []);
   const [loading, setLoading] = useState(false);
-  const [audit, setAudit] = useState<AuditEvent[]>([
+  const [audit, setAudit] = useState<AuditEvent[]>(isUsingMockApi() ? [
     { id: 'a1', time: '10:42', action: 'Tender document uploaded', actor: 'Procurement Officer', detail: 'GEM/2026/B/418207 — Network Infrastructure procurement' },
     { id: 'a2', time: '10:44', action: 'Requirements extracted', actor: 'Verification engine', detail: 'Six eligibility requirements identified for officer review.' },
     { id: 'a3', time: '10:48', action: 'Compliance assessment completed', actor: 'Verification engine', detail: 'Narmada Systems exception set available for review.' },
-  ]);
+  ] : []);
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [tenderId, setTenderId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const log = (action: string, detail: string, actor = 'Procurement Officer') => {
     setAudit((items) => [{ id: crypto.randomUUID(), time: nowTime(), action, actor, detail }, ...items]);
   };
 
-  // Sync with backend if reachable
+  const mapBidder = (row: any, detail?: any): Bidder => ({
+    id: row.id,
+    name: row.legal_name || row.name || 'Bidder',
+    score: Number(row.compliance_score ?? row.score ?? 0),
+    risk: (row.risk_level || row.risk || 'MEDIUM') as RiskLevel,
+    status: row.status || 'PENDING_DOCUMENTS',
+    documents: Number(row.documents_count ?? row.documents ?? 0),
+    exceptions: Number(row.exceptions_count ?? row.exceptions ?? 0),
+    requirements: (detail?.requirements || []).map((requirement: any) => ({
+      id: requirement.requirement_id || requirement.id,
+      name: requirement.requirement_name || requirement.name,
+      category: requirement.category || 'General',
+      status: requirement.status === 'COMPLIANT' ? 'Verified' : requirement.status === 'NON_COMPLIANT' || requirement.status === 'EXPIRED' ? 'Failed' : requirement.status === 'NEEDS_REVIEW' ? 'Needs Review' : requirement.status === 'NOT_APPLICABLE' ? 'Not Applicable' : 'Pending',
+      evidence: requirement.evidence_value || requirement.evidence_field_key || 'No supporting evidence available',
+      note: requirement.reason || 'Assessment pending.',
+    })),
+    discrepancies: (detail?.discrepancies || []).map((item: any) => ({ type: item.discrepancy_type, severity: item.severity, message: item.description, field: item.field_name, expected: item.expected_value, found: item.found_value })),
+    recommendations: detail?.recommendations || [],
+    officerDecision: row.officer_decision,
+    officerNote: row.officer_note,
+  });
+
+  // Backend/database is authoritative in live mode. Mock mode deliberately
+  // retains the existing fixture adapter for offline SIH demos.
   const refreshData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      if ((apiClient as any).procurement) {
-        const remoteBidders = await (apiClient as any).procurement.getBidders('TEN-2026-001');
-        if (Array.isArray(remoteBidders) && remoteBidders.length > 0) {
-          setBidders((prev) => {
-            // merge with local state
-            return remoteBidders.map((rb: any) => {
-              const existing = prev.find((p) => p.id === rb.id);
-              return {
-                id: rb.id,
-                name: rb.legal_name || rb.name || 'Bidder',
-                score: rb.compliance_score ?? rb.score ?? 0,
-                risk: rb.risk_level || rb.risk || 'MEDIUM',
-                status: rb.status || 'Pending Documents',
-                documents: rb.documents_count ?? rb.documents ?? 0,
-                exceptions: rb.exceptions_count ?? rb.exceptions ?? 0,
-                requirements: existing ? existing.requirements : compliantRequirements,
-                discrepancies: existing?.discrepancies,
-                recommendations: existing?.recommendations,
-              };
-            });
-          });
-        }
-      }
+      const procurement = (apiClient as any).procurement;
+      const tenders = await procurement.getTenders();
+      const activeTender = tenders[0];
+      if (!activeTender) { setTenderId(null); setBidders([]); setDocuments([]); setAudit([]); return; }
+      setTenderId(activeTender.id);
+      const [remoteBidders, remoteAudit, remoteDocuments] = await Promise.all([
+        procurement.getBidders(activeTender.id), procurement.getAuditTrail(activeTender.id), procurement.getDocuments?.(activeTender.id) ?? Promise.resolve([]),
+      ]);
+      const details = await Promise.all(remoteBidders.map((bidder: any) => procurement.getBidder(bidder.id).catch(() => null)));
+      setBidders(remoteBidders.map((bidder: any, index: number) => mapBidder(bidder, details[index])));
+      setDocuments(remoteDocuments);
+      setAudit((remoteAudit || []).map((event: any) => ({ id: event.id, time: new Date(event.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false }), action: event.action, actor: event.actor, detail: event.description || '' })));
     } catch (e) {
-      console.warn('Procurement context backend sync note (operating normally with local state):', e);
+      const message = e instanceof Error ? e.message : 'Unable to load persistent procurement data.';
+      setError(message);
+      if (!isUsingMockApi()) { setBidders([]); setDocuments([]); setAudit([]); }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -176,17 +200,18 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, []);
 
   const addTender = async (title: string) => {
-    log('Tender created', title);
     try {
-      if ((apiClient as any).procurement) {
-        await (apiClient as any).procurement.createTender({ title });
-      }
+      await (apiClient as any).procurement.createTender({ title });
+      if (isUsingMockApi()) log('Tender created', title);
+      await refreshData();
     } catch (e) {
-      console.warn('Tender creation backend note:', e);
+      setError(e instanceof Error ? e.message : 'Unable to create tender.');
+      throw e;
     }
   };
 
   const addBidder = async (name: string, gstin?: string, pan?: string) => {
+    if (!tenderId && !isUsingMockApi()) throw new Error('Create or select a tender before adding a bidder.');
     const newId = `BID-${String(bidders.length + 1).padStart(3, '0')}`;
     const newBidder: Bidder = {
       id: newId,
@@ -209,24 +234,21 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
       ]
     };
 
-    setBidders((items) => [...items, newBidder]);
-    log('Bidder added', `${name} added to GEM/2026/B/418207.`);
-
     try {
-      if ((apiClient as any).procurement) {
-        await (apiClient as any).procurement.addBidder('TEN-2026-001', { legal_name: name, gstin, pan });
-      }
+      await (apiClient as any).procurement.addBidder(tenderId || 'TEN-2026-001', { legal_name: name, gstin, pan });
+      if (isUsingMockApi()) { setBidders((items) => [...items, newBidder]); log('Bidder added', `${name} added to tender.`); }
+      else await refreshData();
     } catch (e) {
-      console.warn('Add bidder backend note:', e);
+      setError(e instanceof Error ? e.message : 'Unable to add bidder.');
+      throw e;
     }
   };
 
   const uploadDocument = async (bidderId: string, fileName: string, file?: File, documentType: string = 'auto'): Promise<any> => {
-    log('Bidder document uploaded', `${fileName} attached to ${bidderId}.`);
-
     if (file && (apiClient as any).procurement?.uploadBidderDocument) {
       try {
         const res = await (apiClient as any).procurement.uploadBidderDocument(bidderId, file, documentType);
+        if (!isUsingMockApi()) await refreshData();
         if (res && res.assessment) {
           const { assessment, bidder: updatedBidder, doc_record } = res;
           setBidders((items) =>
@@ -252,7 +274,7 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 : b
             )
           );
-          log(
+          if (isUsingMockApi()) log(
             'Document Processed & Verified',
             `${fileName} for ${bidderId}: Score ${assessment.compliance_score}/100, Risk: ${assessment.risk_level}`,
             'Verification Engine'
@@ -260,11 +282,13 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
           return res;
         }
       } catch (e) {
-        console.warn('Document storage upload note:', e);
+        setError(e instanceof Error ? e.message : 'Document upload failed.');
+        throw e;
       }
     }
 
-    // Fallback local increment if offline or upload failed
+    if (!isUsingMockApi()) throw new Error('A file is required for persistent document upload.');
+    // Mock-only local update.
     setBidders((items) =>
       items.map((b) =>
         b.id === bidderId
@@ -307,36 +331,47 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
             )
           );
           log('Compliance Assessment Completed', `${bidderId}: Score ${assessment.compliance_score}/100, Risk: ${assessment.risk_level}`, 'Compliance Engine');
+          if (!isUsingMockApi()) await refreshData();
           return assessment;
         }
       }
     } catch (e) {
-      console.warn('Verification API note:', e);
+      setError(e instanceof Error ? e.message : 'Verification could not be completed.');
+      throw e;
     } finally {
       setLoading(false);
     }
   };
 
   const decide = async (bidderId: string, decision: string, note: string) => {
-    setBidders((items) =>
+    if (isUsingMockApi()) setBidders((items) =>
       items.map((b) =>
         b.id === bidderId
           ? { ...b, status: decision, officerDecision: decision, officerNote: note }
           : b
       )
     );
-    log('Officer decision recorded', `${bidderId}: ${decision}${note ? ` — ${note}` : ''}`);
-
     try {
-      if ((apiClient as any).procurement) {
-        await (apiClient as any).procurement.recordDecision(bidderId, decision, note);
-      }
+      await (apiClient as any).procurement.recordDecision(bidderId, decision, note);
+      if (isUsingMockApi()) log('Officer decision recorded', `${bidderId}: ${decision}${note ? ` — ${note}` : ''}`);
+      else await refreshData();
     } catch (e) {
-      console.warn('Officer decision API note:', e);
+      setError(e instanceof Error ? e.message : 'Officer decision could not be recorded.');
+      throw e;
     }
   };
 
-  const updateRequirement = (bidderId: string, requirementId: string, status: CheckStatus) => {
+  const updateRequirement = async (bidderId: string, requirementId: string, status: CheckStatus) => {
+    if (!isUsingMockApi()) {
+      try {
+        await (apiClient as any).procurement.reviewRequirement(bidderId, requirementId, status);
+        await refreshData();
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Requirement review could not be saved.');
+        throw e;
+      }
+      return;
+    }
     setBidders((items) =>
       items.map((b) =>
         b.id === bidderId
@@ -365,6 +400,9 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         decide,
         updateRequirement,
         refreshData,
+        tenderId,
+        documents,
+        error,
       }}
     >
       {children}

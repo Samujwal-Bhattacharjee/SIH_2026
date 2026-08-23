@@ -507,6 +507,15 @@ export const realApi = {
       const q = tenderId ? `?tender_id=${tenderId}` : '';
       return request<any[]>(`/api/v1/procurement/audit${q}`);
     },
+    async getDocuments(tenderId?: string): Promise<any[]> {
+      return request<any[]>(`/api/v1/procurement/documents${tenderId ? `?tender_id=${encodeURIComponent(tenderId)}` : ''}`);
+    },
+    async getDocumentEvidence(documentId: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/documents/${documentId}`);
+    },
+    async reviewRequirement(bidderId: string, requirementId: string, status: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/bidders/${bidderId}/requirements/${requirementId}/review`, { method: 'POST', body: JSON.stringify({ status }) });
+    },
 
     async uploadBidderDocument(bidderId: string, file: File, documentType: string = 'auto'): Promise<any> {
       const formData = new FormData();

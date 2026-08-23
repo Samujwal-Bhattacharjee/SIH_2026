@@ -13,33 +13,27 @@ import { useProcurement } from '../context/ProcurementContext';
 import { apiClient } from '../services/api/apiClient';
 
 export const ProcurementDashboard: React.FC = () => {
-  const { bidders, audit, refreshData } = useProcurement();
-  const [tendersCount, setTendersCount] = useState(1);
+  const { bidders, audit, refreshData, error } = useProcurement();
+  const [metrics, setMetrics] = useState({ active_tenders: 0, bids_under_verification: 0, completed_assessments: 0, high_risk_bidders: 0, pending_documents: 0, verification_exceptions: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
     refreshData();
-    // Fetch live tenders count from API if available
-    const fetchTenders = async () => {
+    const fetchDashboard = async () => {
       try {
-        if ((apiClient as any).procurement?.getTenders) {
-          const tenders = await (apiClient as any).procurement.getTenders();
-          if (Array.isArray(tenders) && tenders.length > 0) {
-            setTendersCount(tenders.length);
-          }
-        }
-      } catch (e) {
-        console.warn('Dashboard tenders fetch note:', e);
+        setMetrics(await (apiClient as any).procurement.getDashboard());
+      } catch {
+        // ProcurementContext exposes the live API error; do not replace it with static metrics.
       }
     };
-    fetchTenders();
+    fetchDashboard();
   }, []);
 
-  const activeTendersCount = tendersCount;
-  const underVerificationCount = bidders.filter((b) => b.status === 'Under Review' || b.status === 'Exception Found' || b.status === 'Pending Documents').length;
-  const highRiskCount = bidders.filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL').length;
-  const pendingDocsCount = bidders.filter((b) => b.status.includes('Pending') || b.documents === 0).length;
-  const totalExceptionsCount = bidders.reduce((acc, b) => acc + (b.exceptions || (b.discrepancies?.length || 0)), 0);
+  const activeTendersCount = metrics.active_tenders;
+  const underVerificationCount = metrics.bids_under_verification;
+  const highRiskCount = metrics.high_risk_bidders;
+  const pendingDocsCount = metrics.pending_documents;
+  const totalExceptionsCount = metrics.verification_exceptions;
 
   return (
     <div className="space-y-4 font-sans pb-8">
@@ -74,6 +68,8 @@ export const ProcurementDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {error && <div className="border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-xs text-[#B72025]">Unable to load persistent procurement data: {error}</div>}
 
       {/* Horizontal Operational Statistics Strip (UX4G Government Pattern) */}
       <section

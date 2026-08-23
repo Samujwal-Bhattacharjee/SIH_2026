@@ -342,8 +342,9 @@ CREATE POLICY "Authenticated users can insert audit_logs" ON audit_logs FOR INSE
 ALTER TABLE documents
   ADD COLUMN IF NOT EXISTS extracted_fields   JSONB,
   ADD COLUMN IF NOT EXISTS processed_at       TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS error_message      TEXT;
+  ADD COLUMN IF NOT EXISTS error_message      TEXT,
+  ADD COLUMN IF NOT EXISTS ocr_engine         TEXT,
+  ADD COLUMN IF NOT EXISTS ocr_confidence     NUMERIC(5,4);
 
 -- Index for querying documents that have been processed
 CREATE INDEX IF NOT EXISTS idx_documents_processed_at ON documents(processed_at);
-

@@ -50,7 +50,7 @@ def upload_document(
     file_bytes: bytes,
     filename: str,
     content_type: str,
-    case_id: str,
+    case_id: Optional[str],
     document_type: str,
     uploaded_by: str,
 ) -> dict:
@@ -68,7 +68,8 @@ def upload_document(
     # Build a unique storage path
     checksum = hashlib.sha256(file_bytes).hexdigest()[:12]
     safe_name = filename.replace(" ", "_")
-    storage_path = f"{case_id}/{now[:10]}_{checksum}_{safe_name}"
+    storage_scope = case_id or "procurement"
+    storage_path = f"{storage_scope}/{now[:10]}_{checksum}_{safe_name}"
 
     # Upload to Supabase Storage
     try:
@@ -104,12 +105,14 @@ def upload_document(
     insert_result = supabase.table("documents").insert(doc_row).execute()
     doc = insert_result.data[0]
 
-    # Update case document_ids array
-    case_result = supabase.table("cases").select("document_ids").eq("id", case_id).maybe_single().execute()
-    if case_result and getattr(case_result, "data", None):
-        existing_ids = case_result.data.get("document_ids") or []
-        existing_ids.append(doc["id"])
-        supabase.table("cases").update({"document_ids": existing_ids, "updated_at": now}).eq("id", case_id).execute()
+    # Legacy case workflow keeps its document id list; procurement documents
+    # are linked through bidder_documents and deliberately have no case_id.
+    if case_id:
+        case_result = supabase.table("cases").select("document_ids").eq("id", case_id).maybe_single().execute()
+        if case_result and getattr(case_result, "data", None):
+            existing_ids = case_result.data.get("document_ids") or []
+            existing_ids.append(doc["id"])
+            supabase.table("cases").update({"document_ids": existing_ids, "updated_at": now}).eq("id", case_id).execute()
 
     return doc
 
@@ -172,6 +175,8 @@ def process_ocr(document_id: str) -> dict:
             "extracted_text": text,
             "extracted_fields": fields,   # Stored as JSONB array
             "processed_at": processed_at,
+            "ocr_engine": engine,
+            "ocr_confidence": confidence,
             "error_message": None,        # Clear any previous error
         }).eq("id", document_id).execute()
 
