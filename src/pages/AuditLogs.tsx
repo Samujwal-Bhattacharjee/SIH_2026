@@ -104,12 +104,12 @@ export const AuditLogs: React.FC = () => {
     },
     {
       key: 'fileNumber',
-      header: 'File Docket Reference',
+      header: 'Project / Docket Ref',
       width: '180px',
       render: (item) => (
         <Link
-          to={`/files/${item.fileId}`}
-          className="font-mono font-bold text-xs text-[#0B2A4A] hover:underline"
+          to={`/projects/${item.fileId}`}
+          className="font-mono font-bold text-xs text-[#0B3558] hover:underline"
         >
           {item.fileNumber || item.fileId}
         </Link>
@@ -117,14 +117,14 @@ export const AuditLogs: React.FC = () => {
     },
     {
       key: 'transition',
-      header: 'State Transition & Remarks',
+      header: 'Stage Transition & Remarks',
       render: (item) => (
         <div className="space-y-1 text-xs text-[#202124] max-w-md">
           {item.previousState && item.newState && (
             <div className="flex items-center space-x-1.5 text-[11px] font-mono text-[#5F6368]">
               <span>{item.previousState}</span>
               <span>→</span>
-              <strong className="text-[#0B2A4A]">{item.newState}</strong>
+              <strong className="text-[#0B3558]">{item.newState}</strong>
             </div>
           )}
           {item.remarks && (
@@ -138,24 +138,24 @@ export const AuditLogs: React.FC = () => {
       header: 'Terminal & IP Address',
       width: '160px',
       render: (item) => (
-        <div className="font-mono text-[11px] text-[#5F6368]">
-          <div className="font-semibold text-[#202124]">{item.terminalId}</div>
-          <div>{item.ipAddress}</div>
+        <div className="font-mono text-xs text-[#5F6368] space-y-0.5">
+          <div className="text-[#202124] font-semibold">{item.terminalId}</div>
+          <div className="text-[11px] text-gray-400">{item.ipAddress}</div>
         </div>
       ),
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
         <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            Official System Audit Register &amp; Event Trail
+          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
+            Procurement Activity &amp; Audit Trail Register
           </h1>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Immutable traceability ledger recording all file registrations, forwardings, approvals, and OCR ingestion events.
+            Tamper-evident legal ledger recording all tender evaluations, document OCR extractions, and officer decisions.
           </p>
         </div>
 

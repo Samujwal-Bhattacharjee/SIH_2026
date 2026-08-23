@@ -351,6 +351,23 @@ class CaseOut(BaseModel):
     receivedDate: Optional[str] = None
     limitationDays: Optional[int] = None
     limitationDeadline: Optional[str] = None
+    # Land Acquisition fields (SIH26017)
+    projectCode: Optional[str] = None
+    state: Optional[str] = None
+    district: Optional[str] = None
+    totalParcels: Optional[int] = None
+    completedParcels: Optional[int] = None
+    totalArea: Optional[float] = None
+    documentationCompleteness: Optional[float] = None
+    legalDispute: Optional[bool] = None
+    ownershipConflict: Optional[bool] = None
+    compensationPendingDays: Optional[int] = None
+    rrStatus: Optional[str] = None
+    interDeptDependency: Optional[bool] = None
+    delayProbability: Optional[float] = None
+    predictedDelayDays: Optional[int] = None
+    mlRiskLevel: Optional[str] = None
+    modelVersion: Optional[str] = None
 
 
 class CaseListResponse(BaseModel):
@@ -459,6 +476,13 @@ class DashboardMetrics(BaseModel):
     cases_by_department: Dict[str, int] = {}
     cases_by_priority: Dict[str, int] = {}
     cases_by_stage: Dict[str, int] = {}
+    # Land Acquisition aliases & aggregates
+    total_projects: Optional[int] = None
+    high_risk_projects: Optional[int] = None
+    delayed_projects: Optional[int] = None
+    average_delay_days: Optional[float] = None
+    projects_by_district: Dict[str, int] = {}
+    projects_by_stage: Dict[str, int] = {}
 
 
 # ============================================================

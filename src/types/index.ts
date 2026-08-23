@@ -1,4 +1,12 @@
 export type Department =
+  | 'Department of Administrative Reforms'
+  | 'Ministry of Electronics & Information Technology'
+  | 'Department of Telecommunications'
+  | 'Department of Personnel & Training'
+  | 'Department of Expenditure'
+  | 'Department for Promotion of Industry and Internal Trade'
+  | 'GeM Central Procurement Division'
+  | 'General Administration'
   | 'Land Revenue'
   | 'Urban Planning'
   | 'Social Welfare'
@@ -8,9 +16,24 @@ export type Department =
   | 'Health & Family Welfare'
   | 'Transport & Highways'
   | 'Finance & Expenditure'
-  | 'Administrative Reforms';
+  | 'Administrative Reforms'
+  | string;
+
+export type LandAcquisitionStage =
+  | 'Project Initiation'
+  | 'Land Identification'
+  | 'Preliminary Notification'
+  | 'Survey and Verification'
+  | 'Ownership Verification'
+  | 'Objection and Legal Review'
+  | 'Compensation Assessment'
+  | 'Compensation Disbursement'
+  | 'R&R and Rehabilitation'
+  | 'Final Acquisition'
+  | 'Possession and Handover';
 
 export type CaseStage =
+  | LandAcquisitionStage
   | 'Application Received'
   | 'Document Verification'
   | 'Department Assignment'
@@ -21,7 +44,7 @@ export type CaseStage =
 
 export type PriorityLevel = 'IMMEDIATE' | 'URGENT' | 'ROUTINE';
 
-export type RiskLevel = 'HIGH' | 'MEDIUM' | 'LOW';
+export type RiskLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 
 export type GovFileStatus =
   | 'RECEIVED'
@@ -87,7 +110,7 @@ export interface RiskPrediction {
 
 export interface Case {
   id: string;
-  fileNumber?: string; // e.g. KA/REV/2026/001284
+  fileNumber?: string; // e.g. LA-1024 or KA/REV/2026/001284
   title: string;
   subject?: string;
   caseType: string;
@@ -111,11 +134,113 @@ export interface Case {
   lastMovementDate?: string;
   documentIds: string[];
   events?: CaseEvent[];
+  documents?: DocumentRecord[];
   riskPrediction?: RiskPrediction;
+  // Land Acquisition fields (SIH26017)
+  projectCode?: string;
+  district?: string;
+  state?: string;
+  totalParcels?: number;
+  completedParcels?: number;
+  totalArea?: number;
+  documentationCompleteness?: number;
+  legalDispute?: boolean;
+  ownershipConflict?: boolean;
+  compensationPendingDays?: number;
+  rrStatus?: string;
+  interDeptDependency?: boolean;
+  delayProbability?: number;
+  predictedDelayDays?: number;
+  mlRiskLevel?: string;
+  modelVersion?: string;
+  topFactors?: { factor: string; label?: string; value: any; importance?: number }[];
 }
 
-// Alias for clean naming
+export type LandProject = Case;
 export type FileRecord = Case;
+
+export interface ProjectPrediction {
+  project_id: string;
+  project_code: string;
+  project_name: string;
+  district: string;
+  current_stage: string;
+  delay_probability: number;
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  predicted_delay_days: number;
+  model_version: string;
+  model_available: boolean;
+  top_factors: { factor: string; label?: string; value: any; importance?: number }[];
+  feature_vector?: Record<string, any>;
+  model_metrics?: {
+    accuracy: number;
+    precision: number;
+    recall: number;
+    f1: number;
+    roc_auc: number;
+  };
+  disclaimer?: string;
+}
+
+export interface ProjectTimelineStage {
+  stage_index: number;
+  stage_name: string;
+  status: 'COMPLETED' | 'IN_PROGRESS' | 'UPCOMING';
+  expected_days: number;
+  actual_days: number;
+  delay_days: number;
+  is_delayed: boolean;
+  is_current: boolean;
+}
+
+export interface ProjectBottleneckResponse {
+  project_id: string;
+  current_stage: string;
+  stage_dwell_days: number;
+  stage_expected_days: number;
+  stage_delay_days: number;
+  is_bottleneck: boolean;
+  severity: 'LOW' | 'MODERATE' | 'CRITICAL';
+  bottleneck?: {
+    stage: string;
+    expected_days: number;
+    actual_days: number;
+    delay_days: number;
+    severity: string;
+    root_cause?: string;
+    responsible_officer?: string;
+  } | null;
+}
+
+export interface ProjectDelayFactorsResponse {
+  project_id: string;
+  delay_probability: number;
+  risk_level: string;
+  observed_factors: {
+    factor: string;
+    name: string;
+    observed_value: string;
+    status: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+    description: string;
+  }[];
+  model_feature_importance: {
+    feature: string;
+    importance: number;
+  }[];
+  note?: string;
+}
+
+export interface ProjectRecommendationsResponse {
+  project_id: string;
+  priority: 'IMMEDIATE' | 'URGENT' | 'ROUTINE';
+  primary_recommendation: string;
+  recommended_actions: {
+    factor: string;
+    reason: string;
+    action: string;
+    urgency: 'HIGH' | 'MEDIUM' | 'LOW';
+  }[];
+}
 
 export interface WorkflowNodeData {
   [key: string]: unknown;

@@ -167,17 +167,17 @@ export const Login: React.FC = () => {
       </div>
 
       {/* Top Ministry Header Strip */}
-      <div className="w-full bg-[#071A2E] text-white py-1.5 px-4 text-center text-xs select-none z-10 shadow-sm">
+      <div className="w-full bg-[#040E1A] text-white py-1.5 px-4 text-center text-xs select-none z-10 shadow-sm font-sans">
         <div className="gov-tricolour-bar mb-1.5" />
         <div className="flex items-center justify-center space-x-2 text-[11px] sm:text-xs">
           <span className="font-serif font-bold tracking-wide">भारत सरकार • Government of India</span>
           <span className="text-gray-400">|</span>
-          <span className="text-gray-300">Department of Administrative Reforms &amp; Public Grievances</span>
+          <span className="text-gray-300">Government Procurement • Prototype / Demonstration • SIH26100</span>
         </div>
       </div>
 
       {/* Main Container */}
-      <div className="max-w-5xl mx-auto w-full my-auto px-4 py-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch relative z-10">
+      <div className="max-w-5xl mx-auto w-full my-auto px-4 py-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch relative z-10 font-sans">
         {/* Left Column: Institutional Branding */}
         <div className="md:col-span-6 bg-white/95 backdrop-blur-sm border border-[#D9DDE3] rounded-[4px] p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
           {/* Subtle Top Tricolour Accent Line on Left Card */}
@@ -187,11 +187,11 @@ export const Login: React.FC = () => {
             <div className="flex items-center space-x-3.5 pt-1">
               <Emblem size={56} />
               <div>
-                <h2 className="font-serif font-extrabold text-lg sm:text-xl text-[#0B2A4A] leading-tight">
+                <h2 className="font-serif font-extrabold text-lg sm:text-xl text-[#0B3558] leading-tight">
                   Government of India
                 </h2>
                 <p className="text-xs text-[#5F6368] font-medium">
-                  File Tracking &amp; Administrative Intelligence System
+                  Procurement Decision Support Platform • SIH26100
                 </p>
               </div>
             </div>
@@ -199,11 +199,11 @@ export const Login: React.FC = () => {
             <div className="h-0.5 w-16 bg-[#FF9933]" />
 
             <div className="space-y-3">
-              <h1 className="font-serif font-bold text-xl sm:text-2xl text-[#0B2A4A] leading-snug">
-                Official Administrative Workflow &amp; e-File Gateway
+              <h1 className="font-serif font-bold text-xl sm:text-2xl text-[#0B3558] leading-snug">
+                Government Procurement Intelligence Platform
               </h1>
               <p className="text-xs text-[#5F6368] leading-relaxed">
-                Secure internal portal for tracking government file movement, OCR document processing, statutory SLA compliance monitoring, and bottleneck delay intelligence across state departments.
+                AI-assisted bid compliance verification and decision-support platform for government procurement. Automated document OCR extraction, sandbox source validation, and evidence-backed evaluation.
               </p>
             </div>
 
@@ -211,11 +211,11 @@ export const Login: React.FC = () => {
             <div className="space-y-2.5 text-xs text-[#202124] pt-2">
               <div className="flex items-start space-x-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D] flex-shrink-0 mt-0.5" />
-                <span>Statutory SLA Compliance &amp; Delay Risk Intelligence</span>
+                <span>Evidence-Backed Bid Compliance Verification &amp; Risk Scoring</span>
               </div>
               <div className="flex items-start space-x-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D] flex-shrink-0 mt-0.5" />
-                <span>Optical Character Recognition (OCR) &amp; Metadata Extraction</span>
+                <span>Optical Character Recognition (OCR) &amp; Certificate Extraction</span>
               </div>
               <div className="flex items-start space-x-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D] flex-shrink-0 mt-0.5" />
@@ -223,7 +223,7 @@ export const Login: React.FC = () => {
               </div>
               <div className="flex items-start space-x-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D] flex-shrink-0 mt-0.5" />
-                <span>Complete Official Movement Register &amp; Immutable Audit Trail</span>
+                <span>Tamper-Evident Movement Register &amp; Immutable Audit Trail</span>
               </div>
             </div>
           </div>
@@ -342,14 +342,12 @@ export const Login: React.FC = () => {
                         className={`${inputBaseClasses} pl-9`}
                         required
                       >
+                        <option value="Department of Administrative Reforms">Department of Administrative Reforms</option>
+                        <option value="Ministry of Electronics & Information Technology">Ministry of Electronics & IT</option>
+                        <option value="Department of Telecommunications">Department of Telecommunications</option>
+                        <option value="Department of Personnel & Training">Department of Personnel & Training</option>
+                        <option value="Department of Expenditure">Department of Expenditure</option>
                         <option value="General Administration">General Administration</option>
-                        <option value="Land Revenue">Land Revenue</option>
-                        <option value="Urban Planning">Urban Planning</option>
-                        <option value="Social Welfare">Social Welfare</option>
-                        <option value="Public Works">Public Works</option>
-                        <option value="Environment & Forests">Environment & Forests</option>
-                        <option value="Finance & Expenditure">Finance & Expenditure</option>
-                        <option value="Administrative Reforms">Administrative Reforms</option>
                       </select>
                     </div>
                   </FormField>
@@ -507,8 +505,8 @@ export const Login: React.FC = () => {
                     onClick={() => handleDemoSignIn('krmohan.rev@goip.gov.in')}
                     className="p-2 text-left bg-[#F0F5FA] hover:bg-[#E6EEF5] border border-[#CBD2DE] rounded-[3px] text-xs transition-colors cursor-pointer"
                   >
-                    <strong className="block text-[#0B2A4A] text-[11px]">Asst. Commissioner</strong>
-                    <span className="text-[10px] text-[#5F6368]">Land Revenue Desk</span>
+                    <strong className="block text-[#0B2A4A] text-[11px]">Deputy Secretary</strong>
+                    <span className="text-[10px] text-[#5F6368]">Technical Evaluation Desk</span>
                   </button>
                 </div>
               </div>

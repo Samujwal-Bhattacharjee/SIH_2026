@@ -1,0 +1,1201 @@
+project_id,state,district,project_type,current_stage,current_stage_index,project_age_days,total_parcels,completed_parcels,total_area,documentation_completeness,legal_dispute,ownership_conflict,compensation_pending_days,pending_approvals,inter_dept_dependency,rr_delay_days,previous_stage_delay_days,number_of_delayed_stages,target_delayed,target_delay_days
+LA-1000,Karnataka,Bengaluru,Highway Construction,Project Initiation,0,789,124,100,126.59,80.0,0,0,13,1,0,1,0,0,0,0
+LA-1001,Karnataka,Dharwad,Mining Development,Objection and Legal Review,5,459,54,24,90.07,84.0,0,1,50,3,0,22,12,2,1,59
+LA-1002,Karnataka,Mangaluru,Mining Development,Land Identification,1,157,343,217,20.41,99.3,0,0,18,0,0,0,0,0,0,0
+LA-1003,Rajasthan,Jaipur,Defense Installation,Final Acquisition,9,314,355,131,14.46,49.3,1,1,106,1,0,0,99,4,1,108
+LA-1004,Rajasthan,Ajmer,Urban Infrastructure,Survey and Verification,3,247,464,222,146.09,95.0,0,0,8,3,0,4,0,0,0,0
+LA-1005,Rajasthan,Ajmer,Pipeline Project,Land Identification,1,123,133,115,242.78,100.0,0,0,21,6,1,13,0,0,0,0
+LA-1006,Karnataka,Bengaluru,Mining Development,Ownership Verification,4,798,157,124,50.13,79.9,0,1,29,3,1,30,24,1,1,50
+LA-1007,Odisha,Berhampur,Highway Construction,Project Initiation,0,643,48,25,244.51,59.7,1,1,110,0,0,0,0,0,1,164
+LA-1008,Madhya Pradesh,Indore,Power Transmission,Survey and Verification,3,570,465,402,129.64,100.0,0,0,23,4,1,22,0,0,0,0
+LA-1009,Uttar Pradesh,Lucknow,Mining Development,Land Identification,1,265,281,281,33.51,90.8,1,0,26,1,0,58,8,0,1,58
+LA-1010,Rajasthan,Kota,Defense Installation,Project Initiation,0,224,377,318,85.16,100.0,0,0,20,3,0,20,0,0,0,0
+LA-1011,Rajasthan,Ajmer,Pipeline Project,Land Identification,1,173,479,458,188.51,71.6,0,0,14,1,1,0,21,0,0,0
+LA-1012,Gujarat,Surat,Defense Installation,Compensation Assessment,6,90,301,177,78.74,100.0,1,1,125,0,0,0,8,3,1,50
+LA-1013,Madhya Pradesh,Indore,Highway Construction,Survey and Verification,3,550,219,122,164.51,87.9,1,1,82,0,0,0,10,0,1,78
+LA-1014,Karnataka,Dharwad,Urban Infrastructure,Compensation Disbursement,7,274,42,10,33.55,81.1,0,0,0,0,0,0,12,0,0,0
+LA-1015,Uttar Pradesh,Lucknow,Industrial Corridor,Project Initiation,0,408,482,440,166.02,77.8,0,0,16,2,0,0,0,0,0,0
+LA-1016,Maharashtra,Nashik,Mining Development,Ownership Verification,4,189,329,126,1.38,78.4,0,1,51,0,0,16,65,1,1,101
+LA-1017,Rajasthan,Bikaner,Pipeline Project,Preliminary Notification,2,594,70,46,10.94,100.0,0,0,22,3,1,0,11,0,0,0
+LA-1018,Odisha,Bhubaneswar,Urban Infrastructure,Preliminary Notification,2,245,414,207,202.79,100.0,0,0,27,1,0,13,7,0,0,0
+LA-1019,Karnataka,Hubli,Defense Installation,Project Initiation,0,851,107,78,76.65,79.3,0,0,22,4,1,3,0,0,0,0
+LA-1020,Odisha,Cuttack,Industrial Corridor,Land Identification,1,54,302,250,27.55,72.3,1,1,144,1,0,21,0,0,1,117
+LA-1021,Madhya Pradesh,Ujjain,Railway Expansion,R&R and Rehabilitation,8,424,225,25,17.96,66.5,0,0,16,3,1,29,0,0,0,0
+LA-1022,Uttar Pradesh,Allahabad,Railway Expansion,Preliminary Notification,2,767,351,351,187.16,68.2,0,0,22,3,0,9,6,0,0,0
+LA-1023,Gujarat,Gandhinagar,Highway Construction,Compensation Disbursement,7,341,342,95,21.66,100.0,0,0,14,1,0,0,0,0,0,0
+LA-1024,Uttar Pradesh,Lucknow,Industrial Corridor,Land Identification,1,718,361,294,96.3,79.5,0,0,15,4,1,19,0,0,0,0
+LA-1025,Karnataka,Bengaluru,Railway Expansion,Land Identification,1,827,491,366,188.93,88.0,0,0,1,2,0,17,0,0,0,0
+LA-1026,Madhya Pradesh,Jabalpur,Mining Development,Ownership Verification,4,486,145,34,110.25,93.7,0,0,7,1,0,26,2,0,0,0
+LA-1027,Uttar Pradesh,Kanpur,Mining Development,Objection and Legal Review,5,112,443,151,220.22,69.2,1,1,115,0,0,0,8,2,1,100
+LA-1028,Odisha,Sambalpur,Defense Installation,Objection and Legal Review,5,581,89,85,245.19,81.6,0,0,0,6,1,12,0,0,0,0
+LA-1029,Madhya Pradesh,Bhopal,Defense Installation,Objection and Legal Review,5,636,134,41,208.81,78.1,1,0,73,3,0,45,13,1,1,63
+LA-1030,Uttar Pradesh,Agra,Railway Expansion,Survey and Verification,3,829,363,213,151.67,87.0,1,1,110,3,0,38,13,0,1,124
+LA-1031,Uttar Pradesh,Lucknow,Highway Construction,Land Identification,1,349,361,74,193.23,71.4,0,0,6,0,0,0,0,0,0,0
+LA-1032,Maharashtra,Solapur,Highway Construction,Compensation Assessment,6,385,83,83,109.15,62.3,0,0,0,6,1,27,48,0,1,7
+LA-1033,Uttar Pradesh,Meerut,Mining Development,Ownership Verification,4,823,389,77,95.06,62.9,0,0,2,1,0,0,1,0,0,0
+LA-1034,Maharashtra,Nagpur,Urban Infrastructure,Land Identification,1,216,373,105,60.46,65.2,1,1,118,1,0,0,8,0,1,116
+LA-1035,Maharashtra,Nashik,Power Transmission,Objection and Legal Review,5,256,364,215,113.71,62.9,0,0,17,2,0,16,15,0,0,0
+LA-1036,Karnataka,Mysuru,Urban Infrastructure,Ownership Verification,4,152,56,30,208.24,94.2,0,0,23,2,0,15,21,0,0,0
+LA-1037,Uttar Pradesh,Lucknow,Mining Development,Compensation Disbursement,7,159,245,153,119.94,98.3,0,0,4,2,0,0,3,0,0,0
+LA-1038,Uttar Pradesh,Varanasi,Railway Expansion,Land Identification,1,871,402,380,130.88,100.0,1,1,86,1,0,0,18,0,1,124
+LA-1039,Uttar Pradesh,Meerut,Highway Construction,Land Identification,1,654,214,46,73.17,90.0,0,0,7,2,1,5,0,0,0,0
+LA-1040,Rajasthan,Udaipur,Power Transmission,Survey and Verification,3,749,470,274,15.38,86.4,1,1,126,1,0,47,9,0,1,114
+LA-1041,Uttar Pradesh,Varanasi,Railway Expansion,Land Identification,1,509,314,213,62.97,58.6,0,0,15,2,0,14,6,0,1,25
+LA-1042,Odisha,Berhampur,Highway Construction,Preliminary Notification,2,813,330,300,117.77,75.3,0,1,61,3,0,0,2,0,1,45
+LA-1043,Odisha,Cuttack,Urban Infrastructure,Project Initiation,0,451,166,99,193.25,100.0,0,0,17,0,0,0,0,0,0,0
+LA-1044,Odisha,Berhampur,Highway Construction,Ownership Verification,4,703,67,52,7.7,95.7,0,1,32,3,0,6,0,1,1,41
+LA-1045,Rajasthan,Udaipur,Mining Development,Ownership Verification,4,44,217,217,61.31,74.5,0,0,26,2,0,4,0,0,0,0
+LA-1046,Madhya Pradesh,Indore,Defense Installation,Objection and Legal Review,5,225,149,76,145.19,100.0,0,0,13,3,1,0,0,0,0,0
+LA-1047,Karnataka,Mangaluru,Dam / Irrigation,Survey and Verification,3,487,124,98,79.88,65.9,0,0,6,3,0,22,0,0,0,0
+LA-1048,Gujarat,Bhavnagar,Defense Installation,Land Identification,1,425,56,15,180.75,100.0,0,0,30,3,0,18,0,0,0,0
+LA-1049,Gujarat,Bhavnagar,Dam / Irrigation,Compensation Assessment,6,106,451,89,59.08,35.4,0,1,85,3,0,0,48,2,1,142
+LA-1050,Karnataka,Bengaluru,Defense Installation,Project Initiation,0,130,155,61,61.43,52.4,0,0,9,3,1,28,0,0,1,11
+LA-1051,Rajasthan,Jodhpur,Dam / Irrigation,Survey and Verification,3,110,465,161,201.26,96.3,0,0,18,0,0,4,0,0,0,0
+LA-1052,Rajasthan,Jaipur,Pipeline Project,Survey and Verification,3,383,126,75,95.65,66.2,0,0,14,0,0,0,23,0,0,0
+LA-1053,Karnataka,Hubli,Highway Construction,Project Initiation,0,879,431,346,199.82,93.7,0,0,23,3,0,0,0,0,0,0
+LA-1054,Madhya Pradesh,Gwalior,Industrial Corridor,Possession and Handover,10,681,163,100,91.53,87.0,0,0,3,0,0,28,8,0,0,0
+LA-1055,Rajasthan,Jaipur,Power Transmission,Preliminary Notification,2,364,500,386,85.01,81.8,0,1,61,3,0,26,3,0,1,41
+LA-1056,Odisha,Cuttack,Defense Installation,Objection and Legal Review,5,896,426,86,159.82,83.4,0,0,17,3,0,3,0,0,0,0
+LA-1057,Gujarat,Ahmedabad,Mining Development,Ownership Verification,4,365,257,177,29.47,100.0,0,0,29,2,1,0,0,0,0,0
+LA-1058,Gujarat,Rajkot,Urban Infrastructure,Compensation Assessment,6,716,485,389,237.9,100.0,0,0,23,3,0,4,22,0,0,0
+LA-1059,Gujarat,Rajkot,Industrial Corridor,Ownership Verification,4,401,51,19,149.49,85.5,0,1,29,3,0,0,27,1,0,0
+LA-1060,Maharashtra,Nashik,Urban Infrastructure,Preliminary Notification,2,279,146,103,32.93,100.0,0,1,55,0,0,10,12,0,0,0
+LA-1061,Uttar Pradesh,Agra,Railway Expansion,Preliminary Notification,2,706,386,347,90.83,88.4,0,0,8,0,0,1,0,0,0,0
+LA-1062,Madhya Pradesh,Bhopal,Pipeline Project,Project Initiation,0,545,438,438,100.7,86.4,0,0,20,3,0,30,0,0,0,0
+LA-1063,Gujarat,Ahmedabad,Railway Expansion,Ownership Verification,4,359,63,45,213.27,62.8,1,0,78,3,1,60,0,0,1,43
+LA-1064,Gujarat,Rajkot,Industrial Corridor,Compensation Disbursement,7,453,420,283,32.96,71.5,1,0,50,2,0,0,63,3,1,116
+LA-1065,Uttar Pradesh,Allahabad,Railway Expansion,Ownership Verification,4,450,300,127,120.81,65.9,0,0,19,0,0,0,21,0,0,0
+LA-1066,Odisha,Bhubaneswar,Urban Infrastructure,Project Initiation,0,895,144,79,175.82,73.7,1,1,101,1,0,71,0,0,1,90
+LA-1067,Odisha,Cuttack,Defense Installation,Ownership Verification,4,101,84,18,39.77,98.0,0,1,35,1,1,11,52,1,1,35
+LA-1068,Gujarat,Bhavnagar,Defense Installation,Compensation Disbursement,7,527,109,92,75.7,67.4,0,1,79,0,0,18,6,3,1,80
+LA-1069,Uttar Pradesh,Kanpur,Railway Expansion,Project Initiation,0,37,240,145,230.33,62.9,0,1,58,4,1,2,0,0,1,45
+LA-1070,Gujarat,Bhavnagar,Defense Installation,Land Identification,1,326,437,372,100.41,84.8,0,0,29,3,0,0,0,0,0,0
+LA-1071,Maharashtra,Nagpur,Power Transmission,Preliminary Notification,2,793,79,46,38.64,73.4,0,1,65,2,1,11,28,0,1,62
+LA-1072,Odisha,Sambalpur,Pipeline Project,Final Acquisition,9,802,82,82,110.22,72.7,0,0,20,2,0,0,0,0,0,0
+LA-1073,Odisha,Rourkela,Highway Construction,Land Identification,1,390,241,37,145.29,86.9,0,0,26,3,0,9,7,0,0,0
+LA-1074,Maharashtra,Nagpur,Industrial Corridor,Land Identification,1,359,367,218,109.72,73.6,0,0,25,1,0,28,0,0,0,0
+LA-1075,Rajasthan,Udaipur,Urban Infrastructure,Land Identification,1,319,150,140,63.37,90.1,0,0,20,3,0,20,0,0,0,0
+LA-1076,Madhya Pradesh,Indore,Urban Infrastructure,Preliminary Notification,2,113,334,159,198.02,44.7,1,0,92,3,0,0,13,0,1,65
+LA-1077,Madhya Pradesh,Bhopal,Defense Installation,Land Identification,1,550,343,114,33.2,71.0,1,1,69,0,0,30,14,0,1,109
+LA-1078,Odisha,Berhampur,Dam / Irrigation,Ownership Verification,4,768,467,383,208.86,100.0,0,0,14,3,0,19,1,0,0,0
+LA-1079,Gujarat,Rajkot,Power Transmission,Preliminary Notification,2,826,452,239,93.12,100.0,0,0,25,3,0,0,2,0,0,0
+LA-1080,Madhya Pradesh,Bhopal,Power Transmission,Survey and Verification,3,115,32,4,99.42,70.6,0,0,13,3,0,2,20,0,0,0
+LA-1081,Maharashtra,Aurangabad,Industrial Corridor,Preliminary Notification,2,58,468,123,20.27,94.7,1,0,41,0,0,29,16,0,1,113
+LA-1082,Karnataka,Belagavi,Mining Development,Land Identification,1,463,328,123,36.32,93.4,1,0,42,0,0,0,12,0,1,85
+LA-1083,Madhya Pradesh,Jabalpur,Dam / Irrigation,R&R and Rehabilitation,8,710,27,13,159.1,82.2,0,0,17,3,0,0,0,0,0,0
+LA-1084,Maharashtra,Aurangabad,Railway Expansion,Project Initiation,0,383,94,77,245.21,80.4,0,1,60,5,1,4,0,0,1,40
+LA-1085,Maharashtra,Kolhapur,Pipeline Project,Ownership Verification,4,67,446,319,83.32,57.8,1,1,148,4,1,56,60,1,1,78
+LA-1086,Karnataka,Mangaluru,Defense Installation,Land Identification,1,377,284,136,73.79,100.0,0,0,16,1,0,0,0,0,0,0
+LA-1087,Uttar Pradesh,Kanpur,Pipeline Project,Objection and Legal Review,5,647,43,25,167.96,91.6,0,0,23,0,0,27,9,0,0,0
+LA-1088,Karnataka,Dharwad,Dam / Irrigation,Objection and Legal Review,5,61,490,311,93.06,94.0,0,1,32,3,0,24,0,2,1,49
+LA-1089,Madhya Pradesh,Gwalior,Defense Installation,Ownership Verification,4,351,107,107,31.1,74.0,0,1,39,3,0,8,5,1,1,53
+LA-1090,Karnataka,Mangaluru,Railway Expansion,Preliminary Notification,2,859,119,88,35.15,67.6,1,1,102,5,1,77,0,0,1,79
+LA-1091,Gujarat,Gandhinagar,Dam / Irrigation,Compensation Assessment,6,656,243,127,170.19,100.0,1,0,102,3,0,0,36,2,1,149
+LA-1092,Karnataka,Belagavi,Dam / Irrigation,Survey and Verification,3,816,133,112,68.98,100.0,1,0,45,3,1,65,10,0,1,74
+LA-1093,Madhya Pradesh,Sagar,Dam / Irrigation,Objection and Legal Review,5,636,28,21,237.16,100.0,0,0,19,0,0,0,23,0,0,0
+LA-1094,Rajasthan,Ajmer,Defense Installation,Survey and Verification,3,662,237,40,18.71,68.0,0,0,30,2,0,9,6,0,0,0
+LA-1095,Gujarat,Rajkot,Industrial Corridor,Objection and Legal Review,5,378,168,136,60.81,89.1,0,0,27,0,0,0,7,0,0,0
+LA-1096,Rajasthan,Jaipur,Highway Construction,Preliminary Notification,2,327,395,160,40.26,95.7,0,0,28,1,0,0,17,0,0,0
+LA-1097,Uttar Pradesh,Varanasi,Highway Construction,Project Initiation,0,122,310,286,117.91,81.5,0,0,11,3,0,1,0,0,0,0
+LA-1098,Madhya Pradesh,Bhopal,Railway Expansion,Objection and Legal Review,5,471,202,18,70.29,91.4,0,0,17,3,1,6,7,0,0,0
+LA-1099,Madhya Pradesh,Sagar,Railway Expansion,R&R and Rehabilitation,8,161,261,177,178.54,99.8,0,0,6,3,0,0,0,0,0,0
+LA-1100,Odisha,Sambalpur,Mining Development,Objection and Legal Review,5,497,248,177,168.61,100.0,0,1,53,2,0,18,45,2,1,38
+LA-1101,Karnataka,Dharwad,Highway Construction,Project Initiation,0,641,92,11,193.76,65.9,0,0,18,3,0,0,0,0,0,0
+LA-1102,Gujarat,Surat,Industrial Corridor,Project Initiation,0,62,270,106,52.23,56.9,1,1,131,1,0,73,0,0,1,164
+LA-1103,Uttar Pradesh,Agra,Pipeline Project,Survey and Verification,3,575,147,58,243.24,72.8,0,0,19,1,0,0,9,0,0,0
+LA-1104,Uttar Pradesh,Kanpur,Industrial Corridor,R&R and Rehabilitation,8,736,463,463,238.67,77.6,0,0,3,3,0,18,0,0,0,0
+LA-1105,Odisha,Cuttack,Power Transmission,Ownership Verification,4,73,60,18,60.99,75.3,0,0,6,3,1,26,27,0,0,0
+LA-1106,Karnataka,Belagavi,Industrial Corridor,Preliminary Notification,2,683,249,76,72.17,82.9,0,0,30,3,0,17,5,0,0,0
+LA-1107,Uttar Pradesh,Allahabad,Highway Construction,Preliminary Notification,2,817,433,138,234.18,100.0,0,0,5,0,0,0,8,0,0,0
+LA-1108,Odisha,Rourkela,Highway Construction,Preliminary Notification,2,39,144,93,41.04,74.7,0,0,16,3,0,15,15,0,0,0
+LA-1109,Gujarat,Bhavnagar,Power Transmission,Compensation Assessment,6,765,49,24,245.43,93.5,0,0,27,2,0,20,36,0,0,0
+LA-1110,Gujarat,Vadodara,Industrial Corridor,Ownership Verification,4,36,359,229,116.62,81.1,0,0,0,2,0,0,13,0,0,0
+LA-1111,Rajasthan,Kota,Mining Development,Preliminary Notification,2,750,387,344,175.63,85.4,0,0,30,3,0,4,0,0,0,0
+LA-1112,Gujarat,Gandhinagar,Industrial Corridor,Project Initiation,0,810,298,298,134.4,82.5,1,0,36,1,0,0,0,0,1,96
+LA-1113,Maharashtra,Kolhapur,Industrial Corridor,Project Initiation,0,764,349,186,201.83,75.2,0,0,14,3,0,18,0,0,0,0
+LA-1114,Odisha,Bhubaneswar,Industrial Corridor,Preliminary Notification,2,622,196,18,248.22,64.2,1,1,100,3,0,29,18,0,1,142
+LA-1115,Maharashtra,Kolhapur,Mining Development,Project Initiation,0,166,349,129,179.91,72.5,0,1,22,3,0,0,0,0,1,42
+LA-1116,Rajasthan,Kota,Urban Infrastructure,Land Identification,1,188,233,50,12.64,75.2,1,0,46,0,0,30,28,0,1,38
+LA-1117,Rajasthan,Jaipur,Dam / Irrigation,Objection and Legal Review,5,545,216,216,75.47,89.6,0,0,18,1,0,19,2,0,0,0
+LA-1118,Karnataka,Mysuru,Defense Installation,Objection and Legal Review,5,599,197,61,46.38,98.4,0,0,25,2,0,0,0,0,0,0
+LA-1119,Rajasthan,Udaipur,Dam / Irrigation,Survey and Verification,3,855,438,309,93.08,78.8,1,0,53,3,0,37,11,0,1,42
+LA-1120,Uttar Pradesh,Varanasi,Highway Construction,Project Initiation,0,104,484,484,47.91,93.5,0,0,10,1,0,0,0,0,0,0
+LA-1121,Odisha,Sambalpur,Industrial Corridor,Compensation Assessment,6,742,189,102,128.45,52.2,0,0,24,2,0,9,0,0,1,22
+LA-1122,Karnataka,Mangaluru,Urban Infrastructure,Compensation Assessment,6,238,105,48,208.42,69.2,0,0,29,3,1,18,18,0,1,14
+LA-1123,Karnataka,Hubli,Power Transmission,Preliminary Notification,2,811,474,422,222.4,82.1,0,0,5,1,0,23,9,0,0,0
+LA-1124,Madhya Pradesh,Bhopal,Railway Expansion,Land Identification,1,867,35,21,154.65,79.3,0,0,7,2,0,0,7,0,0,0
+LA-1125,Gujarat,Bhavnagar,Pipeline Project,Project Initiation,0,46,59,54,60.62,60.4,0,1,57,4,1,9,0,0,1,33
+LA-1126,Uttar Pradesh,Varanasi,Railway Expansion,Land Identification,1,412,212,23,95.13,76.5,0,0,9,1,1,0,0,0,0,0
+LA-1127,Maharashtra,Kolhapur,Dam / Irrigation,Project Initiation,0,114,113,110,141.91,80.0,0,0,27,1,0,3,0,0,0,0
+LA-1128,Uttar Pradesh,Lucknow,Railway Expansion,Land Identification,1,730,88,21,212.44,100.0,1,0,76,2,0,37,0,0,1,111
+LA-1129,Odisha,Cuttack,Railway Expansion,Final Acquisition,9,542,329,169,68.7,72.2,0,0,2,3,1,10,46,0,1,14
+LA-1130,Uttar Pradesh,Meerut,Defense Installation,Preliminary Notification,2,472,406,110,79.51,91.4,0,0,2,6,1,2,14,0,0,0
+LA-1131,Maharashtra,Nashik,Highway Construction,Objection and Legal Review,5,345,447,184,97.26,53.3,1,1,90,2,0,15,25,2,1,151
+LA-1132,Rajasthan,Ajmer,Mining Development,Preliminary Notification,2,203,133,113,236.08,59.3,0,0,4,2,1,2,0,0,1,11
+LA-1133,Madhya Pradesh,Indore,Pipeline Project,Objection and Legal Review,5,139,158,45,50.61,83.4,0,0,14,1,0,0,1,0,0,0
+LA-1134,Uttar Pradesh,Agra,Defense Installation,Objection and Legal Review,5,356,107,30,170.59,74.9,0,0,26,3,1,25,17,0,0,0
+LA-1135,Madhya Pradesh,Bhopal,Pipeline Project,Preliminary Notification,2,755,128,76,106.07,90.1,1,0,104,2,0,0,46,0,1,143
+LA-1136,Gujarat,Gandhinagar,Defense Installation,Objection and Legal Review,5,577,398,91,62.43,100.0,0,0,25,0,0,30,0,0,0,0
+LA-1137,Madhya Pradesh,Bhopal,Defense Installation,R&R and Rehabilitation,8,800,205,83,116.03,72.7,0,0,7,5,1,16,0,0,0,0
+LA-1138,Rajasthan,Udaipur,Highway Construction,Survey and Verification,3,524,229,128,180.64,57.1,1,1,118,0,0,40,0,0,1,104
+LA-1139,Karnataka,Bengaluru,Highway Construction,Objection and Legal Review,5,899,495,39,157.63,77.2,0,0,17,3,0,5,4,0,0,0
+LA-1140,Rajasthan,Bikaner,Defense Installation,Land Identification,1,435,414,303,81.83,100.0,0,1,38,0,0,0,9,0,0,0
+LA-1141,Gujarat,Ahmedabad,Power Transmission,Compensation Disbursement,7,716,421,147,229.71,96.3,0,0,11,1,0,11,0,0,0,0
+LA-1142,Madhya Pradesh,Bhopal,Dam / Irrigation,Preliminary Notification,2,350,330,0,232.71,93.3,0,1,55,3,0,12,25,0,1,33
+LA-1143,Rajasthan,Jodhpur,Urban Infrastructure,R&R and Rehabilitation,8,892,255,202,199.07,74.9,1,0,48,3,0,60,13,3,1,69
+LA-1144,Madhya Pradesh,Gwalior,Dam / Irrigation,Land Identification,1,829,282,13,205.74,95.9,0,0,3,2,0,18,1,0,0,0
+LA-1145,Madhya Pradesh,Indore,Defense Installation,Ownership Verification,4,134,402,402,203.07,89.4,0,0,1,4,1,0,0,0,0,0
+LA-1146,Karnataka,Hubli,Defense Installation,Objection and Legal Review,5,199,365,352,73.51,100.0,0,0,18,2,0,0,0,0,0,0
+LA-1147,Madhya Pradesh,Sagar,Railway Expansion,Preliminary Notification,2,168,369,165,80.86,62.4,0,0,27,1,0,0,0,0,0,0
+LA-1148,Gujarat,Rajkot,Dam / Irrigation,Land Identification,1,621,237,136,237.59,100.0,0,0,25,2,0,28,0,0,0,0
+LA-1149,Odisha,Bhubaneswar,Pipeline Project,Survey and Verification,3,680,285,173,144.69,83.1,0,0,6,4,1,30,0,0,0,0
+LA-1150,Uttar Pradesh,Allahabad,Highway Construction,Project Initiation,0,77,108,108,220.6,73.6,0,1,52,3,0,14,0,0,1,64
+LA-1151,Uttar Pradesh,Lucknow,Urban Infrastructure,Survey and Verification,3,286,114,24,119.46,100.0,0,1,54,0,0,23,0,0,1,70
+LA-1152,Gujarat,Ahmedabad,Highway Construction,Land Identification,1,742,193,138,193.48,76.9,0,0,2,2,0,23,2,0,0,0
+LA-1153,Odisha,Cuttack,Dam / Irrigation,Compensation Assessment,6,100,445,325,35.43,79.7,0,0,4,3,0,29,0,0,0,0
+LA-1154,Maharashtra,Thane,Defense Installation,Project Initiation,0,389,270,145,151.93,97.2,1,1,128,3,1,78,0,0,1,147
+LA-1155,Odisha,Cuttack,Pipeline Project,Preliminary Notification,2,425,445,341,136.82,98.1,0,0,29,3,0,0,9,0,0,0
+LA-1156,Rajasthan,Kota,Railway Expansion,Compensation Assessment,6,47,147,103,230.27,79.4,0,1,64,1,0,22,26,2,1,88
+LA-1157,Madhya Pradesh,Sagar,Railway Expansion,Land Identification,1,347,346,248,185.55,95.3,0,0,2,2,0,29,0,0,0,0
+LA-1158,Karnataka,Mysuru,Highway Construction,Preliminary Notification,2,197,380,370,221.66,72.9,0,0,8,2,0,0,14,0,0,0
+LA-1159,Odisha,Sambalpur,Power Transmission,Project Initiation,0,566,193,170,223.62,77.6,0,1,61,1,0,11,0,0,1,62
+LA-1160,Madhya Pradesh,Bhopal,Highway Construction,Compensation Assessment,6,42,297,104,225.53,69.2,1,1,136,0,0,80,34,3,1,139
+LA-1161,Gujarat,Ahmedabad,Pipeline Project,Ownership Verification,4,319,193,23,148.13,34.1,0,0,11,3,1,6,6,0,0,0
+LA-1162,Rajasthan,Bikaner,Mining Development,Project Initiation,0,808,5,3,184.65,83.3,0,0,17,2,0,11,0,0,0,0
+LA-1163,Uttar Pradesh,Lucknow,Industrial Corridor,Survey and Verification,3,572,463,15,21.68,100.0,0,0,1,6,1,29,0,0,0,0
+LA-1164,Maharashtra,Thane,Dam / Irrigation,Objection and Legal Review,5,682,167,65,235.92,85.0,0,0,8,2,0,27,0,0,0,0
+LA-1165,Rajasthan,Ajmer,Railway Expansion,Ownership Verification,4,189,51,43,206.68,97.5,1,0,73,0,0,0,40,0,1,81
+LA-1166,Odisha,Rourkela,Dam / Irrigation,Project Initiation,0,123,442,54,62.84,74.4,0,0,9,3,0,8,0,0,0,0
+LA-1167,Gujarat,Ahmedabad,Dam / Irrigation,Land Identification,1,154,38,28,202.42,100.0,1,0,50,0,0,65,8,0,1,69
+LA-1168,Uttar Pradesh,Lucknow,Highway Construction,Compensation Assessment,6,502,457,214,37.58,63.0,0,1,31,3,0,0,0,2,1,49
+LA-1169,Uttar Pradesh,Varanasi,Defense Installation,R&R and Rehabilitation,8,593,200,131,136.36,74.4,0,0,7,0,0,0,2,0,0,0
+LA-1170,Gujarat,Vadodara,Mining Development,Compensation Disbursement,7,359,397,163,40.33,73.3,0,0,1,2,0,0,9,0,0,0
+LA-1171,Rajasthan,Bikaner,Industrial Corridor,Preliminary Notification,2,302,126,18,174.56,50.9,0,0,25,1,0,12,0,0,0,0
+LA-1172,Madhya Pradesh,Bhopal,Urban Infrastructure,Project Initiation,0,611,124,55,150.61,60.7,0,1,35,0,0,15,0,0,1,46
+LA-1173,Madhya Pradesh,Indore,Dam / Irrigation,Land Identification,1,378,196,93,146.71,73.7,0,0,29,3,1,4,0,0,0,0
+LA-1174,Uttar Pradesh,Kanpur,Urban Infrastructure,R&R and Rehabilitation,8,169,119,38,94.91,100.0,0,0,22,2,0,30,0,0,0,0
+LA-1175,Karnataka,Dharwad,Power Transmission,Project Initiation,0,160,476,293,202.3,82.5,0,0,18,2,0,0,0,0,0,0
+LA-1176,Maharashtra,Nagpur,Dam / Irrigation,Land Identification,1,369,10,1,66.67,65.4,0,0,28,3,0,30,0,0,0,0
+LA-1177,Uttar Pradesh,Lucknow,Highway Construction,Objection and Legal Review,5,79,408,228,216.08,88.7,0,0,15,3,0,0,0,0,0,0
+LA-1178,Rajasthan,Kota,Railway Expansion,Preliminary Notification,2,848,285,138,235.49,59.7,0,0,2,0,0,0,5,0,1,14
+LA-1179,Madhya Pradesh,Jabalpur,Highway Construction,R&R and Rehabilitation,8,471,149,83,98.53,92.1,0,0,6,5,1,13,0,0,0,0
+LA-1180,Madhya Pradesh,Jabalpur,Dam / Irrigation,Ownership Verification,4,85,162,89,196.33,69.8,0,1,28,0,0,5,44,1,1,50
+LA-1181,Maharashtra,Kolhapur,Mining Development,Ownership Verification,4,426,390,216,167.2,96.9,0,0,7,1,1,26,34,0,0,0
+LA-1182,Odisha,Berhampur,Defense Installation,Compensation Disbursement,7,804,248,126,213.56,62.7,0,0,27,1,0,29,0,0,0,0
+LA-1183,Maharashtra,Thane,Mining Development,Preliminary Notification,2,849,221,221,50.88,35.8,0,1,33,0,0,0,0,0,1,40
+LA-1184,Uttar Pradesh,Kanpur,Railway Expansion,Project Initiation,0,119,62,28,147.19,57.5,0,0,14,3,0,29,0,0,0,0
+LA-1185,Odisha,Bhubaneswar,Railway Expansion,Final Acquisition,9,606,24,17,154.75,87.8,0,0,20,3,0,15,0,0,0,0
+LA-1186,Karnataka,Dharwad,Defense Installation,Ownership Verification,4,69,436,59,25.01,52.7,1,0,33,2,0,70,56,0,1,76
+LA-1187,Gujarat,Vadodara,Power Transmission,Compensation Disbursement,7,776,164,30,177.54,100.0,0,0,26,2,1,13,29,0,0,0
+LA-1188,Madhya Pradesh,Ujjain,Highway Construction,Survey and Verification,3,207,330,330,230.81,99.9,0,1,32,3,0,29,9,0,0,0
+LA-1189,Gujarat,Gandhinagar,Pipeline Project,Land Identification,1,211,442,393,143.28,69.8,0,0,26,1,0,28,0,0,0,0
+LA-1190,Karnataka,Mysuru,Industrial Corridor,Project Initiation,0,305,336,285,56.33,74.2,0,0,21,1,0,0,0,0,0,0
+LA-1191,Madhya Pradesh,Gwalior,Power Transmission,Land Identification,1,463,266,266,209.92,100.0,0,0,19,0,0,12,0,0,0,0
+LA-1192,Madhya Pradesh,Sagar,Power Transmission,Ownership Verification,4,335,81,30,14.67,73.7,0,0,20,1,0,22,0,0,0,0
+LA-1193,Odisha,Berhampur,Defense Installation,Final Acquisition,9,706,188,3,210.24,77.8,1,1,75,6,1,0,95,4,1,112
+LA-1194,Karnataka,Hubli,Mining Development,Survey and Verification,3,811,195,66,65.51,100.0,0,0,7,2,0,0,0,0,0,0
+LA-1195,Gujarat,Ahmedabad,Railway Expansion,Project Initiation,0,513,107,12,223.26,100.0,0,0,9,1,0,13,0,0,0,0
+LA-1196,Gujarat,Surat,Urban Infrastructure,Preliminary Notification,2,762,255,182,32.79,85.1,0,0,14,1,0,8,4,0,0,0
+LA-1197,Gujarat,Bhavnagar,Defense Installation,Survey and Verification,3,443,351,351,56.95,63.5,0,1,63,0,0,0,23,0,1,65
+LA-1198,Gujarat,Gandhinagar,Power Transmission,Preliminary Notification,2,201,389,389,47.51,89.8,1,1,156,2,0,47,0,0,1,91
+LA-1199,Rajasthan,Jodhpur,Dam / Irrigation,Project Initiation,0,246,343,69,27.47,79.6,1,1,135,0,0,68,0,0,1,93
+LA-1200,Gujarat,Rajkot,Railway Expansion,Ownership Verification,4,590,373,186,154.62,81.5,0,1,60,3,1,16,64,1,1,90
+LA-1201,Rajasthan,Ajmer,Industrial Corridor,Objection and Legal Review,5,826,432,124,237.39,80.2,0,1,43,1,1,22,36,2,1,42
+LA-1202,Maharashtra,Aurangabad,Industrial Corridor,Project Initiation,0,497,415,190,29.42,79.9,0,0,5,2,0,27,0,0,0,0
+LA-1203,Odisha,Bhubaneswar,Highway Construction,Objection and Legal Review,5,171,63,0,68.32,76.3,0,0,2,1,0,0,0,0,0,0
+LA-1204,Gujarat,Bhavnagar,Pipeline Project,Compensation Assessment,6,849,318,240,7.69,48.9,1,1,85,2,0,0,65,3,1,57
+LA-1205,Gujarat,Ahmedabad,Defense Installation,Survey and Verification,3,481,270,37,24.26,95.4,0,0,18,2,0,0,2,0,0,0
+LA-1206,Karnataka,Dharwad,Industrial Corridor,Project Initiation,0,523,263,255,212.29,66.7,0,0,1,1,0,0,0,0,0,0
+LA-1207,Maharashtra,Solapur,Pipeline Project,Land Identification,1,358,443,326,124.86,52.9,0,1,59,4,1,12,0,0,1,106
+LA-1208,Karnataka,Bengaluru,Railway Expansion,Objection and Legal Review,5,443,437,101,155.13,62.4,1,1,102,1,0,72,27,2,1,103
+LA-1209,Maharashtra,Nashik,Industrial Corridor,Project Initiation,0,32,257,232,180.53,58.2,0,1,54,1,0,22,0,0,1,43
+LA-1210,Maharashtra,Solapur,Defense Installation,Possession and Handover,10,250,239,78,164.78,93.9,0,0,13,3,0,1,0,0,0,0
+LA-1211,Gujarat,Ahmedabad,Mining Development,Preliminary Notification,2,783,341,151,150.34,79.4,0,1,42,3,0,22,13,0,1,39
+LA-1212,Gujarat,Gandhinagar,Industrial Corridor,Objection and Legal Review,5,310,112,47,86.65,68.8,0,1,75,2,1,9,24,1,1,92
+LA-1213,Rajasthan,Ajmer,Mining Development,Compensation Assessment,6,740,454,15,211.9,100.0,0,0,18,2,0,18,0,0,0,0
+LA-1214,Maharashtra,Nagpur,Dam / Irrigation,Preliminary Notification,2,84,109,23,188.52,61.6,0,0,9,2,0,21,9,0,0,0
+LA-1215,Maharashtra,Thane,Mining Development,Ownership Verification,4,259,165,113,241.48,88.7,0,0,25,6,1,0,16,0,0,0
+LA-1216,Rajasthan,Ajmer,Pipeline Project,Survey and Verification,3,879,234,0,44.77,91.9,0,1,67,2,0,23,22,0,1,42
+LA-1217,Karnataka,Belagavi,Railway Expansion,Project Initiation,0,416,480,317,81.0,96.1,0,0,14,1,0,22,0,0,0,0
+LA-1218,Madhya Pradesh,Sagar,Power Transmission,Preliminary Notification,2,532,283,150,134.49,95.1,0,0,16,3,1,0,0,0,0,0
+LA-1219,Rajasthan,Bikaner,Urban Infrastructure,Project Initiation,0,369,347,164,160.74,89.0,0,0,17,0,0,26,0,0,0,0
+LA-1220,Madhya Pradesh,Indore,Highway Construction,Objection and Legal Review,5,728,464,135,163.06,95.3,1,0,86,2,1,0,3,1,1,72
+LA-1221,Rajasthan,Ajmer,Mining Development,Compensation Assessment,6,37,387,222,179.36,73.3,0,0,6,0,0,0,0,0,0,0
+LA-1222,Maharashtra,Nashik,Railway Expansion,Objection and Legal Review,5,85,333,193,186.61,88.0,0,1,69,0,0,12,27,2,1,54
+LA-1223,Madhya Pradesh,Bhopal,Power Transmission,Compensation Assessment,6,835,387,245,98.05,75.3,0,0,12,2,1,0,13,0,1,12
+LA-1224,Karnataka,Mysuru,Power Transmission,Land Identification,1,723,7,2,137.11,100.0,0,0,27,0,0,17,0,0,0,0
+LA-1225,Maharashtra,Aurangabad,Industrial Corridor,Survey and Verification,3,796,97,40,14.07,80.4,0,1,34,0,0,19,0,0,1,102
+LA-1226,Gujarat,Bhavnagar,Mining Development,Preliminary Notification,2,104,167,81,121.72,58.1,1,1,116,1,1,0,10,0,1,179
+LA-1227,Rajasthan,Ajmer,Urban Infrastructure,Preliminary Notification,2,857,241,27,122.0,74.3,1,1,111,4,1,0,32,0,1,78
+LA-1228,Uttar Pradesh,Agra,Mining Development,Project Initiation,0,231,113,103,136.1,76.1,0,1,47,6,1,20,0,0,1,32
+LA-1229,Uttar Pradesh,Varanasi,Industrial Corridor,Objection and Legal Review,5,820,76,46,111.83,87.4,0,0,2,4,1,12,8,0,0,0
+LA-1230,Karnataka,Mysuru,Pipeline Project,Survey and Verification,3,397,456,202,12.09,100.0,0,1,24,5,1,21,29,0,1,52
+LA-1231,Madhya Pradesh,Sagar,Power Transmission,Land Identification,1,884,197,159,101.76,80.8,0,0,28,2,0,26,0,0,0,0
+LA-1232,Odisha,Rourkela,Pipeline Project,Preliminary Notification,2,841,372,290,103.95,57.6,1,0,75,5,1,25,17,0,1,69
+LA-1233,Gujarat,Rajkot,Industrial Corridor,Preliminary Notification,2,634,90,49,64.94,61.7,0,1,70,2,1,5,0,0,1,102
+LA-1234,Madhya Pradesh,Sagar,Highway Construction,Survey and Verification,3,766,411,63,155.99,77.4,0,0,15,1,0,5,0,0,0,0
+LA-1235,Madhya Pradesh,Gwalior,Dam / Irrigation,Compensation Assessment,6,771,248,230,219.5,66.0,1,0,45,1,0,58,0,2,1,76
+LA-1236,Gujarat,Bhavnagar,Dam / Irrigation,Objection and Legal Review,5,647,122,112,192.28,81.8,1,0,99,3,0,0,34,1,1,56
+LA-1237,Odisha,Berhampur,Railway Expansion,Ownership Verification,4,465,272,170,163.81,66.3,1,1,151,3,1,0,38,1,1,143
+LA-1238,Rajasthan,Kota,Power Transmission,Survey and Verification,3,297,194,92,139.99,97.6,0,0,21,1,0,12,0,0,0,0
+LA-1239,Madhya Pradesh,Gwalior,Defense Installation,Land Identification,1,783,319,285,174.42,87.5,0,1,84,5,1,30,9,0,1,68
+LA-1240,Karnataka,Bengaluru,Railway Expansion,Final Acquisition,9,873,258,47,110.02,100.0,1,0,70,4,1,64,189,2,1,126
+LA-1241,Uttar Pradesh,Agra,Highway Construction,Objection and Legal Review,5,832,12,7,23.0,64.4,1,1,56,4,1,67,2,2,1,135
+LA-1242,Uttar Pradesh,Kanpur,Power Transmission,Compensation Assessment,6,261,179,120,236.78,46.9,0,0,8,2,0,5,7,0,0,0
+LA-1243,Madhya Pradesh,Ujjain,Power Transmission,Compensation Disbursement,7,740,251,175,29.51,39.4,0,0,10,0,0,30,0,0,1,20
+LA-1244,Rajasthan,Bikaner,Industrial Corridor,Land Identification,1,849,248,128,143.64,64.0,1,0,73,1,0,78,28,0,1,84
+LA-1245,Rajasthan,Kota,Industrial Corridor,Objection and Legal Review,5,270,494,354,166.02,73.1,0,0,7,3,1,26,3,0,0,0
+LA-1246,Madhya Pradesh,Bhopal,Pipeline Project,Ownership Verification,4,410,208,208,55.91,61.9,0,0,27,2,0,0,12,0,0,0
+LA-1247,Odisha,Sambalpur,Pipeline Project,Objection and Legal Review,5,583,190,186,153.39,79.2,1,1,122,2,0,0,13,2,1,143
+LA-1248,Gujarat,Gandhinagar,Urban Infrastructure,Preliminary Notification,2,404,421,333,59.33,89.6,0,0,14,1,0,5,11,0,0,0
+LA-1249,Gujarat,Rajkot,Industrial Corridor,Objection and Legal Review,5,179,208,201,25.19,91.1,1,0,114,0,0,73,0,1,1,97
+LA-1250,Gujarat,Bhavnagar,Railway Expansion,Objection and Legal Review,5,490,300,64,44.05,81.5,0,0,13,1,0,3,0,0,0,0
+LA-1251,Odisha,Rourkela,Urban Infrastructure,Preliminary Notification,2,362,220,73,212.3,72.3,0,0,20,2,0,30,0,0,0,0
+LA-1252,Maharashtra,Nashik,Dam / Irrigation,Objection and Legal Review,5,381,216,192,31.7,84.1,0,0,14,3,0,24,10,0,0,0
+LA-1253,Rajasthan,Bikaner,Power Transmission,Compensation Assessment,6,791,122,94,62.23,79.8,1,1,58,5,1,0,15,3,1,128
+LA-1254,Odisha,Cuttack,Highway Construction,Preliminary Notification,2,65,328,195,109.03,63.5,1,1,134,3,0,58,0,0,1,65
+LA-1255,Gujarat,Gandhinagar,Industrial Corridor,Preliminary Notification,2,854,489,470,188.99,73.7,1,1,101,3,0,84,9,0,1,150
+LA-1256,Rajasthan,Jaipur,Mining Development,Survey and Verification,3,412,221,76,200.09,96.0,0,0,26,0,0,12,22,0,0,0
+LA-1257,Madhya Pradesh,Sagar,Power Transmission,Ownership Verification,4,321,278,170,6.02,68.8,1,1,136,2,1,57,0,1,1,110
+LA-1258,Gujarat,Bhavnagar,Highway Construction,Project Initiation,0,268,402,252,98.41,84.6,1,1,79,2,0,25,0,0,1,100
+LA-1259,Gujarat,Ahmedabad,Railway Expansion,Land Identification,1,816,247,3,234.09,78.1,0,0,23,1,0,24,0,0,0,0
+LA-1260,Rajasthan,Bikaner,Highway Construction,Survey and Verification,3,792,329,181,198.7,100.0,0,0,27,1,1,0,0,0,0,0
+LA-1261,Madhya Pradesh,Bhopal,Defense Installation,Preliminary Notification,2,838,51,25,242.43,84.1,0,0,24,3,0,2,31,0,0,0
+LA-1262,Odisha,Bhubaneswar,Highway Construction,Survey and Verification,3,394,198,98,224.72,64.8,1,0,89,3,1,0,0,0,1,79
+LA-1263,Madhya Pradesh,Sagar,Pipeline Project,R&R and Rehabilitation,8,224,156,142,204.94,59.8,0,0,27,3,0,26,23,0,0,0
+LA-1264,Odisha,Berhampur,Defense Installation,R&R and Rehabilitation,8,781,333,266,80.85,76.9,1,1,70,3,0,0,59,4,1,131
+LA-1265,Rajasthan,Jodhpur,Highway Construction,Project Initiation,0,236,118,85,151.69,91.2,0,1,78,2,0,18,0,0,1,67
+LA-1266,Karnataka,Mangaluru,Railway Expansion,Ownership Verification,4,509,380,315,236.18,84.0,0,0,22,0,0,1,0,0,0,0
+LA-1267,Madhya Pradesh,Bhopal,Railway Expansion,Land Identification,1,772,350,59,220.76,84.1,0,1,67,2,0,0,16,0,1,54
+LA-1268,Madhya Pradesh,Gwalior,Dam / Irrigation,Objection and Legal Review,5,576,316,89,60.56,60.1,0,0,10,2,0,27,1,0,0,0
+LA-1269,Madhya Pradesh,Sagar,Power Transmission,Project Initiation,0,398,460,238,55.86,77.1,0,0,9,1,0,0,0,0,0,0
+LA-1270,Odisha,Rourkela,Highway Construction,Project Initiation,0,820,187,34,39.45,94.0,0,0,4,3,0,0,0,0,0,0
+LA-1271,Rajasthan,Jodhpur,Power Transmission,Objection and Legal Review,5,860,309,309,160.74,100.0,0,0,2,0,0,23,10,0,0,0
+LA-1272,Gujarat,Ahmedabad,Highway Construction,Survey and Verification,3,819,32,1,76.54,89.6,0,0,3,3,0,0,16,0,0,0
+LA-1273,Rajasthan,Udaipur,Mining Development,Ownership Verification,4,744,47,5,137.26,87.7,1,1,151,2,0,26,25,1,1,84
+LA-1274,Karnataka,Mysuru,Dam / Irrigation,Survey and Verification,3,522,170,142,171.34,93.4,0,0,19,3,0,23,0,0,0,0
+LA-1275,Gujarat,Rajkot,Urban Infrastructure,Preliminary Notification,2,386,107,90,171.5,78.0,1,1,118,1,0,0,0,0,1,110
+LA-1276,Karnataka,Bengaluru,Industrial Corridor,Survey and Verification,3,665,109,13,137.43,100.0,1,0,94,1,0,31,0,0,1,95
+LA-1277,Karnataka,Dharwad,Highway Construction,Ownership Verification,4,415,203,150,165.26,72.1,0,0,9,1,1,6,24,0,0,0
+LA-1278,Uttar Pradesh,Lucknow,Highway Construction,Objection and Legal Review,5,329,261,84,241.71,48.0,0,0,22,2,1,3,9,0,0,0
+LA-1279,Maharashtra,Pune,Mining Development,Ownership Verification,4,342,325,325,64.79,71.4,0,0,11,3,1,11,4,0,0,0
+LA-1280,Maharashtra,Thane,Power Transmission,Final Acquisition,9,260,164,135,135.79,100.0,0,1,60,3,0,30,136,3,1,51
+LA-1281,Karnataka,Mysuru,Dam / Irrigation,Preliminary Notification,2,346,39,12,139.56,62.6,0,0,29,2,0,24,24,0,0,0
+LA-1282,Uttar Pradesh,Agra,Highway Construction,Ownership Verification,4,813,99,75,7.04,79.1,0,0,23,1,0,29,6,0,0,0
+LA-1283,Madhya Pradesh,Ujjain,Industrial Corridor,R&R and Rehabilitation,8,640,75,53,102.44,79.8,0,1,38,3,0,0,0,3,1,78
+LA-1284,Rajasthan,Bikaner,Industrial Corridor,Survey and Verification,3,805,373,242,78.57,62.1,1,1,126,3,0,66,10,0,1,96
+LA-1285,Madhya Pradesh,Sagar,Highway Construction,Compensation Assessment,6,563,154,3,193.53,97.4,0,0,23,1,1,1,16,0,0,0
+LA-1286,Uttar Pradesh,Varanasi,Dam / Irrigation,Land Identification,1,462,403,21,136.83,70.9,0,0,2,1,0,23,12,0,0,0
+LA-1287,Gujarat,Rajkot,Urban Infrastructure,Preliminary Notification,2,491,51,43,91.05,100.0,0,0,10,0,0,22,2,0,0,0
+LA-1288,Madhya Pradesh,Sagar,Defense Installation,Objection and Legal Review,5,774,88,64,178.16,87.5,0,0,29,1,0,0,0,0,0,0
+LA-1289,Gujarat,Vadodara,Power Transmission,Compensation Disbursement,7,777,214,96,110.75,84.3,1,0,71,5,1,39,0,3,1,99
+LA-1290,Uttar Pradesh,Meerut,Mining Development,Ownership Verification,4,869,96,68,40.75,84.6,0,1,72,2,1,0,14,1,1,99
+LA-1291,Madhya Pradesh,Ujjain,Mining Development,Compensation Assessment,6,211,360,277,103.73,100.0,1,0,96,0,0,40,17,2,1,71
+LA-1292,Maharashtra,Thane,Mining Development,Compensation Assessment,6,119,479,196,32.86,58.7,0,0,9,2,0,0,10,0,0,0
+LA-1293,Karnataka,Mangaluru,Pipeline Project,Project Initiation,0,857,382,347,249.75,73.6,0,1,22,0,0,0,0,0,1,53
+LA-1294,Odisha,Cuttack,Highway Construction,Land Identification,1,685,431,371,44.32,86.7,1,1,127,0,0,34,2,0,1,163
+LA-1295,Gujarat,Ahmedabad,Dam / Irrigation,Project Initiation,0,523,294,257,181.38,93.2,0,0,29,2,0,0,0,0,0,0
+LA-1296,Rajasthan,Ajmer,Urban Infrastructure,Objection and Legal Review,5,848,309,58,29.65,100.0,0,0,26,4,1,0,0,0,0,0
+LA-1297,Odisha,Rourkela,Highway Construction,Survey and Verification,3,308,472,348,23.6,66.9,0,0,30,1,1,9,0,0,0,0
+LA-1298,Madhya Pradesh,Indore,Industrial Corridor,Land Identification,1,378,240,109,97.2,80.8,0,0,4,0,0,0,0,0,0,0
+LA-1299,Uttar Pradesh,Lucknow,Railway Expansion,Ownership Verification,4,371,103,45,72.0,75.3,1,0,31,1,0,0,10,0,1,73
+LA-1300,Maharashtra,Aurangabad,Dam / Irrigation,Preliminary Notification,2,191,41,14,135.37,81.5,0,0,10,2,1,8,2,0,0,0
+LA-1301,Maharashtra,Pune,Highway Construction,Objection and Legal Review,5,512,477,477,189.06,86.8,1,0,105,0,0,0,11,1,1,113
+LA-1302,Gujarat,Ahmedabad,Pipeline Project,Ownership Verification,4,347,363,302,215.27,70.7,0,0,19,4,1,0,0,0,0,0
+LA-1303,Uttar Pradesh,Varanasi,Pipeline Project,Land Identification,1,60,412,370,18.2,90.1,0,0,18,6,1,4,1,0,0,0
+LA-1304,Uttar Pradesh,Meerut,Pipeline Project,Objection and Legal Review,5,440,383,365,121.91,70.8,1,1,140,0,0,62,7,2,1,102
+LA-1305,Odisha,Sambalpur,Dam / Irrigation,Objection and Legal Review,5,345,459,73,202.55,87.3,1,0,92,2,1,0,11,1,1,60
+LA-1306,Uttar Pradesh,Varanasi,Pipeline Project,Objection and Legal Review,5,230,36,13,92.62,65.2,0,1,55,3,1,0,38,2,1,71
+LA-1307,Madhya Pradesh,Gwalior,Railway Expansion,Survey and Verification,3,318,248,209,210.91,90.8,0,0,12,1,0,13,0,0,0,0
+LA-1308,Uttar Pradesh,Varanasi,Dam / Irrigation,Land Identification,1,325,417,131,197.34,100.0,1,1,147,4,1,0,7,0,1,129
+LA-1309,Madhya Pradesh,Jabalpur,Mining Development,Survey and Verification,3,869,24,24,142.25,87.1,0,0,18,3,1,15,0,0,0,0
+LA-1310,Gujarat,Bhavnagar,Railway Expansion,Compensation Disbursement,7,175,130,116,118.38,73.5,0,0,8,0,0,0,44,0,0,0
+LA-1311,Maharashtra,Kolhapur,Mining Development,Compensation Disbursement,7,847,220,84,88.55,36.3,0,0,0,2,0,15,26,0,1,14
+LA-1312,Rajasthan,Jaipur,Power Transmission,Project Initiation,0,774,253,94,21.09,85.1,0,0,9,2,0,0,0,0,0,0
+LA-1313,Uttar Pradesh,Kanpur,Dam / Irrigation,Preliminary Notification,2,660,125,97,121.49,80.8,0,1,57,5,1,23,0,0,1,27
+LA-1314,Maharashtra,Pune,Dam / Irrigation,Project Initiation,0,887,391,244,204.97,24.8,0,0,6,2,0,18,0,0,1,17
+LA-1315,Gujarat,Vadodara,Pipeline Project,Ownership Verification,4,794,54,41,229.47,100.0,0,1,58,0,0,0,2,1,1,31
+LA-1316,Madhya Pradesh,Sagar,Power Transmission,Survey and Verification,3,373,351,186,137.13,77.9,0,1,65,2,0,0,47,0,1,71
+LA-1317,Gujarat,Ahmedabad,Mining Development,Land Identification,1,136,491,363,150.05,82.4,0,0,1,1,0,0,7,0,0,0
+LA-1318,Maharashtra,Solapur,Dam / Irrigation,Land Identification,1,414,332,310,113.63,100.0,0,0,28,0,0,0,0,0,0,0
+LA-1319,Karnataka,Dharwad,Urban Infrastructure,Preliminary Notification,2,293,317,302,98.46,81.1,1,1,81,1,0,56,60,0,1,110
+LA-1320,Gujarat,Surat,Railway Expansion,Possession and Handover,10,482,299,212,1.42,80.2,0,1,74,4,1,4,6,3,1,45
+LA-1321,Gujarat,Rajkot,Railway Expansion,Ownership Verification,4,583,328,328,91.66,84.7,0,0,11,4,1,10,17,0,0,0
+LA-1322,Odisha,Rourkela,Railway Expansion,Land Identification,1,891,48,40,47.77,52.3,0,0,6,4,1,9,2,0,1,16
+LA-1323,Madhya Pradesh,Indore,Pipeline Project,Project Initiation,0,428,33,11,101.67,82.9,0,1,69,2,0,30,0,0,1,57
+LA-1324,Gujarat,Bhavnagar,Mining Development,Project Initiation,0,182,28,17,4.08,57.0,0,0,15,6,1,0,0,0,1,12
+LA-1325,Odisha,Bhubaneswar,Pipeline Project,Survey and Verification,3,655,420,284,209.06,53.1,0,1,68,2,0,25,26,0,1,35
+LA-1326,Karnataka,Belagavi,Mining Development,Objection and Legal Review,5,170,56,39,94.34,61.8,1,1,105,1,1,59,56,2,1,97
+LA-1327,Maharashtra,Pune,Railway Expansion,Preliminary Notification,2,753,215,215,60.19,76.9,0,0,24,3,0,0,4,0,0,0
+LA-1328,Madhya Pradesh,Indore,Pipeline Project,Survey and Verification,3,656,321,272,90.79,100.0,0,0,0,0,0,17,10,0,0,0
+LA-1329,Rajasthan,Kota,Industrial Corridor,Preliminary Notification,2,313,112,58,108.95,59.6,1,1,157,4,1,0,12,0,1,162
+LA-1330,Maharashtra,Kolhapur,Highway Construction,Survey and Verification,3,580,122,79,24.97,96.2,1,0,79,2,0,0,43,0,1,92
+LA-1331,Rajasthan,Jaipur,Pipeline Project,Preliminary Notification,2,629,188,157,243.9,69.3,0,0,14,4,1,0,0,0,1,21
+LA-1332,Karnataka,Belagavi,Highway Construction,Preliminary Notification,2,317,300,300,22.08,100.0,0,0,19,1,0,0,17,0,0,0
+LA-1333,Odisha,Berhampur,Pipeline Project,Survey and Verification,3,251,472,270,245.06,53.2,0,1,52,1,0,18,0,0,1,57
+LA-1334,Madhya Pradesh,Bhopal,Defense Installation,Land Identification,1,573,491,68,54.89,80.4,0,0,15,3,0,7,0,0,0,0
+LA-1335,Maharashtra,Nashik,Pipeline Project,Compensation Disbursement,7,715,99,0,197.57,92.3,0,0,0,3,0,0,6,0,0,0
+LA-1336,Karnataka,Bengaluru,Railway Expansion,R&R and Rehabilitation,8,424,455,230,84.26,96.6,0,0,8,3,1,22,0,0,0,0
+LA-1337,Karnataka,Hubli,Highway Construction,Land Identification,1,143,281,113,28.83,73.1,0,0,20,3,1,17,0,0,0,0
+LA-1338,Madhya Pradesh,Sagar,Industrial Corridor,Project Initiation,0,801,195,78,131.91,87.7,0,0,21,0,0,13,0,0,0,0
+LA-1339,Maharashtra,Nagpur,Mining Development,Land Identification,1,724,49,49,72.45,99.6,0,0,30,3,0,0,0,0,0,0
+LA-1340,Maharashtra,Nashik,Dam / Irrigation,Objection and Legal Review,5,312,154,96,200.6,89.8,1,1,160,0,0,47,21,2,1,125
+LA-1341,Karnataka,Dharwad,Urban Infrastructure,Preliminary Notification,2,527,195,157,242.7,100.0,0,0,9,3,0,18,4,0,0,0
+LA-1342,Uttar Pradesh,Kanpur,Pipeline Project,Preliminary Notification,2,200,299,217,32.06,76.4,0,0,5,2,0,26,3,0,0,0
+LA-1343,Madhya Pradesh,Sagar,Highway Construction,Land Identification,1,711,398,180,36.77,93.5,0,0,5,3,0,17,5,0,0,0
+LA-1344,Maharashtra,Kolhapur,Mining Development,Final Acquisition,9,549,178,161,172.44,86.1,0,0,30,3,0,24,37,0,0,0
+LA-1345,Rajasthan,Bikaner,Mining Development,Survey and Verification,3,149,105,53,6.13,43.6,1,1,64,2,0,70,0,0,1,122
+LA-1346,Maharashtra,Thane,Defense Installation,Project Initiation,0,229,181,113,88.16,57.6,1,0,96,2,0,45,0,0,1,58
+LA-1347,Rajasthan,Bikaner,Pipeline Project,Preliminary Notification,2,789,78,53,216.95,100.0,0,0,28,0,0,13,0,0,0,0
+LA-1348,Uttar Pradesh,Lucknow,Defense Installation,Preliminary Notification,2,120,153,79,206.65,100.0,0,0,29,3,0,4,0,0,0,0
+LA-1349,Odisha,Berhampur,Power Transmission,Land Identification,1,535,96,13,61.57,63.3,1,1,161,4,1,0,3,0,1,102
+LA-1350,Maharashtra,Thane,Urban Infrastructure,Land Identification,1,625,302,171,15.1,100.0,0,0,22,3,1,0,0,0,0,0
+LA-1351,Rajasthan,Udaipur,Dam / Irrigation,R&R and Rehabilitation,8,84,396,182,24.08,100.0,0,0,9,1,0,9,39,0,0,0
+LA-1352,Odisha,Rourkela,Power Transmission,Project Initiation,0,307,403,132,227.74,59.5,0,0,26,4,1,4,0,0,1,24
+LA-1353,Rajasthan,Jodhpur,Mining Development,Land Identification,1,658,477,300,4.84,88.3,0,0,22,1,0,0,0,0,0,0
+LA-1354,Rajasthan,Kota,Mining Development,Preliminary Notification,2,811,162,76,31.77,100.0,0,0,3,1,0,0,4,0,0,0
+LA-1355,Karnataka,Bengaluru,Railway Expansion,R&R and Rehabilitation,8,49,38,24,75.76,87.3,0,0,25,3,1,21,16,0,0,0
+LA-1356,Maharashtra,Thane,Industrial Corridor,Ownership Verification,4,631,263,195,142.77,82.5,0,0,27,1,0,23,0,0,0,0
+LA-1357,Maharashtra,Thane,Industrial Corridor,Objection and Legal Review,5,762,199,94,106.31,95.8,1,1,91,2,0,71,11,2,1,97
+LA-1358,Gujarat,Ahmedabad,Mining Development,Ownership Verification,4,169,213,14,73.0,65.0,0,1,45,4,1,14,23,1,1,39
+LA-1359,Odisha,Sambalpur,Urban Infrastructure,Preliminary Notification,2,213,360,173,231.36,100.0,0,0,3,3,0,0,1,0,0,0
+LA-1360,Rajasthan,Jaipur,Urban Infrastructure,Compensation Assessment,6,233,253,109,113.93,69.2,1,0,62,3,0,0,71,2,1,64
+LA-1361,Karnataka,Mysuru,Highway Construction,Final Acquisition,9,131,394,325,19.59,100.0,0,0,5,0,0,12,0,0,0,0
+LA-1362,Odisha,Sambalpur,Industrial Corridor,Project Initiation,0,330,455,388,78.98,51.3,0,0,27,2,1,17,0,0,1,18
+LA-1363,Maharashtra,Pune,Mining Development,Compensation Assessment,6,705,342,72,138.67,96.0,0,0,4,3,0,9,2,0,0,0
+LA-1364,Madhya Pradesh,Indore,Mining Development,Ownership Verification,4,87,433,325,91.92,77.0,0,0,11,1,0,24,22,0,0,0
+LA-1365,Odisha,Rourkela,Defense Installation,Survey and Verification,3,129,449,321,76.58,59.8,0,0,7,0,0,7,0,0,0,0
+LA-1366,Uttar Pradesh,Lucknow,Pipeline Project,Project Initiation,0,703,198,71,24.88,85.1,0,0,22,2,0,15,0,0,0,0
+LA-1367,Gujarat,Ahmedabad,Industrial Corridor,Compensation Disbursement,7,374,114,65,249.06,49.1,0,0,6,3,1,0,0,0,1,13
+LA-1368,Karnataka,Bengaluru,Railway Expansion,Ownership Verification,4,636,107,63,103.87,89.4,1,0,70,2,0,39,0,0,1,120
+LA-1369,Odisha,Berhampur,Dam / Irrigation,R&R and Rehabilitation,8,49,272,190,60.47,66.9,1,1,128,0,0,0,0,4,1,151
+LA-1370,Uttar Pradesh,Lucknow,Industrial Corridor,Survey and Verification,3,896,413,300,206.89,100.0,0,0,19,1,0,7,5,0,0,0
+LA-1371,Gujarat,Rajkot,Highway Construction,Project Initiation,0,236,33,22,150.6,87.1,1,1,113,4,1,0,0,0,1,158
+LA-1372,Karnataka,Dharwad,Railway Expansion,Land Identification,1,436,457,119,23.02,71.3,0,0,23,4,1,16,0,0,0,0
+LA-1373,Uttar Pradesh,Kanpur,Defense Installation,Ownership Verification,4,855,256,236,133.6,63.8,0,0,5,0,0,6,0,0,0,0
+LA-1374,Madhya Pradesh,Jabalpur,Pipeline Project,Project Initiation,0,729,435,245,14.14,73.6,1,1,142,0,0,55,0,0,1,130
+LA-1375,Karnataka,Dharwad,Urban Infrastructure,Ownership Verification,4,861,112,112,214.92,99.7,0,0,0,3,1,29,0,0,0,0
+LA-1376,Uttar Pradesh,Allahabad,Defense Installation,Objection and Legal Review,5,838,185,34,105.51,98.4,0,1,56,0,0,0,38,2,1,41
+LA-1377,Gujarat,Bhavnagar,Highway Construction,Objection and Legal Review,5,810,85,51,192.02,100.0,0,0,20,1,1,9,5,0,0,0
+LA-1378,Karnataka,Mysuru,Defense Installation,Objection and Legal Review,5,841,490,490,6.23,100.0,1,0,66,2,1,21,7,1,1,59
+LA-1379,Maharashtra,Nagpur,Industrial Corridor,Land Identification,1,298,274,0,113.7,78.7,0,0,11,3,1,5,0,0,0,0
+LA-1380,Karnataka,Mangaluru,Railway Expansion,Survey and Verification,3,259,377,174,102.43,79.3,0,0,4,3,1,13,0,0,0,0
+LA-1381,Rajasthan,Jaipur,Power Transmission,Objection and Legal Review,5,298,381,192,139.47,83.8,0,1,38,3,0,27,34,2,1,42
+LA-1382,Uttar Pradesh,Meerut,Highway Construction,Project Initiation,0,35,138,106,85.12,93.4,0,1,34,1,0,30,0,0,1,56
+LA-1383,Madhya Pradesh,Jabalpur,Dam / Irrigation,Ownership Verification,4,296,165,71,184.35,93.6,1,1,124,5,1,0,39,1,1,178
+LA-1384,Karnataka,Dharwad,Pipeline Project,Project Initiation,0,84,368,107,28.57,74.9,1,1,144,5,1,30,0,0,1,85
+LA-1385,Uttar Pradesh,Agra,Dam / Irrigation,R&R and Rehabilitation,8,797,398,398,124.78,91.8,0,0,18,1,0,0,34,0,0,0
+LA-1386,Uttar Pradesh,Allahabad,Railway Expansion,Compensation Disbursement,7,433,341,222,1.95,91.0,0,0,0,5,1,2,0,0,0,0
+LA-1387,Gujarat,Vadodara,Dam / Irrigation,Land Identification,1,246,96,49,60.4,77.0,0,0,23,5,1,0,5,0,0,0
+LA-1388,Maharashtra,Solapur,Industrial Corridor,Land Identification,1,196,467,288,171.4,64.0,0,0,4,2,0,0,0,0,0,0
+LA-1389,Odisha,Rourkela,Mining Development,Objection and Legal Review,5,234,52,20,10.59,100.0,0,0,13,3,0,2,0,0,0,0
+LA-1390,Rajasthan,Bikaner,Dam / Irrigation,Ownership Verification,4,537,272,197,107.22,98.8,0,0,2,3,1,29,5,0,0,0
+LA-1391,Maharashtra,Thane,Railway Expansion,Land Identification,1,552,96,62,196.65,72.5,1,0,73,3,0,55,22,0,1,72
+LA-1392,Karnataka,Hubli,Urban Infrastructure,Preliminary Notification,2,631,45,26,217.97,77.1,0,0,25,1,0,0,0,0,0,0
+LA-1393,Maharashtra,Nagpur,Mining Development,Ownership Verification,4,48,416,90,76.01,91.0,1,1,165,3,0,0,22,1,1,130
+LA-1394,Maharashtra,Kolhapur,Industrial Corridor,Land Identification,1,57,80,43,41.94,88.6,0,0,6,3,0,0,8,0,0,0
+LA-1395,Rajasthan,Bikaner,Pipeline Project,Project Initiation,0,526,327,230,211.98,46.9,0,0,1,0,0,0,0,0,0,0
+LA-1396,Gujarat,Bhavnagar,Mining Development,Project Initiation,0,327,221,57,67.33,89.8,1,1,169,0,0,0,0,0,1,157
+LA-1397,Madhya Pradesh,Sagar,Urban Infrastructure,Survey and Verification,3,489,457,206,73.7,76.2,1,0,87,4,1,49,28,0,1,38
+LA-1398,Karnataka,Dharwad,Urban Infrastructure,Compensation Disbursement,7,845,290,189,220.29,34.8,1,1,80,1,0,26,46,4,1,159
+LA-1399,Madhya Pradesh,Bhopal,Railway Expansion,Project Initiation,0,375,441,206,167.54,100.0,0,0,8,3,1,10,0,0,0,0
+LA-1400,Karnataka,Bengaluru,Pipeline Project,Land Identification,1,848,327,245,90.73,48.7,1,1,76,1,0,0,12,0,1,73
+LA-1401,Karnataka,Bengaluru,Dam / Irrigation,Project Initiation,0,692,151,71,93.42,89.7,0,0,13,5,1,24,0,0,0,0
+LA-1402,Odisha,Sambalpur,Urban Infrastructure,Compensation Assessment,6,674,231,144,201.66,76.7,0,0,13,3,1,0,0,0,1,19
+LA-1403,Uttar Pradesh,Varanasi,Dam / Irrigation,Possession and Handover,10,474,374,213,2.47,79.4,0,1,79,2,0,1,49,3,1,90
+LA-1404,Rajasthan,Bikaner,Defense Installation,Objection and Legal Review,5,486,48,34,9.72,67.5,0,0,14,2,0,22,0,0,0,0
+LA-1405,Karnataka,Mysuru,Mining Development,R&R and Rehabilitation,8,583,379,329,156.93,100.0,1,0,64,0,0,11,39,3,1,111
+LA-1406,Maharashtra,Nagpur,Power Transmission,Final Acquisition,9,616,184,18,75.15,100.0,0,0,18,1,0,0,0,0,0,0
+LA-1407,Madhya Pradesh,Sagar,Dam / Irrigation,Objection and Legal Review,5,761,52,45,16.02,53.3,0,0,6,4,1,26,15,0,1,13
+LA-1408,Gujarat,Ahmedabad,Urban Infrastructure,Compensation Assessment,6,723,263,244,32.78,58.3,0,0,13,2,1,14,0,0,1,15
+LA-1409,Maharashtra,Kolhapur,Industrial Corridor,Compensation Assessment,6,496,25,19,130.93,47.5,0,0,30,2,0,3,17,0,1,27
+LA-1410,Uttar Pradesh,Kanpur,Power Transmission,Preliminary Notification,2,527,67,33,11.65,91.8,0,0,9,0,0,6,1,0,0,0
+LA-1411,Gujarat,Gandhinagar,Power Transmission,Compensation Disbursement,7,609,346,9,81.64,66.4,0,0,4,3,0,16,6,0,0,0
+LA-1412,Odisha,Berhampur,Defense Installation,Land Identification,1,426,297,73,77.56,83.9,0,0,20,0,0,0,5,0,0,0
+LA-1413,Karnataka,Bengaluru,Mining Development,Land Identification,1,117,497,497,61.7,90.8,1,0,99,1,0,39,19,0,1,122
+LA-1414,Maharashtra,Solapur,Mining Development,Preliminary Notification,2,651,136,89,23.21,61.9,0,1,52,3,0,0,36,0,1,47
+LA-1415,Rajasthan,Jodhpur,Power Transmission,Project Initiation,0,816,55,40,80.35,95.0,0,0,0,3,0,22,0,0,0,0
+LA-1416,Gujarat,Ahmedabad,Highway Construction,Land Identification,1,237,252,182,7.71,90.3,0,1,55,4,1,30,16,0,1,24
+LA-1417,Uttar Pradesh,Meerut,Railway Expansion,Preliminary Notification,2,282,405,252,240.36,84.1,0,1,44,1,0,0,0,0,1,54
+LA-1418,Gujarat,Gandhinagar,Power Transmission,Objection and Legal Review,5,698,28,22,17.95,82.2,1,0,71,2,0,79,21,1,1,54
+LA-1419,Rajasthan,Bikaner,Mining Development,Objection and Legal Review,5,316,144,0,61.86,87.6,0,0,28,3,0,0,0,0,0,0
+LA-1420,Gujarat,Gandhinagar,Urban Infrastructure,Compensation Assessment,6,46,280,63,8.22,80.2,1,0,21,0,0,42,74,2,1,60
+LA-1421,Maharashtra,Aurangabad,Defense Installation,Survey and Verification,3,877,118,68,170.3,67.7,0,0,11,0,0,29,0,0,0,0
+LA-1422,Karnataka,Hubli,Industrial Corridor,Ownership Verification,4,122,8,6,99.32,92.2,0,0,1,1,0,0,0,0,0,0
+LA-1423,Odisha,Rourkela,Mining Development,Land Identification,1,535,482,195,131.01,87.7,0,0,18,2,0,4,3,0,0,0
+LA-1424,Odisha,Rourkela,Industrial Corridor,Compensation Assessment,6,898,226,174,30.87,57.6,0,0,14,2,1,0,0,0,1,13
+LA-1425,Madhya Pradesh,Bhopal,Industrial Corridor,Project Initiation,0,78,495,397,41.54,79.6,1,1,72,3,0,74,0,0,1,75
+LA-1426,Gujarat,Rajkot,Highway Construction,Project Initiation,0,636,271,215,194.05,76.2,0,0,15,2,0,7,0,0,0,0
+LA-1427,Madhya Pradesh,Jabalpur,Railway Expansion,Land Identification,1,670,475,300,152.88,73.2,0,0,22,0,0,0,1,0,0,0
+LA-1428,Gujarat,Ahmedabad,Railway Expansion,Final Acquisition,9,723,237,47,220.04,87.5,0,0,27,0,0,19,5,0,0,0
+LA-1429,Madhya Pradesh,Bhopal,Urban Infrastructure,Land Identification,1,696,69,31,105.54,100.0,0,0,19,4,1,22,0,0,0,0
+LA-1430,Karnataka,Belagavi,Pipeline Project,R&R and Rehabilitation,8,220,9,1,36.58,83.4,1,1,120,2,0,0,141,4,1,144
+LA-1431,Maharashtra,Nagpur,Urban Infrastructure,Compensation Disbursement,7,230,158,69,104.96,61.1,0,0,6,5,1,21,0,0,0,0
+LA-1432,Odisha,Bhubaneswar,Pipeline Project,Objection and Legal Review,5,254,99,32,206.61,98.9,0,0,6,3,0,7,4,0,0,0
+LA-1433,Uttar Pradesh,Lucknow,Mining Development,Survey and Verification,3,147,373,300,43.98,82.1,1,1,51,2,0,0,12,0,1,56
+LA-1434,Rajasthan,Udaipur,Railway Expansion,Objection and Legal Review,5,51,486,34,155.99,86.8,0,0,14,1,0,7,0,0,0,0
+LA-1435,Gujarat,Bhavnagar,Railway Expansion,Survey and Verification,3,151,395,179,134.1,100.0,0,0,19,0,0,13,21,0,0,0
+LA-1436,Odisha,Cuttack,Urban Infrastructure,Land Identification,1,283,90,9,161.45,100.0,0,0,6,0,0,0,3,0,0,0
+LA-1437,Madhya Pradesh,Gwalior,Pipeline Project,Compensation Assessment,6,561,111,70,215.86,66.5,0,0,8,0,0,18,4,0,0,0
+LA-1438,Gujarat,Surat,Power Transmission,Compensation Disbursement,7,465,122,37,155.47,99.9,0,0,2,2,0,9,0,0,0,0
+LA-1439,Gujarat,Rajkot,Pipeline Project,Ownership Verification,4,472,55,31,30.09,54.7,1,1,104,3,1,43,48,1,1,127
+LA-1440,Karnataka,Hubli,Power Transmission,Ownership Verification,4,339,399,171,195.89,81.1,0,0,27,0,0,24,0,0,0,0
+LA-1441,Gujarat,Rajkot,Highway Construction,Survey and Verification,3,513,421,35,78.61,51.3,0,0,6,6,1,0,0,0,1,18
+LA-1442,Karnataka,Mangaluru,Industrial Corridor,Project Initiation,0,479,178,115,188.28,100.0,0,0,4,2,0,9,0,0,0,0
+LA-1443,Odisha,Berhampur,Power Transmission,Survey and Verification,3,363,37,15,27.61,62.1,1,1,143,3,0,0,2,0,1,73
+LA-1444,Maharashtra,Pune,Railway Expansion,Survey and Verification,3,721,237,237,14.83,93.5,1,0,50,0,0,36,17,0,1,69
+LA-1445,Gujarat,Surat,Railway Expansion,Compensation Disbursement,7,162,146,115,50.82,62.0,0,1,40,3,0,13,20,3,1,76
+LA-1446,Gujarat,Gandhinagar,Industrial Corridor,Objection and Legal Review,5,568,318,273,104.06,70.9,0,0,20,4,1,28,13,0,0,0
+LA-1447,Rajasthan,Ajmer,Defense Installation,Ownership Verification,4,498,362,182,227.23,62.2,1,0,68,0,0,58,48,0,1,100
+LA-1448,Uttar Pradesh,Lucknow,Railway Expansion,Project Initiation,0,546,332,142,95.6,80.9,0,0,16,0,0,1,0,0,0,0
+LA-1449,Karnataka,Mangaluru,Industrial Corridor,Survey and Verification,3,436,76,27,40.76,95.3,1,0,42,3,0,47,18,0,1,37
+LA-1450,Maharashtra,Thane,Defense Installation,Project Initiation,0,202,231,95,202.97,75.0,0,1,37,1,0,6,0,0,1,45
+LA-1451,Maharashtra,Nagpur,Power Transmission,Survey and Verification,3,484,177,136,205.22,59.5,1,1,126,0,0,0,30,0,1,99
+LA-1452,Odisha,Cuttack,Dam / Irrigation,Land Identification,1,75,59,28,100.83,74.6,0,0,17,2,1,12,1,0,0,0
+LA-1453,Uttar Pradesh,Lucknow,Defense Installation,Ownership Verification,4,247,57,27,230.59,75.6,0,0,6,3,0,13,1,0,0,0
+LA-1454,Madhya Pradesh,Indore,Power Transmission,Preliminary Notification,2,127,440,239,4.9,40.9,0,0,10,2,0,0,0,0,0,0
+LA-1455,Madhya Pradesh,Jabalpur,Defense Installation,Survey and Verification,3,553,322,239,124.93,73.7,0,0,28,4,1,3,0,0,0,0
+LA-1456,Rajasthan,Jodhpur,Defense Installation,Ownership Verification,4,239,271,184,203.27,73.7,0,0,4,0,0,0,0,0,0,0
+LA-1457,Odisha,Bhubaneswar,Industrial Corridor,Compensation Assessment,6,897,40,20,238.44,80.2,1,1,131,3,0,0,0,3,1,138
+LA-1458,Maharashtra,Pune,Mining Development,Preliminary Notification,2,881,160,84,159.08,85.4,0,0,6,1,0,7,0,0,0,0
+LA-1459,Uttar Pradesh,Varanasi,Railway Expansion,Project Initiation,0,398,223,157,213.58,73.2,0,0,26,3,0,0,0,0,0,0
+LA-1460,Madhya Pradesh,Ujjain,Dam / Irrigation,Compensation Disbursement,7,596,105,70,39.1,41.5,0,0,12,3,0,17,11,0,0,0
+LA-1461,Madhya Pradesh,Sagar,Urban Infrastructure,Ownership Verification,4,533,458,132,10.19,84.7,0,0,12,3,0,0,0,0,0,0
+LA-1462,Madhya Pradesh,Indore,Industrial Corridor,Compensation Disbursement,7,811,479,81,106.3,73.6,0,0,16,3,0,0,0,0,0,0
+LA-1463,Odisha,Rourkela,Highway Construction,Survey and Verification,3,744,11,4,29.62,100.0,1,0,56,1,0,0,0,0,1,85
+LA-1464,Gujarat,Bhavnagar,Railway Expansion,Land Identification,1,560,330,39,203.65,100.0,1,1,142,0,0,47,0,0,1,134
+LA-1465,Karnataka,Hubli,Highway Construction,Ownership Verification,4,202,365,152,34.02,100.0,1,0,89,3,1,0,20,0,1,64
+LA-1466,Gujarat,Gandhinagar,Industrial Corridor,Final Acquisition,9,220,449,233,21.88,91.1,0,0,14,0,0,0,76,0,0,0
+LA-1467,Maharashtra,Aurangabad,Railway Expansion,Final Acquisition,9,380,113,63,150.94,94.9,0,0,30,1,1,0,6,0,0,0
+LA-1468,Odisha,Rourkela,Pipeline Project,Objection and Legal Review,5,514,198,0,218.33,83.1,0,0,7,3,0,30,0,0,0,0
+LA-1469,Odisha,Bhubaneswar,Highway Construction,Survey and Verification,3,497,356,147,103.58,94.5,0,0,16,6,1,8,0,0,0,0
+LA-1470,Rajasthan,Jaipur,Urban Infrastructure,Land Identification,1,47,224,224,119.29,57.6,0,0,15,2,0,12,0,0,0,0
+LA-1471,Karnataka,Dharwad,Railway Expansion,Project Initiation,0,781,259,225,199.31,63.6,0,0,22,1,0,0,0,0,0,0
+LA-1472,Madhya Pradesh,Jabalpur,Dam / Irrigation,Land Identification,1,486,87,87,232.29,100.0,0,0,5,0,0,24,14,0,0,0
+LA-1473,Uttar Pradesh,Agra,Power Transmission,Land Identification,1,711,397,135,231.0,97.7,0,0,17,4,1,20,1,0,0,0
+LA-1474,Karnataka,Dharwad,Defense Installation,Land Identification,1,699,384,284,148.25,88.5,0,0,7,2,0,0,0,0,0,0
+LA-1475,Madhya Pradesh,Gwalior,Dam / Irrigation,Compensation Assessment,6,350,344,295,150.6,100.0,0,0,17,4,1,6,0,0,0,0
+LA-1476,Madhya Pradesh,Jabalpur,Urban Infrastructure,Ownership Verification,4,178,168,159,77.57,99.8,0,0,4,3,1,0,16,0,0,0
+LA-1477,Odisha,Berhampur,Pipeline Project,Preliminary Notification,2,676,363,10,184.06,81.4,0,0,25,1,0,10,16,0,0,0
+LA-1478,Odisha,Sambalpur,Defense Installation,Objection and Legal Review,5,336,392,297,98.14,67.5,0,0,17,2,0,0,0,0,0,0
+LA-1479,Uttar Pradesh,Allahabad,Industrial Corridor,Project Initiation,0,747,88,27,120.87,94.6,0,0,18,6,1,0,0,0,0,0
+LA-1480,Rajasthan,Jodhpur,Industrial Corridor,Compensation Assessment,6,853,54,21,236.29,81.7,0,1,51,0,0,0,0,2,1,72
+LA-1481,Madhya Pradesh,Jabalpur,Dam / Irrigation,Preliminary Notification,2,672,447,161,204.64,78.8,0,0,9,2,1,22,0,0,0,0
+LA-1482,Gujarat,Vadodara,Highway Construction,Land Identification,1,152,335,139,175.83,99.2,1,1,104,3,0,0,9,0,1,104
+LA-1483,Karnataka,Belagavi,Dam / Irrigation,R&R and Rehabilitation,8,445,390,239,224.45,83.4,0,0,16,0,0,26,0,0,0,0
+LA-1484,Rajasthan,Ajmer,Dam / Irrigation,Ownership Verification,4,35,5,4,62.46,51.6,1,1,72,6,1,19,6,1,1,123
+LA-1485,Madhya Pradesh,Jabalpur,Dam / Irrigation,Project Initiation,0,620,23,14,47.42,66.4,0,0,22,1,0,3,0,0,0,0
+LA-1486,Rajasthan,Ajmer,Mining Development,Ownership Verification,4,251,47,21,236.21,100.0,0,0,17,3,0,8,0,0,0,0
+LA-1487,Rajasthan,Ajmer,Industrial Corridor,Final Acquisition,9,102,219,68,205.48,43.7,0,0,22,1,0,11,0,0,0,0
+LA-1488,Gujarat,Ahmedabad,Industrial Corridor,Land Identification,1,109,449,143,199.63,100.0,0,0,10,1,0,20,8,0,0,0
+LA-1489,Rajasthan,Kota,Railway Expansion,Land Identification,1,831,287,148,68.13,90.1,0,0,26,2,0,25,0,0,0,0
+LA-1490,Uttar Pradesh,Varanasi,Dam / Irrigation,Compensation Assessment,6,383,341,161,32.03,85.3,0,0,28,1,0,27,0,0,0,0
+LA-1491,Maharashtra,Kolhapur,Urban Infrastructure,Compensation Disbursement,7,754,161,161,159.09,100.0,0,0,14,1,0,11,0,0,0,0
+LA-1492,Odisha,Rourkela,Railway Expansion,Ownership Verification,4,679,497,497,233.14,90.0,0,1,21,0,0,23,66,1,1,28
+LA-1493,Karnataka,Belagavi,Railway Expansion,Survey and Verification,3,445,315,135,112.44,84.8,1,1,160,0,0,55,46,0,1,223
+LA-1494,Rajasthan,Jodhpur,Railway Expansion,Survey and Verification,3,405,153,80,53.66,93.5,0,0,3,0,0,10,0,0,0,0
+LA-1495,Karnataka,Dharwad,Defense Installation,Compensation Disbursement,7,252,187,174,74.94,100.0,0,0,28,0,0,0,0,0,0,0
+LA-1496,Maharashtra,Nashik,Urban Infrastructure,Project Initiation,0,769,245,210,99.14,88.6,1,1,80,3,1,70,0,0,1,115
+LA-1497,Odisha,Rourkela,Railway Expansion,Land Identification,1,479,73,15,225.3,71.2,0,1,49,3,1,0,0,0,1,30
+LA-1498,Karnataka,Hubli,Railway Expansion,Compensation Assessment,6,461,72,8,27.88,44.1,0,0,24,3,0,24,0,0,0,0
+LA-1499,Rajasthan,Udaipur,Mining Development,Project Initiation,0,43,153,87,107.52,84.3,0,0,19,3,0,23,0,0,0,0
+LA-1500,Madhya Pradesh,Indore,Mining Development,Land Identification,1,221,442,107,57.73,82.1,0,0,6,2,1,0,10,0,0,0
+LA-1501,Rajasthan,Kota,Highway Construction,Ownership Verification,4,310,177,89,107.05,100.0,0,0,13,2,1,16,0,0,0,0
+LA-1502,Maharashtra,Aurangabad,Railway Expansion,Objection and Legal Review,5,305,151,0,25.64,53.8,0,0,0,1,0,1,21,0,1,18
+LA-1503,Uttar Pradesh,Kanpur,Power Transmission,R&R and Rehabilitation,8,144,26,17,146.85,100.0,1,1,114,0,0,0,13,4,1,90
+LA-1504,Karnataka,Mangaluru,Railway Expansion,Preliminary Notification,2,106,286,128,189.96,100.0,0,0,4,3,0,1,0,0,0,0
+LA-1505,Odisha,Berhampur,Urban Infrastructure,Preliminary Notification,2,404,361,304,238.97,54.9,1,0,38,2,0,0,24,0,1,48
+LA-1506,Karnataka,Mangaluru,Pipeline Project,Compensation Assessment,6,731,86,63,143.19,55.4,0,0,16,2,1,12,0,0,1,18
+LA-1507,Odisha,Berhampur,Pipeline Project,Project Initiation,0,545,487,120,220.96,76.2,1,1,59,1,0,42,0,0,1,72
+LA-1508,Rajasthan,Jodhpur,Mining Development,Preliminary Notification,2,148,155,85,204.07,98.6,0,0,17,6,1,0,0,0,0,0
+LA-1509,Odisha,Rourkela,Industrial Corridor,Land Identification,1,778,489,125,158.76,93.0,0,0,24,3,0,0,0,0,0,0
+LA-1510,Madhya Pradesh,Indore,Pipeline Project,Objection and Legal Review,5,255,466,117,115.12,76.5,0,0,23,1,0,23,7,0,0,0
+LA-1511,Odisha,Cuttack,Industrial Corridor,Land Identification,1,613,470,194,181.21,52.9,1,0,56,3,1,21,8,0,1,50
+LA-1512,Madhya Pradesh,Bhopal,Defense Installation,Land Identification,1,423,410,380,241.61,49.6,0,1,24,0,0,7,15,0,1,53
+LA-1513,Odisha,Rourkela,Railway Expansion,Ownership Verification,4,237,15,9,74.54,100.0,0,0,7,0,0,1,23,0,0,0
+LA-1514,Madhya Pradesh,Jabalpur,Dam / Irrigation,Land Identification,1,31,61,43,70.81,85.4,1,0,97,1,0,76,6,0,1,57
+LA-1515,Maharashtra,Nashik,Dam / Irrigation,Ownership Verification,4,212,474,201,125.06,76.0,0,0,28,2,1,21,0,0,0,0
+LA-1516,Karnataka,Bengaluru,Highway Construction,Land Identification,1,182,170,138,248.7,92.4,1,0,106,2,1,40,0,0,1,99
+LA-1517,Gujarat,Rajkot,Pipeline Project,Compensation Disbursement,7,740,302,166,178.87,100.0,1,0,85,0,0,0,21,3,1,77
+LA-1518,Karnataka,Bengaluru,Industrial Corridor,Preliminary Notification,2,400,240,231,242.97,100.0,0,1,38,2,0,0,16,0,1,55
+LA-1519,Rajasthan,Jaipur,Dam / Irrigation,Project Initiation,0,150,344,104,148.68,87.9,0,0,30,0,0,13,0,0,0,0
+LA-1520,Rajasthan,Jaipur,Dam / Irrigation,Ownership Verification,4,404,405,279,161.39,90.5,0,1,38,3,0,0,38,1,1,42
+LA-1521,Karnataka,Bengaluru,Dam / Irrigation,R&R and Rehabilitation,8,545,368,257,68.32,91.7,0,0,8,2,0,0,30,0,0,0
+LA-1522,Maharashtra,Thane,Defense Installation,Objection and Legal Review,5,158,89,77,106.34,81.2,1,1,117,3,0,0,0,2,1,124
+LA-1523,Odisha,Rourkela,Highway Construction,Survey and Verification,3,275,142,65,21.72,92.4,0,0,24,1,1,29,0,0,0,0
+LA-1524,Odisha,Sambalpur,Highway Construction,Compensation Assessment,6,79,364,364,168.83,79.7,0,0,9,3,1,30,13,0,0,0
+LA-1525,Madhya Pradesh,Bhopal,Mining Development,Preliminary Notification,2,856,492,365,179.76,100.0,1,0,51,0,0,29,0,0,1,60
+LA-1526,Rajasthan,Bikaner,Dam / Irrigation,Ownership Verification,4,543,25,25,97.21,53.1,0,0,10,3,0,0,0,0,0,0
+LA-1527,Rajasthan,Ajmer,Railway Expansion,Preliminary Notification,2,186,87,83,88.67,29.1,1,1,130,2,0,42,0,0,1,82
+LA-1528,Gujarat,Vadodara,Pipeline Project,Ownership Verification,4,695,230,189,92.0,62.6,0,0,11,1,0,27,0,0,0,0
+LA-1529,Uttar Pradesh,Lucknow,Defense Installation,Survey and Verification,3,548,197,123,39.97,45.3,0,0,20,2,0,1,23,0,1,22
+LA-1530,Gujarat,Rajkot,Railway Expansion,Compensation Assessment,6,387,173,147,151.29,56.8,0,0,29,3,1,0,7,0,1,25
+LA-1531,Maharashtra,Aurangabad,Pipeline Project,Compensation Assessment,6,69,114,92,13.99,100.0,0,0,18,5,1,1,40,0,0,0
+LA-1532,Karnataka,Mangaluru,Power Transmission,Survey and Verification,3,288,463,183,225.46,49.2,1,0,86,1,1,63,8,0,1,87
+LA-1533,Rajasthan,Udaipur,Defense Installation,R&R and Rehabilitation,8,523,170,53,183.72,54.8,0,1,27,1,0,0,57,2,1,67
+LA-1534,Rajasthan,Kota,Dam / Irrigation,Compensation Disbursement,7,541,220,94,150.44,66.4,1,0,36,1,0,32,0,3,1,43
+LA-1535,Karnataka,Belagavi,Highway Construction,Compensation Disbursement,7,409,63,56,93.59,100.0,1,0,62,2,0,63,1,3,1,72
+LA-1536,Gujarat,Vadodara,Defense Installation,Land Identification,1,679,259,173,187.61,69.4,0,1,23,0,0,0,28,0,1,39
+LA-1537,Gujarat,Gandhinagar,Highway Construction,Compensation Assessment,6,713,405,123,56.37,77.3,1,1,101,2,0,90,66,3,1,165
+LA-1538,Odisha,Sambalpur,Industrial Corridor,Preliminary Notification,2,34,128,40,154.26,97.1,1,1,139,3,0,0,4,0,1,204
+LA-1539,Gujarat,Surat,Defense Installation,Preliminary Notification,2,775,436,377,190.66,95.3,0,1,63,3,0,25,32,0,1,36
+LA-1540,Uttar Pradesh,Agra,Railway Expansion,Project Initiation,0,125,237,143,158.8,84.7,0,0,2,1,0,18,0,0,0,0
+LA-1541,Karnataka,Mysuru,Power Transmission,Ownership Verification,4,228,326,208,6.27,70.6,0,0,24,1,0,0,7,0,0,0
+LA-1542,Maharashtra,Nagpur,Railway Expansion,Project Initiation,0,139,254,181,171.99,78.6,1,1,111,4,1,28,0,0,1,98
+LA-1543,Odisha,Cuttack,Dam / Irrigation,Final Acquisition,9,335,270,180,128.18,100.0,1,1,86,0,0,51,19,3,1,162
+LA-1544,Rajasthan,Jaipur,Urban Infrastructure,R&R and Rehabilitation,8,171,244,143,128.41,87.5,0,0,11,2,0,0,57,0,0,0
+LA-1545,Gujarat,Surat,Power Transmission,Preliminary Notification,2,207,254,76,149.28,93.2,0,0,18,4,1,0,21,0,0,0
+LA-1546,Uttar Pradesh,Kanpur,Railway Expansion,Ownership Verification,4,651,155,17,237.62,73.1,0,0,28,3,0,1,8,0,0,0
+LA-1547,Madhya Pradesh,Gwalior,Defense Installation,Preliminary Notification,2,60,168,70,53.84,100.0,0,0,11,1,1,11,14,0,0,0
+LA-1548,Madhya Pradesh,Gwalior,Industrial Corridor,Final Acquisition,9,605,30,21,247.57,95.4,1,1,116,1,0,0,83,4,1,136
+LA-1549,Uttar Pradesh,Meerut,Defense Installation,Ownership Verification,4,272,463,463,133.6,89.8,0,0,0,0,0,0,31,0,0,0
+LA-1550,Maharashtra,Nashik,Pipeline Project,Land Identification,1,127,206,52,74.96,79.2,0,0,11,0,0,12,1,0,0,0
+LA-1551,Karnataka,Bengaluru,Urban Infrastructure,Land Identification,1,662,483,28,172.22,79.9,1,1,144,0,0,27,4,0,1,102
+LA-1552,Maharashtra,Aurangabad,Railway Expansion,Preliminary Notification,2,300,459,447,159.41,70.1,0,0,14,4,1,3,14,0,0,0
+LA-1553,Karnataka,Bengaluru,Mining Development,Land Identification,1,570,290,207,161.96,83.2,0,0,2,2,0,8,6,0,0,0
+LA-1554,Odisha,Cuttack,Railway Expansion,R&R and Rehabilitation,8,106,439,0,55.09,88.2,1,1,85,1,0,73,41,4,1,179
+LA-1555,Madhya Pradesh,Indore,Defense Installation,Preliminary Notification,2,222,13,3,223.58,76.3,1,1,107,1,0,0,36,0,1,137
+LA-1556,Gujarat,Vadodara,Power Transmission,Ownership Verification,4,151,30,9,105.94,88.8,0,0,1,0,0,14,0,0,0,0
+LA-1557,Uttar Pradesh,Agra,Defense Installation,Land Identification,1,210,463,384,16.93,63.6,0,0,30,0,0,3,0,0,0,0
+LA-1558,Maharashtra,Aurangabad,Industrial Corridor,Preliminary Notification,2,665,182,53,72.35,76.3,0,0,15,1,0,0,0,0,0,0
+LA-1559,Maharashtra,Nashik,Dam / Irrigation,Preliminary Notification,2,545,465,0,166.67,100.0,0,0,21,2,0,2,0,0,0,0
+LA-1560,Gujarat,Vadodara,Highway Construction,Survey and Verification,3,211,28,21,247.61,100.0,0,1,67,4,1,0,9,0,1,73
+LA-1561,Odisha,Cuttack,Railway Expansion,Ownership Verification,4,132,428,267,88.48,100.0,0,0,17,0,0,0,0,0,0,0
+LA-1562,Odisha,Berhampur,Pipeline Project,Preliminary Notification,2,145,189,113,51.97,45.3,0,1,42,3,0,21,1,0,1,63
+LA-1563,Karnataka,Bengaluru,Power Transmission,Objection and Legal Review,5,671,488,418,10.75,65.3,0,0,21,3,0,11,0,0,0,0
+LA-1564,Madhya Pradesh,Sagar,Urban Infrastructure,Preliminary Notification,2,884,353,353,156.14,67.4,0,0,0,3,0,15,0,0,1,13
+LA-1565,Uttar Pradesh,Lucknow,Power Transmission,Project Initiation,0,45,343,222,34.86,68.9,0,0,15,2,0,9,0,0,0,0
+LA-1566,Uttar Pradesh,Meerut,Mining Development,Project Initiation,0,188,132,61,203.02,100.0,0,1,38,2,0,0,0,0,0,0
+LA-1567,Maharashtra,Aurangabad,Power Transmission,Survey and Verification,3,641,161,142,21.86,67.7,0,1,41,2,0,21,30,0,1,46
+LA-1568,Rajasthan,Kota,Defense Installation,Compensation Assessment,6,128,19,12,191.81,94.5,0,0,13,3,0,14,19,0,0,0
+LA-1569,Maharashtra,Solapur,Dam / Irrigation,Project Initiation,0,659,69,21,101.03,100.0,0,0,28,3,0,0,0,0,0,0
+LA-1570,Odisha,Berhampur,Pipeline Project,Compensation Disbursement,7,889,269,152,36.47,83.2,1,1,95,1,0,54,3,4,1,92
+LA-1571,Karnataka,Dharwad,Dam / Irrigation,Preliminary Notification,2,338,271,207,118.7,62.1,0,0,2,0,0,0,0,0,0,0
+LA-1572,Odisha,Berhampur,Pipeline Project,Ownership Verification,4,430,444,229,36.99,90.6,0,0,17,3,0,0,3,0,0,0
+LA-1573,Maharashtra,Pune,Dam / Irrigation,Land Identification,1,868,346,191,200.06,81.5,0,0,9,5,1,21,0,0,0,0
+LA-1574,Gujarat,Rajkot,Defense Installation,Preliminary Notification,2,181,146,113,125.41,100.0,1,0,104,3,0,33,18,0,1,105
+LA-1575,Madhya Pradesh,Jabalpur,Mining Development,Ownership Verification,4,94,197,196,45.5,100.0,1,1,111,3,0,68,31,1,1,96
+LA-1576,Uttar Pradesh,Agra,Urban Infrastructure,Preliminary Notification,2,632,170,115,190.1,80.8,0,0,1,3,0,0,4,0,0,0
+LA-1577,Karnataka,Mysuru,Railway Expansion,Ownership Verification,4,208,231,227,190.96,78.2,0,0,1,0,0,0,26,0,0,0
+LA-1578,Rajasthan,Udaipur,Railway Expansion,Ownership Verification,4,745,421,421,132.37,60.6,1,0,58,3,0,53,29,0,1,43
+LA-1579,Karnataka,Dharwad,Railway Expansion,Possession and Handover,10,238,187,187,154.81,91.7,0,1,36,2,0,0,17,3,1,49
+LA-1580,Gujarat,Rajkot,Defense Installation,Ownership Verification,4,102,365,79,39.89,73.5,1,0,79,3,0,24,16,0,1,91
+LA-1581,Odisha,Berhampur,Mining Development,Project Initiation,0,349,138,109,15.32,92.7,1,0,68,3,0,31,0,0,1,38
+LA-1582,Odisha,Bhubaneswar,Industrial Corridor,Land Identification,1,535,459,217,138.08,73.5,0,1,41,0,0,0,19,0,1,35
+LA-1583,Maharashtra,Nashik,Pipeline Project,Project Initiation,0,549,354,309,171.06,84.6,0,0,29,3,0,1,0,0,0,0
+LA-1584,Gujarat,Rajkot,Dam / Irrigation,Objection and Legal Review,5,470,123,110,23.45,84.3,0,0,19,1,1,28,4,0,0,0
+LA-1585,Odisha,Berhampur,Highway Construction,Project Initiation,0,851,184,17,249.52,83.2,0,1,47,2,0,5,0,0,1,33
+LA-1586,Maharashtra,Kolhapur,Railway Expansion,Ownership Verification,4,108,449,175,67.25,69.3,0,1,40,2,0,0,66,1,1,56
+LA-1587,Uttar Pradesh,Varanasi,Pipeline Project,Land Identification,1,316,125,9,174.74,79.8,0,1,59,0,0,6,5,0,1,34
+LA-1588,Maharashtra,Nagpur,Highway Construction,Compensation Assessment,6,306,225,37,8.31,78.9,1,0,37,4,1,61,64,2,1,109
+LA-1589,Odisha,Rourkela,Power Transmission,Compensation Assessment,6,859,288,0,97.33,66.8,0,0,19,1,1,0,11,0,0,0
+LA-1590,Odisha,Berhampur,Pipeline Project,Preliminary Notification,2,464,48,22,249.7,55.3,0,0,12,2,0,14,8,0,0,0
+LA-1591,Madhya Pradesh,Jabalpur,Highway Construction,Land Identification,1,660,232,113,115.95,67.1,1,1,98,3,1,0,0,0,1,116
+LA-1592,Karnataka,Belagavi,Industrial Corridor,Ownership Verification,4,448,70,43,217.87,100.0,0,0,5,3,0,8,15,0,0,0
+LA-1593,Karnataka,Bengaluru,Industrial Corridor,Ownership Verification,4,147,352,326,135.34,75.5,0,0,7,0,0,1,0,0,0,0
+LA-1594,Maharashtra,Thane,Industrial Corridor,Ownership Verification,4,388,213,172,224.4,98.6,1,1,157,4,1,53,42,1,1,183
+LA-1595,Maharashtra,Pune,Urban Infrastructure,Survey and Verification,3,75,21,10,190.77,79.4,1,0,107,6,1,72,24,0,1,112
+LA-1596,Rajasthan,Ajmer,Mining Development,Project Initiation,0,618,342,95,67.66,85.4,0,0,28,3,0,16,0,0,0,0
+LA-1597,Odisha,Berhampur,Power Transmission,Survey and Verification,3,279,190,178,19.57,66.7,0,0,22,3,0,0,18,0,0,0
+LA-1598,Uttar Pradesh,Allahabad,Pipeline Project,Final Acquisition,9,649,46,15,102.42,85.9,0,1,48,0,0,0,185,3,1,68
+LA-1599,Karnataka,Mysuru,Dam / Irrigation,Project Initiation,0,494,42,25,33.53,91.1,0,1,21,1,0,0,0,0,0,0
+LA-1600,Gujarat,Vadodara,Dam / Irrigation,Objection and Legal Review,5,441,383,195,230.22,52.1,0,0,26,1,1,28,0,0,1,18
+LA-1601,Karnataka,Mangaluru,Defense Installation,Land Identification,1,326,308,69,113.66,83.3,0,0,16,0,0,0,0,0,0,0
+LA-1602,Uttar Pradesh,Varanasi,Dam / Irrigation,R&R and Rehabilitation,8,550,151,73,45.01,79.5,0,0,16,3,0,28,0,0,0,0
+LA-1603,Rajasthan,Jaipur,Industrial Corridor,Preliminary Notification,2,470,390,300,70.02,58.6,1,0,90,5,1,38,12,0,1,71
+LA-1604,Odisha,Cuttack,Highway Construction,Project Initiation,0,642,109,49,106.91,100.0,0,0,0,2,0,0,0,0,0,0
+LA-1605,Gujarat,Gandhinagar,Dam / Irrigation,Land Identification,1,880,379,81,201.01,43.4,0,0,15,3,1,0,3,0,1,18
+LA-1606,Maharashtra,Aurangabad,Dam / Irrigation,Project Initiation,0,549,56,56,79.72,69.2,0,0,2,3,0,0,0,0,0,0
+LA-1607,Odisha,Berhampur,Highway Construction,Preliminary Notification,2,679,72,57,237.73,72.6,0,0,15,5,1,4,0,0,1,23
+LA-1608,Maharashtra,Nagpur,Railway Expansion,Compensation Assessment,6,532,341,131,238.61,58.6,0,0,8,6,1,19,0,0,1,11
+LA-1609,Uttar Pradesh,Allahabad,Pipeline Project,Ownership Verification,4,531,131,68,116.45,87.2,0,0,28,5,1,28,0,0,0,0
+LA-1610,Uttar Pradesh,Allahabad,Railway Expansion,Project Initiation,0,385,142,22,127.12,72.8,0,0,13,2,0,21,0,0,0,0
+LA-1611,Maharashtra,Thane,Urban Infrastructure,Project Initiation,0,297,377,257,11.88,61.9,0,0,8,3,0,29,0,0,0,0
+LA-1612,Gujarat,Rajkot,Industrial Corridor,Project Initiation,0,616,404,136,176.33,97.8,1,0,93,0,0,56,0,0,1,71
+LA-1613,Maharashtra,Kolhapur,Highway Construction,Preliminary Notification,2,561,216,152,235.03,87.5,0,0,9,2,0,0,14,0,0,0
+LA-1614,Maharashtra,Solapur,Highway Construction,Project Initiation,0,803,68,37,203.34,89.8,0,0,7,5,1,20,0,0,0,0
+LA-1615,Odisha,Rourkela,Railway Expansion,Land Identification,1,108,430,30,151.62,94.6,0,1,49,1,0,19,6,0,0,0
+LA-1616,Madhya Pradesh,Sagar,Highway Construction,Ownership Verification,4,339,147,101,121.1,96.7,0,0,15,6,1,0,0,0,0,0
+LA-1617,Rajasthan,Kota,Highway Construction,Survey and Verification,3,538,233,128,92.77,69.8,0,0,14,1,0,0,11,0,0,0
+LA-1618,Uttar Pradesh,Agra,Railway Expansion,Compensation Assessment,6,127,35,10,191.97,72.0,0,0,2,1,0,4,15,0,0,0
+LA-1619,Uttar Pradesh,Agra,Highway Construction,Compensation Disbursement,7,359,169,88,115.61,97.5,0,0,6,1,0,24,0,0,0,0
+LA-1620,Karnataka,Dharwad,Railway Expansion,Land Identification,1,137,416,281,131.38,84.4,1,0,51,4,1,27,16,0,1,98
+LA-1621,Gujarat,Ahmedabad,Power Transmission,Preliminary Notification,2,150,153,61,153.69,68.2,0,0,11,1,0,18,3,0,0,0
+LA-1622,Karnataka,Hubli,Mining Development,Preliminary Notification,2,649,10,5,117.89,81.8,0,0,4,3,0,0,13,0,0,0
+LA-1623,Maharashtra,Aurangabad,Industrial Corridor,Project Initiation,0,234,150,37,205.28,74.3,1,0,59,2,0,61,0,0,1,49
+LA-1624,Uttar Pradesh,Meerut,Defense Installation,Land Identification,1,290,299,195,69.67,58.1,0,1,36,5,1,18,2,0,1,58
+LA-1625,Gujarat,Surat,Dam / Irrigation,Preliminary Notification,2,32,75,45,128.17,57.2,0,0,4,1,1,0,0,0,0,0
+LA-1626,Uttar Pradesh,Kanpur,Mining Development,Objection and Legal Review,5,808,369,0,36.15,91.8,0,1,52,2,0,9,0,2,1,79
+LA-1627,Odisha,Rourkela,Railway Expansion,Survey and Verification,3,601,200,21,248.86,100.0,0,1,53,1,0,0,0,0,1,32
+LA-1628,Maharashtra,Thane,Power Transmission,Ownership Verification,4,366,325,313,8.09,89.8,1,1,75,4,1,0,5,1,1,93
+LA-1629,Gujarat,Rajkot,Dam / Irrigation,Preliminary Notification,2,514,47,19,105.18,86.5,0,0,11,1,0,0,0,0,0,0
+LA-1630,Karnataka,Dharwad,Highway Construction,Objection and Legal Review,5,351,269,150,4.04,77.0,0,1,35,2,0,10,23,2,1,51
+LA-1631,Karnataka,Bengaluru,Railway Expansion,Project Initiation,0,227,145,41,140.36,91.6,1,0,90,2,0,34,0,0,1,120
+LA-1632,Maharashtra,Thane,Pipeline Project,Project Initiation,0,120,331,227,93.95,87.8,0,0,24,1,0,0,0,0,0,0
+LA-1633,Rajasthan,Udaipur,Industrial Corridor,Preliminary Notification,2,795,457,364,50.21,96.1,1,0,60,3,1,0,9,0,1,74
+LA-1634,Uttar Pradesh,Lucknow,Pipeline Project,Compensation Assessment,6,393,280,0,108.75,67.3,0,0,1,1,0,0,0,0,0,0
+LA-1635,Karnataka,Dharwad,Power Transmission,Survey and Verification,3,242,477,443,47.01,56.1,0,0,6,3,1,8,26,0,1,19
+LA-1636,Uttar Pradesh,Meerut,Defense Installation,Objection and Legal Review,5,704,472,230,136.92,100.0,1,0,48,1,0,41,0,1,1,33
+LA-1637,Madhya Pradesh,Ujjain,Defense Installation,Compensation Assessment,6,778,60,60,105.54,91.3,0,0,10,4,1,15,0,0,0,0
+LA-1638,Gujarat,Gandhinagar,Highway Construction,Survey and Verification,3,197,71,34,166.02,37.8,0,0,30,1,0,0,14,0,0,0
+LA-1639,Maharashtra,Aurangabad,Dam / Irrigation,Preliminary Notification,2,850,228,177,23.0,76.2,0,0,6,1,0,0,0,0,0,0
+LA-1640,Odisha,Rourkela,Highway Construction,Land Identification,1,518,209,161,193.43,100.0,1,1,119,1,0,65,1,0,1,87
+LA-1641,Gujarat,Gandhinagar,Railway Expansion,Objection and Legal Review,5,385,317,112,19.78,52.5,0,0,11,0,0,0,1,0,0,0
+LA-1642,Rajasthan,Jodhpur,Pipeline Project,Preliminary Notification,2,222,354,162,201.65,96.7,1,1,129,3,1,27,19,0,1,116
+LA-1643,Gujarat,Ahmedabad,Dam / Irrigation,Project Initiation,0,356,222,128,151.11,55.9,0,1,77,2,0,12,0,0,1,91
+LA-1644,Odisha,Sambalpur,Urban Infrastructure,Compensation Assessment,6,894,106,65,128.97,70.4,0,0,17,2,0,0,2,0,0,0
+LA-1645,Gujarat,Ahmedabad,Pipeline Project,Ownership Verification,4,318,282,161,104.56,57.9,0,1,77,0,0,11,10,1,1,56
+LA-1646,Madhya Pradesh,Bhopal,Urban Infrastructure,Preliminary Notification,2,779,357,223,154.5,100.0,0,1,26,4,1,23,0,0,1,44
+LA-1647,Karnataka,Belagavi,Pipeline Project,Land Identification,1,71,221,98,186.82,97.4,0,1,59,2,0,0,11,0,1,45
+LA-1648,Odisha,Sambalpur,Railway Expansion,Survey and Verification,3,842,146,40,125.64,51.4,1,1,83,1,0,57,16,0,1,102
+LA-1649,Uttar Pradesh,Kanpur,Highway Construction,Land Identification,1,446,120,103,16.4,90.4,0,0,20,1,0,0,10,0,0,0
+LA-1650,Uttar Pradesh,Allahabad,Pipeline Project,Preliminary Notification,2,632,442,260,174.58,60.7,0,0,10,3,0,11,7,0,0,0
+LA-1651,Karnataka,Mangaluru,Power Transmission,Objection and Legal Review,5,442,154,92,117.11,100.0,0,0,6,2,0,23,4,0,0,0
+LA-1652,Rajasthan,Ajmer,Dam / Irrigation,Preliminary Notification,2,669,54,23,28.1,70.6,1,0,65,0,0,56,30,0,1,71
+LA-1653,Odisha,Sambalpur,Mining Development,Land Identification,1,448,262,54,134.14,91.5,0,0,24,2,0,11,0,0,0,0
+LA-1654,Gujarat,Rajkot,Power Transmission,Objection and Legal Review,5,875,201,44,145.25,100.0,0,0,0,0,0,17,0,0,0,0
+LA-1655,Rajasthan,Bikaner,Highway Construction,Project Initiation,0,663,90,26,23.2,91.2,0,1,59,1,0,30,0,0,1,70
+LA-1656,Odisha,Sambalpur,Mining Development,Preliminary Notification,2,553,155,52,16.67,85.5,0,0,27,3,1,7,24,0,0,0
+LA-1657,Gujarat,Surat,Pipeline Project,Preliminary Notification,2,277,8,8,187.28,86.6,0,0,19,0,0,26,0,0,0,0
+LA-1658,Madhya Pradesh,Jabalpur,Defense Installation,Final Acquisition,9,102,251,142,207.02,65.3,0,0,22,3,0,24,75,0,1,24
+LA-1659,Odisha,Bhubaneswar,Urban Infrastructure,Land Identification,1,439,216,109,61.15,77.5,0,0,8,3,1,24,0,0,0,0
+LA-1660,Gujarat,Surat,Power Transmission,Ownership Verification,4,129,408,154,69.19,68.7,0,0,10,2,0,0,24,0,0,0
+LA-1661,Maharashtra,Solapur,Dam / Irrigation,Final Acquisition,9,181,248,123,39.03,77.9,0,0,22,2,0,5,0,0,0,0
+LA-1662,Odisha,Cuttack,Dam / Irrigation,R&R and Rehabilitation,8,652,441,371,125.52,77.3,1,0,39,4,1,41,96,3,1,83
+LA-1663,Karnataka,Mysuru,Mining Development,Land Identification,1,523,187,39,159.84,99.3,0,1,31,1,0,8,24,0,1,42
+LA-1664,Odisha,Berhampur,Industrial Corridor,Ownership Verification,4,789,413,398,62.37,52.6,0,1,57,0,0,2,73,1,1,57
+LA-1665,Karnataka,Mysuru,Industrial Corridor,Land Identification,1,736,36,18,52.33,71.1,0,0,8,2,0,2,2,0,0,0
+LA-1666,Gujarat,Rajkot,Railway Expansion,Survey and Verification,3,579,158,131,142.55,100.0,1,0,49,3,0,29,34,0,1,38
+LA-1667,Karnataka,Mangaluru,Industrial Corridor,Compensation Disbursement,7,633,145,140,169.62,90.5,1,0,57,2,0,52,0,3,1,68
+LA-1668,Odisha,Cuttack,Pipeline Project,Objection and Legal Review,5,36,403,309,77.15,61.5,0,0,9,2,1,3,29,0,1,14
+LA-1669,Gujarat,Ahmedabad,Power Transmission,Preliminary Notification,2,654,339,126,149.01,100.0,0,1,37,3,0,27,6,0,1,51
+LA-1670,Uttar Pradesh,Varanasi,Power Transmission,Project Initiation,0,409,33,26,242.19,91.9,0,0,12,3,0,24,0,0,0,0
+LA-1671,Gujarat,Vadodara,Highway Construction,Objection and Legal Review,5,868,413,141,54.14,100.0,0,0,11,1,0,0,2,0,0,0
+LA-1672,Maharashtra,Nashik,Industrial Corridor,Compensation Assessment,6,194,132,0,70.4,81.3,0,0,30,3,0,1,0,0,0,0
+LA-1673,Maharashtra,Nashik,Urban Infrastructure,Land Identification,1,312,306,162,75.06,71.2,0,0,28,2,1,23,9,0,0,0
+LA-1674,Rajasthan,Udaipur,Mining Development,Land Identification,1,811,387,202,221.2,89.3,0,0,4,3,0,0,5,0,0,0
+LA-1675,Gujarat,Vadodara,Urban Infrastructure,Land Identification,1,233,430,151,132.34,100.0,0,0,0,4,1,0,0,0,0,0
+LA-1676,Maharashtra,Thane,Defense Installation,Objection and Legal Review,5,62,290,188,195.26,70.8,0,0,9,0,0,18,4,0,0,0
+LA-1677,Odisha,Bhubaneswar,Pipeline Project,Ownership Verification,4,654,174,136,18.72,75.6,0,0,26,4,1,0,0,0,0,0
+LA-1678,Madhya Pradesh,Sagar,Defense Installation,Objection and Legal Review,5,51,277,277,114.71,68.9,0,0,0,2,0,7,13,0,0,0
+LA-1679,Madhya Pradesh,Gwalior,Dam / Irrigation,Project Initiation,0,223,172,172,164.71,55.4,0,0,19,3,1,30,0,0,0,0
+LA-1680,Rajasthan,Udaipur,Dam / Irrigation,Land Identification,1,464,232,231,52.54,95.1,0,0,30,4,1,0,0,0,0,0
+LA-1681,Maharashtra,Nagpur,Pipeline Project,Land Identification,1,438,384,78,79.56,91.8,1,0,104,3,0,23,22,0,1,74
+LA-1682,Madhya Pradesh,Gwalior,Pipeline Project,Land Identification,1,291,489,390,212.03,89.6,0,0,13,2,1,12,0,0,0,0
+LA-1683,Maharashtra,Kolhapur,Defense Installation,Preliminary Notification,2,512,76,40,173.92,100.0,0,1,25,1,0,0,6,0,0,0
+LA-1684,Odisha,Cuttack,Power Transmission,Preliminary Notification,2,410,407,407,41.01,75.6,0,0,16,0,0,30,10,0,0,0
+LA-1685,Karnataka,Hubli,Power Transmission,Preliminary Notification,2,666,85,58,25.48,82.2,0,0,1,1,0,0,11,0,0,0
+LA-1686,Gujarat,Ahmedabad,Railway Expansion,Project Initiation,0,517,248,0,32.49,92.4,0,0,27,2,0,19,0,0,0,0
+LA-1687,Karnataka,Belagavi,Urban Infrastructure,Preliminary Notification,2,658,385,328,221.79,78.0,0,0,16,0,0,4,0,0,0,0
+LA-1688,Maharashtra,Pune,Industrial Corridor,Preliminary Notification,2,286,221,106,184.23,92.5,0,0,18,2,0,28,16,0,0,0
+LA-1689,Odisha,Bhubaneswar,Defense Installation,Project Initiation,0,677,444,292,86.3,93.4,1,1,106,5,1,0,0,0,1,79
+LA-1690,Gujarat,Surat,Pipeline Project,Ownership Verification,4,666,400,71,167.17,80.4,0,0,28,3,0,5,19,0,0,0
+LA-1691,Uttar Pradesh,Meerut,Power Transmission,Land Identification,1,94,452,185,138.55,85.8,0,1,48,3,1,0,0,0,1,99
+LA-1692,Madhya Pradesh,Indore,Defense Installation,Project Initiation,0,869,312,209,132.88,100.0,0,0,7,5,1,0,0,0,0,0
+LA-1693,Maharashtra,Solapur,Mining Development,Final Acquisition,9,401,82,0,106.29,55.2,0,0,20,4,1,0,0,0,1,21
+LA-1694,Gujarat,Vadodara,Defense Installation,Project Initiation,0,564,367,130,230.8,87.4,0,0,30,2,0,9,0,0,0,0
+LA-1695,Madhya Pradesh,Ujjain,Railway Expansion,Preliminary Notification,2,90,205,83,87.93,82.3,0,0,7,3,0,0,0,0,0,0
+LA-1696,Rajasthan,Udaipur,Dam / Irrigation,Project Initiation,0,441,271,256,78.13,100.0,0,0,24,0,0,0,0,0,0,0
+LA-1697,Gujarat,Surat,Pipeline Project,Ownership Verification,4,335,62,35,156.91,97.2,0,0,28,2,0,24,4,0,0,0
+LA-1698,Karnataka,Dharwad,Pipeline Project,Objection and Legal Review,5,806,498,498,108.4,86.9,0,0,30,6,1,0,1,0,0,0
+LA-1699,Odisha,Rourkela,Power Transmission,Project Initiation,0,287,129,53,108.72,85.0,0,0,11,3,0,2,0,0,0,0
+LA-1700,Uttar Pradesh,Lucknow,Pipeline Project,Land Identification,1,604,65,53,145.24,63.8,0,0,3,0,0,18,0,0,0,0
+LA-1701,Karnataka,Belagavi,Defense Installation,Compensation Assessment,6,864,115,62,236.51,58.7,0,1,33,0,0,30,66,2,1,43
+LA-1702,Maharashtra,Kolhapur,Pipeline Project,Ownership Verification,4,899,398,135,198.51,99.9,0,0,30,2,0,7,3,0,0,0
+LA-1703,Madhya Pradesh,Sagar,Urban Infrastructure,Land Identification,1,788,167,150,207.26,100.0,0,0,27,1,0,0,0,0,0,0
+LA-1704,Karnataka,Mangaluru,Urban Infrastructure,Objection and Legal Review,5,666,496,0,42.55,99.1,0,0,22,1,0,15,8,0,0,0
+LA-1705,Uttar Pradesh,Meerut,Mining Development,Land Identification,1,333,441,0,66.21,83.2,0,0,6,3,0,0,0,0,0,0
+LA-1706,Gujarat,Surat,Defense Installation,Land Identification,1,136,130,102,137.22,60.3,0,0,19,0,0,0,0,0,0,0
+LA-1707,Gujarat,Surat,Industrial Corridor,Project Initiation,0,281,434,106,249.59,69.5,0,0,9,3,0,7,0,0,0,0
+LA-1708,Rajasthan,Kota,Dam / Irrigation,Ownership Verification,4,898,191,191,80.38,63.9,0,0,25,2,0,11,0,0,0,0
+LA-1709,Uttar Pradesh,Lucknow,Dam / Irrigation,Compensation Disbursement,7,359,142,43,143.78,100.0,0,1,72,3,1,0,0,3,1,84
+LA-1710,Madhya Pradesh,Jabalpur,Railway Expansion,Objection and Legal Review,5,205,493,258,236.86,100.0,0,0,2,0,0,0,1,0,0,0
+LA-1711,Karnataka,Bengaluru,Pipeline Project,Survey and Verification,3,471,78,53,146.92,69.8,0,0,21,3,0,9,0,0,0,0
+LA-1712,Odisha,Bhubaneswar,Highway Construction,Preliminary Notification,2,759,480,215,22.73,82.7,1,0,49,3,1,55,0,0,1,31
+LA-1713,Gujarat,Rajkot,Defense Installation,Ownership Verification,4,743,121,72,88.12,62.3,0,0,5,4,1,22,0,0,0,0
+LA-1714,Gujarat,Ahmedabad,Mining Development,Project Initiation,0,293,7,3,200.11,76.1,0,1,32,0,0,5,0,0,1,28
+LA-1715,Rajasthan,Jodhpur,Pipeline Project,Objection and Legal Review,5,216,81,25,203.68,68.2,0,0,4,4,1,0,0,0,0,0
+LA-1716,Madhya Pradesh,Bhopal,Power Transmission,Preliminary Notification,2,328,480,282,164.79,90.5,0,1,49,3,0,6,55,0,1,42
+LA-1717,Maharashtra,Kolhapur,Mining Development,Compensation Disbursement,7,97,51,23,132.07,72.9,0,1,29,3,1,29,59,2,1,55
+LA-1718,Odisha,Berhampur,Industrial Corridor,Land Identification,1,319,252,156,152.61,61.1,1,1,128,5,1,0,0,0,1,207
+LA-1719,Karnataka,Dharwad,Highway Construction,Project Initiation,0,570,29,12,241.71,87.7,0,1,61,0,0,10,0,0,1,69
+LA-1720,Maharashtra,Solapur,Defense Installation,Preliminary Notification,2,786,370,243,160.29,47.0,0,0,14,3,1,30,0,0,1,29
+LA-1721,Rajasthan,Bikaner,Railway Expansion,Objection and Legal Review,5,327,353,353,142.85,86.0,1,1,93,3,0,0,24,2,1,88
+LA-1722,Karnataka,Dharwad,Power Transmission,Ownership Verification,4,449,325,184,191.9,75.2,0,0,15,0,0,0,0,0,0,0
+LA-1723,Rajasthan,Bikaner,Industrial Corridor,Ownership Verification,4,102,279,130,65.74,76.2,0,0,30,5,1,23,0,0,0,0
+LA-1724,Odisha,Bhubaneswar,Defense Installation,Land Identification,1,872,431,217,173.56,91.1,0,1,46,2,1,15,3,0,1,40
+LA-1725,Gujarat,Bhavnagar,Dam / Irrigation,Project Initiation,0,482,490,461,63.08,100.0,1,0,52,0,0,0,0,0,1,50
+LA-1726,Karnataka,Bengaluru,Defense Installation,Land Identification,1,419,285,129,241.06,91.7,1,1,118,2,1,38,1,0,1,132
+LA-1727,Madhya Pradesh,Bhopal,Dam / Irrigation,Land Identification,1,771,284,280,227.75,97.8,1,1,105,3,1,70,3,0,1,90
+LA-1728,Gujarat,Rajkot,Industrial Corridor,Preliminary Notification,2,729,151,80,159.45,100.0,0,0,15,1,0,29,0,0,0,0
+LA-1729,Uttar Pradesh,Agra,Urban Infrastructure,Survey and Verification,3,787,220,197,220.96,100.0,0,1,71,3,1,27,32,0,1,81
+LA-1730,Gujarat,Rajkot,Urban Infrastructure,Final Acquisition,9,375,285,269,94.02,73.7,0,0,6,4,1,30,43,0,0,0
+LA-1731,Uttar Pradesh,Agra,Defense Installation,Project Initiation,0,174,177,118,138.15,59.9,0,0,13,1,0,0,0,0,0,0
+LA-1732,Madhya Pradesh,Jabalpur,Dam / Irrigation,Survey and Verification,3,483,449,364,184.75,96.8,1,1,120,1,0,55,24,0,1,102
+LA-1733,Odisha,Berhampur,Mining Development,Land Identification,1,782,385,277,210.25,78.7,1,1,107,3,1,0,5,0,1,145
+LA-1734,Odisha,Sambalpur,Pipeline Project,Preliminary Notification,2,376,292,230,138.3,69.1,0,0,28,4,1,28,0,0,0,0
+LA-1735,Karnataka,Mysuru,Railway Expansion,Compensation Assessment,6,709,304,204,143.19,91.8,0,0,28,4,1,12,0,0,0,0
+LA-1736,Gujarat,Bhavnagar,Urban Infrastructure,Preliminary Notification,2,377,169,169,73.44,83.2,0,0,9,4,1,21,21,0,0,0
+LA-1737,Uttar Pradesh,Meerut,Pipeline Project,Ownership Verification,4,46,255,134,79.98,51.5,0,0,8,0,0,6,38,0,1,22
+LA-1738,Karnataka,Hubli,Power Transmission,Project Initiation,0,489,451,267,244.57,98.3,0,0,10,1,0,0,0,0,0,0
+LA-1739,Maharashtra,Aurangabad,Defense Installation,Objection and Legal Review,5,234,367,318,85.86,61.4,0,0,22,5,1,0,0,0,0,0
+LA-1740,Madhya Pradesh,Indore,Pipeline Project,Land Identification,1,318,129,80,19.07,71.9,0,1,56,0,0,27,12,0,1,72
+LA-1741,Rajasthan,Jaipur,Railway Expansion,Compensation Disbursement,7,39,59,30,35.11,77.1,0,0,30,5,1,27,0,0,0,0
+LA-1742,Karnataka,Bengaluru,Dam / Irrigation,Objection and Legal Review,5,123,423,376,151.56,80.4,0,0,12,3,1,0,0,0,0,0
+LA-1743,Rajasthan,Kota,Power Transmission,Survey and Verification,3,779,394,304,80.69,65.9,1,1,75,3,1,72,0,0,1,50
+LA-1744,Uttar Pradesh,Meerut,Defense Installation,Project Initiation,0,548,391,256,123.73,100.0,0,0,7,4,1,16,0,0,0,0
+LA-1745,Karnataka,Bengaluru,Defense Installation,Objection and Legal Review,5,111,296,164,112.97,64.3,0,0,24,0,0,29,0,0,0,0
+LA-1746,Karnataka,Mangaluru,Urban Infrastructure,Compensation Assessment,6,541,477,385,101.11,75.5,0,0,22,5,1,11,26,0,0,0
+LA-1747,Odisha,Sambalpur,Pipeline Project,Project Initiation,0,186,308,304,236.54,100.0,1,0,66,2,1,45,0,0,1,82
+LA-1748,Rajasthan,Udaipur,Urban Infrastructure,Compensation Assessment,6,232,490,395,166.61,99.8,0,0,15,3,0,19,3,0,0,0
+LA-1749,Uttar Pradesh,Lucknow,Railway Expansion,Ownership Verification,4,361,318,303,30.9,75.3,0,1,30,3,0,30,0,1,1,71
+LA-1750,Uttar Pradesh,Allahabad,Dam / Irrigation,Compensation Disbursement,7,408,499,206,242.8,63.3,1,1,111,2,1,0,13,4,1,109
+LA-1751,Odisha,Cuttack,Pipeline Project,Land Identification,1,606,39,24,112.65,74.7,1,0,62,2,0,49,0,0,1,36
+LA-1752,Karnataka,Mysuru,Urban Infrastructure,Objection and Legal Review,5,898,495,476,74.26,85.5,1,1,95,1,0,60,0,2,1,127
+LA-1753,Madhya Pradesh,Gwalior,Industrial Corridor,Project Initiation,0,839,338,137,92.47,67.5,0,0,6,0,0,4,0,0,0,0
+LA-1754,Odisha,Cuttack,Pipeline Project,Compensation Disbursement,7,670,88,32,4.73,74.2,0,0,6,2,0,22,9,0,0,0
+LA-1755,Maharashtra,Solapur,Urban Infrastructure,Preliminary Notification,2,595,149,55,10.33,72.2,0,0,10,3,1,12,0,0,0,0
+LA-1756,Madhya Pradesh,Bhopal,Dam / Irrigation,Land Identification,1,538,180,108,136.51,88.2,0,1,62,3,0,11,8,0,1,36
+LA-1757,Karnataka,Mysuru,Mining Development,Project Initiation,0,872,334,239,11.08,97.9,1,1,107,1,1,0,0,0,1,111
+LA-1758,Odisha,Cuttack,Mining Development,Project Initiation,0,357,286,223,9.48,92.3,0,0,24,3,0,9,0,0,0,0
+LA-1759,Rajasthan,Ajmer,Pipeline Project,Project Initiation,0,37,141,98,139.29,77.7,0,0,4,2,0,17,0,0,0,0
+LA-1760,Rajasthan,Ajmer,Power Transmission,Compensation Disbursement,7,372,26,10,97.17,81.3,0,1,30,0,0,0,82,2,1,68
+LA-1761,Rajasthan,Ajmer,Power Transmission,Survey and Verification,3,882,163,163,215.16,77.4,0,0,7,0,0,18,0,0,0,0
+LA-1762,Rajasthan,Kota,Defense Installation,Survey and Verification,3,767,320,193,8.28,57.8,0,0,9,0,0,25,30,0,1,17
+LA-1763,Uttar Pradesh,Lucknow,Power Transmission,Survey and Verification,3,485,339,105,6.09,82.8,0,0,6,4,1,20,0,0,0,0
+LA-1764,Uttar Pradesh,Agra,Power Transmission,Project Initiation,0,497,94,68,59.08,43.8,0,0,29,3,0,20,0,0,0,0
+LA-1765,Odisha,Berhampur,Mining Development,Project Initiation,0,309,430,430,116.69,78.5,0,0,21,5,1,12,0,0,0,0
+LA-1766,Maharashtra,Kolhapur,Railway Expansion,Ownership Verification,4,818,419,232,0.99,84.6,0,0,8,3,0,0,11,0,0,0
+LA-1767,Odisha,Sambalpur,Mining Development,Objection and Legal Review,5,749,196,135,164.82,52.4,0,0,11,1,0,2,0,0,1,22
+LA-1768,Rajasthan,Udaipur,Urban Infrastructure,Compensation Disbursement,7,446,497,114,221.25,90.4,0,0,24,5,1,0,21,0,0,0
+LA-1769,Uttar Pradesh,Kanpur,Pipeline Project,R&R and Rehabilitation,8,491,427,237,105.03,82.8,1,1,107,1,0,0,0,4,1,81
+LA-1770,Madhya Pradesh,Bhopal,Power Transmission,Land Identification,1,593,484,484,99.04,76.1,0,0,10,5,1,0,0,0,0,0
+LA-1771,Madhya Pradesh,Gwalior,Defense Installation,Land Identification,1,734,128,79,189.07,67.0,1,0,70,2,0,32,0,0,1,105
+LA-1772,Maharashtra,Solapur,Industrial Corridor,Objection and Legal Review,5,54,180,79,107.42,97.0,0,1,36,2,0,13,16,2,1,82
+LA-1773,Madhya Pradesh,Bhopal,Pipeline Project,Land Identification,1,62,256,201,248.66,69.6,0,0,25,5,1,12,0,0,0,0
+LA-1774,Odisha,Bhubaneswar,Pipeline Project,Compensation Assessment,6,288,287,169,194.4,100.0,1,0,61,2,0,0,29,2,1,72
+LA-1775,Maharashtra,Nashik,Dam / Irrigation,Compensation Assessment,6,637,134,26,123.03,100.0,0,0,22,0,0,18,0,0,0,0
+LA-1776,Gujarat,Vadodara,Dam / Irrigation,Preliminary Notification,2,70,27,14,216.46,78.0,1,1,65,3,0,71,30,0,1,74
+LA-1777,Odisha,Bhubaneswar,Railway Expansion,Project Initiation,0,198,330,98,8.87,83.2,0,1,60,2,0,11,0,0,0,0
+LA-1778,Gujarat,Gandhinagar,Defense Installation,Land Identification,1,98,87,66,49.53,94.9,0,0,29,0,0,0,1,0,0,0
+LA-1779,Karnataka,Belagavi,Urban Infrastructure,Preliminary Notification,2,600,387,226,15.47,81.5,0,0,7,1,0,6,4,0,0,0
+LA-1780,Odisha,Bhubaneswar,Railway Expansion,Survey and Verification,3,567,250,160,138.48,70.0,0,1,72,5,1,0,0,0,1,37
+LA-1781,Rajasthan,Bikaner,Dam / Irrigation,Preliminary Notification,2,552,485,183,56.72,73.6,0,1,53,2,0,0,2,0,1,57
+LA-1782,Maharashtra,Solapur,Urban Infrastructure,Preliminary Notification,2,829,335,299,60.71,72.7,0,0,7,3,0,0,4,0,0,0
+LA-1783,Madhya Pradesh,Gwalior,Pipeline Project,Project Initiation,0,821,147,115,98.62,100.0,0,0,24,2,0,0,0,0,0,0
+LA-1784,Uttar Pradesh,Kanpur,Mining Development,R&R and Rehabilitation,8,649,245,100,84.6,89.2,0,0,12,1,0,24,43,0,0,0
+LA-1785,Madhya Pradesh,Ujjain,Railway Expansion,Survey and Verification,3,287,103,50,206.52,36.3,0,0,7,2,0,10,0,0,0,0
+LA-1786,Uttar Pradesh,Meerut,Defense Installation,Survey and Verification,3,715,109,36,199.61,79.9,0,0,24,2,0,22,0,0,0,0
+LA-1787,Karnataka,Dharwad,Power Transmission,Objection and Legal Review,5,683,79,77,64.05,76.5,0,1,84,2,0,25,15,2,1,76
+LA-1788,Odisha,Berhampur,Defense Installation,R&R and Rehabilitation,8,33,106,54,157.21,100.0,0,0,26,3,0,8,26,0,0,0
+LA-1789,Gujarat,Gandhinagar,Railway Expansion,Land Identification,1,517,70,52,171.84,67.6,1,1,75,2,0,0,10,0,1,95
+LA-1790,Maharashtra,Nashik,Urban Infrastructure,Ownership Verification,4,669,304,235,79.52,67.3,0,0,19,3,1,18,0,0,1,28
+LA-1791,Odisha,Sambalpur,Industrial Corridor,Survey and Verification,3,584,128,54,43.8,48.7,0,1,37,1,0,3,0,0,1,42
+LA-1792,Karnataka,Hubli,Defense Installation,Compensation Assessment,6,623,440,340,153.96,83.4,0,0,27,3,0,2,0,0,0,0
+LA-1793,Uttar Pradesh,Agra,Pipeline Project,Compensation Disbursement,7,477,312,237,209.32,97.4,0,0,19,0,0,12,3,0,0,0
+LA-1794,Gujarat,Surat,Industrial Corridor,Compensation Disbursement,7,351,335,163,174.55,72.0,0,0,12,1,0,0,35,0,0,0
+LA-1795,Gujarat,Gandhinagar,Urban Infrastructure,Ownership Verification,4,398,250,198,39.95,91.5,0,0,2,2,0,0,0,0,0,0
+LA-1796,Madhya Pradesh,Ujjain,Mining Development,Project Initiation,0,859,45,16,37.68,100.0,1,1,67,2,0,51,0,0,1,51
+LA-1797,Rajasthan,Jodhpur,Defense Installation,Compensation Assessment,6,349,39,24,195.89,96.3,1,1,116,0,0,54,50,3,1,133
+LA-1798,Uttar Pradesh,Allahabad,Dam / Irrigation,Ownership Verification,4,186,206,56,34.17,59.5,0,0,5,0,0,24,8,0,0,0
+LA-1799,Rajasthan,Jodhpur,Urban Infrastructure,Preliminary Notification,2,617,198,42,34.41,85.1,0,0,22,0,0,0,0,0,0,0
+LA-1800,Gujarat,Bhavnagar,Defense Installation,Objection and Legal Review,5,593,389,84,63.23,100.0,0,0,30,3,0,0,3,0,0,0
+LA-1801,Odisha,Sambalpur,Dam / Irrigation,Compensation Assessment,6,854,227,153,112.76,77.8,1,1,128,1,0,0,27,3,1,156
+LA-1802,Odisha,Rourkela,Defense Installation,Objection and Legal Review,5,280,464,301,160.19,72.1,0,1,56,1,0,22,29,2,1,70
+LA-1803,Gujarat,Rajkot,Defense Installation,Land Identification,1,109,104,48,3.26,68.3,0,0,15,2,0,0,0,0,0,0
+LA-1804,Maharashtra,Pune,Mining Development,Objection and Legal Review,5,306,150,35,146.61,100.0,0,0,19,2,0,14,5,0,0,0
+LA-1805,Gujarat,Rajkot,Defense Installation,Objection and Legal Review,5,811,379,212,35.98,55.4,0,0,4,3,0,0,0,0,1,17
+LA-1806,Gujarat,Vadodara,Defense Installation,Compensation Assessment,6,255,444,444,196.86,77.9,1,1,118,1,0,44,0,3,1,133
+LA-1807,Karnataka,Mangaluru,Railway Expansion,Ownership Verification,4,111,328,139,166.4,76.5,0,0,11,2,0,0,0,0,0,0
+LA-1808,Odisha,Berhampur,Mining Development,Ownership Verification,4,728,31,26,215.85,77.5,0,1,42,3,0,15,43,1,1,51
+LA-1809,Odisha,Cuttack,Industrial Corridor,Compensation Assessment,6,505,88,43,155.95,61.5,0,0,13,1,0,23,0,0,0,0
+LA-1810,Odisha,Rourkela,Highway Construction,Land Identification,1,476,480,443,239.59,73.6,0,0,10,3,0,0,0,0,0,0
+LA-1811,Odisha,Cuttack,Power Transmission,Land Identification,1,279,281,242,107.42,72.3,0,0,12,1,1,27,9,0,0,0
+LA-1812,Odisha,Cuttack,Highway Construction,Final Acquisition,9,32,319,319,197.49,56.6,1,0,86,1,1,0,96,3,1,107
+LA-1813,Uttar Pradesh,Meerut,Power Transmission,Land Identification,1,660,21,12,98.65,63.3,1,0,67,2,0,56,1,0,1,90
+LA-1814,Odisha,Sambalpur,Urban Infrastructure,Ownership Verification,4,551,112,68,39.23,72.9,0,0,27,2,0,0,24,0,0,0
+LA-1815,Maharashtra,Nashik,Railway Expansion,Compensation Assessment,6,181,484,225,177.42,97.3,1,1,129,2,0,0,54,3,1,94
+LA-1816,Gujarat,Surat,Urban Infrastructure,Objection and Legal Review,5,97,422,99,105.88,100.0,0,0,30,1,0,12,6,0,0,0
+LA-1817,Uttar Pradesh,Meerut,Dam / Irrigation,Ownership Verification,4,37,24,8,192.83,89.3,1,1,74,3,0,64,10,1,1,83
+LA-1818,Uttar Pradesh,Lucknow,Railway Expansion,Compensation Assessment,6,524,399,132,237.48,88.4,1,1,125,3,0,0,0,2,1,104
+LA-1819,Uttar Pradesh,Meerut,Pipeline Project,Compensation Disbursement,7,75,432,140,75.42,81.3,0,0,13,3,1,0,4,0,0,0
+LA-1820,Karnataka,Bengaluru,Industrial Corridor,Project Initiation,0,714,495,232,19.49,93.4,0,1,44,4,1,0,0,0,1,46
+LA-1821,Madhya Pradesh,Jabalpur,Highway Construction,Survey and Verification,3,543,404,308,247.32,100.0,0,0,15,2,0,0,0,0,0,0
+LA-1822,Madhya Pradesh,Sagar,Urban Infrastructure,Preliminary Notification,2,211,341,183,40.88,70.4,1,0,32,1,0,0,11,0,1,68
+LA-1823,Maharashtra,Solapur,Power Transmission,Project Initiation,0,346,38,26,236.12,92.3,0,0,4,1,0,27,0,0,0,0
+LA-1824,Rajasthan,Jaipur,Pipeline Project,Land Identification,1,375,95,42,236.26,100.0,0,0,8,2,1,0,7,0,0,0
+LA-1825,Karnataka,Bengaluru,Railway Expansion,Objection and Legal Review,5,94,441,93,26.34,90.6,0,0,24,2,1,0,9,0,0,0
+LA-1826,Madhya Pradesh,Jabalpur,Industrial Corridor,Compensation Disbursement,7,201,169,80,10.97,91.4,0,0,7,5,1,0,31,0,0,0
+LA-1827,Gujarat,Surat,Highway Construction,Land Identification,1,614,436,392,191.65,49.2,0,0,10,1,0,0,14,0,1,13
+LA-1828,Madhya Pradesh,Ujjain,Urban Infrastructure,Project Initiation,0,152,33,33,249.6,70.8,1,0,97,0,0,63,0,0,1,101
+LA-1829,Rajasthan,Udaipur,Urban Infrastructure,Project Initiation,0,900,99,45,232.89,99.6,1,0,67,2,0,24,0,0,1,79
+LA-1830,Maharashtra,Nashik,Power Transmission,Project Initiation,0,816,435,275,228.29,77.2,0,0,25,4,1,2,0,0,0,0
+LA-1831,Maharashtra,Solapur,Mining Development,Ownership Verification,4,621,175,102,17.65,97.5,0,0,29,3,1,1,0,0,0,0
+LA-1832,Madhya Pradesh,Bhopal,Railway Expansion,Land Identification,1,518,337,337,26.42,100.0,1,0,79,2,1,0,11,0,1,32
+LA-1833,Rajasthan,Jodhpur,Mining Development,Project Initiation,0,274,113,42,206.34,87.4,1,0,69,3,0,60,0,0,1,58
+LA-1834,Madhya Pradesh,Jabalpur,Power Transmission,Project Initiation,0,305,102,60,144.37,97.2,0,1,73,6,1,15,0,0,1,66
+LA-1835,Karnataka,Mysuru,Dam / Irrigation,Preliminary Notification,2,758,338,251,52.95,75.0,0,1,61,0,0,0,13,0,1,69
+LA-1836,Maharashtra,Aurangabad,Industrial Corridor,Ownership Verification,4,487,344,250,52.09,99.8,0,0,21,3,0,16,22,0,0,0
+LA-1837,Uttar Pradesh,Agra,Industrial Corridor,Survey and Verification,3,531,456,247,44.68,67.6,1,1,124,0,0,44,16,0,1,98
+LA-1838,Madhya Pradesh,Jabalpur,Urban Infrastructure,Ownership Verification,4,340,13,10,195.36,60.4,0,0,15,1,0,30,6,0,0,0
+LA-1839,Madhya Pradesh,Ujjain,Dam / Irrigation,Project Initiation,0,142,495,379,71.06,68.0,1,1,170,3,1,54,0,0,1,202
+LA-1840,Odisha,Berhampur,Mining Development,Compensation Assessment,6,217,60,35,183.29,71.1,0,0,10,2,1,0,0,0,0,0
+LA-1841,Karnataka,Hubli,Industrial Corridor,Compensation Disbursement,7,673,444,360,84.37,63.4,0,0,3,0,0,12,5,0,0,0
+LA-1842,Uttar Pradesh,Varanasi,Industrial Corridor,Survey and Verification,3,471,353,353,247.45,84.4,1,0,53,1,1,25,0,0,1,51
+LA-1843,Karnataka,Mysuru,Industrial Corridor,Land Identification,1,409,477,292,201.45,93.4,0,0,28,2,0,14,2,0,0,0
+LA-1844,Odisha,Berhampur,Mining Development,Survey and Verification,3,794,459,246,145.93,61.0,0,1,37,3,0,0,0,0,1,64
+LA-1845,Karnataka,Hubli,Urban Infrastructure,Project Initiation,0,801,93,64,11.78,81.9,0,0,20,3,1,18,0,0,0,0
+LA-1846,Rajasthan,Jodhpur,Industrial Corridor,Survey and Verification,3,232,226,149,225.34,95.5,0,0,29,5,1,23,9,0,0,0
+LA-1847,Gujarat,Rajkot,Highway Construction,Land Identification,1,205,227,152,66.9,66.3,0,0,6,4,1,0,5,0,0,0
+LA-1848,Madhya Pradesh,Sagar,Mining Development,R&R and Rehabilitation,8,723,493,209,209.25,44.0,0,0,14,1,0,5,0,0,1,15
+LA-1849,Madhya Pradesh,Indore,Highway Construction,Land Identification,1,230,122,54,184.38,87.3,0,0,27,0,0,0,0,0,0,0
+LA-1850,Madhya Pradesh,Jabalpur,Defense Installation,Preliminary Notification,2,695,280,195,138.29,74.6,0,0,17,1,1,28,0,0,0,0
+LA-1851,Uttar Pradesh,Kanpur,Urban Infrastructure,Land Identification,1,592,221,122,180.37,100.0,1,1,77,0,0,0,0,0,1,85
+LA-1852,Rajasthan,Bikaner,Power Transmission,Final Acquisition,9,897,406,382,14.78,79.6,1,1,71,3,0,30,75,4,1,152
+LA-1853,Rajasthan,Udaipur,Urban Infrastructure,Land Identification,1,418,152,83,123.04,81.2,0,0,9,3,0,8,0,0,0,0
+LA-1854,Rajasthan,Udaipur,Mining Development,Project Initiation,0,666,6,1,94.78,78.2,0,0,14,0,0,0,0,0,0,0
+LA-1855,Karnataka,Hubli,Railway Expansion,Objection and Legal Review,5,400,197,108,10.32,79.6,1,1,142,4,1,37,0,2,1,104
+LA-1856,Madhya Pradesh,Ujjain,Mining Development,Preliminary Notification,2,501,448,302,98.22,89.4,0,0,20,1,1,30,2,0,0,0
+LA-1857,Madhya Pradesh,Ujjain,Highway Construction,Survey and Verification,3,297,275,157,162.11,74.0,0,0,30,1,0,15,0,0,0,0
+LA-1858,Karnataka,Bengaluru,Dam / Irrigation,Ownership Verification,4,743,455,316,105.24,89.9,0,0,20,1,0,21,0,0,0,0
+LA-1859,Karnataka,Belagavi,Defense Installation,Compensation Assessment,6,249,211,164,197.27,65.1,0,1,40,1,1,9,78,2,1,48
+LA-1860,Karnataka,Mysuru,Power Transmission,Project Initiation,0,226,379,163,27.69,100.0,1,1,126,1,0,61,0,0,1,159
+LA-1861,Odisha,Rourkela,Urban Infrastructure,Survey and Verification,3,772,111,111,48.99,100.0,1,0,48,1,0,55,11,0,1,76
+LA-1862,Karnataka,Bengaluru,Defense Installation,Land Identification,1,775,51,43,157.9,97.6,1,1,150,4,1,70,30,0,1,151
+LA-1863,Uttar Pradesh,Agra,Highway Construction,Objection and Legal Review,5,446,241,241,194.84,99.7,0,0,24,0,0,30,0,0,0,0
+LA-1864,Karnataka,Belagavi,Highway Construction,Preliminary Notification,2,40,130,64,159.39,92.5,0,1,35,0,0,17,8,0,0,0
+LA-1865,Gujarat,Vadodara,Power Transmission,Objection and Legal Review,5,872,458,385,18.19,91.0,0,0,6,3,1,12,0,0,0,0
+LA-1866,Maharashtra,Solapur,Mining Development,Preliminary Notification,2,684,104,86,235.43,84.0,0,0,26,3,0,0,0,0,0,0
+LA-1867,Madhya Pradesh,Ujjain,Mining Development,Preliminary Notification,2,181,26,20,194.62,99.7,0,0,22,6,1,0,5,0,0,0
+LA-1868,Uttar Pradesh,Agra,Pipeline Project,Project Initiation,0,434,271,254,221.29,39.8,0,0,13,2,1,0,0,0,1,21
+LA-1869,Madhya Pradesh,Bhopal,Highway Construction,Objection and Legal Review,5,425,265,78,27.64,93.3,0,0,6,2,1,8,10,0,0,0
+LA-1870,Karnataka,Mangaluru,Defense Installation,Land Identification,1,811,463,45,246.29,46.0,0,0,30,2,0,1,0,0,1,25
+LA-1871,Rajasthan,Kota,Mining Development,Objection and Legal Review,5,784,193,192,16.68,65.8,1,0,46,3,1,17,0,1,1,63
+LA-1872,Maharashtra,Kolhapur,Pipeline Project,Compensation Assessment,6,291,450,94,195.24,93.1,0,0,19,3,0,0,3,0,0,0
+LA-1873,Madhya Pradesh,Ujjain,Pipeline Project,Survey and Verification,3,121,15,13,193.19,100.0,0,0,12,2,0,20,9,0,0,0
+LA-1874,Odisha,Cuttack,Dam / Irrigation,Compensation Assessment,6,224,290,214,118.51,66.8,0,1,48,0,0,24,0,2,1,78
+LA-1875,Gujarat,Ahmedabad,Pipeline Project,Objection and Legal Review,5,208,465,351,224.32,81.9,0,0,21,1,0,21,0,0,0,0
+LA-1876,Odisha,Bhubaneswar,Power Transmission,Compensation Assessment,6,877,20,0,37.24,98.5,0,0,18,2,0,0,0,0,0,0
+LA-1877,Madhya Pradesh,Gwalior,Mining Development,Project Initiation,0,722,419,398,106.78,98.0,0,1,39,3,0,29,0,0,1,26
+LA-1878,Odisha,Cuttack,Mining Development,Survey and Verification,3,351,144,77,7.85,36.5,0,0,17,5,1,4,0,0,1,25
+LA-1879,Rajasthan,Jaipur,Highway Construction,Project Initiation,0,713,262,166,48.74,76.8,0,0,2,3,0,0,0,0,0,0
+LA-1880,Madhya Pradesh,Gwalior,Highway Construction,Compensation Assessment,6,79,491,152,36.34,98.4,0,1,37,4,1,1,18,1,1,48
+LA-1881,Uttar Pradesh,Lucknow,Pipeline Project,Preliminary Notification,2,481,75,21,86.47,100.0,0,0,14,4,1,0,1,0,0,0
+LA-1882,Odisha,Sambalpur,Pipeline Project,Project Initiation,0,423,484,113,17.26,79.3,0,0,2,3,0,0,0,0,0,0
+LA-1883,Rajasthan,Jodhpur,Industrial Corridor,Land Identification,1,494,283,254,51.63,86.8,0,0,11,3,0,29,14,0,0,0
+LA-1884,Rajasthan,Bikaner,Railway Expansion,Compensation Disbursement,7,110,461,339,167.14,81.6,0,1,56,4,1,4,29,2,1,61
+LA-1885,Karnataka,Mysuru,Urban Infrastructure,Survey and Verification,3,78,208,95,35.87,93.4,0,0,1,3,1,7,9,0,0,0
+LA-1886,Gujarat,Bhavnagar,Pipeline Project,Preliminary Notification,2,713,326,236,243.43,42.2,0,1,80,0,0,0,11,0,1,42
+LA-1887,Odisha,Sambalpur,Pipeline Project,Land Identification,1,269,19,19,84.95,74.8,0,0,7,4,1,0,4,0,0,0
+LA-1888,Karnataka,Bengaluru,Pipeline Project,Compensation Disbursement,7,834,125,38,225.13,73.4,0,0,29,3,0,3,0,0,0,0
+LA-1889,Odisha,Bhubaneswar,Urban Infrastructure,Objection and Legal Review,5,812,402,232,84.1,78.3,0,1,34,3,1,0,10,2,1,63
+LA-1890,Uttar Pradesh,Varanasi,Dam / Irrigation,Project Initiation,0,780,125,99,107.78,100.0,1,0,90,2,0,72,0,0,1,79
+LA-1891,Odisha,Bhubaneswar,Dam / Irrigation,Compensation Assessment,6,159,336,336,84.76,85.9,1,0,110,2,0,0,23,2,1,72
+LA-1892,Karnataka,Bengaluru,Power Transmission,Project Initiation,0,385,51,24,223.85,80.1,0,0,29,3,0,0,0,0,0,0
+LA-1893,Gujarat,Rajkot,Defense Installation,Land Identification,1,519,258,85,135.72,92.3,1,0,53,3,0,79,22,0,1,63
+LA-1894,Gujarat,Bhavnagar,Dam / Irrigation,R&R and Rehabilitation,8,887,334,311,46.97,73.3,0,0,23,3,0,1,0,0,0,0
+LA-1895,Maharashtra,Kolhapur,Power Transmission,Objection and Legal Review,5,60,90,56,70.26,72.6,0,0,23,0,0,19,0,0,0,0
+LA-1896,Uttar Pradesh,Kanpur,Power Transmission,Ownership Verification,4,287,354,76,67.68,73.9,0,1,41,1,0,26,30,1,1,58
+LA-1897,Rajasthan,Ajmer,Railway Expansion,Objection and Legal Review,5,378,472,0,236.28,70.8,0,0,5,1,0,0,0,0,0,0
+LA-1898,Rajasthan,Kota,Industrial Corridor,Compensation Assessment,6,741,491,153,212.61,100.0,0,1,54,3,0,3,24,2,1,97
+LA-1899,Gujarat,Bhavnagar,Power Transmission,Land Identification,1,874,472,121,12.2,81.8,0,0,26,0,0,0,0,0,0,0
+LA-1900,Madhya Pradesh,Sagar,Urban Infrastructure,Land Identification,1,625,378,299,54.01,84.8,1,1,86,1,0,40,23,0,1,96
+LA-1901,Maharashtra,Pune,Defense Installation,Land Identification,1,488,402,175,88.79,38.3,1,0,66,0,0,73,22,0,1,61
+LA-1902,Karnataka,Belagavi,Mining Development,R&R and Rehabilitation,8,514,88,88,139.57,59.3,0,0,7,4,1,27,0,0,0,0
+LA-1903,Odisha,Sambalpur,Defense Installation,Preliminary Notification,2,89,366,167,185.33,100.0,0,0,8,3,0,9,0,0,0,0
+LA-1904,Karnataka,Hubli,Mining Development,Preliminary Notification,2,677,160,160,241.92,69.2,0,0,19,1,0,0,13,0,0,0
+LA-1905,Odisha,Sambalpur,Urban Infrastructure,Preliminary Notification,2,56,414,198,52.48,100.0,1,0,56,0,0,27,41,0,1,63
+LA-1906,Rajasthan,Bikaner,Defense Installation,Compensation Assessment,6,598,260,227,240.79,86.0,0,0,16,4,1,16,0,0,0,0
+LA-1907,Gujarat,Rajkot,Pipeline Project,Preliminary Notification,2,766,116,55,201.44,42.7,0,0,11,3,1,27,8,0,1,22
+LA-1908,Odisha,Bhubaneswar,Dam / Irrigation,Project Initiation,0,224,458,213,22.92,86.8,0,0,19,0,0,2,0,0,0,0
+LA-1909,Rajasthan,Jodhpur,Mining Development,Compensation Disbursement,7,504,250,192,116.33,96.0,0,0,22,2,0,2,6,0,0,0
+LA-1910,Madhya Pradesh,Sagar,Power Transmission,Compensation Disbursement,7,525,496,395,30.67,100.0,1,1,89,3,0,75,0,4,1,137
+LA-1911,Rajasthan,Kota,Industrial Corridor,Final Acquisition,9,608,384,170,25.65,55.7,0,0,18,1,0,30,0,0,1,16
+LA-1912,Odisha,Berhampur,Railway Expansion,Objection and Legal Review,5,685,289,111,234.95,89.1,0,0,10,3,1,0,0,0,0,0
+LA-1913,Karnataka,Dharwad,Pipeline Project,Project Initiation,0,784,448,262,193.85,91.1,0,0,7,4,1,30,0,0,0,0
+LA-1914,Madhya Pradesh,Sagar,Railway Expansion,Project Initiation,0,214,346,119,225.32,100.0,0,0,14,3,1,2,0,0,0,0
+LA-1915,Gujarat,Bhavnagar,Railway Expansion,Survey and Verification,3,249,73,47,198.41,86.3,0,0,17,0,0,30,1,0,0,0
+LA-1916,Odisha,Bhubaneswar,Mining Development,Compensation Disbursement,7,222,268,123,133.98,100.0,0,1,77,5,1,28,0,3,1,132
+LA-1917,Odisha,Bhubaneswar,Industrial Corridor,Objection and Legal Review,5,47,493,330,52.91,94.8,0,0,26,1,0,18,3,0,0,0
+LA-1918,Odisha,Bhubaneswar,Highway Construction,Project Initiation,0,827,160,108,217.03,43.9,0,1,55,0,0,0,0,0,1,63
+LA-1919,Rajasthan,Jaipur,Defense Installation,Project Initiation,0,511,379,272,29.96,100.0,0,1,27,1,0,12,0,0,0,0
+LA-1920,Karnataka,Dharwad,Pipeline Project,Land Identification,1,449,26,24,111.9,56.1,0,1,42,1,0,12,10,0,1,46
+LA-1921,Madhya Pradesh,Jabalpur,Industrial Corridor,Objection and Legal Review,5,232,338,218,219.28,100.0,0,0,6,3,1,13,0,0,0,0
+LA-1922,Maharashtra,Pune,Power Transmission,Project Initiation,0,210,73,54,32.64,53.1,1,1,105,2,0,0,0,0,1,105
+LA-1923,Uttar Pradesh,Allahabad,Defense Installation,Final Acquisition,9,889,426,217,4.76,65.6,0,0,29,3,0,6,0,0,1,31
+LA-1924,Maharashtra,Pune,Power Transmission,Land Identification,1,225,77,77,105.9,66.9,1,1,75,0,0,0,11,0,1,113
+LA-1925,Gujarat,Vadodara,Highway Construction,Project Initiation,0,200,121,121,133.0,93.1,1,0,87,3,0,0,0,0,1,55
+LA-1926,Odisha,Cuttack,Highway Construction,Objection and Legal Review,5,257,221,109,223.31,93.7,0,0,0,5,1,19,14,0,0,0
+LA-1927,Gujarat,Gandhinagar,Urban Infrastructure,Preliminary Notification,2,410,289,174,15.32,88.2,0,0,26,0,0,3,0,0,0,0
+LA-1928,Maharashtra,Nashik,Industrial Corridor,Land Identification,1,57,283,175,3.78,100.0,0,0,14,0,0,12,0,0,0,0
+LA-1929,Uttar Pradesh,Varanasi,Railway Expansion,Land Identification,1,181,32,18,115.76,98.7,0,0,1,1,1,14,0,0,0,0
+LA-1930,Maharashtra,Solapur,Power Transmission,Land Identification,1,399,183,120,133.16,89.3,0,0,12,1,0,5,7,0,0,0
+LA-1931,Gujarat,Bhavnagar,Defense Installation,Preliminary Notification,2,640,426,140,37.65,79.0,1,1,108,5,1,54,45,0,1,121
+LA-1932,Rajasthan,Bikaner,Pipeline Project,Land Identification,1,49,233,51,31.52,100.0,0,0,18,0,0,0,3,0,0,0
+LA-1933,Uttar Pradesh,Lucknow,Highway Construction,Ownership Verification,4,796,132,48,79.51,68.6,0,0,24,2,1,0,0,0,0,0
+LA-1934,Rajasthan,Jaipur,Power Transmission,R&R and Rehabilitation,8,655,332,205,116.08,78.1,0,0,29,3,0,12,0,0,0,0
+LA-1935,Gujarat,Bhavnagar,Railway Expansion,Ownership Verification,4,863,253,92,58.71,61.0,1,0,51,0,0,0,41,0,1,57
+LA-1936,Rajasthan,Bikaner,Mining Development,Project Initiation,0,715,89,89,238.96,62.8,0,0,19,2,0,14,0,0,0,0
+LA-1937,Rajasthan,Jaipur,Industrial Corridor,Possession and Handover,10,508,416,197,212.48,100.0,0,0,26,3,1,5,4,0,0,0
+LA-1938,Madhya Pradesh,Bhopal,Industrial Corridor,Land Identification,1,408,232,232,134.61,70.0,0,0,14,0,0,0,0,0,0,0
+LA-1939,Karnataka,Belagavi,Power Transmission,Preliminary Notification,2,707,393,393,220.92,49.0,0,0,9,1,0,0,0,0,1,10
+LA-1940,Rajasthan,Ajmer,Pipeline Project,Project Initiation,0,549,247,101,207.29,78.0,0,0,0,3,0,8,0,0,0,0
+LA-1941,Rajasthan,Jodhpur,Defense Installation,Ownership Verification,4,606,467,96,126.42,100.0,0,1,74,6,1,21,41,1,1,76
+LA-1942,Karnataka,Mangaluru,Highway Construction,Land Identification,1,303,27,5,62.4,98.2,0,0,13,3,0,0,1,0,0,0
+LA-1943,Gujarat,Vadodara,Mining Development,Possession and Handover,10,601,98,56,151.38,86.7,0,0,25,3,0,0,18,0,0,0
+LA-1944,Gujarat,Bhavnagar,Power Transmission,Project Initiation,0,885,292,120,84.84,68.3,1,1,120,1,0,18,0,0,1,127
+LA-1945,Odisha,Cuttack,Defense Installation,R&R and Rehabilitation,8,311,319,290,246.26,73.0,0,0,17,1,0,12,0,0,0,0
+LA-1946,Gujarat,Rajkot,Dam / Irrigation,Survey and Verification,3,800,425,396,27.44,57.9,1,1,64,1,0,76,10,0,1,78
+LA-1947,Uttar Pradesh,Agra,Industrial Corridor,Project Initiation,0,74,469,469,124.15,44.5,0,0,24,2,0,26,0,0,0,0
+LA-1948,Uttar Pradesh,Lucknow,Railway Expansion,Land Identification,1,469,137,37,136.88,80.1,1,1,111,4,1,81,9,0,1,43
+LA-1949,Maharashtra,Solapur,Defense Installation,Survey and Verification,3,502,284,37,105.84,72.0,1,0,99,5,1,43,0,0,1,52
+LA-1950,Karnataka,Belagavi,Defense Installation,Objection and Legal Review,5,743,165,104,31.47,67.7,0,0,2,2,0,0,0,0,0,0
+LA-1951,Rajasthan,Bikaner,Dam / Irrigation,Land Identification,1,89,247,247,15.94,99.6,0,0,1,0,0,0,0,0,0,0
+LA-1952,Odisha,Berhampur,Mining Development,Ownership Verification,4,800,253,242,2.42,86.4,1,1,110,3,0,0,0,1,1,129
+LA-1953,Odisha,Cuttack,Power Transmission,Compensation Assessment,6,573,409,178,205.14,95.4,0,1,58,2,0,0,25,2,1,73
+LA-1954,Uttar Pradesh,Varanasi,Pipeline Project,Survey and Verification,3,378,222,15,33.15,99.5,1,0,84,0,0,0,21,0,1,64
+LA-1955,Gujarat,Surat,Dam / Irrigation,Preliminary Notification,2,818,65,46,240.84,57.6,1,1,46,1,0,75,28,0,1,120
+LA-1956,Karnataka,Mangaluru,Power Transmission,Land Identification,1,440,413,118,129.51,77.4,1,1,83,5,1,38,22,0,1,103
+LA-1957,Maharashtra,Nagpur,Mining Development,Objection and Legal Review,5,435,233,213,198.24,61.1,0,0,28,2,1,30,1,0,0,0
+LA-1958,Odisha,Cuttack,Defense Installation,Survey and Verification,3,107,306,159,133.31,87.3,1,1,136,5,1,0,21,0,1,91
+LA-1959,Rajasthan,Udaipur,Power Transmission,Ownership Verification,4,556,29,29,63.99,100.0,1,1,115,2,0,0,44,0,1,118
+LA-1960,Karnataka,Mysuru,Industrial Corridor,R&R and Rehabilitation,8,895,235,28,191.16,100.0,1,0,99,0,0,68,53,2,1,68
+LA-1961,Karnataka,Dharwad,Dam / Irrigation,Project Initiation,0,531,415,346,97.06,59.7,1,1,75,0,0,68,0,0,1,125
+LA-1962,Karnataka,Mysuru,Highway Construction,Preliminary Notification,2,425,11,4,9.42,86.2,0,0,16,3,1,0,0,0,0,0
+LA-1963,Karnataka,Dharwad,Railway Expansion,Objection and Legal Review,5,557,138,138,65.84,68.7,0,1,35,2,0,26,29,2,1,78
+LA-1964,Madhya Pradesh,Gwalior,Railway Expansion,Objection and Legal Review,5,516,310,268,240.11,71.9,0,0,24,4,1,0,0,0,0,0
+LA-1965,Madhya Pradesh,Sagar,Power Transmission,Project Initiation,0,581,166,10,120.57,79.0,0,0,4,2,0,28,0,0,0,0
+LA-1966,Maharashtra,Aurangabad,Pipeline Project,Preliminary Notification,2,727,235,235,41.1,49.2,1,1,165,4,1,57,10,0,1,130
+LA-1967,Maharashtra,Kolhapur,Mining Development,Project Initiation,0,541,79,57,30.72,100.0,0,1,74,2,1,29,0,0,1,51
+LA-1968,Rajasthan,Jaipur,Highway Construction,Project Initiation,0,94,423,136,74.22,75.6,1,0,101,0,0,56,0,0,1,102
+LA-1969,Maharashtra,Kolhapur,Industrial Corridor,Ownership Verification,4,596,104,10,79.06,78.1,0,1,70,1,0,0,45,1,1,84
+LA-1970,Odisha,Bhubaneswar,Highway Construction,Objection and Legal Review,5,33,15,10,108.5,91.8,0,1,43,2,0,30,44,2,1,65
+LA-1971,Maharashtra,Nashik,Highway Construction,Survey and Verification,3,692,56,33,100.01,65.6,0,0,22,2,0,0,13,0,0,0
+LA-1972,Uttar Pradesh,Meerut,Pipeline Project,Survey and Verification,3,72,86,65,97.41,45.5,1,0,86,3,0,0,12,0,1,69
+LA-1973,Madhya Pradesh,Jabalpur,Mining Development,Project Initiation,0,598,416,227,148.04,56.6,0,1,79,2,0,2,0,0,1,62
+LA-1974,Madhya Pradesh,Jabalpur,Defense Installation,R&R and Rehabilitation,8,53,394,394,92.45,77.4,1,1,141,0,0,0,7,4,1,174
+LA-1975,Uttar Pradesh,Meerut,Urban Infrastructure,Ownership Verification,4,150,54,39,135.68,90.8,0,0,4,0,0,0,0,0,0,0
+LA-1976,Rajasthan,Udaipur,Railway Expansion,Compensation Disbursement,7,653,420,396,176.93,57.2,0,0,5,4,1,4,0,0,1,15
+LA-1977,Karnataka,Dharwad,Urban Infrastructure,Objection and Legal Review,5,302,6,4,211.22,89.3,0,0,1,1,0,0,0,0,0,0
+LA-1978,Uttar Pradesh,Varanasi,Highway Construction,Project Initiation,0,757,113,31,206.91,44.1,0,1,51,4,1,0,0,0,1,67
+LA-1979,Madhya Pradesh,Indore,Mining Development,Ownership Verification,4,655,74,53,235.43,68.4,1,0,116,2,1,25,60,0,1,136
+LA-1980,Uttar Pradesh,Lucknow,Pipeline Project,Land Identification,1,97,437,266,116.22,67.3,1,1,79,1,0,0,7,0,1,36
+LA-1981,Uttar Pradesh,Agra,Defense Installation,Preliminary Notification,2,112,21,1,148.62,81.9,0,0,26,0,0,18,0,0,0,0
+LA-1982,Karnataka,Bengaluru,Highway Construction,Survey and Verification,3,525,413,120,148.48,80.9,1,0,78,1,0,0,42,0,1,99
+LA-1983,Uttar Pradesh,Agra,Power Transmission,R&R and Rehabilitation,8,315,417,95,78.06,100.0,0,0,30,1,0,0,88,0,0,0
+LA-1984,Odisha,Bhubaneswar,Highway Construction,Survey and Verification,3,294,114,103,242.72,79.0,0,0,12,2,0,0,5,0,0,0
+LA-1985,Gujarat,Vadodara,Mining Development,Ownership Verification,4,812,234,130,48.84,53.6,0,0,16,3,0,1,19,0,0,0
+LA-1986,Uttar Pradesh,Kanpur,Mining Development,Preliminary Notification,2,545,422,224,111.36,65.8,1,1,125,2,1,0,0,0,1,123
+LA-1987,Madhya Pradesh,Gwalior,Urban Infrastructure,Compensation Disbursement,7,111,56,56,115.94,70.1,1,1,114,1,0,15,57,4,1,115
+LA-1988,Karnataka,Bengaluru,Dam / Irrigation,Preliminary Notification,2,366,475,176,58.84,97.8,0,0,21,2,0,22,0,0,0,0
+LA-1989,Karnataka,Bengaluru,Dam / Irrigation,Objection and Legal Review,5,30,393,206,203.21,44.0,0,0,25,3,1,0,2,0,1,20
+LA-1990,Maharashtra,Aurangabad,Industrial Corridor,Objection and Legal Review,5,766,229,102,123.33,100.0,0,0,14,0,0,20,0,0,0,0
+LA-1991,Odisha,Sambalpur,Industrial Corridor,Land Identification,1,894,9,7,169.55,98.7,1,1,85,0,0,0,16,0,1,87
+LA-1992,Karnataka,Belagavi,Railway Expansion,Ownership Verification,4,33,177,159,43.98,79.2,1,1,104,4,1,16,0,1,1,92
+LA-1993,Uttar Pradesh,Allahabad,Urban Infrastructure,Compensation Assessment,6,180,229,116,174.02,100.0,1,1,87,6,1,31,0,3,1,68
+LA-1994,Rajasthan,Bikaner,Industrial Corridor,Project Initiation,0,708,256,28,211.7,81.8,0,1,40,3,0,0,0,0,1,43
+LA-1995,Karnataka,Hubli,Highway Construction,Land Identification,1,104,326,214,47.1,93.1,0,0,12,0,0,5,0,0,0,0
+LA-1996,Rajasthan,Jodhpur,Industrial Corridor,Compensation Assessment,6,345,134,134,61.12,72.8,1,0,43,6,1,0,35,2,1,82
+LA-1997,Gujarat,Rajkot,Pipeline Project,Objection and Legal Review,5,255,170,165,22.39,88.9,0,1,73,3,0,0,0,1,1,66
+LA-1998,Uttar Pradesh,Agra,Defense Installation,Preliminary Notification,2,77,135,116,115.75,51.2,0,1,20,0,0,0,0,0,1,50
+LA-1999,Rajasthan,Jaipur,Pipeline Project,Land Identification,1,147,39,7,196.53,95.9,0,1,72,1,0,30,11,0,1,45
+LA-2000,Maharashtra,Kolhapur,Urban Infrastructure,Land Identification,1,609,245,82,42.29,72.8,1,1,117,6,1,62,16,0,1,84
+LA-2001,Karnataka,Bengaluru,Urban Infrastructure,Preliminary Notification,2,272,416,137,220.58,51.6,0,0,19,4,1,0,2,0,1,24
+LA-2002,Madhya Pradesh,Indore,Dam / Irrigation,Preliminary Notification,2,769,344,66,236.41,62.4,0,0,19,2,1,9,0,0,1,20
+LA-2003,Uttar Pradesh,Varanasi,Power Transmission,Objection and Legal Review,5,700,10,3,183.83,84.3,0,0,30,4,1,30,6,0,0,0
+LA-2004,Rajasthan,Jaipur,Industrial Corridor,Land Identification,1,81,104,104,33.1,77.2,0,1,34,5,1,22,21,0,1,20
+LA-2005,Gujarat,Vadodara,Defense Installation,Compensation Disbursement,7,231,398,261,40.89,100.0,0,1,48,2,1,0,0,3,1,96
+LA-2006,Odisha,Bhubaneswar,Pipeline Project,Survey and Verification,3,335,131,125,210.62,96.6,0,0,23,2,0,30,15,0,0,0
+LA-2007,Maharashtra,Thane,Defense Installation,Project Initiation,0,431,192,15,242.23,48.6,0,1,44,0,0,15,0,0,1,66
+LA-2008,Gujarat,Ahmedabad,Defense Installation,Project Initiation,0,269,151,104,75.48,49.0,0,0,12,5,1,11,0,0,0,0
+LA-2009,Maharashtra,Nagpur,Defense Installation,Final Acquisition,9,430,237,193,96.64,100.0,0,0,0,4,1,9,0,0,0,0
+LA-2010,Gujarat,Ahmedabad,Railway Expansion,R&R and Rehabilitation,8,332,141,75,128.91,95.6,0,0,30,2,0,0,0,0,0,0
+LA-2011,Madhya Pradesh,Sagar,Highway Construction,Survey and Verification,3,576,48,18,95.38,77.9,0,0,13,5,1,4,0,0,0,0
+LA-2012,Rajasthan,Jodhpur,Mining Development,Objection and Legal Review,5,376,277,171,237.33,94.7,0,0,30,2,1,5,0,0,0,0
+LA-2013,Odisha,Bhubaneswar,Industrial Corridor,Objection and Legal Review,5,109,474,205,125.1,100.0,0,0,23,3,0,8,10,0,0,0
+LA-2014,Odisha,Sambalpur,Defense Installation,Survey and Verification,3,630,228,83,214.38,75.2,0,0,10,1,0,0,0,0,0,0
+LA-2015,Gujarat,Rajkot,Mining Development,Objection and Legal Review,5,421,49,33,100.08,88.3,1,1,115,5,1,32,13,2,1,108
+LA-2016,Gujarat,Rajkot,Power Transmission,Objection and Legal Review,5,894,67,55,249.43,65.1,1,0,82,3,0,29,29,1,1,60
+LA-2017,Rajasthan,Jodhpur,Defense Installation,Compensation Assessment,6,866,20,20,133.77,62.7,0,1,43,0,0,14,41,2,1,67
+LA-2018,Madhya Pradesh,Gwalior,Dam / Irrigation,Survey and Verification,3,175,383,327,226.51,88.7,0,0,10,2,0,5,0,0,0,0
+LA-2019,Odisha,Sambalpur,Power Transmission,Objection and Legal Review,5,303,468,97,111.46,96.6,1,0,28,1,0,65,0,1,0,0
+LA-2020,Gujarat,Bhavnagar,Urban Infrastructure,Preliminary Notification,2,446,337,187,130.03,88.9,1,1,102,4,1,0,20,0,1,93
+LA-2021,Odisha,Cuttack,Dam / Irrigation,Land Identification,1,97,275,208,123.85,76.3,0,0,9,3,1,7,4,0,0,0
+LA-2022,Rajasthan,Jaipur,Industrial Corridor,Final Acquisition,9,154,299,153,196.13,90.0,0,0,23,1,0,0,63,0,0,0
+LA-2023,Uttar Pradesh,Agra,Urban Infrastructure,Survey and Verification,3,660,313,183,91.22,59.2,0,0,20,4,1,22,20,0,1,13
+LA-2024,Odisha,Cuttack,Urban Infrastructure,Compensation Disbursement,7,260,200,169,10.12,86.6,1,1,116,2,1,15,52,4,1,123
+LA-2025,Uttar Pradesh,Allahabad,Mining Development,Possession and Handover,10,257,477,256,214.95,100.0,0,0,15,3,0,0,0,0,0,0
+LA-2026,Odisha,Sambalpur,Pipeline Project,Project Initiation,0,235,391,391,152.05,68.4,1,1,84,0,0,50,0,0,1,138
+LA-2027,Odisha,Berhampur,Dam / Irrigation,Preliminary Notification,2,764,113,60,97.71,100.0,0,0,1,2,0,12,0,0,0,0
+LA-2028,Odisha,Sambalpur,Industrial Corridor,Survey and Verification,3,98,400,351,37.55,87.5,1,1,76,2,0,67,7,0,1,110
+LA-2029,Gujarat,Bhavnagar,Highway Construction,Objection and Legal Review,5,550,28,21,90.7,99.4,0,0,15,4,1,0,0,0,0,0
+LA-2030,Rajasthan,Bikaner,Railway Expansion,Objection and Legal Review,5,407,113,28,147.94,89.0,0,1,82,6,1,10,11,2,1,91
+LA-2031,Rajasthan,Jaipur,Pipeline Project,Land Identification,1,852,42,40,188.1,91.8,1,1,158,3,1,21,7,0,1,176
+LA-2032,Madhya Pradesh,Ujjain,Pipeline Project,Survey and Verification,3,445,72,57,109.74,76.0,0,1,59,1,0,28,36,0,1,71
+LA-2033,Uttar Pradesh,Allahabad,Mining Development,Ownership Verification,4,577,64,16,95.87,63.2,0,0,20,1,0,21,0,0,0,0
+LA-2034,Uttar Pradesh,Agra,Highway Construction,Land Identification,1,554,253,173,71.06,67.1,0,0,3,2,1,18,0,0,0,0
+LA-2035,Karnataka,Mangaluru,Power Transmission,Compensation Assessment,6,521,477,161,105.24,87.8,0,1,74,3,0,24,30,2,1,52
+LA-2036,Karnataka,Bengaluru,Power Transmission,Compensation Assessment,6,368,45,41,162.69,92.9,1,1,66,3,0,0,75,3,1,94
+LA-2037,Rajasthan,Jaipur,Urban Infrastructure,Survey and Verification,3,637,441,307,78.85,70.0,1,0,56,0,0,50,3,0,1,104
+LA-2038,Odisha,Berhampur,Urban Infrastructure,Survey and Verification,3,656,136,97,76.69,50.1,0,0,8,5,1,27,16,0,1,20
+LA-2039,Madhya Pradesh,Ujjain,Industrial Corridor,Survey and Verification,3,801,140,68,4.79,98.1,0,0,18,3,0,14,0,0,0,0
+LA-2040,Karnataka,Belagavi,Dam / Irrigation,Survey and Verification,3,179,56,15,62.67,47.8,0,1,68,2,0,23,4,0,1,74
+LA-2041,Odisha,Berhampur,Pipeline Project,Survey and Verification,3,162,327,170,84.5,92.3,0,0,27,2,0,16,2,0,0,0
+LA-2042,Odisha,Berhampur,Dam / Irrigation,Survey and Verification,3,826,426,426,218.72,91.5,1,1,86,0,0,72,24,0,1,77
+LA-2043,Odisha,Sambalpur,Urban Infrastructure,Possession and Handover,10,432,417,0,20.18,70.0,0,0,18,3,0,10,16,0,0,0
+LA-2044,Maharashtra,Aurangabad,Urban Infrastructure,Objection and Legal Review,5,595,85,40,233.23,76.4,1,1,69,3,0,73,26,2,1,85
+LA-2045,Uttar Pradesh,Varanasi,Power Transmission,Project Initiation,0,217,287,230,197.97,80.8,1,1,130,0,0,0,0,0,1,142
+LA-2046,Rajasthan,Ajmer,Power Transmission,Land Identification,1,420,101,86,210.45,82.9,0,1,58,5,1,0,0,0,1,50
+LA-2047,Odisha,Rourkela,Highway Construction,Preliminary Notification,2,197,324,243,198.41,100.0,0,1,36,1,0,14,18,0,1,45
+LA-2048,Gujarat,Gandhinagar,Railway Expansion,Objection and Legal Review,5,250,77,51,87.17,82.7,1,1,117,3,0,58,17,2,1,119
+LA-2049,Uttar Pradesh,Allahabad,Urban Infrastructure,Ownership Verification,4,245,474,356,32.2,78.3,0,1,68,5,1,24,25,1,1,24
+LA-2050,Odisha,Berhampur,Highway Construction,Project Initiation,0,123,421,346,207.92,93.2,0,0,9,2,1,0,0,0,0,0
+LA-2051,Karnataka,Belagavi,Pipeline Project,Land Identification,1,777,478,274,160.13,83.4,0,0,8,1,0,13,0,0,0,0
+LA-2052,Rajasthan,Ajmer,Pipeline Project,Objection and Legal Review,5,187,369,217,185.0,86.9,0,1,63,2,0,1,0,2,1,83
+LA-2053,Rajasthan,Kota,Railway Expansion,Objection and Legal Review,5,843,442,135,12.85,95.6,1,1,145,2,1,26,0,2,1,97
+LA-2054,Karnataka,Mysuru,Dam / Irrigation,Land Identification,1,390,94,76,97.26,100.0,0,0,28,1,1,28,9,0,0,0
+LA-2055,Uttar Pradesh,Agra,Industrial Corridor,Objection and Legal Review,5,600,455,111,48.49,71.7,0,0,12,5,1,21,2,0,0,0
+LA-2056,Rajasthan,Bikaner,Highway Construction,Ownership Verification,4,738,265,13,3.43,70.5,0,0,0,3,0,0,0,0,0,0
+LA-2057,Gujarat,Ahmedabad,Dam / Irrigation,Survey and Verification,3,40,259,149,45.82,97.8,0,0,27,3,0,10,0,0,0,0
+LA-2058,Gujarat,Bhavnagar,Industrial Corridor,Preliminary Notification,2,193,295,229,221.51,100.0,0,0,15,3,1,0,0,0,0,0
+LA-2059,Uttar Pradesh,Meerut,Railway Expansion,Land Identification,1,175,116,114,79.29,85.5,0,0,9,3,0,3,0,0,0,0
+LA-2060,Karnataka,Dharwad,Defense Installation,Ownership Verification,4,268,26,12,165.98,63.5,0,0,23,1,0,0,7,0,0,0
+LA-2061,Madhya Pradesh,Ujjain,Highway Construction,Ownership Verification,4,691,424,201,160.77,74.0,0,1,44,2,1,1,1,0,1,76
+LA-2062,Odisha,Cuttack,Railway Expansion,Compensation Assessment,6,411,276,116,15.09,81.9,1,0,102,0,0,57,0,2,1,125
+LA-2063,Odisha,Bhubaneswar,Highway Construction,R&R and Rehabilitation,8,843,402,269,184.32,79.9,0,0,14,2,0,0,0,0,0,0
+LA-2064,Odisha,Sambalpur,Power Transmission,Land Identification,1,823,96,96,19.24,93.8,0,0,21,1,0,5,8,0,0,0
+LA-2065,Maharashtra,Nashik,Power Transmission,R&R and Rehabilitation,8,197,51,7,118.03,96.0,0,0,23,0,0,15,7,0,0,0
+LA-2066,Odisha,Sambalpur,Power Transmission,Project Initiation,0,619,221,41,186.41,75.1,1,0,93,3,1,0,0,0,1,104
+LA-2067,Rajasthan,Bikaner,Dam / Irrigation,Project Initiation,0,582,130,130,137.68,82.0,0,0,10,3,1,20,0,0,0,0
+LA-2068,Maharashtra,Aurangabad,Mining Development,Project Initiation,0,735,278,240,174.53,91.9,0,0,1,3,0,0,0,0,0,0
+LA-2069,Gujarat,Surat,Industrial Corridor,Compensation Assessment,6,211,213,0,225.08,99.1,0,0,19,3,1,0,14,0,0,0
+LA-2070,Maharashtra,Kolhapur,Mining Development,Ownership Verification,4,860,84,47,166.12,90.1,0,0,7,1,1,13,8,0,0,0
+LA-2071,Rajasthan,Bikaner,Dam / Irrigation,Compensation Disbursement,7,131,171,84,177.21,70.3,0,0,28,3,0,5,0,0,0,0
+LA-2072,Maharashtra,Nagpur,Pipeline Project,Project Initiation,0,534,443,206,192.7,39.3,0,1,63,0,0,5,0,0,1,76
+LA-2073,Gujarat,Ahmedabad,Pipeline Project,Survey and Verification,3,545,96,32,183.74,99.7,0,0,17,3,0,20,0,0,0,0
+LA-2074,Karnataka,Mysuru,Defense Installation,Objection and Legal Review,5,415,109,49,77.36,85.0,0,0,5,3,0,19,3,0,0,0
+LA-2075,Rajasthan,Udaipur,Urban Infrastructure,Preliminary Notification,2,258,142,57,157.04,80.9,0,0,14,3,0,23,0,0,0,0
+LA-2076,Gujarat,Gandhinagar,Power Transmission,Compensation Disbursement,7,94,291,291,88.31,100.0,0,0,0,2,0,17,0,0,0,0
+LA-2077,Gujarat,Vadodara,Railway Expansion,Ownership Verification,4,551,209,117,133.54,66.2,0,1,57,1,0,7,0,1,1,53
+LA-2078,Maharashtra,Aurangabad,Power Transmission,Land Identification,1,353,209,0,35.32,100.0,0,1,27,1,0,10,21,0,0,0
+LA-2079,Uttar Pradesh,Meerut,Highway Construction,Project Initiation,0,48,452,251,120.88,86.6,0,0,16,1,0,3,0,0,0,0
+LA-2080,Karnataka,Belagavi,Mining Development,Preliminary Notification,2,272,473,288,11.96,60.4,0,1,43,2,0,0,0,0,1,44
+LA-2081,Gujarat,Ahmedabad,Urban Infrastructure,Survey and Verification,3,690,226,0,112.48,52.1,0,1,53,2,0,8,37,0,1,78
+LA-2082,Karnataka,Bengaluru,Railway Expansion,Project Initiation,0,573,475,310,74.26,63.7,1,0,80,3,1,0,0,0,1,86
+LA-2083,Madhya Pradesh,Bhopal,Defense Installation,Project Initiation,0,525,77,67,196.96,79.5,0,0,5,3,0,0,0,0,0,0
+LA-2084,Uttar Pradesh,Meerut,Defense Installation,Project Initiation,0,519,125,86,165.15,93.3,0,1,53,2,0,3,0,0,1,56
+LA-2085,Uttar Pradesh,Varanasi,Defense Installation,Preliminary Notification,2,340,278,255,56.69,68.6,0,0,19,1,0,13,18,0,0,0
+LA-2086,Rajasthan,Udaipur,Urban Infrastructure,Project Initiation,0,776,70,14,232.66,83.3,1,0,46,3,0,0,0,0,1,65
+LA-2087,Rajasthan,Bikaner,Dam / Irrigation,Survey and Verification,3,678,288,235,81.52,68.6,0,0,20,2,0,17,0,0,0,0
+LA-2088,Rajasthan,Bikaner,Urban Infrastructure,Objection and Legal Review,5,173,177,67,229.1,100.0,0,0,10,0,0,0,0,0,0,0
+LA-2089,Uttar Pradesh,Kanpur,Railway Expansion,Survey and Verification,3,294,62,21,208.4,77.3,0,0,20,2,0,0,1,0,0,0
+LA-2090,Madhya Pradesh,Gwalior,Pipeline Project,Project Initiation,0,234,104,77,21.24,74.5,0,1,53,1,0,16,0,0,1,74
+LA-2091,Odisha,Berhampur,Dam / Irrigation,Land Identification,1,467,105,78,2.91,87.0,0,0,25,3,0,0,0,0,0,0
+LA-2092,Uttar Pradesh,Allahabad,Railway Expansion,Compensation Disbursement,7,350,450,189,95.69,65.0,1,1,110,2,0,47,71,4,1,167
+LA-2093,Rajasthan,Ajmer,Defense Installation,Ownership Verification,4,632,23,12,28.49,100.0,0,1,47,3,1,20,0,1,1,55
+LA-2094,Rajasthan,Ajmer,Highway Construction,R&R and Rehabilitation,8,574,92,39,184.16,100.0,0,0,19,4,1,13,0,0,0,0
+LA-2095,Madhya Pradesh,Ujjain,Power Transmission,Objection and Legal Review,5,664,330,175,130.21,82.3,0,0,17,2,0,29,0,0,0,0
+LA-2096,Madhya Pradesh,Sagar,Railway Expansion,Land Identification,1,892,158,64,152.3,72.5,0,1,78,1,0,27,4,0,1,67
+LA-2097,Maharashtra,Aurangabad,Mining Development,Survey and Verification,3,336,272,167,26.65,84.2,0,0,8,3,0,25,0,0,0,0
+LA-2098,Maharashtra,Pune,Mining Development,Survey and Verification,3,544,145,82,236.34,93.5,0,0,18,0,0,0,13,0,0,0
+LA-2099,Odisha,Bhubaneswar,Dam / Irrigation,Survey and Verification,3,883,263,236,134.85,84.3,1,1,133,5,1,41,43,0,1,108
+LA-2100,Odisha,Rourkela,Industrial Corridor,Preliminary Notification,2,159,73,32,30.76,80.3,1,0,51,5,1,74,11,0,1,78
+LA-2101,Madhya Pradesh,Gwalior,Mining Development,Survey and Verification,3,846,412,292,196.86,83.6,0,1,24,5,1,9,16,0,1,44
+LA-2102,Rajasthan,Kota,Railway Expansion,Project Initiation,0,252,169,45,243.87,74.1,0,0,19,5,1,1,0,0,0,0
+LA-2103,Gujarat,Ahmedabad,Urban Infrastructure,Compensation Assessment,6,678,182,172,197.57,76.9,0,0,27,3,1,0,1,0,1,26
+LA-2104,Rajasthan,Kota,Highway Construction,Compensation Assessment,6,705,198,155,201.91,96.3,1,1,143,0,0,0,61,3,1,223
+LA-2105,Maharashtra,Nashik,Railway Expansion,Ownership Verification,4,668,196,133,167.49,100.0,0,0,26,3,1,20,0,0,0,0
+LA-2106,Madhya Pradesh,Bhopal,Dam / Irrigation,Ownership Verification,4,532,308,93,79.59,84.3,1,1,90,1,0,0,22,1,1,121
+LA-2107,Odisha,Bhubaneswar,Defense Installation,Project Initiation,0,537,93,80,126.66,59.3,0,0,29,1,0,0,0,0,0,0
+LA-2108,Madhya Pradesh,Ujjain,Pipeline Project,Preliminary Notification,2,813,459,217,49.54,67.5,1,1,114,2,0,74,20,0,1,110
+LA-2109,Madhya Pradesh,Bhopal,Railway Expansion,R&R and Rehabilitation,8,805,497,459,128.24,56.7,0,1,58,2,0,18,113,3,1,54
+LA-2110,Odisha,Sambalpur,Pipeline Project,Survey and Verification,3,44,16,10,33.74,85.8,0,0,30,3,0,11,0,0,0,0
+LA-2111,Uttar Pradesh,Agra,Highway Construction,Compensation Disbursement,7,298,142,85,14.62,100.0,0,0,20,2,1,11,19,0,0,0
+LA-2112,Karnataka,Mangaluru,Power Transmission,Compensation Disbursement,7,132,55,55,36.48,72.3,0,0,1,2,0,19,0,0,0,0
+LA-2113,Uttar Pradesh,Meerut,Pipeline Project,Survey and Verification,3,58,95,0,210.57,57.0,0,0,18,1,0,0,0,0,1,20
+LA-2114,Maharashtra,Aurangabad,Industrial Corridor,Land Identification,1,206,11,4,37.75,70.9,1,0,65,3,0,55,5,0,1,72
+LA-2115,Maharashtra,Pune,Highway Construction,Compensation Assessment,6,62,248,134,24.4,56.1,0,1,56,3,0,6,0,2,1,81
+LA-2116,Madhya Pradesh,Bhopal,Highway Construction,Compensation Disbursement,7,847,421,301,95.48,100.0,0,0,1,4,1,0,5,0,0,0
+LA-2117,Maharashtra,Kolhapur,Defense Installation,Land Identification,1,537,247,176,208.64,87.5,1,1,142,0,0,59,11,0,1,115
+LA-2118,Rajasthan,Jodhpur,Power Transmission,Land Identification,1,330,472,472,146.04,100.0,1,1,83,4,1,53,0,0,1,127
+LA-2119,Gujarat,Surat,Defense Installation,Preliminary Notification,2,661,373,311,139.52,53.2,0,1,31,2,0,7,0,0,1,39
+LA-2120,Uttar Pradesh,Allahabad,Urban Infrastructure,Compensation Assessment,6,628,135,8,120.0,73.5,1,1,110,3,0,42,25,3,1,172
+LA-2121,Gujarat,Surat,Industrial Corridor,R&R and Rehabilitation,8,504,322,208,211.67,77.4,0,1,45,2,0,14,57,3,1,64
+LA-2122,Maharashtra,Nagpur,Mining Development,Ownership Verification,4,873,488,448,237.67,87.0,0,1,41,3,0,7,0,1,1,59
+LA-2123,Madhya Pradesh,Jabalpur,Urban Infrastructure,Preliminary Notification,2,310,188,115,52.43,72.7,0,0,23,0,0,15,2,0,0,0
+LA-2124,Rajasthan,Jaipur,Highway Construction,Project Initiation,0,51,67,42,63.4,100.0,1,1,93,0,0,29,0,0,1,135
+LA-2125,Odisha,Bhubaneswar,Defense Installation,Compensation Disbursement,7,611,158,133,136.06,82.5,1,0,111,2,0,0,0,3,1,103
+LA-2126,Gujarat,Rajkot,Power Transmission,Survey and Verification,3,427,460,460,238.3,82.2,0,0,21,0,0,7,3,0,0,0
+LA-2127,Maharashtra,Nashik,Mining Development,Preliminary Notification,2,117,330,186,3.5,71.0,0,0,24,1,1,18,16,0,1,18
+LA-2128,Rajasthan,Udaipur,Defense Installation,Compensation Assessment,6,450,419,389,227.61,94.1,1,1,95,0,0,62,37,3,1,154
+LA-2129,Rajasthan,Ajmer,Pipeline Project,Project Initiation,0,640,459,372,81.53,90.0,0,0,12,5,1,0,0,0,0,0
+LA-2130,Rajasthan,Kota,Industrial Corridor,Preliminary Notification,2,838,400,178,175.45,100.0,1,1,51,0,0,24,1,0,1,93
+LA-2131,Maharashtra,Kolhapur,Dam / Irrigation,Land Identification,1,835,117,61,14.32,94.5,0,0,27,1,0,28,1,0,0,0
+LA-2132,Maharashtra,Pune,Mining Development,Preliminary Notification,2,278,184,107,22.85,83.8,0,0,23,4,1,0,6,0,0,0
+LA-2133,Madhya Pradesh,Sagar,Urban Infrastructure,Ownership Verification,4,41,340,225,44.84,89.2,0,0,26,2,0,24,0,0,0,0
+LA-2134,Rajasthan,Bikaner,Power Transmission,Survey and Verification,3,422,137,74,59.1,97.3,1,0,66,1,0,71,30,0,1,72
+LA-2135,Gujarat,Gandhinagar,Dam / Irrigation,Project Initiation,0,197,438,181,104.87,100.0,1,0,89,3,0,0,0,0,1,45
+LA-2136,Odisha,Sambalpur,Dam / Irrigation,Ownership Verification,4,163,247,118,40.33,80.8,0,0,17,2,0,14,7,0,0,0
+LA-2137,Maharashtra,Kolhapur,Industrial Corridor,Preliminary Notification,2,400,447,255,13.89,100.0,0,0,9,2,0,4,1,0,0,0
+LA-2138,Karnataka,Mangaluru,Defense Installation,Ownership Verification,4,590,342,176,172.89,87.0,0,1,60,3,0,5,33,1,1,32
+LA-2139,Odisha,Bhubaneswar,Railway Expansion,Survey and Verification,3,716,177,64,125.36,76.8,0,1,57,1,0,13,0,0,1,58
+LA-2140,Maharashtra,Thane,Mining Development,Project Initiation,0,313,27,18,219.6,81.8,0,0,8,1,1,27,0,0,0,0
+LA-2141,Uttar Pradesh,Agra,Power Transmission,Survey and Verification,3,114,56,28,126.56,85.7,1,0,110,1,0,23,4,0,1,77
+LA-2142,Maharashtra,Kolhapur,Industrial Corridor,Land Identification,1,137,112,59,74.8,81.0,0,0,30,0,0,1,0,0,0,0
+LA-2143,Rajasthan,Jaipur,Pipeline Project,Compensation Assessment,6,795,374,216,127.08,69.2,0,1,22,0,0,28,45,2,1,82
+LA-2144,Karnataka,Mangaluru,Mining Development,Project Initiation,0,366,477,47,42.03,100.0,1,0,97,3,0,60,0,0,1,79
+LA-2145,Madhya Pradesh,Sagar,Highway Construction,Project Initiation,0,512,403,345,154.08,95.1,0,0,3,0,0,0,0,0,0,0
+LA-2146,Rajasthan,Bikaner,Defense Installation,Project Initiation,0,287,291,291,2.24,80.4,0,0,26,3,0,7,0,0,0,0
+LA-2147,Odisha,Rourkela,Mining Development,Ownership Verification,4,45,104,67,219.15,68.8,0,0,0,2,0,5,0,0,0,0
+LA-2148,Rajasthan,Jodhpur,Railway Expansion,Compensation Assessment,6,430,15,5,170.82,54.7,0,0,14,3,0,8,0,0,0,0
+LA-2149,Maharashtra,Nagpur,Railway Expansion,Project Initiation,0,281,434,85,101.94,36.8,0,0,2,0,0,0,0,0,0,0
+LA-2150,Maharashtra,Nashik,Pipeline Project,Preliminary Notification,2,39,322,70,134.78,91.6,1,1,121,0,0,0,31,0,1,155
+LA-2151,Uttar Pradesh,Meerut,Railway Expansion,Land Identification,1,255,198,62,201.98,97.1,1,1,84,0,0,20,8,0,1,102
+LA-2152,Odisha,Cuttack,Industrial Corridor,Project Initiation,0,713,424,412,228.06,64.6,0,0,2,0,0,2,0,0,0,0
+LA-2153,Gujarat,Vadodara,Dam / Irrigation,Land Identification,1,532,399,355,123.42,49.3,0,0,17,4,1,10,0,0,1,20
+LA-2154,Madhya Pradesh,Gwalior,Pipeline Project,Preliminary Notification,2,548,227,122,189.72,73.0,1,1,116,4,1,0,14,0,1,83
+LA-2155,Odisha,Sambalpur,Pipeline Project,Compensation Disbursement,7,174,55,18,57.45,88.4,1,1,110,1,1,51,33,4,1,130
+LA-2156,Odisha,Bhubaneswar,Power Transmission,Preliminary Notification,2,545,80,80,223.43,99.9,0,0,5,3,0,18,0,0,0,0
+LA-2157,Uttar Pradesh,Lucknow,Pipeline Project,Preliminary Notification,2,456,487,195,84.9,100.0,1,0,67,1,0,0,48,0,1,26
+LA-2158,Gujarat,Rajkot,Dam / Irrigation,Project Initiation,0,396,269,127,229.67,72.0,0,0,13,2,0,28,0,0,0,0
+LA-2159,Karnataka,Mysuru,Dam / Irrigation,Project Initiation,0,88,247,172,21.41,79.4,0,0,11,1,0,25,0,0,0,0
+LA-2160,Uttar Pradesh,Meerut,Pipeline Project,Compensation Disbursement,7,469,260,138,40.12,100.0,0,0,1,3,0,23,0,0,0,0
+LA-2161,Odisha,Bhubaneswar,Highway Construction,Project Initiation,0,277,488,136,161.04,92.8,1,1,127,2,1,46,0,0,1,109
+LA-2162,Gujarat,Vadodara,Pipeline Project,Ownership Verification,4,466,196,159,44.34,44.9,1,1,144,0,0,31,0,1,1,144
+LA-2163,Rajasthan,Ajmer,Dam / Irrigation,Preliminary Notification,2,221,142,68,105.86,93.2,0,0,3,3,0,28,1,0,0,0
+LA-2164,Maharashtra,Solapur,Railway Expansion,Project Initiation,0,491,154,113,146.03,45.3,1,1,74,0,0,59,0,0,1,119
+LA-2165,Uttar Pradesh,Kanpur,Defense Installation,Project Initiation,0,621,21,15,185.49,83.4,0,0,7,4,1,29,0,0,0,0
+LA-2166,Maharashtra,Pune,Urban Infrastructure,Survey and Verification,3,660,97,90,135.46,66.1,0,0,19,3,0,7,12,0,0,0
+LA-2167,Maharashtra,Solapur,Defense Installation,Compensation Assessment,6,257,187,187,244.32,100.0,1,0,40,2,0,41,4,2,1,82
+LA-2168,Madhya Pradesh,Gwalior,Highway Construction,Project Initiation,0,493,284,70,3.05,78.4,0,0,11,2,1,0,0,0,0,0
+LA-2169,Odisha,Cuttack,Highway Construction,Ownership Verification,4,199,93,76,48.51,73.8,1,1,63,1,0,0,0,1,1,93
+LA-2170,Uttar Pradesh,Lucknow,Highway Construction,Survey and Verification,3,187,120,70,213.9,82.4,0,0,1,0,0,3,9,0,0,0
+LA-2171,Odisha,Berhampur,Power Transmission,Survey and Verification,3,741,72,51,2.31,66.0,0,0,28,3,0,5,0,0,0,0
+LA-2172,Karnataka,Dharwad,Mining Development,Project Initiation,0,690,389,151,218.7,78.1,1,1,68,2,0,75,0,0,1,123
+LA-2173,Rajasthan,Jodhpur,Pipeline Project,Ownership Verification,4,441,180,38,146.7,86.6,1,1,45,3,0,33,0,1,1,51
+LA-2174,Maharashtra,Nagpur,Urban Infrastructure,Preliminary Notification,2,267,133,34,96.08,91.3,1,0,75,3,0,0,30,0,1,48
+LA-2175,Madhya Pradesh,Jabalpur,Railway Expansion,Preliminary Notification,2,489,36,27,16.17,86.7,0,1,60,2,0,0,2,0,1,66
+LA-2176,Maharashtra,Aurangabad,Railway Expansion,Project Initiation,0,307,474,114,65.6,98.0,0,1,39,5,1,21,0,0,1,68
+LA-2177,Karnataka,Hubli,Dam / Irrigation,Objection and Legal Review,5,187,97,23,184.12,79.1,0,0,20,3,1,0,0,0,0,0
+LA-2178,Madhya Pradesh,Jabalpur,Pipeline Project,Preliminary Notification,2,72,186,25,24.27,79.1,0,0,6,3,0,28,0,0,0,0
+LA-2179,Rajasthan,Udaipur,Pipeline Project,R&R and Rehabilitation,8,763,429,138,184.83,51.1,0,0,16,1,0,10,7,0,1,26
+LA-2180,Karnataka,Mangaluru,Pipeline Project,Preliminary Notification,2,168,478,338,218.79,72.9,0,0,24,2,0,0,4,0,0,0
+LA-2181,Karnataka,Hubli,Railway Expansion,Possession and Handover,10,834,101,41,45.48,72.6,1,1,108,3,0,0,9,4,1,102
+LA-2182,Rajasthan,Jodhpur,Power Transmission,Compensation Assessment,6,119,5,3,65.94,73.2,0,1,78,3,0,0,0,2,1,67
+LA-2183,Maharashtra,Thane,Urban Infrastructure,Land Identification,1,470,194,122,44.82,84.3,0,0,2,2,1,1,2,0,0,0
+LA-2184,Rajasthan,Udaipur,Pipeline Project,Preliminary Notification,2,125,24,11,28.17,100.0,1,0,116,6,1,0,27,0,1,106
+LA-2185,Maharashtra,Nagpur,Defense Installation,Project Initiation,0,162,121,49,106.2,48.1,0,0,0,2,0,0,0,0,0,0
+LA-2186,Gujarat,Rajkot,Dam / Irrigation,Ownership Verification,4,258,369,320,34.74,76.3,0,0,29,2,0,25,0,0,0,0
+LA-2187,Rajasthan,Bikaner,Railway Expansion,Compensation Assessment,6,428,444,183,151.3,59.5,0,1,72,2,1,28,92,2,1,57
+LA-2188,Uttar Pradesh,Varanasi,Railway Expansion,Compensation Disbursement,7,514,362,170,46.1,78.2,0,0,2,2,0,26,0,0,0,0
+LA-2189,Rajasthan,Kota,Power Transmission,Survey and Verification,3,303,296,74,190.33,72.0,1,0,85,3,0,55,25,0,1,74
+LA-2190,Odisha,Berhampur,Urban Infrastructure,Compensation Assessment,6,793,309,127,84.64,87.3,0,1,32,1,1,0,98,2,1,60
+LA-2191,Uttar Pradesh,Agra,Railway Expansion,Project Initiation,0,430,249,92,107.12,100.0,0,0,26,1,0,25,0,0,0,0
+LA-2192,Uttar Pradesh,Varanasi,Defense Installation,Land Identification,1,784,498,488,64.47,92.6,0,0,1,6,1,12,2,0,0,0
+LA-2193,Gujarat,Rajkot,Dam / Irrigation,Ownership Verification,4,725,270,93,152.43,100.0,0,0,11,0,0,0,0,0,0,0
+LA-2194,Maharashtra,Nashik,Dam / Irrigation,Project Initiation,0,493,125,83,91.15,54.6,1,0,79,2,0,65,0,0,1,54
+LA-2195,Maharashtra,Pune,Industrial Corridor,Project Initiation,0,484,363,331,197.97,80.0,0,0,21,3,0,6,0,0,0,0
+LA-2196,Rajasthan,Jodhpur,Dam / Irrigation,Project Initiation,0,460,265,108,54.9,69.2,0,0,24,3,0,2,0,0,0,0
+LA-2197,Odisha,Rourkela,Highway Construction,R&R and Rehabilitation,8,426,209,209,199.81,70.0,0,0,22,3,0,0,4,0,0,0
+LA-2198,Karnataka,Hubli,Highway Construction,Land Identification,1,894,354,208,97.99,74.7,0,1,70,3,0,13,0,0,1,62
+LA-2199,Gujarat,Surat,Highway Construction,Land Identification,1,515,256,149,30.44,56.1,0,1,70,1,0,0,24,0,1,100

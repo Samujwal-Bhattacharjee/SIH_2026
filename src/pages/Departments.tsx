@@ -56,13 +56,13 @@ export const Departments: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2 font-sans">
         <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            State Government Departments &amp; Officers Directory
+          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
+            Procuring Departments &amp; Officer Directory
           </h1>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Directory of administrative departments, principal secretaries, section officers, and desk allocations.
+            Directory of Procurement Divisions, Technical Evaluation Desks, and Tender Assessment Authorities.
           </p>
         </div>
       </div>

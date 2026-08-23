@@ -27,30 +27,30 @@ export const GovCard: React.FC<GovCardProps> = ({
 }) => {
   const borderHighlightClass = {
     none: 'border-[#D9DDE3]',
-    navy: 'border-[#D9DDE3] border-t-4 border-t-[#0B2A4A]',
-    red: 'border-[#D9DDE3] border-t-4 border-t-[#B72025]',
-    saffron: 'border-[#D9DDE3] border-t-4 border-t-[#D97706]',
-    green: 'border-[#D9DDE3] border-t-4 border-t-[#15803D]',
+    navy: 'border-[#CBD2DE] border-t-2 border-t-[#0B3558]',
+    red: 'border-[#CBD2DE] border-l-4 border-l-[#B72025]',
+    saffron: 'border-[#CBD2DE] border-l-4 border-l-[#E87511]',
+    green: 'border-[#CBD2DE] border-l-4 border-l-[#15803D]',
   }[highlightBorder];
 
   return (
-    <div
-      className={`bg-white border rounded-[4px] shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] overflow-hidden ${borderHighlightClass} ${className}`}
+    <section
+      className={`bg-white border rounded-[2px] ${borderHighlightClass} ${className} font-sans`}
     >
       {(title || headerAction) && (
         <div
-          className={`px-4 py-3 bg-[#F8F9FA] border-b border-[#D9DDE3] flex flex-wrap items-center justify-between gap-2 ${headerClassName}`}
+          className={`px-4 py-2.5 bg-[#F8F9FA] border-b border-[#D9DDE3] flex flex-wrap items-center justify-between gap-2 ${headerClassName}`}
         >
           <div>
             {typeof title === 'string' ? (
-              <h3 className="font-serif font-bold text-base text-[#0B2A4A] tracking-tight">
+              <h3 className="font-serif font-bold text-sm text-[#0B3558] tracking-tight uppercase">
                 {title}
               </h3>
             ) : (
               title
             )}
             {subtitle && (
-              <p className="text-xs text-[#5F6368] mt-0.5">{subtitle}</p>
+              <p className="text-[11px] text-[#5F6368] mt-0.5">{subtitle}</p>
             )}
           </div>
           {headerAction && <div className="flex items-center gap-2">{headerAction}</div>}
@@ -62,10 +62,10 @@ export const GovCard: React.FC<GovCardProps> = ({
       </div>
 
       {footer && (
-        <div className="px-4 py-2.5 bg-[#F8F9FA] border-t border-[#D9DDE3] text-xs text-[#5F6368]">
+        <div className="px-4 py-2 bg-[#F8F9FA] border-t border-[#D9DDE3] text-[11px] text-[#5F6368]">
           {footer}
         </div>
       )}
-    </div>
+    </section>
   );
 };

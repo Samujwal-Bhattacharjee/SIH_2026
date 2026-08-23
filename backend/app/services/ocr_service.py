@@ -279,4 +279,377 @@ def extract_fields_from_text(text: str) -> list[dict]:
             "isExtracted": True,
         })
 
+    # --- Land Acquisition Domain Field Extraction (SIH26017) ---
+    try:
+        from app.services.land_document_extractor import extract_la_fields, fields_to_ocr_list
+        la_dict = extract_la_fields(text)
+        la_fields_list = fields_to_ocr_list(la_dict)
+        existing_keys = {f["key"] for f in fields}
+        for la_f in la_fields_list:
+            if la_f["key"] not in existing_keys:
+                fields.append(la_f)
+    except Exception as e:
+        logger.warning(f"LA field extraction error: {e}")
+
+    # --- Procurement / Bid Compliance Field Extraction (SIH26100) ---
+    existing_keys = {f["key"] for f in fields}
+    proc_fields = extract_procurement_fields(text)
+    for pf in proc_fields:
+        if pf["key"] not in existing_keys:
+            fields.append(pf)
+
     return fields
+
+
+# ============================================================
+# PROCUREMENT FIELD EXTRACTION (SIH26100)
+# Extracts fields needed for bid compliance verification.
+# Each field includes: key, value, confidence, isExtracted, label
+# ============================================================
+
+def extract_procurement_fields(text: str) -> list[dict]:
+    """
+    Extract procurement-specific structured fields from OCR text.
+    Used for bid compliance verification (SIH26100).
+
+    Fields extracted:
+    - GSTIN, PAN, Udyam number, CIN
+    - Legal/company name
+    - Document dates and expiry
+    - Turnover amounts
+    - Local content percentage
+    - OEM authorization reference
+    - Blacklisting mentions
+    - Registration numbers
+    """
+    fields = []
+
+    # -----------------------------------------------
+    # GSTIN — 15-char alphanumeric: 2 digits + 10 PAN + 1 + Z + 1
+    # -----------------------------------------------
+    gstin_match = re.search(
+        r'\b([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})\b',
+        text,
+        re.IGNORECASE
+    )
+    if gstin_match:
+        fields.append({
+            "key": "gstin",
+            "label": "GSTIN",
+            "value": gstin_match.group(1).upper(),
+            "confidence": 0.96,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # PAN — 10-char: 5 letters + 4 digits + 1 letter
+    # Avoid matching inside GSTIN (char 3-12)
+    # -----------------------------------------------
+    pan_match = re.search(
+        r'(?<![0-9])\b([A-Z]{5}[0-9]{4}[A-Z]{1})\b(?![0-9A-Z])',
+        text,
+        re.IGNORECASE
+    )
+    if pan_match:
+        # Make sure it's not the PAN embedded inside a GSTIN we already found
+        pan_val = pan_match.group(1).upper()
+        gstin_val = next((f["value"] for f in fields if f["key"] == "gstin"), "")
+        if pan_val not in gstin_val:
+            fields.append({
+                "key": "pan",
+                "label": "PAN",
+                "value": pan_val,
+                "confidence": 0.94,
+                "isExtracted": True,
+            })
+
+    # -----------------------------------------------
+    # Udyam Registration Number
+    # Format: UDYAM-XX-YY-NNNNNNN
+    # -----------------------------------------------
+    udyam_match = re.search(
+        r'\b(UDYAM[-\s][A-Z]{2}[-\s][0-9]{2}[-\s][0-9]{7})\b',
+        text,
+        re.IGNORECASE
+    )
+    if udyam_match:
+        fields.append({
+            "key": "udyamNumber",
+            "label": "Udyam Registration Number",
+            "value": udyam_match.group(1).upper().replace(" ", "-"),
+            "confidence": 0.95,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # CIN — Corporate Identity Number
+    # Format: U/L + 5 digits + 2 letters + 4 digits + 3 letters + 6 digits
+    # -----------------------------------------------
+    cin_match = re.search(
+        r'\b([UL][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})\b',
+        text,
+        re.IGNORECASE
+    )
+    if cin_match:
+        fields.append({
+            "key": "cin",
+            "label": "CIN",
+            "value": cin_match.group(1).upper(),
+            "confidence": 0.93,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # Legal / Company Name
+    # Looks for common certificate header patterns
+    # -----------------------------------------------
+    company_patterns = [
+        r'(?:This\s+is\s+to\s+certify\s+that|Registered\s+to|Name\s+of\s+(?:Enterprise|Applicant|Company|Firm|Business))\s*[:\-]?\s*\n?\s*([A-Z][A-Za-z\s&\.\,\(\)]{3,80}(?:Pvt\.?|Private|Ltd\.?|Limited|LLP|Technologies|Solutions|Enterprises|Industries|Services|Systems|Associates)?[A-Za-z\s\.]*)',
+        r'(?:M/s\.?|Messrs\.?)\s+([A-Z][A-Za-z\s&\.\,\(\)]{3,80})',
+        r'(?:Name|Company|Firm)\s*[:\-]\s*([A-Z][A-Za-z\s&\.\,\(\)]{5,80})',
+    ]
+    for pat in company_patterns:
+        m = re.search(pat, text, re.IGNORECASE | re.MULTILINE)
+        if m:
+            name_val = m.group(1).strip().rstrip(".,;:")
+            if len(name_val) >= 5 and len(name_val) <= 120:
+                fields.append({
+                    "key": "legalName",
+                    "label": "Legal / Company Name",
+                    "value": name_val,
+                    "confidence": 0.75,
+                    "isExtracted": True,
+                })
+                break
+
+    # -----------------------------------------------
+    # Document / Registration Date
+    # -----------------------------------------------
+    doc_date_patterns = [
+        r'(?:Date\s+of\s+(?:Registration|Issue|Issuance)|Registered\s+on|Issued\s+on|Valid\s+from)[:\-\s]+([\d]{1,2}[\-\/\.][\d]{1,2}[\-\/\.][\d]{2,4})',
+        r'(?:Date)[:\-\s]+([\d]{1,2}[\-\/\.][\d]{1,2}[\-\/\.][\d]{2,4})',
+        r'(?:Dated)[:\-\s]+([\d]{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})',
+    ]
+    for pat in doc_date_patterns:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            fields.append({
+                "key": "documentDate",
+                "label": "Document Date",
+                "value": m.group(1).strip(),
+                "confidence": 0.80,
+                "isExtracted": True,
+            })
+            break
+
+    # -----------------------------------------------
+    # Validity / Expiry Date
+    # -----------------------------------------------
+    expiry_patterns = [
+        r'(?:Valid\s+(?:up\s+to|till|until|upto)|Expiry\s+Date|Expires\s+on|Validity)[:\-\s]+([\d]{1,2}[\-\/\.][\d]{1,2}[\-\/\.][\d]{2,4})',
+        r'(?:Valid\s+(?:up\s+to|till|until|upto)|Expiry\s+Date|Expires\s+on|Validity)[:\-\s]+([\d]{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})',
+    ]
+    for pat in expiry_patterns:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            fields.append({
+                "key": "expiryDate",
+                "label": "Validity / Expiry Date",
+                "value": m.group(1).strip(),
+                "confidence": 0.82,
+                "isExtracted": True,
+            })
+            break
+
+    # -----------------------------------------------
+    # Annual Turnover
+    # -----------------------------------------------
+    turnover_patterns = [
+        r'(?:Annual\s+Turnover|Total\s+Turnover|Net\s+Turnover|Gross\s+Turnover)\s*[:\-]?\s*(?:Rs\.?|INR|₹)?\s*([\d,]+(?:\.\d+)?)\s*(?:Lakh|Crore|Cr\.?|L\.?|lakhs?|crores?)?',
+        r'(?:Rs\.?|INR|₹)\s*([\d,]+(?:\.\d+)?)\s*(?:Lakh|Crore|Cr\.?|L\.?)',
+    ]
+    for pat in turnover_patterns:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            raw_val = m.group(0).strip()
+            fields.append({
+                "key": "annualTurnover",
+                "label": "Annual Turnover",
+                "value": raw_val[:100],
+                "confidence": 0.72,
+                "isExtracted": True,
+            })
+            break
+
+    # -----------------------------------------------
+    # Local Content / Make in India Percentage
+    # -----------------------------------------------
+    lc_match = re.search(
+        r'(?:Local\s+(?:Value\s+Addition|Content)|Make\s+in\s+India|Domestic\s+Value\s+Addition)\s*[:\-]?\s*([\d]{1,3}(?:\.\d+)?)\s*%',
+        text,
+        re.IGNORECASE
+    )
+    if lc_match:
+        fields.append({
+            "key": "localContentPct",
+            "label": "Local Content %",
+            "value": f"{lc_match.group(1)}%",
+            "confidence": 0.85,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # OEM Authorization Reference
+    # -----------------------------------------------
+    oem_patterns = [
+        r'(?:OEM\s+Auth(?:orization|orisation)?(?:\s+Letter)?(?:\s+Ref(?:erence)?(?:\s+No\.?)?)?|MAF\s+(?:No\.?|Reference))[:\-\s]*([A-Z0-9\/\-\.]{4,40})',
+        r'(?:Manufacturer\s+Authorization)\s*(?:No\.?|Number|Ref\.?)[:\-\s]*([A-Z0-9\/\-\.]{4,40})',
+        r'Ref(?:erence)?(?:\s+No\.?)?[:\-\s]+([A-Z0-9\/\-]{5,30})',
+    ]
+    for pat in oem_patterns:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            fields.append({
+                "key": "oemReference",
+                "label": "OEM Authorization Reference",
+                "value": m.group(1).strip(),
+                "confidence": 0.78,
+                "isExtracted": True,
+            })
+            break
+
+    # -----------------------------------------------
+    # Blacklisting / Debarment Declaration
+    # -----------------------------------------------
+    blacklist_pattern = re.search(
+        r'(?:not\s+(?:been\s+)?(?:blacklisted|debarred|barred|disqualified)|no\s+(?:blacklisting|debarment)|'
+        r'free\s+from\s+(?:any\s+)?(?:blacklisting|debarment|legal\s+proceedings)|'
+        r'neither\s+blacklisted|no\s+adverse\s+finding)',
+        text,
+        re.IGNORECASE
+    )
+    if blacklist_pattern:
+        fields.append({
+            "key": "blacklistingDeclaration",
+            "label": "Non-Blacklisting Declaration",
+            "value": "Declaration found — no blacklisting/debarment stated",
+            "confidence": 0.80,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # NSIC Registration Number
+    # -----------------------------------------------
+    nsic_match = re.search(
+        r'\b(NSIC\/[A-Z]{2,4}\/[A-Z]{2,5}\/[\d]{4}\/[\d]{4,6})\b',
+        text,
+        re.IGNORECASE
+    )
+    if nsic_match:
+        fields.append({
+            "key": "nsicNumber",
+            "label": "NSIC Registration Number",
+            "value": nsic_match.group(1).upper(),
+            "confidence": 0.90,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # Startup India / DPIIT Recognition Number
+    # -----------------------------------------------
+    dpiit_match = re.search(
+        r'\b(DIPP[\-\s]?(?:CERT[\-\s]?)?\d{4,8})\b',
+        text,
+        re.IGNORECASE
+    )
+    if dpiit_match:
+        fields.append({
+            "key": "dpiitNumber",
+            "label": "DPIIT / Startup India Recognition No.",
+            "value": dpiit_match.group(1).upper().replace(" ", "-"),
+            "confidence": 0.88,
+            "isExtracted": True,
+        })
+
+    # -----------------------------------------------
+    # EPFO Establishment Code
+    # -----------------------------------------------
+    epfo_match = re.search(
+        r'\b([A-Z]{2}\/[A-Z]{3}\/[\d]{7}\/[\d]{3})\b',
+        text,
+        re.IGNORECASE
+    )
+    if epfo_match:
+        fields.append({
+            "key": "epfoCode",
+            "label": "EPFO Establishment Code",
+            "value": epfo_match.group(1).upper(),
+            "confidence": 0.88,
+            "isExtracted": True,
+        })
+
+    return fields
+
+
+# ============================================================
+# DOCUMENT TYPE CLASSIFIER
+# Deterministic, rule-based. No ML required for prototype.
+# ============================================================
+
+DOCUMENT_TYPE_RULES = [
+    # (regex pattern, document_type, priority)
+    (r'\bGSTIN\b|\bGST\s+Registration\b|\bGoods\s+and\s+Services\s+Tax\b', "GST Certificate", 10),
+    (r'\bPermanent\s+Account\s+Number\b|\bPAN\s+Card\b|\bIncome\s+Tax\s+Department.*\bPAN\b', "PAN Card", 10),
+    (r'\bUdyam\s+Registration\b|\bUDYAM[-\s]', "Udyam/MSME Certificate", 10),
+    (r'\bMSME\s+(?:Registration|Certificate)\b|\bMicro\s+and\s+Small\b', "Udyam/MSME Certificate", 8),
+    (r'\bOEM\s+Auth(?:orization|orisation)\b|\bManufacturer\s+Authorization\b|\bMAF\b', "OEM Authorization", 10),
+    (r'\bStartup\s+India\b|\bDPIIT\s+(?:Recognition|Certificate)\b', "Startup India Certificate", 10),
+    (r'\bNSIC\b.*\b(?:Registration|Certificate|SPRS)\b', "NSIC Certificate", 10),
+    (r'\bEPFO\b|\bProvident\s+Fund\b|\bPF\s+(?:Registration|Certificate)\b', "EPFO Registration", 10),
+    (r'\bESIC\b|\bEmployees.*State\s+Insurance\b', "ESIC Registration", 10),
+    (r'\bLocal\s+Content\b|\bMake\s+in\s+India\b|\bDomestic\s+Value\s+Addition\b', "Local Content / Make in India Declaration", 9),
+    (r'\b(?:not\s+(?:been\s+)?(?:blacklisted|debarred))\b', "Non-Blacklisting Declaration", 9),
+    (r'\bBalance\s+Sheet\b|\bProfit\s+(?:and|&)\s+Loss\b|\bFinancial\s+Statement\b|\bAudit(?:ed|or)\s+Report\b', "Financial Statement", 9),
+    (r'\bIncome\s+Tax\s+Return\b|\bITR[-\s]?\d\b', "Income Tax / ITR", 9),
+    (r'\bTrade\s+(?:Licence|License|Certificate)\b', "Trade License", 7),
+    (r'\bCertificate\s+of\s+Incorporation\b|\bMemorandum\s+of\s+Association\b', "Incorporation Certificate", 7),
+]
+
+
+def classify_document_type(text: str, filename: str = "") -> str:
+    """
+    Classify a document type from its OCR text using deterministic rules.
+    Returns a document type string.
+
+    Priority: higher priority rules take precedence.
+    If no match found, returns "Other".
+    """
+    if not text:
+        # Fallback: try filename-based classification
+        filename_lower = filename.lower()
+        if "gst" in filename_lower:
+            return "GST Certificate"
+        if "pan" in filename_lower:
+            return "PAN Card"
+        if "udyam" in filename_lower or "msme" in filename_lower:
+            return "Udyam/MSME Certificate"
+        if "oem" in filename_lower or "authorization" in filename_lower:
+            return "OEM Authorization"
+        if "blacklist" in filename_lower or "debarment" in filename_lower:
+            return "Non-Blacklisting Declaration"
+        if "itr" in filename_lower or "income_tax" in filename_lower:
+            return "Income Tax / ITR"
+        return "Other"
+
+    # Score each candidate type
+    best_type = "Other"
+    best_priority = -1
+
+    for pattern, doc_type, priority in DOCUMENT_TYPE_RULES:
+        if re.search(pattern, text, re.IGNORECASE):
+            if priority > best_priority:
+                best_priority = priority
+                best_type = doc_type
+
+    return best_type
+

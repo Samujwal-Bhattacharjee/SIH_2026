@@ -94,3 +94,113 @@ def generate_recommendation(
         return (
             "ROUTINE: Processing within regular parameters. No immediate escalation needed."
         )
+
+
+def generate_la_recommendations(
+    project_data: Dict[str, Any],
+    bottleneck_info: Optional[BottleneckInfo] = None,
+    delay_probability: Optional[float] = None,
+) -> Dict[str, Any]:
+    """
+    Generate structured, transparent operational recommendations for Land Acquisition projects (SIH26017).
+    
+    Rules are completely explainable and traceable to detected project conditions.
+    """
+    actions = []
+    priority = "ROUTINE"
+
+    prob = delay_probability if delay_probability is not None else float(project_data.get("delay_probability") or 0.0)
+    if prob >= 0.80:
+        priority = "IMMEDIATE"
+    elif prob >= 0.50:
+        priority = "URGENT"
+
+    # 1. Ownership conflict check
+    if project_data.get("ownership_conflict"):
+        priority = "IMMEDIATE"
+        actions.append({
+            "factor": "Ownership Conflict",
+            "reason": "Disputed title / multiple ownership claims detected on parcel records",
+            "action": "Initiate Special Revenue Court summary inquiry & refer to Sub-Divisional Magistrate for title verification",
+            "urgency": "HIGH",
+        })
+
+    # 2. Legal dispute check
+    if project_data.get("legal_dispute"):
+        priority = "IMMEDIATE"
+        actions.append({
+            "factor": "Legal Dispute",
+            "reason": "Active writ petition / stay application in district or high court",
+            "action": "Brief Government Standing Counsel immediately to file counter-affidavit and vacate interim stay",
+            "urgency": "HIGH",
+        })
+
+    # 3. Compensation pending
+    comp_days = int(project_data.get("compensation_pending_days") or 0)
+    if comp_days > 60:
+        priority = "IMMEDIATE"
+        actions.append({
+            "factor": "Compensation Pending",
+            "reason": f"Compensation disbursement has been pending for {comp_days} days (exceeds 60-day threshold)",
+            "action": "Escalate to District Collector / Special Land Acquisition Officer (SLAO) for treasury sanction release",
+            "urgency": "HIGH",
+        })
+    elif comp_days > 30:
+        actions.append({
+            "factor": "Compensation Pending",
+            "reason": f"Compensation disbursement pending for {comp_days} days",
+            "action": "Expedite beneficiary account validation and bank transfer authorization",
+            "urgency": "MEDIUM",
+        })
+
+    # 4. Documentation completeness
+    doc_comp = float(project_data.get("documentation_completeness") or 100.0)
+    if doc_comp < 60:
+        actions.append({
+            "factor": "Documentation Incomplete",
+            "reason": f"Documentation completeness is critically low at {doc_comp}% (threshold: 80%)",
+            "action": "Issue formal compliance notice to requisitioning agency for missing survey / clearance records",
+            "urgency": "HIGH",
+        })
+    elif doc_comp < 80:
+        actions.append({
+            "factor": "Documentation Incomplete",
+            "reason": f"Documentation completeness is at {doc_comp}% (threshold: 80%)",
+            "action": "Collect remaining cadastral maps and record-of-rights (RoR) extracts",
+            "urgency": "MEDIUM",
+        })
+
+    # 5. Inter-department dependency
+    if project_data.get("inter_dept_dependency"):
+        actions.append({
+            "factor": "Inter-Department Dependency",
+            "reason": "Pending clearance or alignment approvals from external department/agency",
+            "action": "Convene joint inter-departmental coordination meeting with nodal liaison officer",
+            "urgency": "MEDIUM",
+        })
+
+    # 6. Bottleneck at stage
+    if bottleneck_info and bottleneck_info.is_bottleneck:
+        actions.append({
+            "factor": f"Stage Bottleneck: {bottleneck_info.stage}",
+            "reason": f"Stage dwell time ({bottleneck_info.days_pending} days) significantly exceeds baseline",
+            "action": f"Deploy additional verification staff and issue 7-day disposal directive for '{bottleneck_info.stage}'",
+            "urgency": "HIGH" if bottleneck_info.severity == "CRITICAL" else "MEDIUM",
+        })
+
+    # 7. Fallback if no issues found
+    if not actions:
+        actions.append({
+            "factor": "On Track",
+            "reason": "All measured land acquisition workflow parameters within normal boundaries",
+            "action": "Continue routine milestone tracking and bi-weekly review",
+            "urgency": "LOW",
+        })
+
+    primary_rec = actions[0]["action"] if actions else "Continue standard project monitoring."
+
+    return {
+        "priority": priority,
+        "primary_recommendation": primary_rec,
+        "recommended_actions": actions,
+    }

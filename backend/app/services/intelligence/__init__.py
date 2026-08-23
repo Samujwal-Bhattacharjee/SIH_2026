@@ -69,6 +69,7 @@ from app.services.intelligence.risk_engine import (
 
 from app.services.intelligence.recommendation_engine import (
     generate_recommendation,
+    generate_la_recommendations,
 )
 
 from app.services.intelligence.priority_engine import (

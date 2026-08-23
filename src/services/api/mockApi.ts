@@ -151,6 +151,287 @@ export const mockApi = {
   },
 
   // ----------------------------------------------------
+  // LAND ACQUISITION PROJECTS (SIH26017)
+  // ----------------------------------------------------
+  projects: {
+    async getProjects(params?: {
+      district?: string;
+      state?: string;
+      stage?: string;
+      riskLevel?: string;
+      status?: string;
+      search?: string;
+    }): Promise<{ projects: Case[]; total: number }> {
+      await delay(200);
+      let results = [...casesStore];
+
+      if (params?.district && params.district !== 'ALL') {
+        results = results.filter((c) => c.district === params.district);
+      }
+      if (params?.state && params.state !== 'ALL') {
+        results = results.filter((c) => c.state === params.state);
+      }
+      if (params?.stage && params.stage !== 'ALL') {
+        results = results.filter((c) => c.currentStage === params.stage);
+      }
+      if (params?.riskLevel && params.riskLevel !== 'ALL') {
+        results = results.filter((c) => c.riskLevel === params.riskLevel || c.mlRiskLevel === params.riskLevel);
+      }
+      if (params?.status && params.status !== 'ALL') {
+        results = results.filter((c) => c.status === params.status);
+      }
+      if (params?.search && params.search.trim() !== '') {
+        const q = params.search.toLowerCase();
+        results = results.filter(
+          (c) =>
+            c.id.toLowerCase().includes(q) ||
+            (c.fileNumber && c.fileNumber.toLowerCase().includes(q)) ||
+            (c.projectCode && c.projectCode.toLowerCase().includes(q)) ||
+            c.title.toLowerCase().includes(q) ||
+            (c.district && c.district.toLowerCase().includes(q))
+        );
+      }
+
+      return { projects: results, total: results.length };
+    },
+
+    async getProjectById(projectId: string): Promise<Case & { events: CaseEvent[]; documents: DocumentRecord[] }> {
+      await delay(200);
+      const proj = casesStore.find((c) => c.id === projectId || c.fileNumber === projectId || c.projectCode === projectId);
+      if (!proj) {
+        throw new Error(`Project ${projectId} not found in Land Acquisition registry.`);
+      }
+      const events = caseEventsStore[proj.id] || [];
+      const documents = documentsStore.filter((d) => d.caseId === proj.id);
+
+      return {
+        ...proj,
+        events,
+        documents,
+      };
+    },
+
+    async createProject(newProj: Partial<Case>): Promise<Case> {
+      await delay(350);
+      const nextSeq = 1080 + casesStore.length + 1;
+      const code = newProj.projectCode || `LA-${nextSeq}`;
+      const created: Case = {
+        id: code,
+        fileNumber: code,
+        projectCode: code,
+        title: newProj.title || 'New Land Acquisition Project',
+        subject: newProj.subject || '',
+        caseType: 'Land Acquisition',
+        department: newProj.department || 'Land Revenue',
+        section: newProj.section || 'Special Land Acquisition Office',
+        currentStage: newProj.currentStage || 'Project Initiation',
+        ageDays: 0,
+        statutoryDeadlineDays: newProj.statutoryDeadlineDays || 180,
+        daysRemaining: newProj.statutoryDeadlineDays || 180,
+        riskScore: 25,
+        riskLevel: 'LOW',
+        status: 'REGISTERED',
+        priority: 'ROUTINE',
+        applicant: newProj.applicant || 'State Requisitioning Body',
+        origin: 'Revenue Department',
+        assignedOfficer: newProj.assignedOfficer || 'Unassigned',
+        currentDesk: 'Desk-01',
+        flaggedForReview: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0],
+        lastMovementDate: 'Just now',
+        documentIds: [],
+        state: newProj.state || 'Maharashtra',
+        district: newProj.district || 'Nashik',
+        totalParcels: newProj.totalParcels || 0,
+        completedParcels: 0,
+        totalArea: newProj.totalArea || 0.0,
+        documentationCompleteness: newProj.documentationCompleteness || 100.0,
+        legalDispute: newProj.legalDispute || false,
+        ownershipConflict: newProj.ownershipConflict || false,
+        compensationPendingDays: newProj.compensationPendingDays || 0,
+        rrStatus: newProj.rrStatus || 'NOT_APPLICABLE',
+        interDeptDependency: newProj.interDeptDependency || false,
+        delayProbability: 0.25,
+        predictedDelayDays: 0,
+        mlRiskLevel: 'LOW',
+        modelVersion: 'land-delay-rf-v1',
+      };
+
+      casesStore.unshift(created);
+      return created;
+    },
+
+    async updateProject(projectId: string, updates: Partial<Case>): Promise<Case> {
+      await delay(200);
+      const idx = casesStore.findIndex((c) => c.id === projectId || c.fileNumber === projectId);
+      if (idx === -1) throw new Error(`Project ${projectId} not found`);
+      casesStore[idx] = { ...casesStore[idx], ...updates, updatedAt: new Date().toISOString().split('T')[0] };
+      return casesStore[idx];
+    },
+
+    async getPrediction(projectId: string): Promise<any> {
+      await delay(250);
+      const proj = casesStore.find((c) => c.id === projectId || c.fileNumber === projectId) || casesStore[0];
+      const prob = proj.delayProbability ?? 0.82;
+      return {
+        project_id: projectId,
+        project_code: proj.projectCode || proj.fileNumber || projectId,
+        project_name: proj.title,
+        district: proj.district || 'Nashik',
+        current_stage: proj.currentStage,
+        delay_probability: prob,
+        risk_level: prob >= 0.80 ? 'CRITICAL' : prob >= 0.60 ? 'HIGH' : prob >= 0.30 ? 'MEDIUM' : 'LOW',
+        predicted_delay_days: proj.predictedDelayDays ?? 23,
+        model_version: 'land-delay-rf-v1',
+        model_available: true,
+        top_factors: proj.topFactors || [
+          { factor: 'compensation_pending_days', label: 'Compensation Pending', value: proj.compensationPendingDays || 19, importance: 0.3664 },
+          { factor: 'ownership_conflict', label: 'Ownership Conflict Active', value: proj.ownershipConflict || true, importance: 0.2205 },
+          { factor: 'documentation_completeness', label: 'Documentation Completeness', value: proj.documentationCompleteness || 62.0, importance: 0.1188 },
+        ],
+        model_metrics: {
+          accuracy: 0.9458,
+          precision: 0.9358,
+          recall: 0.9444,
+          f1: 0.9401,
+          roc_auc: 0.9934,
+        },
+        disclaimer: 'Calculated using trained RandomForest model on synthetic LARR dataset.',
+      };
+    },
+
+    async getBottlenecks(projectId: string): Promise<any> {
+      await delay(200);
+      const proj = casesStore.find((c) => c.id === projectId || c.fileNumber === projectId) || casesStore[0];
+      const isBottleneck = (proj.riskLevel === 'HIGH' || proj.riskLevel === 'CRITICAL');
+      return {
+        project_id: projectId,
+        current_stage: proj.currentStage,
+        stage_dwell_days: 31,
+        stage_expected_days: 15,
+        stage_delay_days: 16,
+        is_bottleneck: isBottleneck,
+        severity: proj.riskLevel === 'CRITICAL' ? 'CRITICAL' : 'HIGH',
+        bottleneck: isBottleneck ? {
+          stage: proj.currentStage,
+          expected_days: 15,
+          actual_days: 31,
+          delay_days: 16,
+          severity: 'HIGH',
+          root_cause: `File has been stalled at '${proj.currentStage}' for 31 days with active title/compensation queries.`,
+          responsible_officer: proj.assignedOfficer,
+        } : null,
+      };
+    },
+
+    async getDelayFactors(projectId: string): Promise<any> {
+      await delay(200);
+      const proj = casesStore.find((c) => c.id === projectId || c.fileNumber === projectId) || casesStore[0];
+      return {
+        project_id: projectId,
+        delay_probability: proj.delayProbability ?? 0.82,
+        risk_level: proj.riskLevel ?? 'HIGH',
+        observed_factors: [
+          { factor: 'compensation_pending', name: 'Compensation Pending', observed_value: `${proj.compensationPendingDays || 19} days`, status: 'HIGH', description: 'Compensation processing awaiting sanction.' },
+          { factor: 'ownership_conflict', name: 'Ownership Conflict', observed_value: proj.ownershipConflict ? 'Active Dispute' : 'Resolved', status: proj.ownershipConflict ? 'CRITICAL' : 'LOW', description: 'Dispute over survey boundaries and title.' },
+          { factor: 'documentation_completeness', name: 'Documentation Completeness', observed_value: `${proj.documentationCompleteness || 62}%`, status: (proj.documentationCompleteness || 62) < 70 ? 'HIGH' : 'LOW', description: 'Required RoR and cadastral sheets indexed.' },
+        ],
+        model_feature_importance: [
+          { feature: 'compensation_pending_days', importance: 0.3664 },
+          { feature: 'ownership_conflict', importance: 0.2205 },
+          { feature: 'documentation_completeness', importance: 0.1188 },
+          { feature: 'legal_dispute', importance: 0.1140 },
+        ],
+      };
+    },
+
+    async getRecommendations(projectId: string): Promise<any> {
+      await delay(200);
+      const proj = casesStore.find((c) => c.id === projectId || c.fileNumber === projectId) || casesStore[0];
+      return {
+        project_id: projectId,
+        priority: proj.priority || 'URGENT',
+        primary_recommendation: 'Escalate compensation disbursement to Special Land Acquisition Officer (SLAO) and convene title verification summary inquiry.',
+        recommended_actions: [
+          { factor: 'Compensation Pending', reason: `Compensation disbursement pending for ${proj.compensationPendingDays || 19} days.`, action: 'Escalate compensation disbursement to SLAO / District Collector.', urgency: 'HIGH' },
+          { factor: 'Ownership Conflict', reason: 'Disputed title / contested ownership on parcel.', action: 'Initiate Special Revenue Court summary inquiry with Sub-Divisional Magistrate.', urgency: 'HIGH' },
+          { factor: 'Documentation Completeness', reason: `Documentation completeness at ${proj.documentationCompleteness || 62}%.`, action: 'Request missing cadastral and RoR extracts from Land Revenue office.', urgency: 'MEDIUM' },
+        ],
+      };
+    },
+
+    async getTimeline(projectId: string): Promise<any> {
+      await delay(200);
+      const proj = casesStore.find((c) => c.id === projectId || c.fileNumber === projectId) || casesStore[0];
+      const stages = [
+        { stage_index: 0, stage_name: 'Project Initiation', status: 'COMPLETED', expected_days: 15, actual_days: 12, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 1, stage_name: 'Land Identification', status: 'COMPLETED', expected_days: 30, actual_days: 28, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 2, stage_name: 'Preliminary Notification', status: 'COMPLETED', expected_days: 30, actual_days: 30, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 3, stage_name: 'Survey and Verification', status: 'COMPLETED', expected_days: 45, actual_days: 44, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 4, stage_name: 'Ownership Verification', status: 'COMPLETED', expected_days: 30, actual_days: 46, delay_days: 16, is_delayed: true, is_current: false },
+        { stage_index: 5, stage_name: 'Objection and Legal Review', status: 'COMPLETED', expected_days: 60, actual_days: 58, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 6, stage_name: 'Compensation Assessment', status: 'COMPLETED', expected_days: 60, actual_days: 62, delay_days: 2, is_delayed: true, is_current: false },
+        { stage_index: 7, stage_name: 'Compensation Disbursement', status: 'IN_PROGRESS', expected_days: 90, actual_days: 104, delay_days: 14, is_delayed: true, is_current: true },
+        { stage_index: 8, stage_name: 'R&R and Rehabilitation', status: 'UPCOMING', expected_days: 120, actual_days: 0, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 9, stage_name: 'Final Acquisition', status: 'UPCOMING', expected_days: 30, actual_days: 0, delay_days: 0, is_delayed: false, is_current: false },
+        { stage_index: 10, stage_name: 'Possession and Handover', status: 'UPCOMING', expected_days: 30, actual_days: 0, delay_days: 0, is_delayed: false, is_current: false },
+      ];
+      return {
+        project_id: projectId,
+        current_stage: proj.currentStage,
+        total_stages: 11,
+        stages,
+      };
+    },
+
+    async uploadProjectDocument(projectId: string, file: File, documentType: string = 'Land Document'): Promise<any> {
+      await delay(500);
+      const docId = `doc-${Date.now()}`;
+      const newDoc: DocumentRecord = {
+        id: docId,
+        caseId: projectId,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        documentType: (documentType as any) || 'Land Document',
+        fileName: file.name,
+        fileUrl: '#',
+        uploadDate: new Date().toISOString(),
+        uploadedBy: 'Rajeshwar V. Verma, IAS',
+        status: 'READY',
+        ocrStatus: 'COMPLETED',
+        metadata: {
+          fileSize: `${(file.size / 1024).toFixed(1)} KB`,
+          fileType: file.type,
+          mimeType: file.type,
+          pageCount: 2,
+        },
+        ocrResult: {
+          documentId: docId,
+          extractedText: `Government of Maharashtra. Land Acquisition Notification. Survey No. 142/3A, Village Sinnar, District Nashik. Compensation amount: INR 45,00,000. Ownership dispute noted on record.`,
+          confidenceScore: 0.94,
+          ocrEngine: 'PyMuPDF-digital',
+          status: 'READY',
+          processingTimeMs: 420,
+          extractedFields: [
+            { key: 'project_id', label: 'Project ID', value: 'LA-1024', confidence: 0.95, isExtracted: true },
+            { key: 'survey_number', label: 'Survey Number', value: '142/3A', confidence: 0.92, isExtracted: true },
+            { key: 'district', label: 'District', value: 'Nashik', confidence: 0.96, isExtracted: true },
+            { key: 'ownership_conflict', label: 'Ownership Conflict', value: 'true', confidence: 0.88, isExtracted: true },
+            { key: 'compensation_status', label: 'Compensation Status', value: 'PENDING', confidence: 0.89, isExtracted: true },
+          ],
+        },
+      };
+      documentsStore.unshift(newDoc);
+      return {
+        document: newDoc,
+        ocrResult: newDoc.ocrResult,
+        projectUpdated: true,
+        appliedUpdates: { ownership_conflict: true, compensation_status: 'PENDING' },
+      };
+    },
+  },
+
+  // ----------------------------------------------------
   // FILE / CASE MANAGEMENT
   // ----------------------------------------------------
   cases: {
@@ -697,6 +978,116 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     async getPerformanceMetrics(): Promise<ProcessPerformanceMetrics> {
       await delay(200);
       return MOCK_PERFORMANCE_METRICS;
+    },
+  },
+
+  // ----------------------------------------------------
+  // PROCUREMENT COMPLIANCE (SIH26100)
+  // ----------------------------------------------------
+  procurement: {
+    async getDashboard(): Promise<any> {
+      await delay(150);
+      return {
+        active_tenders: 4,
+        bids_under_verification: 3,
+        completed_assessments: 12,
+        high_risk_bidders: 1,
+        pending_documents: 2,
+        verification_exceptions: 5,
+      };
+    },
+    async getTenders(): Promise<any[]> {
+      await delay(150);
+      return [
+        {
+          id: 'TEN-2026-001',
+          tender_number: 'GEM/2026/B/418207',
+          title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
+          department: 'Department of Administrative Reforms',
+          status: 'ACTIVE',
+        },
+      ];
+    },
+    async getTender(id: string): Promise<any> {
+      await delay(100);
+      return {
+        id,
+        tender_number: 'GEM/2026/B/418207',
+        title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
+        department: 'Department of Administrative Reforms',
+      };
+    },
+    async createTender(tender: any): Promise<any> {
+      await delay(200);
+      return { id: `TEN-${Date.now()}`, ...tender, tender_number: `GEM/2026/B/${Math.floor(100000 + Math.random() * 900000)}` };
+    },
+    async getBidders(tenderId: string): Promise<any[]> {
+      await delay(150);
+      return [
+        { id: 'BID-001', name: 'Triveni Infotech Solutions Pvt. Ltd.', score: 87, risk: 'LOW', status: 'Under Review', documents: 7, exceptions: 1 },
+        { id: 'BID-002', name: 'Narmada Systems & Services Pvt. Ltd.', score: 54, risk: 'HIGH', status: 'Exception Found', documents: 5, exceptions: 4 },
+        { id: 'BID-003', name: 'Vindhya Digital Technologies LLP', score: 68, risk: 'MEDIUM', status: 'Under Review', documents: 4, exceptions: 2 },
+      ];
+    },
+    async addBidder(tenderId: string, bidder: any): Promise<any> {
+      await delay(200);
+      return { id: `BID-${Date.now()}`, tenderId, name: bidder.legal_name, score: 0, risk: 'MEDIUM', status: 'Pending Documents', documents: 0, exceptions: 0 };
+    },
+    async getBidder(id: string): Promise<any> {
+      await delay(100);
+      return { id, name: id === 'BID-002' ? 'Narmada Systems & Services Pvt. Ltd.' : 'Triveni Infotech Solutions Pvt. Ltd.' };
+    },
+    async verifyBidder(bidderId: string): Promise<any> {
+      await delay(300);
+      return { status: 'COMPLETED', bidderId };
+    },
+    async getCompliance(bidderId: string): Promise<any> {
+      await delay(200);
+      return { bidder_id: bidderId, compliance_score: bidderId === 'BID-002' ? 54 : 87, risk_level: bidderId === 'BID-002' ? 'HIGH' : 'LOW' };
+    },
+    async recordDecision(bidderId: string, decision: string, note?: string): Promise<any> {
+      await delay(200);
+      return { bidder_id: bidderId, status: decision, note, timestamp: new Date().toISOString() };
+    },
+    async getAuditTrail(): Promise<any[]> {
+      await delay(150);
+      return [];
+    },
+    async uploadBidderDocument(bidderId: string, file: File, documentType: string = 'auto'): Promise<any> {
+      await delay(400);
+      return {
+        doc_record: {
+          id: `DOC-${bidderId}-${Date.now()}`,
+          file_name: file.name,
+          document_type: documentType === 'auto' ? 'GST Registration Certificate' : documentType,
+          ocr_status: 'COMPLETED',
+          extracted_fields: [
+            { key: 'fileName', label: 'Document Name', value: file.name, confidence: 1.0 },
+            { key: 'docType', label: 'Document Type', value: documentType, confidence: 0.95 }
+          ],
+          confidence: 0.95,
+          engine: 'PyMuPDF + Regex Parser',
+          created_at: new Date().toISOString(),
+        },
+        extracted_fields: [
+          { key: 'fileName', label: 'Document Name', value: file.name, confidence: 1.0 },
+          { key: 'docType', label: 'Document Type', value: documentType, confidence: 0.95 }
+        ],
+        assessment: {
+          compliance_score: 85,
+          risk_level: 'LOW',
+          discrepancies: [],
+          missing_documents: []
+        },
+        bidder: {
+          id: bidderId,
+          compliance_score: 85,
+          risk_level: 'LOW',
+          status: 'Under Review',
+          documents_count: 1,
+          exceptions_count: 0
+        }
+      };
     },
   },
 };

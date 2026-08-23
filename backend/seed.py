@@ -473,12 +473,231 @@ def seed_case_actions():
 
 
 # ============================================================
+# 6. LAND ACQUISITION PROJECTS SEEDING (SIH26017)
+# ============================================================
+DEMO_LA_PROJECTS = [
+    {
+        "file_number": "LA-1024",
+        "project_code": "LA-1024",
+        "title": "Samruddhi Expressway Interchange & Connecting Corridor",
+        "subject": "Survey No. 142/3A, 142/3B, 143/1 — 42.5 Hectares",
+        "case_type": "Land Acquisition",
+        "department": "Land Revenue",
+        "state": "Maharashtra",
+        "district": "Nashik",
+        "current_stage": "Compensation Disbursement",
+        "status": "AT_RISK",
+        "total_parcels": 84,
+        "completed_parcels": 46,
+        "total_area": 42.5,
+        "documentation_completeness": 62.0,
+        "legal_dispute": False,
+        "ownership_conflict": True,
+        "compensation_pending_days": 19,
+        "rr_status": "IN_PROGRESS",
+        "rr_delay_days": 14,
+        "inter_dept_dependency": True,
+        "pending_approvals": 2,
+        "assigned_officer": "Rajeshwar V. Verma, IAS",
+        "current_desk": "Desk-04 (SLAO Office)",
+        "statutory_deadline_days": 180,
+    },
+    {
+        "file_number": "LA-1031",
+        "project_code": "LA-1031",
+        "title": "Pune Ring Road Phase-II Land Parcel Package",
+        "subject": "Survey No. 88/1 to 88/12 — 68.2 Hectares",
+        "case_type": "Land Acquisition",
+        "department": "Land Revenue",
+        "state": "Maharashtra",
+        "district": "Pune",
+        "current_stage": "Ownership Verification",
+        "status": "OVERDUE",
+        "total_parcels": 120,
+        "completed_parcels": 30,
+        "total_area": 68.2,
+        "documentation_completeness": 74.0,
+        "legal_dispute": True,
+        "ownership_conflict": True,
+        "compensation_pending_days": 45,
+        "rr_status": "IN_PROGRESS",
+        "rr_delay_days": 20,
+        "inter_dept_dependency": True,
+        "pending_approvals": 3,
+        "assigned_officer": "Anita Deshmukh",
+        "current_desk": "Desk-02 (Revenue Verification)",
+        "statutory_deadline_days": 180,
+    },
+    {
+        "file_number": "LA-1042",
+        "project_code": "LA-1042",
+        "title": "Aurangabad Industrial Corridor Water Pipeline",
+        "subject": "Survey No. 201/A to 215/C — 18.0 Hectares",
+        "case_type": "Land Acquisition",
+        "department": "Public Works",
+        "state": "Maharashtra",
+        "district": "Aurangabad",
+        "current_stage": "Survey and Verification",
+        "status": "UNDER_SCRUTINY",
+        "total_parcels": 32,
+        "completed_parcels": 12,
+        "total_area": 18.0,
+        "documentation_completeness": 48.0,
+        "legal_dispute": False,
+        "ownership_conflict": False,
+        "compensation_pending_days": 0,
+        "rr_status": "NOT_APPLICABLE",
+        "rr_delay_days": 0,
+        "inter_dept_dependency": False,
+        "pending_approvals": 1,
+        "assigned_officer": "Pradeep K. Rathore",
+        "current_desk": "Desk-01 (Cadastral Survey)",
+        "statutory_deadline_days": 180,
+    },
+    {
+        "file_number": "LA-1055",
+        "project_code": "LA-1055",
+        "title": "Nagpur Metro Rail Extension Depot Land",
+        "subject": "Survey No. 45/2 — 12.4 Hectares",
+        "case_type": "Land Acquisition",
+        "department": "Urban Planning",
+        "state": "Maharashtra",
+        "district": "Nagpur",
+        "current_stage": "Final Acquisition",
+        "status": "IN_PROGRESS",
+        "total_parcels": 18,
+        "completed_parcels": 16,
+        "total_area": 12.4,
+        "documentation_completeness": 96.0,
+        "legal_dispute": False,
+        "ownership_conflict": False,
+        "compensation_pending_days": 5,
+        "rr_status": "COMPLETED",
+        "rr_delay_days": 0,
+        "inter_dept_dependency": False,
+        "pending_approvals": 0,
+        "assigned_officer": "K. R. Mohan",
+        "current_desk": "Desk-03 (Final Gazette)",
+        "statutory_deadline_days": 180,
+    },
+    {
+        "file_number": "LA-1068",
+        "project_code": "LA-1068",
+        "title": "Jaipur Ring Road Bypass Western Alignment",
+        "subject": "Survey No. 310/1 to 330/4 — 95.0 Hectares",
+        "case_type": "Land Acquisition",
+        "department": "Transport & Highways",
+        "state": "Rajasthan",
+        "district": "Jaipur",
+        "current_stage": "Objection and Legal Review",
+        "status": "AT_RISK",
+        "total_parcels": 210,
+        "completed_parcels": 80,
+        "total_area": 95.0,
+        "documentation_completeness": 70.0,
+        "legal_dispute": True,
+        "ownership_conflict": False,
+        "compensation_pending_days": 38,
+        "rr_status": "IN_PROGRESS",
+        "rr_delay_days": 25,
+        "inter_dept_dependency": True,
+        "pending_approvals": 2,
+        "assigned_officer": "Adv. M. Sundaram",
+        "current_desk": "Desk-05 (Legal Hearing)",
+        "statutory_deadline_days": 180,
+    },
+    {
+        "file_number": "LA-1077",
+        "project_code": "LA-1077",
+        "title": "Bengaluru Sub-Urban Rail Corridor-4 Depot",
+        "subject": "Survey No. 12/1A, 12/2 — 35.0 Hectares",
+        "case_type": "Land Acquisition",
+        "department": "Transport & Highways",
+        "state": "Karnataka",
+        "district": "Bengaluru",
+        "current_stage": "Preliminary Notification",
+        "status": "REGISTERED",
+        "total_parcels": 45,
+        "completed_parcels": 40,
+        "total_area": 35.0,
+        "documentation_completeness": 92.0,
+        "legal_dispute": False,
+        "ownership_conflict": False,
+        "compensation_pending_days": 0,
+        "rr_status": "NOT_APPLICABLE",
+        "rr_delay_days": 0,
+        "inter_dept_dependency": False,
+        "pending_approvals": 0,
+        "assigned_officer": "S. N. Hegde",
+        "current_desk": "Desk-01 (Notification Section)",
+        "statutory_deadline_days": 180,
+    },
+]
+
+
+def seed_land_acquisition_projects():
+    print("Checking & seeding Land Acquisition demo projects (SIH26017)...")
+    from app.services.prediction.predict import predict_delay
+
+    res = supabase.table("cases").select("id, file_number").execute()
+    existing = res.data or []
+    existing_fns = {c["file_number"] for c in existing if c.get("file_number")}
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    for proj in DEMO_LA_PROJECTS:
+        fn = proj["file_number"]
+        if fn in existing_fns:
+            continue
+
+        # Calculate prediction dynamically
+        pred = predict_delay(proj)
+        proj_row = {
+            **proj,
+            "delay_probability": pred["delay_probability"],
+            "predicted_delay_days": pred["predicted_delay_days"],
+            "ml_risk_level": pred["risk_level"],
+            "model_version": pred["model_version"],
+            "created_at": now,
+            "updated_at": now,
+        }
+
+        insert_res = supabase.table("cases").insert(proj_row).execute()
+        if insert_res.data:
+            case_id = insert_res.data[0]["id"]
+            # Add initial movement
+            supabase.table("case_movements").insert({
+                "case_id": case_id,
+                "from_stage": "Project Initiation",
+                "to_stage": proj["current_stage"],
+                "assigned_to": proj["assigned_officer"],
+                "remarks": f"Project active in {proj['current_stage']}",
+                "started_at": now,
+                "status": "IN_PROGRESS",
+            }).execute()
+
+            # Add alert if high risk
+            if pred["delay_probability"] >= 0.70:
+                supabase.table("alerts").insert({
+                    "case_id": case_id,
+                    "type": "CRITICAL_DELAY_RISK",
+                    "severity": "CRITICAL" if pred["delay_probability"] >= 0.80 else "HIGH",
+                    "message": f"Project {fn} has an elevated delay probability of {int(pred['delay_probability']*100)}% (Predicted delay: {pred['predicted_delay_days']} days).",
+                    "created_at": now,
+                }).execute()
+
+            stats.record_inserted("cases")
+
+    print("  [OK] Land Acquisition Demo Projects seeded successfully.")
+
+
+# ============================================================
 # MAIN ENTRYPOINT
 # ============================================================
 def main():
     print("=" * 70)
-    print("GOIP Government File Tracking System -- Idempotent Demo Data Seeder")
-    print("NOTE: All data generated is DEMO DATA for SIH prototype.")
+    print("SIH26017 Land Acquisition Delay Prediction Platform -- Demo Seeder")
+    print("NOTE: All data generated is SYNTHETIC DEMO DATA for SIH prototype.")
     print("=" * 70)
 
     # 1. Departments
@@ -487,13 +706,16 @@ def main():
     # 2. Cases & Workflow (Movements, Alerts, Audit Logs)
     seed_cases(40)
 
-    # 3. Documents
+    # 3. Land Acquisition Projects
+    seed_land_acquisition_projects()
+
+    # 4. Documents
     seed_documents()
 
-    # 4. Legal Opinions
+    # 5. Legal Opinions
     seed_legal_opinions()
 
-    # 5. Case Actions
+    # 6. Case Actions
     seed_case_actions()
 
     # Verify final counts from Supabase
@@ -514,7 +736,6 @@ def main():
 
     print("=" * 70)
     print("Status: SUCCESS - Seed completed without exceptions.")
-    print("Integrity: Existing data preserved; no duplicate key violations.")
     print("=" * 70)
 
 

@@ -1,0 +1,13 @@
+{
+  "compensation_pending_days": 0.366446,
+  "ownership_conflict": 0.220529,
+  "documentation_completeness": 0.118847,
+  "legal_dispute": 0.114036,
+  "number_of_delayed_stages": 0.047587,
+  "rr_delay_days": 0.040259,
+  "previous_stage_delay_days": 0.030928,
+  "project_age_days": 0.029254,
+  "current_stage_index": 0.013126,
+  "inter_dept_dependency": 0.011042,
+  "pending_approvals": 0.007946
+}

@@ -201,6 +201,81 @@ export const realApi = {
     },
   },
 
+  projects: {
+    async getProjects(params?: {
+      district?: string;
+      state?: string;
+      stage?: string;
+      riskLevel?: string;
+      status?: string;
+      search?: string;
+    }): Promise<{ projects: Case[]; total: number }> {
+      const queryParams = new URLSearchParams();
+      if (params?.district && params.district !== 'ALL') queryParams.append('district', params.district);
+      if (params?.state && params.state !== 'ALL') queryParams.append('state', params.state);
+      if (params?.stage && params.stage !== 'ALL') queryParams.append('stage', params.stage);
+      if (params?.riskLevel && params.riskLevel !== 'ALL') queryParams.append('risk_level', params.riskLevel);
+      if (params?.status && params.status !== 'ALL') queryParams.append('status', params.status);
+      if (params?.search) queryParams.append('q', params.search);
+
+      return request<{ projects: Case[]; total: number }>(`/api/v1/projects?${queryParams.toString()}`);
+    },
+
+    async getProjectById(projectId: string): Promise<Case & { events: CaseEvent[]; documents: DocumentRecord[] }> {
+      return request<Case & { events: CaseEvent[]; documents: DocumentRecord[] }>(`/api/v1/projects/${projectId}`);
+    },
+
+    async createProject(newProject: Partial<Case>): Promise<Case> {
+      return request<Case>('/api/v1/projects', {
+        method: 'POST',
+        body: JSON.stringify(newProject),
+      });
+    },
+
+    async updateProject(projectId: string, updates: Partial<Case>): Promise<Case> {
+      return request<Case>(`/api/v1/projects/${projectId}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+      });
+    },
+
+    async getPrediction(projectId: string): Promise<any> {
+      return request<any>(`/api/v1/projects/${projectId}/prediction`);
+    },
+
+    async getBottlenecks(projectId: string): Promise<any> {
+      return request<any>(`/api/v1/projects/${projectId}/bottlenecks`);
+    },
+
+    async getDelayFactors(projectId: string): Promise<any> {
+      return request<any>(`/api/v1/projects/${projectId}/delay-factors`);
+    },
+
+    async getRecommendations(projectId: string): Promise<any> {
+      return request<any>(`/api/v1/projects/${projectId}/recommendations`);
+    },
+
+    async getTimeline(projectId: string): Promise<any> {
+      return request<any>(`/api/v1/projects/${projectId}/timeline`);
+    },
+
+    async uploadProjectDocument(projectId: string, file: File, documentType: string = 'Land Document'): Promise<any> {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('document_type', documentType);
+
+      const token = localStorage.getItem('gov_session_token');
+      const response = await fetch(`${API_BASE_URL}/api/v1/projects/${projectId}/documents`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Document upload failed');
+      return response.json();
+    },
+  },
+
   cases: {
     async getCases(params?: {
       department?: string;
@@ -383,6 +458,74 @@ export const realApi = {
   analytics: {
     async getPerformanceMetrics(): Promise<ProcessPerformanceMetrics> {
       return request<ProcessPerformanceMetrics>('/api/v1/analytics/performance');
+    },
+  },
+
+  procurement: {
+    async getDashboard(): Promise<any> {
+      return request<any>('/api/v1/procurement/dashboard');
+    },
+    async getTenders(): Promise<any[]> {
+      return request<any[]>('/api/v1/procurement/tenders');
+    },
+    async getTender(id: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/tenders/${id}`);
+    },
+    async createTender(tender: { title: string; department?: string; estimated_value?: number }): Promise<any> {
+      return request<any>('/api/v1/procurement/tenders', {
+        method: 'POST',
+        body: JSON.stringify(tender),
+      });
+    },
+    async getBidders(tenderId: string): Promise<any[]> {
+      return request<any[]>(`/api/v1/procurement/tenders/${tenderId}/bidders`);
+    },
+    async addBidder(tenderId: string, bidder: { legal_name: string; gstin?: string; pan?: string }): Promise<any> {
+      return request<any>(`/api/v1/procurement/tenders/${tenderId}/bidders`, {
+        method: 'POST',
+        body: JSON.stringify(bidder),
+      });
+    },
+    async getBidder(id: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/bidders/${id}`);
+    },
+    async verifyBidder(bidderId: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/bidders/${bidderId}/verify`, {
+        method: 'POST',
+      });
+    },
+    async getCompliance(bidderId: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/bidders/${bidderId}/compliance`);
+    },
+    async recordDecision(bidderId: string, decision: string, note?: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/bidders/${bidderId}/decision`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, note }),
+      });
+    },
+    async getAuditTrail(tenderId?: string): Promise<any[]> {
+      const q = tenderId ? `?tender_id=${tenderId}` : '';
+      return request<any[]>(`/api/v1/procurement/audit${q}`);
+    },
+
+    async uploadBidderDocument(bidderId: string, file: File, documentType: string = 'auto'): Promise<any> {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('document_type', documentType);
+
+      const token = localStorage.getItem('gov_session_token');
+      const response = await fetch(`${API_BASE_URL}/api/v1/procurement/bidders/${bidderId}/documents`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let detail = 'Document upload failed';
+        try { detail = (await response.json()).detail || detail; } catch { /* noop */ }
+        throw new Error(`[${response.status}] ${detail}`);
+      }
+      return response.json();
     },
   },
 };

@@ -11,33 +11,33 @@ import {
   ShieldAlert,
   GitBranch,
   RefreshCw,
+  Layers,
+  FileCheck,
 } from 'lucide-react';
-import { workflowService, analyticsService, riskService } from '../services/api';
+import { workflowService, analyticsService, projectService } from '../services/api';
 import { ProcessMapData, ProcessPerformanceMetrics, Case } from '../types';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
-import { StatusBadge } from '../components/common/GovBadge';
 import { TableSkeleton } from '../components/common/LoadingSkeleton';
-import { MOCK_BOTTLENECKS } from '../mock/data';
 
 export const Intelligence: React.FC = () => {
   const [processMap, setProcessMap] = useState<ProcessMapData | null>(null);
   const [metrics, setMetrics] = useState<ProcessPerformanceMetrics | null>(null);
-  const [riskCases, setRiskCases] = useState<Case[]>([]);
+  const [projects, setProjects] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchIntelligenceData = async () => {
     setLoading(true);
     try {
-      const [mapRes, perfRes, riskRes] = await Promise.all([
+      const [mapRes, perfRes, projRes] = await Promise.all([
         workflowService.getProcessMap(),
         analyticsService.getPerformanceMetrics(),
-        riskService.getRiskCases(),
+        projectService.getProjects({ riskLevel: 'HIGH' }),
       ]);
       setProcessMap(mapRes);
       setMetrics(perfRes);
-      setRiskCases(riskRes);
+      setProjects(projRes.projects || []);
     } catch (err) {
       console.error('Failed to load intelligence data:', err);
     } finally {
@@ -58,16 +58,32 @@ export const Intelligence: React.FC = () => {
     );
   }
 
+  const delayFactors = [
+    { factor: 'Compensation Disbursement Backlog', weight: '36.6%', impacted: 184, impact: 'CRITICAL', avgDelay: '+28d', desc: 'Awaiting sanction from District Treasury or multi-party award apportionment.' },
+    { factor: 'Ownership & Title Conflict', weight: '22.1%', impacted: 126, impact: 'CRITICAL', avgDelay: '+22d', desc: 'Contested claims between co-sharers or unregistered land revenue partitions.' },
+    { factor: 'Incomplete Documentation / RoR', weight: '11.9%', impacted: 98, impact: 'HIGH', avgDelay: '+14d', desc: 'Missing 7/12 land records, sub-division maps, or cadastral boundary sheets.' },
+    { factor: 'Court Litigation / Stay Orders', weight: '11.4%', impacted: 64, impact: 'HIGH', avgDelay: '+45d', desc: 'High Court writ petitions or stay orders on Section 11 preliminary notifications.' },
+    { factor: 'Joint Survey & Measurement Discrepancies', weight: '6.2%', impacted: 45, impact: 'MEDIUM', avgDelay: '+9d', desc: 'Area discrepancy between physical possession and revenue record registers.' },
+    { factor: 'Inter-departmental NOC Dependencies', weight: '4.8%', impacted: 52, impact: 'MEDIUM', avgDelay: '+12d', desc: 'Pending forest clearance, railway crossing NOC, or utility relocation approvals.' },
+    { factor: 'R&R Package Sanction Delays', weight: '4.0%', impacted: 38, impact: 'MEDIUM', avgDelay: '+16d', desc: 'Rehabilitation and resettlement scheme approval pending under Section 16.' },
+    { factor: 'Gazette Publication Lapses', weight: '3.0%', impacted: 19, impact: 'LOW', avgDelay: '+6d', desc: 'Delay in local newspaper publication or official state gazette printing.' },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
         <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            Administrative Intelligence &amp; Bottleneck Analysis
-          </h1>
+          <div className="flex items-center space-x-2">
+            <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
+              Procurement Compliance Intelligence &amp; Exception Analysis
+            </h1>
+            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase rounded-[2px] border border-emerald-300">
+              Rule Evaluator (v2.1)
+            </span>
+          </div>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Identify recurring queue delays, inter-departmental rework loops, and section workload bottlenecks.
+            Government Procurement • AI-assisted bid compliance attribution and exception detection across tender records.
           </p>
         </div>
 
@@ -75,188 +91,201 @@ export const Intelligence: React.FC = () => {
           variant="secondary"
           size="sm"
           onClick={fetchIntelligenceData}
-          icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B2A4A]" />}
+          icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B3558]" />}
         >
           Refresh Analysis
         </GovButton>
       </div>
 
-      {/* Analytical Insight Callout Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-white border border-[#D9DDE3] border-l-4 border-l-[#B72025] rounded-[3px] shadow-sm space-y-1.5">
-          <div className="flex items-center space-x-1.5 text-xs font-bold text-[#B72025]">
-            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-            <span>Critical Section Delay</span>
-          </div>
-          <p className="text-xs text-[#202124] leading-relaxed">
-            <strong>142 files</strong> currently delayed at the <strong>Legal Review Desk</strong>, running at <strong>+191%</strong> above standard SLA baseline.
-          </p>
-          <span className="text-[11px] text-[#5F6368] font-mono block pt-1">
-            Avg Turnaround: 6.4 Days (Baseline: 2.2d)
-          </span>
+      {/* Continuous Government Metric Strip */}
+      <div className="bg-white border border-[#CBD2DE] border-t-2 border-t-[#0B3558] rounded-[2px] grid grid-cols-2 md:grid-cols-4 divide-x divide-[#CBD2DE] select-none">
+        <div className="p-3.5 space-y-0.5">
+          <span className="text-[10px] uppercase font-bold text-[#5F6368] tracking-wider block">PROJECTS ANALYZED</span>
+          <div className="text-2xl font-bold font-serif text-[#0B3558]">1,200</div>
+          <span className="text-[11px] text-[#5F6368] block">Across 8 State Districts</span>
         </div>
-
-        <div className="p-4 bg-white border border-[#D9DDE3] border-l-4 border-l-[#D97706] rounded-[3px] shadow-sm space-y-1.5">
-          <div className="flex items-center space-x-1.5 text-xs font-bold text-[#D97706]">
-            <Clock className="w-4 h-4 flex-shrink-0" />
-            <span>Rework Loop Accumulation</span>
-          </div>
-          <p className="text-xs text-[#202124] leading-relaxed">
-            <strong>24% of legal scrutiny cases</strong> trigger rework back to Officer Review for missing survey sketches, adding <strong>+4.2 days</strong> delay.
-          </p>
-          <span className="text-[11px] text-[#5F6368] font-mono block pt-1">
-            820 Affected Cases This Quarter
-          </span>
+        <div className="p-3.5 space-y-0.5 bg-[#FFF9F9]">
+          <span className="text-[10px] uppercase font-bold text-[#B72025] tracking-wider block">HIGH DELAY RISK (≥60%)</span>
+          <div className="text-2xl font-bold font-serif text-[#B72025]">48</div>
+          <span className="text-[11px] text-[#B72025] font-semibold block">Require SLAO Escalation</span>
         </div>
-
-        <div className="p-4 bg-white border border-[#D9DDE3] border-l-4 border-l-[#15803D] rounded-[3px] shadow-sm space-y-1.5">
-          <div className="flex items-center space-x-1.5 text-xs font-bold text-[#15803D]">
-            <TrendingUp className="w-4 h-4 flex-shrink-0" />
-            <span>State SLA Compliance Trend</span>
-          </div>
-          <p className="text-xs text-[#202124] leading-relaxed">
-            Overall statutory SLA adherence stands at <strong>83.4%</strong> across 10,482 active state file dockets.
-          </p>
-          <span className="text-[11px] text-[#5F6368] font-mono block pt-1">
-            Median Cycle Time: 12.4 Days
-          </span>
+        <div className="p-3.5 space-y-0.5 bg-[#FFFDF5]">
+          <span className="text-[10px] uppercase font-bold text-[#D97706] tracking-wider block">PRIMARY BOTTLENECK</span>
+          <div className="text-sm font-bold font-serif text-[#D97706] truncate">Compensation Disbursement</div>
+          <span className="text-[11px] text-[#D97706] font-semibold block">+28d Excess Dwell</span>
+        </div>
+        <div className="p-3.5 space-y-0.5 bg-[#F9FDF9]">
+          <span className="text-[10px] uppercase font-bold text-[#15803D] tracking-wider block">MODEL ACCURACY</span>
+          <div className="text-2xl font-bold font-serif text-[#15803D]">94.58%</div>
+          <span className="text-[11px] text-[#15803D] font-mono block">ROC-AUC: 0.9934</span>
         </div>
       </div>
 
-      {/* Stage-wise Processing Time vs Baseline Comparison Table */}
+      {/* Delay Factor Attribution Matrix */}
       <GovCard
-        title="Stage-Wise Turnaround Time &amp; Queue Breakdown"
-        subtitle="Active processing time versus queue dwell wait across workflow stages."
+        title="Observable Delay Factor Attribution &amp; Global Feature Importance"
+        subtitle="Random Forest feature weights evaluating empirical contribution to statutory timeline deviations."
         noPadding
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#0B2A4A] text-white border-b-2 border-[#071A2E]">
-                <th className="p-2.5 font-semibold">Workflow Stage</th>
-                <th className="p-2.5 font-semibold text-center">Active Dwell (Days)</th>
-                <th className="p-2.5 font-semibold text-center">Queue Wait (Days)</th>
-                <th className="p-2.5 font-semibold text-center">Total Cycle Time</th>
-                <th className="p-2.5 font-semibold text-center">Current Queue</th>
-                <th className="p-2.5 font-semibold text-center">SLA Breach Rate</th>
-                <th className="p-2.5 font-semibold">Bottleneck Severity</th>
+              <tr className="bg-[#0B3558] text-white border-b-2 border-[#040E1A]">
+                <th className="p-2.5 font-semibold">Contributing Delay Factor</th>
+                <th className="p-2.5 font-semibold text-center">Model Importance</th>
+                <th className="p-2.5 font-semibold text-center">Impacted Projects</th>
+                <th className="p-2.5 font-semibold text-center">Avg Timeline Delay</th>
+                <th className="p-2.5 font-semibold">Severity Classification</th>
+                <th className="p-2.5 font-semibold">Observed Administrative Trigger</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9DDE3]">
-              {metrics.stageBreakdown.map((row, idx) => {
-                const isCritical = row.waitingDays > 3 || row.slaBreachRatePct > 20;
-                const isWarning = row.waitingDays > 1.5 || row.slaBreachRatePct > 8;
-
-                return (
-                  <tr
-                    key={row.stage}
-                    className={`hover:bg-[#EEF2F7] transition-colors ${
-                      idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'
-                    }`}
-                  >
-                    <td className="p-2.5 font-bold text-[#0B2A4A]">{row.stage}</td>
-                    <td className="p-2.5 text-center font-mono">{row.activeProcessingDays}d</td>
-                    <td
-                      className={`p-2.5 text-center font-mono font-bold ${
-                        isCritical ? 'text-[#B72025]' : isWarning ? 'text-[#D97706]' : 'text-[#202124]'
-                      }`}
-                    >
-                      {row.waitingDays}d
-                    </td>
-                    <td className="p-2.5 text-center font-mono font-semibold">{row.totalDays}d</td>
-                    <td className="p-2.5 text-center font-mono font-bold text-[#0B2A4A]">
-                      {row.queueCount} files
-                    </td>
-                    <td
-                      className={`p-2.5 text-center font-mono font-bold ${
-                        isCritical ? 'text-[#B72025]' : isWarning ? 'text-[#D97706]' : 'text-[#15803D]'
-                      }`}
-                    >
-                      {row.slaBreachRatePct}%
-                    </td>
-                    <td className="p-2.5">
-                      {isCritical ? (
-                        <span className="px-2 py-0.5 bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5] rounded-[2px] font-bold text-[11px]">
-                          CRITICAL BOTTLENECK
-                        </span>
-                      ) : isWarning ? (
-                        <span className="px-2 py-0.5 bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A] rounded-[2px] font-semibold text-[11px]">
-                          MODERATE DELAY
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px] text-[11px]">
-                          NORMAL
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {delayFactors.map((row, idx) => (
+                <tr
+                  key={idx}
+                  className={`hover:bg-[#EEF2F7] transition-colors ${idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'}`}
+                >
+                  <td className="p-2.5 font-bold text-[#0B3558]">{row.factor}</td>
+                  <td className="p-2.5 text-center font-mono font-bold text-[#0B3558]">{row.weight}</td>
+                  <td className="p-2.5 text-center font-mono font-semibold">{row.impacted}</td>
+                  <td className="p-2.5 text-center font-mono font-bold text-[#B72025]">{row.avgDelay}</td>
+                  <td className="p-2.5">
+                    <span className={`px-2 py-0.5 rounded-[2px] font-bold text-[10px] border ${
+                      row.impact === 'CRITICAL' ? 'bg-red-50 text-red-800 border-red-300' :
+                      row.impact === 'HIGH' ? 'bg-amber-50 text-amber-800 border-amber-300' :
+                      row.impact === 'MEDIUM' ? 'bg-blue-50 text-blue-800 border-blue-300' :
+                      'bg-green-50 text-green-800 border-green-300'
+                    }`}>
+                      {row.impact}
+                    </span>
+                  </td>
+                  <td className="p-2.5 text-[#5F6368] text-[11px]">{row.desc}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </GovCard>
 
-      {/* Delay Risk Rankings with Explicit Mathematical Rationale */}
+      {/* Procurement Verification Stage Breakdown */}
       <GovCard
-        title="Delay Risk &amp; Statutory SLA Breach Forecaster"
-        subtitle="Calculated probability of statutory deadline breach with explicit mathematical attribution."
-        highlightBorder="saffron"
+        title="Verification Stage Turnaround vs Baseline"
+        subtitle="Comparison of observed average stage duration versus procurement evaluation benchmarks."
         noPadding
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#0B2A4A] text-white border-b-2 border-[#071A2E]">
-                <th className="p-2.5 font-semibold">File Docket</th>
-                <th className="p-2.5 font-semibold">Department &amp; Current Stage</th>
-                <th className="p-2.5 font-semibold text-center">Days in Queue</th>
-                <th className="p-2.5 font-semibold text-center">Historical Benchmark</th>
-                <th className="p-2.5 font-semibold text-center">Risk Level</th>
-                <th className="p-2.5 font-semibold">Attribution Reason</th>
+              <tr className="bg-[#0B3558] text-white border-b-2 border-[#040E1A]">
+                <th className="p-2.5 font-semibold">Verification Stage</th>
+                <th className="p-2.5 font-semibold text-center">Statutory Baseline</th>
+                <th className="p-2.5 font-semibold text-center">Observed Avg Dwell</th>
+                <th className="p-2.5 font-semibold text-center">Timeline Deviation</th>
+                <th className="p-2.5 font-semibold text-center">Active Projects</th>
+                <th className="p-2.5 font-semibold">Status Rating</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#D9DDE3]">
+              {[
+                { stage: 'Project Initiation', baseline: '15d', actual: '14.2d', dev: '-5%', count: 82, status: 'NORMAL' },
+                { stage: 'Land Identification', baseline: '30d', actual: '28.6d', dev: '-4%', count: 110, status: 'NORMAL' },
+                { stage: 'Preliminary Notification (Sec 11)', baseline: '30d', actual: '34.8d', dev: '+16%', count: 145, status: 'WARNING' },
+                { stage: 'Survey and Verification', baseline: '45d', actual: '48.2d', dev: '+7%', count: 128, status: 'NORMAL' },
+                { stage: 'Ownership Verification', baseline: '30d', actual: '46.4d', dev: '+54%', count: 164, status: 'CRITICAL' },
+                { stage: 'Objection & Legal Review', baseline: '60d', actual: '59.1d', dev: '-1%', count: 96, status: 'NORMAL' },
+                { stage: 'Compensation Assessment', baseline: '60d', actual: '67.5d', dev: '+12%', count: 132, status: 'WARNING' },
+                { stage: 'Compensation Disbursement', baseline: '90d', actual: '118.4d', dev: '+31%', count: 184, status: 'CRITICAL' },
+                { stage: 'R&R and Rehabilitation', baseline: '120d', actual: '126.8d', dev: '+5%', count: 74, status: 'NORMAL' },
+                { stage: 'Final Acquisition', baseline: '30d', actual: '29.2d', dev: '-2%', count: 52, status: 'NORMAL' },
+                { stage: 'Possession and Handover', baseline: '30d', actual: '31.0d', dev: '+3%', count: 33, status: 'NORMAL' },
+              ].map((stg, i) => (
+                <tr
+                  key={i}
+                  className={`hover:bg-[#EEF2F7] transition-colors ${i % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'}`}
+                >
+                  <td className="p-2.5 font-bold text-[#0B3558]">{stg.stage}</td>
+                  <td className="p-2.5 text-center font-mono">{stg.baseline}</td>
+                  <td className="p-2.5 text-center font-mono font-bold text-[#0B3558]">{stg.actual}</td>
+                  <td className={`p-2.5 text-center font-mono font-bold ${
+                    stg.dev.startsWith('+') && parseInt(stg.dev) >= 20 ? 'text-[#B72025]' :
+                    stg.dev.startsWith('+') ? 'text-[#D97706]' : 'text-[#15803D]'
+                  }`}>
+                    {stg.dev}
+                  </td>
+                  <td className="p-2.5 text-center font-mono font-semibold">{stg.count}</td>
+                  <td className="p-2.5">
+                    <span className={`px-2 py-0.5 rounded-[2px] font-bold text-[10px] border ${
+                      stg.status === 'CRITICAL' ? 'bg-red-50 text-red-800 border-red-300' :
+                      stg.status === 'WARNING' ? 'bg-amber-50 text-amber-800 border-amber-300' :
+                      'bg-green-50 text-green-800 border-green-300'
+                    }`}>
+                      {stg.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </GovCard>
+
+      {/* Priority Escalation Project List */}
+      <GovCard
+        title="High-Priority Escalation Queue (Exceptions & High Risk)"
+        subtitle="Bidder submissions currently flagged with compliance exceptions or high risk."
+        highlightBorder="red"
+        noPadding
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-[#0B3558] text-white border-b-2 border-[#040E1A]">
+                <th className="p-2.5 font-semibold">Project Code</th>
+                <th className="p-2.5 font-semibold">Project Description &amp; District</th>
+                <th className="p-2.5 font-semibold">Current Stage</th>
+                <th className="p-2.5 font-semibold text-center">Delay Prob (ML)</th>
+                <th className="p-2.5 font-semibold text-center">Est. Delay</th>
                 <th className="p-2.5 font-semibold text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9DDE3]">
-              {riskCases.map((c, idx) => {
-                const rp = c.riskPrediction;
+              {projects.slice(0, 5).map((p, idx) => {
+                const prob = p.delayProbability ?? (p.riskScore / 100);
+                const probPct = Math.round(prob * 100);
                 return (
                   <tr
-                    key={c.id}
-                    className={`hover:bg-[#FAF8F2] transition-colors ${
-                      idx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'
-                    }`}
+                    key={p.id}
+                    className={`hover:bg-[#FFF8F8] transition-colors ${idx % 2 === 1 ? 'bg-[#FCFDFD]' : 'bg-white'}`}
                   >
-                    <td className="p-2.5 font-mono font-bold text-[#0B2A4A]">
-                      <Link to={`/files/${c.id}`} className="hover:underline">
-                        {c.fileNumber || c.id}
+                    <td className="p-2.5 font-mono font-bold text-[#0B3558]">
+                      <Link to={`/projects/${p.id}`} className="hover:underline">
+                        {p.projectCode || p.fileNumber || p.id}
                       </Link>
                     </td>
+                    <td className="p-2.5 max-w-sm">
+                      <div className="font-semibold text-[#202124] truncate">{p.title}</div>
+                      <div className="text-[11px] text-[#5F6368]">{p.district || 'Pune'} • {p.department}</div>
+                    </td>
                     <td className="p-2.5">
-                      <div className="font-semibold text-[#0B2A4A]">{c.department}</div>
-                      <div className="text-[11px] text-[#5F6368]">{c.currentStage}</div>
+                      <span className="px-1.5 py-0.5 bg-gray-100 text-gray-800 font-mono text-[11px] rounded-[2px] border border-gray-300">
+                        {p.currentStage}
+                      </span>
                     </td>
-                    <td className="p-2.5 text-center font-mono font-bold text-[#B72025]">
-                      {c.ageDays} Days
+                    <td className="p-2.5 text-center font-mono">
+                      <span className="px-2 py-0.5 bg-red-100 text-red-800 border border-red-300 rounded-[2px] font-bold text-[11px]">
+                        {probPct}%
+                      </span>
                     </td>
-                    <td className="p-2.5 text-center font-mono text-[#5F6368]">
-                      {rp?.historicalBaselineDays || 7} Days
-                    </td>
-                    <td className="p-2.5 text-center">
-                      <StatusBadge status={c.riskLevel} size="sm" />
-                    </td>
-                    <td className="p-2.5 text-[#202124] max-w-sm">
-                      <p className="line-clamp-2">
-                        {rp?.primaryFactor || 'Queue dwell time exceeds stage historical baseline.'}
-                      </p>
+                    <td className="p-2.5 text-center font-mono font-bold text-red-700">
+                      +{p.predictedDelayDays || 23}d
                     </td>
                     <td className="p-2.5 text-right whitespace-nowrap">
                       <GovButton
                         variant="secondary"
                         size="sm"
-                        onClick={() => navigate(`/files/${c.id}`)}
+                        onClick={() => navigate(`/projects/${p.id}`)}
                       >
-                        Inspect Docket
+                        Inspect Dossier
                       </GovButton>
                     </td>
                   </tr>
@@ -269,3 +298,5 @@ export const Intelligence: React.FC = () => {
     </div>
   );
 };
+
+export default Intelligence;

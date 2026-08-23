@@ -62,6 +62,18 @@ STAGE_BASELINE_DAYS = {
     "APPEAL": 5.0,
     "COMPLIANCE": 4.0,
     "CLOSED": 0.0,
+    # Land Acquisition stages (SIH26017)
+    "Project Initiation": 15.0,
+    "Land Identification": 30.0,
+    "Preliminary Notification": 30.0,
+    "Survey and Verification": 45.0,
+    "Ownership Verification": 30.0,
+    "Objection and Legal Review": 60.0,
+    "Compensation Assessment": 60.0,
+    "Compensation Disbursement": 90.0,
+    "R&R and Rehabilitation": 120.0,
+    "Final Acquisition": 30.0,
+    "Possession and Handover": 30.0,
 }
 
 # Stage criticality weights for risk scoring (0 - 10)
@@ -82,6 +94,18 @@ STAGE_CRITICALITY_WEIGHTS = {
     "ORDER_RECEIVED": 3,
     "DEPARTMENT_REVIEW": 4,
     "CLOSED": 0,
+    # Land Acquisition stages (SIH26017)
+    "Project Initiation": 2,
+    "Land Identification": 3,
+    "Preliminary Notification": 5,
+    "Survey and Verification": 6,
+    "Ownership Verification": 8,
+    "Objection and Legal Review": 9,
+    "Compensation Assessment": 7,
+    "Compensation Disbursement": 9,
+    "R&R and Rehabilitation": 8,
+    "Final Acquisition": 7,
+    "Possession and Handover": 6,
 }
 
 # ============================================================

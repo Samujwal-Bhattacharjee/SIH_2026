@@ -44,18 +44,25 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Could not verify/create storage bucket on startup: {e}")
 
+    # Ensure ML model is loaded
+    try:
+        from app.services.prediction.model_loader import load_model
+        load_model()
+        logger.info("ML Prediction model initialized.")
+    except Exception as e:
+        logger.warning(f"Could not load ML model on startup: {e}")
+
     yield
     logger.info("Shutting down GOIP backend")
 
 
 
 app = FastAPI(
-    title=settings.APP_NAME,
+    title="GOIP — Bid Compliance Verification Platform",
     version=settings.APP_VERSION,
     description=(
-        "REST API backend for the Government File Tracking & Administrative Intelligence System. "
-        "Provides case management, document OCR, deadline tracking, risk scoring, and alert generation. "
-        "\n\n**Note**: This is a Smart India Hackathon prototype. Demo data is seeded via seed.py."
+        "AI-assisted procurement bid compliance verification platform (SIH26100). "
+        "Provides document OCR, evidence-backed compliance checks and sandbox verification adapters."
     ),
     docs_url="/docs",
     redoc_url="/redoc",
@@ -77,11 +84,14 @@ app.add_middleware(
 # ROUTE REGISTRATION
 # ============================================================
 from app.api.routes.auth import router as auth_router
+from app.api.routes.projects import router as projects_router
 from app.api.routes.cases import router as cases_router
 from app.api.routes.documents import router as documents_router
 from app.api.routes.ocr import router as ocr_router
 from app.api.routes.dashboard import router as dashboard_router
 from app.api.routes.alerts import router as alerts_router
+from app.api.routes.verification import router as verification_router
+from app.api.routes.procurement import router as procurement_router
 from app.api.routes.other import (
     departments_router,
     audit_router,
@@ -99,10 +109,14 @@ API_PREFIX = "/api/v1"
 
 app.include_router(auth_router,          prefix=f"{API_PREFIX}/auth",         tags=["Authentication"])
 app.include_router(dashboard_router,     prefix=f"{API_PREFIX}/dashboard",     tags=["Dashboard"])
-app.include_router(cases_router,         prefix=f"{API_PREFIX}/cases",         tags=["Cases"])
+app.include_router(procurement_router,   prefix=f"{API_PREFIX}/procurement",   tags=["Procurement Compliance Verification"])
+app.include_router(procurement_router,   prefix=f"{API_PREFIX}",               tags=["Procurement Tenders & Bidders"])
+app.include_router(projects_router,      prefix=f"{API_PREFIX}/projects",      tags=["Land Acquisition Projects"])
+app.include_router(cases_router,         prefix=f"{API_PREFIX}/cases",         tags=["Cases (Compatibility)"])
 app.include_router(documents_router,     prefix=f"{API_PREFIX}/documents",     tags=["Documents"])
 app.include_router(ocr_router,           prefix=f"{API_PREFIX}/ocr",           tags=["OCR"])
 app.include_router(alerts_router,        prefix=f"{API_PREFIX}/alerts",        tags=["Alerts"])
+app.include_router(verification_router,  prefix=f"{API_PREFIX}/verification",  tags=["Procurement Verification"])
 app.include_router(departments_router,   prefix=f"{API_PREFIX}/departments",   tags=["Departments"])
 app.include_router(users_router,         prefix=f"{API_PREFIX}/users",         tags=["Users"])
 app.include_router(audit_router,         prefix=f"{API_PREFIX}/audit-logs",    tags=["Audit Logs"])

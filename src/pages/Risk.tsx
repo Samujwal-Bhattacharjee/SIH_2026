@@ -134,9 +134,9 @@ export const Risk: React.FC = () => {
         <GovButton
           variant="secondary"
           size="sm"
-          onClick={() => navigate(`/files/${item.id}`)}
+          onClick={() => navigate(`/projects/${item.id}`)}
         >
-          Inspect Docket
+          Inspect Project
         </GovButton>
       ),
     },
@@ -147,11 +147,16 @@ export const Risk: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
         <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            Statutory Delay Risk &amp; Turnaround Forecasting
-          </h1>
+          <div className="flex items-center space-x-2">
+            <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
+              Bidder Compliance &amp; Exception Risk Assessment
+            </h1>
+            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase rounded-[2px] border border-emerald-300">
+              Rule Evaluator (v2.1)
+            </span>
+          </div>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Identify files at high risk of breaching citizen charter SLAs based on historical stage dwell benchmarks.
+            Identify procurement bidders at high risk of non-compliance based on statutory certificate checks, OEM authorization, and turnover verification.
           </p>
         </div>
 
@@ -161,7 +166,7 @@ export const Risk: React.FC = () => {
           onClick={fetchRiskData}
           icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B2A4A]" />}
         >
-          Refresh Risk Scores
+          Recalculate Risk
         </GovButton>
       </div>
 

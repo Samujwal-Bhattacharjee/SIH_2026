@@ -141,9 +141,21 @@ async def get_dashboard_metrics(user: dict = Depends(get_current_user)):
     sorted_cases = sorted(enriched, key=lambda c: c.get("daysRemaining", 999))
     high_risk_cases = [_map_db_case_to_frontend(c, include_risk=False) for c in sorted_cases[:5]]
 
-    # Active departments
-    active_depts = supabase.table("departments").select("id", count="exact").execute()
-    dept_count = active_depts.count or len(cases_by_dept)
+    # --- Cases by district ---
+    projects_by_district: dict = {}
+    for c in enriched:
+        dist = c.get("district") or "Unassigned"
+        projects_by_district[dist] = projects_by_district.get(dist, 0) + 1
+
+    # Average delay days
+    delayed_cases = [c for c in enriched if c.get("daysRemaining", 999) < 0]
+    avg_delay_days = (
+        round(sum(abs(c.get("daysRemaining", 0)) for c in delayed_cases) / len(delayed_cases), 1)
+        if delayed_cases else 0.0
+    )
+
+    # Number of distinct active departments
+    dept_count = len(cases_by_dept)
 
     return DashboardMetrics(
         totalActiveCases=total_active,
@@ -163,4 +175,10 @@ async def get_dashboard_metrics(user: dict = Depends(get_current_user)):
         cases_by_department=cases_by_dept,
         cases_by_priority=cases_by_priority,
         cases_by_stage=cases_by_stage,
+        total_projects=len(all_cases),
+        high_risk_projects=sla_at_risk_count,
+        delayed_projects=sla_breached_count,
+        average_delay_days=avg_delay_days,
+        projects_by_district=projects_by_district,
+        projects_by_stage=cases_by_stage,
     )

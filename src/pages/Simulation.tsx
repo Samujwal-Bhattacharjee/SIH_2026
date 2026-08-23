@@ -61,15 +61,15 @@ export const Simulation: React.FC = () => {
   const activeScenario = scenarios.find((s) => s.id === selectedIntervention);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
         <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            Administrative Policy &amp; Workflow Simulation Engine
+          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
+            Procurement Policy &amp; Verification What-If Simulation Engine
           </h1>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Model the systemic turnaround impacts of routing thresholds, staffing capacity, and fast-track procedures.
+            Model the impact of administrative procurement policies (automated OCR validation, sandbox verification, MSME exemption fast-tracking) on evaluation cycles.
           </p>
         </div>
       </div>

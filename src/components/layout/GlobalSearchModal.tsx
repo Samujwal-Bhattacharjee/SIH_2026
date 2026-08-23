@@ -75,7 +75,7 @@ export const GlobalSearchModal: React.FC = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search active files (e.g. KA/REV/2026/001284), subjects, or documents..."
+            placeholder="Search active tenders (e.g. GEM/2026/B/418207), bidders, or documents..."
             className="w-full bg-transparent text-xs text-[#202124] placeholder:text-gray-400 focus:outline-none font-sans"
           />
           {loading ? (
@@ -94,11 +94,11 @@ export const GlobalSearchModal: React.FC = () => {
         <div className="max-h-96 overflow-y-auto p-3 bg-[#F5F6F8] space-y-3">
           {query.trim().length <= 1 && (
             <div className="p-6 text-center text-xs text-[#5F6368] space-y-2">
-              <p>Type to search official file numbers, departments, officers, or OCR text</p>
+              <p>Type to search tender IDs, bidder legal names, certificates, or OCR text</p>
               <div className="flex justify-center space-x-2 text-[11px]">
-                <span className="px-2 py-0.5 bg-white border border-[#D9DDE3] rounded-[2px]">KA/REV/2026/001284</span>
-                <span className="px-2 py-0.5 bg-white border border-[#D9DDE3] rounded-[2px]">Land Revenue</span>
-                <span className="px-2 py-0.5 bg-white border border-[#D9DDE3] rounded-[2px]">High Court Order</span>
+                <span className="px-2 py-0.5 bg-white border border-[#D9DDE3] rounded-[2px]">GEM/2026/B/418207</span>
+                <span className="px-2 py-0.5 bg-white border border-[#D9DDE3] rounded-[2px]">Triveni Infotech</span>
+                <span className="px-2 py-0.5 bg-white border border-[#D9DDE3] rounded-[2px]">GST Certificate</span>
               </div>
             </div>
           )}

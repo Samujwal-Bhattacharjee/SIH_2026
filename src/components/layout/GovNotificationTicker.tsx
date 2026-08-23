@@ -12,25 +12,25 @@ interface NoticeItem {
 const NOTICES: NoticeItem[] = [
   {
     id: '1',
-    tag: 'IMPORTANT NOTICE',
-    text: 'Files pending beyond prescribed statutory SLA require immediate departmental escalation under Citizen Charter Guidelines.',
+    tag: 'PROCUREMENT COMPLIANCE',
+    text: 'Bid verification assessments require officer review before final qualification (GeM Tender Rules).',
     isUrgent: true,
   },
   {
     id: '2',
-    tag: 'OFFICIAL CIRCULAR',
-    text: 'Bhoomi GIS spatial data verification mandatory for all Land Revenue alienation and conversion dockets (G.O. Ms. No. 42/2026).',
+    tag: 'EVIDENCE VERIFICATION',
+    text: 'Document verification results are generated from submitted evidence and configured verification sources.',
   },
   {
     id: '3',
-    tag: 'ADMINISTRATIVE ADVISORY',
-    text: 'All High Court compliance matters to be expedited through Legal Scrutiny Cell within 7 statutory working days.',
+    tag: 'ADVISORY NOTICE',
+    text: 'AI-generated compliance assessments are advisory and require officer review and signature.',
     isUrgent: true,
   },
   {
     id: '4',
-    tag: 'SYSTEM UPDATE',
-    text: 'National Informatics Centre (NIC) Optical Character Recognition (OCR) engine upgraded to Indic Multi-Lingual Engine v5.3.',
+    tag: 'SANDBOX ADAPTERS',
+    text: 'Sandbox verification sources are currently enabled for this demonstration prototype.',
   },
 ];
 

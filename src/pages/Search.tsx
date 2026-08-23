@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import {
   Search as SearchIcon,
   FolderKanban,
@@ -15,6 +15,7 @@ import { inputBaseClasses, inputErrorClasses, selectBaseClasses } from '../compo
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal';
 
 export const Search: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [departmentFilter, setDepartmentFilter] = useState('ALL');
@@ -74,10 +75,10 @@ export const Search: React.FC = () => {
       {/* Header */}
       <div className="border-b border-[#D9DDE3] pb-3">
         <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-          Government File &amp; Document Retrieval System
+          Tender, Bidder &amp; Document Retrieval Engine
         </h1>
         <p className="text-xs text-[#5F6368] mt-0.5">
-          Execute multi-criteria searches across active file dockets, optical text (OCR) archives, and citizen petitions.
+          Execute multi-criteria searches across active tender records, bidder submissions, and OCR-extracted document archives.
         </p>
       </div>
 
@@ -96,7 +97,7 @@ export const Search: React.FC = () => {
                     setValidationError(null);
                   }
                 }}
-                placeholder="Enter File Number (e.g. KA/REV/2026/001284), Survey No, Title Deed Ref, or Keywords..."
+                placeholder="Enter Tender ID (e.g. GEM/2026/B/418207), Bidder Name, GSTIN, or Keywords..."
                 className={`${
                   validationError ? inputErrorClasses : inputBaseClasses
                 } pl-9 py-2 text-sm font-sans`}
@@ -175,8 +176,8 @@ export const Search: React.FC = () => {
           {/* Matched Files Section */}
           {(searchType === 'ALL' || searchType === 'FILES') && cases.length > 0 && (
             <GovCard
-              title={`Matching File Dockets (${cases.length})`}
-              subtitle="Files matching search criteria"
+              title={`Matching Procurement Records (${cases.length})`}
+              subtitle="Tenders and records matching keyword, bidder name, or department criteria"
               noPadding
             >
               <div className="divide-y divide-[#D9DDE3]">
@@ -187,20 +188,28 @@ export const Search: React.FC = () => {
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center space-x-2">
-                        <FolderKanban className="w-4 h-4 text-[#0B2A4A]" />
+                        <FolderKanban className="w-4 h-4 text-[#0B3558]" />
                         <Link
-                          to={`/files/${c.id}`}
-                          className="font-mono font-bold text-sm text-[#0B2A4A] hover:underline"
+                          to={`/projects/${c.id}`}
+                          className="font-mono font-bold text-sm text-[#0B3558] hover:underline"
                         >
-                          {c.fileNumber || c.id}
+                          {c.projectCode || c.fileNumber || c.id}
                         </Link>
                         <StatusBadge status={c.status} size="sm" />
-                        {c.priority && <StatusBadge status={c.priority} size="sm" />}
                       </div>
 
-                      <span className="font-mono text-[#5F6368] text-[11px]">
-                        Registered: {c.createdAt}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono text-[#5F6368] text-[11px]">
+                          Registered: {c.createdAt}
+                        </span>
+                        <GovButton
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => navigate(`/projects/${c.id}`)}
+                        >
+                          Inspect Dossier
+                        </GovButton>
+                      </div>
                     </div>
 
                     <h3 className="font-semibold text-sm text-[#202124]">

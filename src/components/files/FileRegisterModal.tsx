@@ -18,12 +18,12 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
   onCreated,
 }) => {
   const [subject, setSubject] = useState('');
-  const [department, setDepartment] = useState<Department>('Land Revenue');
-  const [section, setSection] = useState('Title Adjudication Cell');
-  const [caseType, setCaseType] = useState('Land Adjudication & Survey');
+  const [department, setDepartment] = useState<Department>('Department of Administrative Reforms' as any);
+  const [section, setSection] = useState('Technical Evaluation Cell');
+  const [caseType, setCaseType] = useState('Procurement Compliance & Verification');
   const [applicant, setApplicant] = useState('');
-  const [origin, setOrigin] = useState('District Collectorate');
-  const [assignedOfficer, setAssignedOfficer] = useState('K. R. Mohan (Assistant Commissioner)');
+  const [origin, setOrigin] = useState('Central Procurement Portal');
+  const [assignedOfficer, setAssignedOfficer] = useState('Rajeshwar V. Verma (Joint Secretary)');
   const [priority, setPriority] = useState<PriorityLevel>('ROUTINE');
   const [statutoryDays, setStatutoryDays] = useState(30);
   const [initialRemarks, setInitialRemarks] = useState('');
@@ -46,7 +46,7 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim()) {
-      setError('Please provide a descriptive file subject.');
+      setError('Please provide a descriptive tender/file subject.');
       return;
     }
     setError(null);
@@ -68,7 +68,7 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
 
       onCreated(created);
     } catch (err: any) {
-      setError(err.message || 'Failed to register file docket.');
+      setError(err.message || 'Failed to register procurement docket.');
     } finally {
       setSubmitting(false);
     }
@@ -78,8 +78,8 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
     <GovModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Register New Inward Government File"
-      subtitle="Issue official file number, establish SLA deadline, and assign initial desk."
+      title="Register New Procurement Record / Tender"
+      subtitle="Issue official tender ID, establish evaluation period, and assign procurement desk."
       maxWidth="2xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -89,12 +89,12 @@ export const FileRegisterModal: React.FC<FileRegisterModalProps> = ({
           </div>
         )}
 
-        <FormField label="File Subject / Matter Description" required>
+        <FormField label="Tender Title / Matter Description" required>
           <textarea
             rows={2}
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            placeholder="e.g. Scrutiny and administrative sanction for survey boundary rectification in Kadugodi village."
+            placeholder="e.g. Supply and installation of network infrastructure for administrative offices."
             className={textareaBaseClasses}
             required
           />

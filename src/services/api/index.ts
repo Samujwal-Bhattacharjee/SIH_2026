@@ -75,6 +75,36 @@ export const casesService = {
     apiClient.cases.search(query),
 };
 
+export const projectService = {
+  getProjects: (params?: {
+    district?: string;
+    state?: string;
+    stage?: string;
+    riskLevel?: string;
+    status?: string;
+    search?: string;
+  }): Promise<{ projects: Case[]; total: number }> => apiClient.projects.getProjects(params),
+
+  getProjectById: (projectId: string): Promise<Case & { events: CaseEvent[]; documents: DocumentRecord[] }> =>
+    apiClient.projects.getProjectById(projectId),
+
+  createProject: (newProject: Partial<Case>): Promise<Case> =>
+    apiClient.projects.createProject(newProject),
+
+  updateProject: (projectId: string, updates: Partial<Case>): Promise<Case> =>
+    apiClient.projects.updateProject(projectId, updates),
+
+  getPrediction: (projectId: string) => apiClient.projects.getPrediction(projectId),
+  getBottlenecks: (projectId: string) => apiClient.projects.getBottlenecks(projectId),
+  getDelayFactors: (projectId: string) => apiClient.projects.getDelayFactors(projectId),
+  getRecommendations: (projectId: string) => apiClient.projects.getRecommendations(projectId),
+  getTimeline: (projectId: string) => apiClient.projects.getTimeline(projectId),
+  uploadProjectDocument: (projectId: string, file: File, documentType?: string) =>
+    apiClient.projects.uploadProjectDocument(projectId, file, documentType),
+};
+
+export const projectsService = projectService;
+
 // Aliases for government naming
 export const fileService = casesService;
 

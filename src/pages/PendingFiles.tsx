@@ -57,81 +57,91 @@ export const PendingFiles: React.FC = () => {
   const columns: TableColumn<Case>[] = [
     {
       key: 'fileNumber',
-      header: 'File Number',
-      width: '170px',
+      header: 'Project Code',
+      width: '160px',
       sortable: true,
       render: (item) => (
         <Link
-          to={`/files/${item.id}`}
-          className="font-mono font-bold text-xs text-[#0B2A4A] hover:underline"
+          to={`/projects/${item.id}`}
+          className="font-mono font-bold text-xs text-[#0B3558] hover:underline"
         >
-          {item.fileNumber || item.id}
+          {item.projectCode || item.fileNumber || item.id}
         </Link>
       ),
     },
     {
       key: 'subject',
-      header: 'Subject / Matter',
+      header: 'Project Title & Location',
       render: (item) => (
         <div className="space-y-0.5 max-w-sm">
           <Link
-            to={`/files/${item.id}`}
-            className="font-semibold text-xs text-[#202124] hover:text-[#0B2A4A] line-clamp-1"
+            to={`/projects/${item.id}`}
+            className="font-semibold text-xs text-[#202124] hover:text-[#0B3558] line-clamp-1"
           >
-            {item.subject || item.title}
+            {item.title || item.subject}
           </Link>
-          <div className="text-[11px] text-[#5F6368]">{item.applicant}</div>
+          <div className="text-[11px] text-[#5F6368]">{item.district || 'Pune'} • {item.state || 'Maharashtra'}</div>
         </div>
       ),
     },
     {
-      key: 'department',
-      header: 'Department',
-      width: '160px',
+      key: 'currentStage',
+      header: 'Acquisition Stage',
+      width: '180px',
       sortable: true,
-      render: (item) => <span className="font-semibold text-xs text-[#0B2A4A]">{item.department}</span>,
+      render: (item) => (
+        <span className="px-2 py-0.5 bg-gray-100 text-[#0B3558] font-sans text-xs font-semibold rounded-[2px] border border-gray-300">
+          {item.currentStage}
+        </span>
+      ),
     },
     {
       key: 'assignedOfficer',
-      header: 'Current Desk / Officer',
+      header: 'Desk / SLAO Officer',
       width: '180px',
       render: (item) => (
         <div>
-          <div className="font-medium text-xs text-[#202124]">{item.assignedOfficer}</div>
-          <div className="text-[11px] font-mono text-gray-500">{item.currentDesk}</div>
+          <div className="font-medium text-xs text-[#202124]">{item.assignedOfficer || 'Special Land Acquisition Office'}</div>
+          <div className="text-[11px] font-mono text-gray-500">{item.department}</div>
         </div>
       ),
     },
     {
-      key: 'ageDays',
-      header: 'Age / Days Pending',
+      key: 'delayProbability',
+      header: 'ML Delay Risk',
       width: '140px',
       align: 'center',
-      sortable: true,
-      render: (item) => (
-        <div className="text-center font-mono">
-          <span className="font-bold text-xs text-[#202124]">{item.ageDays} Days</span>
-          <span className="text-[11px] text-[#5F6368] block">SLA Limit: {item.statutoryDeadlineDays}d</span>
-        </div>
-      ),
+      render: (item) => {
+        const prob = item.delayProbability ?? (item.riskScore / 100);
+        const probPct = Math.round(prob * 100);
+        return (
+          <span className={`px-2 py-0.5 rounded-[2px] font-bold text-xs ${
+            probPct >= 80 ? 'bg-red-100 text-red-800 border border-red-300' :
+            probPct >= 60 ? 'bg-amber-100 text-amber-800 border border-amber-300' :
+            'bg-green-100 text-green-800 border border-green-300'
+          }`}>
+            {probPct}% P(Delay)
+          </span>
+        );
+      },
     },
     {
       key: 'daysRemaining',
-      header: 'SLA Overdue Status',
+      header: 'Statutory SLA Status',
       width: '160px',
       align: 'center',
       sortable: true,
       render: (item) => {
-        const isOverdue = item.daysRemaining < 0;
+        const isOverdue = item.daysRemaining < 0 || (item.predictedDelayDays && item.predictedDelayDays > 0);
         return (
           <div className="text-center font-mono">
             {isOverdue ? (
-              <span className="px-2 py-0.5 bg-white text-[#C62828] border border-[#C62828] rounded-[2px] font-bold text-xs">
-                {Math.abs(item.daysRemaining)}d OVERDUE
+              <span className="px-2 py-0.5 bg-white text-[#B72025] border border-[#B72025] rounded-[2px] font-bold text-xs">
+                +{item.predictedDelayDays || Math.abs(item.daysRemaining)}d Delay Est.
               </span>
             ) : (
               <span className="px-2 py-0.5 bg-white text-[#15803D] border border-[#15803D] rounded-[2px] font-semibold text-xs">
-                {item.daysRemaining}d Remaining
+                {item.daysRemaining}d On Track
               </span>
             )}
           </div>
@@ -141,23 +151,16 @@ export const PendingFiles: React.FC = () => {
     {
       key: 'actions',
       header: 'Action',
-      width: '150px',
+      width: '120px',
       align: 'right',
       render: (item) => (
-        <div className="flex items-center justify-end space-x-1.5">
+        <div className="flex items-center space-x-1 justify-end">
           <GovButton
             variant="secondary"
             size="sm"
-            onClick={() => navigate(`/files/${item.id}`)}
+            onClick={() => navigate(`/projects/${item.id}`)}
           >
-            View
-          </GovButton>
-          <GovButton
-            variant="danger"
-            size="sm"
-            onClick={() => setSelectedCaseForForward(item)}
-          >
-            Forward
+            Dossier
           </GovButton>
         </div>
       ),
@@ -165,15 +168,20 @@ export const PendingFiles: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
         <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            Pending Government Files Inventory
-          </h1>
+          <div className="flex items-center space-x-2">
+            <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
+              Tender Exceptions &amp; Verification Escalation Register
+            </h1>
+            <span className="px-2 py-0.5 bg-red-100 text-red-800 text-[10px] font-bold uppercase rounded-[2px] border border-red-300">
+              Escalation Register
+            </span>
+          </div>
           <p className="text-xs text-[#5F6368] mt-0.5">
-            Monitor files awaiting administrative review, legal opinions, or executive approvals across state departments.
+            Monitor tender bidder assessments with discrepancies, expired OEM authorizations, and pending reviews.
           </p>
         </div>
       </div>
@@ -182,30 +190,30 @@ export const PendingFiles: React.FC = () => {
       <GovCard
         title={
           <div className="flex items-center space-x-2">
-            <span className="px-2 py-0.5 bg-[#C62828] text-white text-[10px] font-bold uppercase rounded-[2px] tracking-wide">
-              STATUTORY SLA BREACH
+            <span className="px-2 py-0.5 bg-[#B72025] text-white text-[10px] font-bold uppercase rounded-[2px] tracking-wide">
+              EXCEPTION ESCALATION
             </span>
-            <span className="font-serif font-bold text-base text-[#0B2A4A]">
-              Pending Files Exceeding Statutory SLA ({overdueCases.length})
+            <span className="font-serif font-bold text-sm text-[#0B3558]">
+              Bidders Requiring Officer Intervention ({overdueCases.length})
             </span>
           </div>
         }
-        subtitle="Mandatory escalation under the Administrative Reforms & Citizen Charter Guidelines."
+        subtitle="Mandatory officer review under GeM Procurement Guidelines and Technical Evaluation Rules."
         highlightBorder="red"
         noPadding
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-[#0B2A4A] text-white border-b-2 border-[#071A2E]">
-                <th className="p-2.5 font-semibold">File Number</th>
-                <th className="p-2.5 font-semibold">Subject Matter</th>
+              <tr className="bg-[#0B3558] text-white border-b-2 border-[#040E1A]">
+                <th className="p-2.5 font-semibold">Project Code</th>
+                <th className="p-2.5 font-semibold">Project &amp; District</th>
                 <th className="p-2.5 font-semibold">Department</th>
-                <th className="p-2.5 font-semibold">Current Custodian Officer</th>
-                <th className="p-2.5 font-semibold text-center">Pending Since</th>
+                <th className="p-2.5 font-semibold">Competent Authority / SLAO</th>
+                <th className="p-2.5 font-semibold text-center">Registration</th>
                 <th className="p-2.5 font-semibold text-center">Statutory SLA</th>
-                <th className="p-2.5 font-semibold text-center">Days Overdue</th>
-                <th className="p-2.5 font-semibold text-right">Escalation Action</th>
+                <th className="p-2.5 font-semibold text-center">Delay Status</th>
+                <th className="p-2.5 font-semibold text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9DDE3]">
@@ -216,30 +224,30 @@ export const PendingFiles: React.FC = () => {
                     idx % 2 === 1 ? 'bg-[#FCFDFD]' : 'bg-white'
                   }`}
                 >
-                  <td className="p-2.5 font-mono font-bold text-[#0B2A4A]">
-                    <Link to={`/files/${c.id}`} className="hover:underline">
-                      {c.fileNumber || c.id}
+                  <td className="p-2.5 font-mono font-bold text-[#0B3558]">
+                    <Link to={`/projects/${c.id}`} className="hover:underline">
+                      {c.projectCode || c.fileNumber || c.id}
                     </Link>
                   </td>
                   <td className="p-2.5 font-medium text-[#202124] max-w-xs truncate">
-                    {c.subject || c.title}
+                    {c.title || c.subject}
                   </td>
                   <td className="p-2.5 text-[#5F6368]">{c.department}</td>
-                  <td className="p-2.5 font-medium text-[#202124]">{c.assignedOfficer}</td>
+                  <td className="p-2.5 font-medium text-[#202124]">{c.assignedOfficer || 'SLAO Office'}</td>
                   <td className="p-2.5 text-center font-mono">{c.createdAt}</td>
-                  <td className="p-2.5 text-center font-mono">{c.statutoryDeadlineDays}d</td>
+                  <td className="p-2.5 text-center font-mono">{c.statutoryDeadlineDays || 540}d</td>
                   <td className="p-2.5 text-center font-mono">
-                    <span className="px-2 py-0.5 bg-white text-[#C62828] border border-[#C62828] rounded-[2px] font-bold">
-                      +{Math.abs(c.daysRemaining)} Days Overdue
+                    <span className="px-2 py-0.5 bg-white text-[#B72025] border border-[#B72025] rounded-[2px] font-bold">
+                      +{c.predictedDelayDays || Math.abs(c.daysRemaining)}d Overdue
                     </span>
                   </td>
                   <td className="p-2.5 text-right whitespace-nowrap space-x-1.5">
                     <GovButton
                       variant="secondary"
                       size="sm"
-                      onClick={() => navigate(`/files/${c.id}`)}
+                      onClick={() => navigate(`/projects/${c.id}`)}
                     >
-                      Inspect Docket
+                      Dossier
                     </GovButton>
                     <GovButton
                       variant="danger"

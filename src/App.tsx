@@ -7,6 +7,8 @@ import { AppLayout } from './components/layout/AppLayout';
 
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { Projects } from './pages/Projects';
+import { ProjectDetail } from './pages/ProjectDetail';
 import { Files } from './pages/Files';
 import { FileDetail } from './pages/FileDetail';
 import { PendingFiles } from './pages/PendingFiles';
@@ -22,6 +24,13 @@ import { AuditLogs } from './pages/AuditLogs';
 import { Departments } from './pages/Departments';
 import { Settings } from './pages/Settings';
 import { Loader2 } from 'lucide-react';
+import { ProcurementProvider } from './context/ProcurementContext';
+import { ProcurementDashboard } from './pages/ProcurementDashboard';
+import { Tenders } from './pages/Tenders';
+import { BidderVerification } from './pages/BidderVerification';
+import { ProcurementDocuments } from './pages/ProcurementDocuments';
+import { ProcurementAuditTrail } from './pages/ProcurementAuditTrail';
+import { VerificationSources } from './pages/VerificationSources';
 
 // Route guard for authenticated session
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -65,6 +74,7 @@ export function App() {
     <LanguageProvider>
       <AuthProvider>
         <SystemProvider>
+          <ProcurementProvider>
           <Router>
             <Routes>
               {/* Public Login Route */}
@@ -86,37 +96,38 @@ export function App() {
                 }
               >
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<ProcurementDashboard />} />
+                <Route path="/tenders" element={<Tenders />} />
+                <Route path="/verification/:bidderId" element={<BidderVerification />} />
+                <Route path="/verification-sources" element={<VerificationSources />} />
+                <Route path="/sources" element={<VerificationSources />} />
+                <Route path="/audit-trail" element={<ProcurementAuditTrail />} />
 
-                {/* File Register Routes & Aliases */}
-                <Route path="/files" element={<Files />} />
-                <Route path="/files/:caseId" element={<FileDetail />} />
-                <Route path="/cases" element={<Files />} />
-                <Route path="/cases/:caseId" element={<FileDetail />} />
-
-                {/* Pending Files Inventory */}
-                <Route path="/pending" element={<PendingFiles />} />
+                {/* Legacy Route Aliases (Redirect to Procurement Counterparts) */}
+                <Route path="/projects" element={<Navigate to="/tenders" replace />} />
+                <Route path="/projects/:caseId" element={<Navigate to="/tenders" replace />} />
+                <Route path="/files" element={<Navigate to="/tenders" replace />} />
+                <Route path="/files/:caseId" element={<Navigate to="/tenders" replace />} />
+                <Route path="/cases" element={<Navigate to="/tenders" replace />} />
+                <Route path="/cases/:caseId" element={<Navigate to="/tenders" replace />} />
+                <Route path="/pending" element={<Navigate to="/verification/BID-002" replace />} />
+                <Route path="/intelligence" element={<Navigate to="/verification/BID-001" replace />} />
+                <Route path="/analytics" element={<Navigate to="/reports" replace />} />
+                <Route path="/workflow" element={<Navigate to="/verification-sources" replace />} />
+                <Route path="/risk" element={<Navigate to="/verification/BID-002" replace />} />
+                <Route path="/simulation" element={<Navigate to="/verification-sources" replace />} />
+                <Route path="/audit-logs" element={<Navigate to="/audit-trail" replace />} />
 
                 {/* Document Repository & OCR Scan */}
-                <Route path="/documents" element={<Documents />} />
-                <Route path="/documents/upload" element={<UploadDocument />} />
-                <Route path="/upload" element={<UploadDocument />} />
+                <Route path="/documents" element={<ProcurementDocuments />} />
+                <Route path="/documents/upload" element={<ProcurementDocuments />} />
+                <Route path="/upload" element={<ProcurementDocuments />} />
 
                 {/* Advanced Search Engine */}
                 <Route path="/search" element={<Search />} />
 
-                {/* Administrative Intelligence & Workflow Analytics */}
-                <Route path="/intelligence" element={<Intelligence />} />
-                <Route path="/analytics" element={<Intelligence />} />
-                <Route path="/workflow" element={<Workflow />} />
-                <Route path="/risk" element={<Risk />} />
-                <Route path="/simulation" element={<Simulation />} />
-
-                {/* Reports & SLA Adherence */}
+                {/* Procurement Compliance Reports */}
                 <Route path="/reports" element={<Reports />} />
-
-                {/* System Audit Register */}
-                <Route path="/audit-logs" element={<AuditLogs />} />
 
                 {/* Departments Directory */}
                 <Route path="/departments" element={<Departments />} />
@@ -129,6 +140,7 @@ export function App() {
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </Router>
+          </ProcurementProvider>
         </SystemProvider>
       </AuthProvider>
     </LanguageProvider>
