@@ -21,11 +21,13 @@ import {
   Eye,
   X,
   SlidersHorizontal,
+  Network,
 } from 'lucide-react';
 import { apiClient, isUsingMockApi } from '../services/api/apiClient';
 import { IntegrityAssessment, IntegrityFinding, IntegrityEvidence } from '../types';
 import { useProcurement } from '../context/ProcurementContext';
 import { useLanguage } from '../context/LanguageContext';
+import { RelationshipGraph } from '../components/integrity/RelationshipGraph';
 
 // ─── Human-readable Signal Types & Badges ─────────────────────────────────────
 const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
@@ -432,7 +434,44 @@ export const ProcurementIntegrity: React.FC = () => {
             </div>
           </div>
 
-          {/* ── 3. Empty State (Genuinely Clean Dataset) ── */}
+          {/* ── 3. Relationship Network ── */}
+          <div className="bg-white border border-[#D9DDE3] rounded-[3px] shadow-sm">
+            <div className="p-3 border-b border-[#D9DDE3] flex items-center justify-between bg-[#F8FAFC]">
+              <div>
+                <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5">
+                  <Network className="w-4 h-4 text-[#0B2A4A]" />
+                  Entity Relationship Network
+                </h2>
+                <p className="text-[11px] text-[#64748B] mt-0.5">
+                  Procurement entity relationships derived from submitted bidder documents and
+                  statutory identifier cross-references. Click any node or edge for detail.
+                </p>
+              </div>
+              <span className="text-[10px] text-[#64748B] font-mono whitespace-nowrap">
+                {assessment.findings.filter(
+                  (f) => f.signal_type === 'RELATED_BIDDER' || f.signal_type === 'SHARED_ENTITY'
+                ).length} relationship finding{assessment.findings.filter(
+                  (f) => f.signal_type === 'RELATED_BIDDER' || f.signal_type === 'SHARED_ENTITY'
+                ).length !== 1 ? 's' : ''}
+              </span>
+            </div>
+            <div className="p-3">
+              <RelationshipGraph
+                tenderId={selectedTenderId}
+                tenderLabel={
+                  currentTender
+                    ? (currentTender.tender_number ? `${currentTender.tender_number} — ${currentTender.title || ''}` : (currentTender.title || selectedTenderId))
+                    : selectedTenderId
+                }
+                tenderDepartment={currentTender?.department}
+                tenderEstimatedValue={currentTender?.estimated_value}
+                bidders={bidders.map((b) => ({ id: b.id, name: b.name, risk: b.risk }))}
+                assessment={assessment}
+              />
+            </div>
+          </div>
+
+          {/* ── 4. Empty State (Genuinely Clean Dataset) ── */}
           {assessment.findings_count === 0 && (
             <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-10 text-center shadow-sm">
               <div className="w-12 h-12 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center mx-auto mb-3 border border-[#A7F3D0]">
