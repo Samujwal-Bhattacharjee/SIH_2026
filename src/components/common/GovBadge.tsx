@@ -83,7 +83,10 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       colorClasses = 'bg-[#F3F4F6] text-[#4B5563] border-[#D1D5DB]';
       label = 'Routine';
       break;
-    // Risk Levels
+    case 'CRITICAL':
+      colorClasses = 'bg-[#FEF2F2] text-[#991B1B] border-[#FCA5A5] font-bold';
+      label = 'Critical Risk';
+      break;
     case 'HIGH':
       colorClasses = 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5] font-bold';
       label = 'High Risk';
@@ -93,8 +96,19 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       label = 'Medium Risk';
       break;
     case 'LOW':
-      colorClasses = 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]';
+      colorClasses = 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0] font-semibold';
       label = 'Low Risk';
+      break;
+    case 'QUALIFIED':
+    case 'COMPLIANT':
+    case 'VERIFIED':
+      colorClasses = 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0] font-bold';
+      label = status;
+      break;
+    case 'DISQUALIFIED':
+    case 'NON_COMPLIANT':
+      colorClasses = 'bg-[#FEF2F2] text-[#991B1B] border-[#FCA5A5] font-bold';
+      label = status;
       break;
     // OCR Statuses
     case 'COMPLETED':
@@ -108,7 +122,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       break;
     case 'FAILED':
     case 'ERROR':
-      colorClasses = 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]';
+      colorClasses = 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5] font-semibold';
       label = 'OCR Failed';
       break;
     default:
@@ -118,7 +132,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center justify-center font-sans uppercase tracking-wider border rounded-[3px] select-none ${sizeClasses} ${colorClasses} ${className}`}
+      className={`inline-flex items-center justify-center font-sans tracking-wide border rounded-[2px] select-none ${sizeClasses} ${colorClasses} ${className}`}
     >
       {label}
     </span>

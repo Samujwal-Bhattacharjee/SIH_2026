@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@400;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -19,7 +20,7 @@
   --color-gov-surface-muted: #E2E6EC;
 
   /* Government Text Hierarchy (UX4G Standard) */
-  --color-gov-text-primary: #202124;
+  --color-gov-text-primary: #1E293B;
   --color-gov-text-secondary: #475569;
   --color-gov-text-muted: #64748B;
   --color-gov-text-inverted: #FFFFFF;
@@ -48,9 +49,9 @@
   --color-gov-blue-subtle: #EFF6FF;
   --color-gov-blue-border: #BFDBFE;
 
-  /* Institutional Typography (UX4G Standard: Noto Sans) */
-  --font-sans: "Noto Sans", "Noto Sans Devanagari", Arial, sans-serif;
-  --font-serif: "Source Serif 4", "Times New Roman", Georgia, serif;
+  /* Institutional Typography (UX4G Standard: Inter + Merriweather + JetBrains Mono) */
+  --font-sans: "Inter", "Noto Sans", Arial, sans-serif;
+  --font-serif: "Merriweather", "Times New Roman", Georgia, serif;
   --font-mono: "JetBrains Mono", "Courier New", monospace;
 
   /* Shadows (Minimal, Non-Floating, Structural) */
