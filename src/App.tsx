@@ -14,10 +14,10 @@ import { ProcurementProvider } from './context/ProcurementContext';
 import { ProcurementDashboard } from './pages/ProcurementDashboard';
 import { Tenders } from './pages/Tenders';
 import { BidderVerification } from './pages/BidderVerification';
+import { VerificationHub } from './pages/VerificationHub';
 import { ProcurementDocuments } from './pages/ProcurementDocuments';
 import { ProcurementAuditTrail } from './pages/ProcurementAuditTrail';
 import { VerificationSources } from './pages/VerificationSources';
-import { useProcurement } from './context/ProcurementContext';
 
 // Route guard for authenticated session
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -56,16 +56,6 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-// Verification landing: redirects to the first active bidder or shows the tenders page
-const VerificationLanding: React.FC = () => {
-  const { bidders } = useProcurement();
-  const firstBidder = bidders[0];
-  if (firstBidder) {
-    return <Navigate to={`/verification/${firstBidder.id}`} replace />;
-  }
-  return <Navigate to="/tenders" replace />;
-};
-
 export function App() {
   return (
     <LanguageProvider>
@@ -95,7 +85,7 @@ export function App() {
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<ProcurementDashboard />} />
                 <Route path="/tenders" element={<Tenders />} />
-                <Route path="/verification" element={<VerificationLanding />} />
+                <Route path="/verification" element={<VerificationHub />} />
                 <Route path="/verification/:bidderId" element={<BidderVerification />} />
                 <Route path="/integrity" element={<VerificationSources />} />
                 <Route path="/verification-sources" element={<VerificationSources />} />
