@@ -112,21 +112,26 @@ export const ProcurementDocuments: React.FC = () => {
         </p>
       </div>
 
-      {error && <div className="border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-xs text-[#B72025]">{error}</div>}
+      {error && (
+        <div className="gov-alert gov-alert-error text-xs">
+          <AlertCircle className="w-4 h-4 text-[#B72025] shrink-0 mt-0.5" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Horizontal Document Processing Workflow Indicator */}
       <section className="bg-white border border-[#D9DDE3] rounded-[2px] p-3 text-xs" aria-label="Processing workflow">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[11px]">
-          <div className={`p-2 border rounded-[2px] ${processingState === 'uploading' ? 'bg-[#EFF6FF] border-[#BFDBFE] font-bold text-[#1D4ED8]' : 'bg-[#F8F9FA] border-[#D9DDE3] text-[#475569]'}`}>
+          <div className={`p-2 border rounded-[2px] ${processingState === 'uploading' ? 'bg-[#EFF6FF] border-[#BFDBFE] font-bold text-[#1D4ED8]' : 'bg-[#FAFAFA] border-[#D9DDE3] text-[#475569]'}`}>
             1. Document Upload
           </div>
-          <div className={`p-2 border rounded-[2px] ${processingState === 'ocr' ? 'bg-[#EFF6FF] border-[#BFDBFE] font-bold text-[#1D4ED8]' : 'bg-[#F8F9FA] border-[#D9DDE3] text-[#475569]'}`}>
+          <div className={`p-2 border rounded-[2px] ${processingState === 'ocr' ? 'bg-[#EFF6FF] border-[#BFDBFE] font-bold text-[#1D4ED8]' : 'bg-[#FAFAFA] border-[#D9DDE3] text-[#475569]'}`}>
             2. OCR Text Extraction
           </div>
-          <div className={`p-2 border rounded-[2px] ${processingState === 'extracting' ? 'bg-[#EFF6FF] border-[#BFDBFE] font-bold text-[#1D4ED8]' : 'bg-[#F8F9FA] border-[#D9DDE3] text-[#475569]'}`}>
+          <div className={`p-2 border rounded-[2px] ${processingState === 'extracting' ? 'bg-[#EFF6FF] border-[#BFDBFE] font-bold text-[#1D4ED8]' : 'bg-[#FAFAFA] border-[#D9DDE3] text-[#475569]'}`}>
             3. Field Identification
           </div>
-          <div className={`p-2 border rounded-[2px] ${processingState === 'completed' ? 'bg-[#F0FDF4] border-[#BBF7D0] font-bold text-[#15803D]' : 'bg-[#F8F9FA] border-[#D9DDE3] text-[#475569]'}`}>
+          <div className={`p-2 border rounded-[2px] ${processingState === 'completed' ? 'bg-[#F0FDF4] border-[#BBF7D0] font-bold text-[#15803D]' : 'bg-[#FAFAFA] border-[#D9DDE3] text-[#475569]'}`}>
             4. Evidence Verified
           </div>
         </div>
@@ -149,7 +154,7 @@ export const ProcurementDocuments: React.FC = () => {
                 <select
                   value={docTypeSelect}
                   onChange={(e) => setDocTypeSelect(e.target.value)}
-                  className="w-full border border-[#CBD2DE] p-1.5 text-xs rounded-[2px] bg-white text-[#202124]"
+                  className="w-full border border-[#CBD2DE] p-1.5 text-xs rounded-[2px] bg-white text-[#202124] focus:outline-[#0B2A4A]"
                 >
                   <option>GST Registration Certificate</option>
                   <option>Permanent Account Number (PAN) Card</option>
@@ -169,7 +174,7 @@ export const ProcurementDocuments: React.FC = () => {
                 <select
                   value={bidderId}
                   onChange={(e) => setBidderId(e.target.value)}
-                  className="w-full border border-[#CBD2DE] p-1.5 text-xs rounded-[2px] bg-white text-[#202124]"
+                  className="w-full border border-[#CBD2DE] p-1.5 text-xs rounded-[2px] bg-white text-[#202124] focus:outline-[#0B2A4A]"
                 >
                   {bidders.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -188,16 +193,16 @@ export const ProcurementDocuments: React.FC = () => {
               onChange={(e) => handleFileSelect(e.target.files?.[0])}
             />
 
-            {/* Document Selection Box */}
+            {/* Document Selection Box — Plain border per UX4G */}
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-[#BAC1CC] bg-[#F8F9FA] hover:bg-[#F0F4F8] p-5 text-center rounded-[2px] cursor-pointer transition-colors"
+              className="border border-[#CBD2DE] bg-[#FAFAFA] hover:bg-[#F5F5F5] p-5 text-center rounded-[4px] cursor-pointer transition-colors"
             >
               <FileUp className="w-6 h-6 text-[#0B2A4A] mx-auto" />
               <span className="block font-semibold text-xs text-[#0B2A4A] mt-1.5">
                 {selectedFile ? `Selected: ${selectedFile.name}` : 'Choose PDF / scanned document'}
               </span>
-              <span className="text-[11px] text-[#475569] block mt-0.5">
+              <span className="text-[11px] text-[#737373] block mt-0.5">
                 Supported formats: PDF, JPG, PNG • Maximum file size: 10 MB
               </span>
             </div>
@@ -284,7 +289,7 @@ export const ProcurementDocuments: React.FC = () => {
               Scanned certificates, extracted statutory identifiers, extraction confidence, and audit states.
             </p>
           </div>
-          <span className="text-[11px] font-mono font-semibold text-[#0B2A4A] bg-[#F8F9FA] px-2 py-0.5 border border-[#CBD2DE]">
+          <span className="text-[11px] font-mono font-semibold text-[#0B2A4A] bg-[#FAFAFA] px-2 py-0.5 border border-[#CBD2DE]">
             {documents.length} records active
           </span>
         </div>
@@ -337,10 +342,10 @@ export const ProcurementDocuments: React.FC = () => {
                   </td>
                   <td>
                     <span
-                      className={`inline-block px-2 py-0.5 border text-[10px] font-semibold rounded-[2px] ${
+                      className={`gov-badge ${
                         doc.ocr_status === 'COMPLETED'
-                          ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
-                          : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                          ? 'gov-badge-success'
+                          : 'gov-badge-warning'
                       }`}
                     >
                       {doc.ocr_status === 'COMPLETED' ? '[✓] Processed' : '[!] Review'}
@@ -353,7 +358,72 @@ export const ProcurementDocuments: React.FC = () => {
           </table>
         </div>
       </section>
-      {evidenceDoc && <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"><section className="max-w-2xl w-full max-h-[85vh] overflow-auto bg-white border-2 border-[#0B2A4A] p-4"><div className="flex justify-between gap-4"><div><h2 className="font-serif font-bold text-lg text-[#0B2A4A]">Document evidence</h2><p className="text-xs text-[#475569]">{evidenceDoc.file_name} • {evidenceDoc.bidder_name}</p></div><button onClick={() => setEvidenceDoc(null)} className="text-xs underline">Close</button></div><dl className="grid grid-cols-2 gap-3 text-xs my-4"><div><dt className="text-[#475569]">Type</dt><dd>{evidenceDoc.document_type}</dd></div><div><dt className="text-[#475569]">OCR status</dt><dd>{evidenceDoc.ocr_status}</dd></div><div><dt className="text-[#475569]">Uploaded</dt><dd>{new Date(evidenceDoc.created_at).toLocaleString('en-IN')}</dd></div><div><dt className="text-[#475569]">Processing method</dt><dd>{evidenceDoc.ocr_engine || 'Stored OCR result'}</dd></div></dl><table className="w-full text-xs border border-[#D9DDE3]"><thead><tr className="bg-[#F8F9FA]"><th className="text-left p-2">Field</th><th className="text-left p-2">Value</th><th className="text-left p-2">Confidence</th></tr></thead><tbody>{(evidenceDoc.extracted_fields || []).map((field: ExtractedField) => <tr key={field.key} className="border-t border-[#E6E9EF]"><td className="p-2">{field.label || field.key}</td><td className="p-2 font-mono break-all">{field.value}</td><td className="p-2">{Math.round(field.confidence * 100)}%</td></tr>)}</tbody></table><details className="mt-4"><summary className="cursor-pointer text-xs font-semibold text-[#0B2A4A]">View extracted text</summary><pre className="mt-2 p-3 whitespace-pre-wrap text-[11px] bg-[#F8F9FA] border border-[#D9DDE3]">{evidenceDoc.extracted_text || 'No extracted text is available.'}</pre></details></section></div>}
+
+      {/* Modal Dialog */}
+      {evidenceDoc && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <section className="max-w-2xl w-full max-h-[85vh] overflow-auto bg-white border border-[#D9DDE3] rounded-[4px] shadow-lg p-5">
+            <div className="flex justify-between items-start gap-4 border-b border-[#E6E9EF] pb-3">
+              <div>
+                <h2 className="font-serif font-bold text-lg text-[#0B2A4A]">Document evidence</h2>
+                <p className="text-xs text-[#475569] mt-0.5 font-mono">{evidenceDoc.file_name} • {evidenceDoc.bidder_name}</p>
+              </div>
+              <button
+                onClick={() => setEvidenceDoc(null)}
+                className="px-2.5 py-1 text-xs border border-[#CBD2DE] rounded-[2px] text-[#475569] hover:bg-[#F5F5F5] cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+            <dl className="grid grid-cols-2 gap-3 text-xs my-4 bg-[#FAFAFA] p-3 border border-[#E6E9EF] rounded-[2px]">
+              <div>
+                <dt className="text-[#737373] text-[11px]">Document type</dt>
+                <dd className="font-semibold text-[#202124]">{evidenceDoc.document_type}</dd>
+              </div>
+              <div>
+                <dt className="text-[#737373] text-[11px]">OCR status</dt>
+                <dd className="font-semibold text-[#202124]">{evidenceDoc.ocr_status}</dd>
+              </div>
+              <div>
+                <dt className="text-[#737373] text-[11px]">Uploaded on</dt>
+                <dd className="font-mono text-[#202124]">{new Date(evidenceDoc.created_at).toLocaleString('en-IN')}</dd>
+              </div>
+              <div>
+                <dt className="text-[#737373] text-[11px]">Processing engine</dt>
+                <dd className="text-[#202124]">{evidenceDoc.ocr_engine || 'Stored OCR result'}</dd>
+              </div>
+            </dl>
+            <table className="gov-table">
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Extracted value</th>
+                  <th className="text-right">Confidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(evidenceDoc.extracted_fields || []).map((field: ExtractedField) => (
+                  <tr key={field.key}>
+                    <td className="font-medium">{field.label || field.key}</td>
+                    <td className="font-mono break-all text-xs">{field.value}</td>
+                    <td className="text-right font-mono font-semibold text-[#15803D]">
+                      {Math.round(field.confidence * 100)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <details className="mt-4">
+              <summary className="cursor-pointer text-xs font-semibold text-[#0B2A4A] hover:underline">
+                View extracted raw text
+              </summary>
+              <pre className="mt-2 p-3 whitespace-pre-wrap text-[11px] font-mono bg-[#FAFAFA] border border-[#D9DDE3] rounded-[2px] max-h-48 overflow-y-auto">
+                {evidenceDoc.extracted_text || 'No extracted text is available.'}
+              </pre>
+            </details>
+          </section>
+        </div>
+      )}
     </div>
   );
 };

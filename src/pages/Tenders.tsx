@@ -79,14 +79,10 @@ export const Tenders: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="p-3 border border-[#BBF7D0] bg-[#F0FDF4] text-[#15803D] text-xs font-medium rounded-[2px] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
-            <span>{statusMessage}</span>
-          </div>
-          <button onClick={() => setStatusMessage(null)} className="text-[#15803D] text-xs underline cursor-pointer">
-            Dismiss
-          </button>
+        <div className="gov-alert gov-alert-success text-xs">
+          <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
+          <span className="flex-1">{statusMessage}</span>
+          <button onClick={() => setStatusMessage(null)} className="text-[#15803D] text-xs underline cursor-pointer">Dismiss</button>
         </div>
       )}
 
@@ -126,8 +122,8 @@ export const Tenders: React.FC = () => {
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             {statutoryRequirements.map((req) => (
-              <div key={req.id} className="p-2.5 bg-[#F8F9FA] border border-[#D9DDE3] rounded-[2px] text-xs">
-                <span className="text-[10px] uppercase font-semibold text-[#475569] block">
+              <div key={req.id} className="p-2.5 bg-[#F5F5F5] border border-[#D9DDE3] rounded-[2px] text-xs">
+                <span className="text-[10px] uppercase font-semibold text-[#737373] block">
                   {req.category}
                 </span>
                 <strong className="text-[#0B2A4A] text-xs block mt-0.5">

@@ -130,7 +130,7 @@ export const ProcurementAuditTrail: React.FC = () => {
                     </span>
                   </td>
                   <td>
-                    <span className="inline-block px-2 py-0.5 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px] text-[10px] font-semibold">
+                    <span className="gov-badge gov-badge-success text-[10px]">
                       [✓] Success
                     </span>
                   </td>

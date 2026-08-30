@@ -162,10 +162,9 @@ export const VerificationSources: React.FC = () => {
         </div>
       </div>
 
-      {/* SIH Transparency Notice */}
-      <section className="border border-[#BFDBFE] bg-[#EFF6FF] p-3.5 rounded-[2px] text-xs text-[#1E3A8A] flex items-start gap-2.5">
+      <section className="gov-alert gov-alert-info rounded-[2px]">
         <ShieldCheck className="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5" />
-        <div className="leading-relaxed">
+        <div className="leading-relaxed text-xs text-[#1e3a8a]">
           <strong>Sandbox architecture statement:</strong> This prototype operates using <strong>sandbox/mock verification adapters</strong>. Direct production integration with live government databases (GSTN, MCA21, EPFO, etc.) requires authorized departmental API keys, VPN tunnels, and production network whitelisting. No live government databases are represented as connected during this demonstration.
         </div>
       </section>
@@ -214,12 +213,7 @@ export const VerificationSources: React.FC = () => {
                   <td>
                     <div className="flex flex-wrap gap-1 max-w-xs">
                       {source.verifiedParams.map((p, i) => (
-                        <span
-                          key={i}
-                          className="px-1.5 py-0.2 bg-[#F0F2F5] text-[#202124] rounded-[2px] text-[10px]"
-                        >
-                          {p}
-                        </span>
+                        <span key={i} className="gov-badge gov-badge-neutral">{p}</span>
                       ))}
                     </div>
                   </td>
@@ -229,7 +223,7 @@ export const VerificationSources: React.FC = () => {
                     </span>
                   </td>
                   <td>
-                    <span className="inline-block px-2 py-0.5 bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A] rounded-[2px] text-[10px] font-semibold">
+                    <span className="gov-badge gov-badge-warning">
                       {source.status}
                     </span>
                   </td>
@@ -254,16 +248,11 @@ export const VerificationSources: React.FC = () => {
         </div>
       </section>
 
-      {/* Test Result Callout */}
       {testResult && (
-        <div className="p-3 bg-[#F0FDF4] border border-[#BBF7D0] rounded-[2px] text-xs text-[#15803D] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
-            <span>{testResult.message}</span>
-          </div>
-          <button onClick={() => setTestResult(null)} className="text-[#15803D] text-xs underline cursor-pointer">
-            Dismiss
-          </button>
+        <div className="gov-alert gov-alert-success text-xs">
+          <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
+          <span className="flex-1">{testResult.message}</span>
+          <button onClick={() => setTestResult(null)} className="text-[#15803D] text-xs underline cursor-pointer">Dismiss</button>
         </div>
       )}
     </div>

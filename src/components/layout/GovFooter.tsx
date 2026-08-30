@@ -37,37 +37,32 @@ export const GovFooter: React.FC = () => {
           <ul className="space-y-1.5 text-gray-300">
             <li>
               <Link to="/dashboard" className="hover:text-white hover:underline">
-                Procurement Dashboard
+                Dashboard
               </Link>
             </li>
             <li>
               <Link to="/tenders" className="hover:text-white hover:underline">
-                Tender Register
+                Procurement Register
               </Link>
             </li>
             <li>
-              <Link to="/verification/BID-001" className="hover:text-white hover:underline">
-                Bidder Verification
+              <Link to="/verification" className="hover:text-white hover:underline">
+                Bidder Verification Hub
+              </Link>
+            </li>
+            <li>
+              <Link to="/integrity" className="hover:text-white hover:underline">
+                Integrity &amp; Sources
               </Link>
             </li>
             <li>
               <Link to="/documents" className="hover:text-white hover:underline">
-                Document Verification
-              </Link>
-            </li>
-            <li>
-              <Link to="/verification/BID-002" className="hover:text-white hover:underline">
-                Compliance Assessment
-              </Link>
-            </li>
-            <li>
-              <Link to="/verification-sources" className="hover:text-white hover:underline">
-                Verification Sources
+                Document Repository
               </Link>
             </li>
             <li>
               <Link to="/reports" className="hover:text-white hover:underline">
-                Reports
+                Compliance Reports
               </Link>
             </li>
             <li>

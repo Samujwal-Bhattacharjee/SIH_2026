@@ -161,30 +161,30 @@ export const BidderVerification: React.FC = () => {
   const statusBadge = (status: CheckStatus) => {
     if (status === 'Verified')
       return (
-        <span className="inline-block px-2 py-0.5 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px] text-[11px] font-semibold">
+        <span className="gov-badge gov-badge-success">
           [✓] Verified
         </span>
       );
     if (status === 'Failed')
       return (
-        <span className="inline-block px-2 py-0.5 bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5] rounded-[2px] text-[11px] font-semibold">
+        <span className="gov-badge gov-badge-error">
           [✕] Failed
         </span>
       );
     if (status === 'Needs Review')
       return (
-        <span className="inline-block px-2 py-0.5 bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE] rounded-[2px] text-[11px] font-semibold">
+        <span className="gov-badge gov-badge-info">
           [!] Review required
         </span>
       );
     if (status === 'Not Applicable')
       return (
-        <span className="inline-block px-2 py-0.5 bg-[#F8F9FA] text-[#475569] border border-[#D9DDE3] rounded-[2px] text-[11px] font-semibold">
+        <span className="gov-badge gov-badge-neutral">
           Not applicable
         </span>
       );
     return (
-      <span className="inline-block px-2 py-0.5 bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A] rounded-[2px] text-[11px] font-semibold">
+      <span className="gov-badge gov-badge-warning">
         [○] Pending
       </span>
     );
@@ -239,17 +239,17 @@ export const BidderVerification: React.FC = () => {
       {/* Banner — success or error */}
       {banner && (
         <div
-          className={`p-3 border text-xs font-medium rounded-[2px] flex items-center justify-between ${
+          className={`gov-alert text-xs font-medium ${
             banner.kind === 'success'
-              ? 'border-[#BBF7D0] bg-[#F0FDF4] text-[#15803D]'
-              : 'border-[#FCA5A5] bg-[#FEF2F2] text-[#B72025]'
+              ? 'gov-alert-success text-[#15803D]'
+              : 'gov-alert-error text-[#B72025]'
           }`}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-1">
             {banner.kind === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#15803D]" />
             ) : (
-              <XCircle className="w-4 h-4 shrink-0" />
+              <XCircle className="w-4 h-4 shrink-0 text-[#B72025]" />
             )}
             <span>{banner.message}</span>
           </div>

@@ -134,13 +134,14 @@ export const GovHorizontalNav: React.FC = () => {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 h-full ${
-                      isActive
-                        ? 'active-nav-link bg-[#123F6D] text-white border-[#FF9933] font-bold shadow-inner'
-                        : 'text-gray-200 hover:bg-[#123F6D] hover:text-white border-transparent'
-                    }`
-                  }
+                  className={({ isActive }) => {
+                    const active = isActive || (item.key === 'verification' && location.pathname.startsWith('/verification'));
+                    return `flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 h-full ${
+                      active
+                        ? 'active-nav-link bg-[#F0F5FA] text-[#0B2A4A] border-[#FF9933] font-semibold'
+                        : 'text-gray-200 hover:bg-[#123F6D]/40 hover:text-white border-transparent'
+                    }`;
+                  }}
                 >
                   <Icon className="w-3.5 h-3.5 flex-shrink-0 opacity-90" />
                   <span>{displayName}</span>

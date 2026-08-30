@@ -69,7 +69,7 @@ export const ProcurementDashboard: React.FC = () => {
         </div>
       </div>
 
-      {error && <div className="border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-xs text-[#B72025]">Unable to load persistent procurement data: {error}</div>}
+      {error && <div className="gov-alert gov-alert-error text-xs"><AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-[#B72025]" /><span>Unable to load persistent procurement data: {error}</span></div>}
 
       {/* Horizontal Operational Statistics Strip (UX4G Government Pattern) */}
       <section
@@ -208,28 +208,27 @@ export const ProcurementDashboard: React.FC = () => {
         {/* Right Column: Work Queue & Attention Required */}
         <aside className="space-y-4">
           {/* Attention Required Panel */}
-          <section className="border border-[#FDE68A] bg-[#FFFBEB] p-3.5 rounded-[2px]">
-            <div className="flex items-start gap-2 text-[#92400E]">
-              <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-[#D97706]" />
-              <div>
-                <h2 className="font-bold text-xs uppercase tracking-wide text-[#92400E]">
-                  Attention required
-                </h2>
-                <p className="text-xs font-semibold text-[#202124] mt-1">
-                  Narmada Systems &amp; Services Pvt. Ltd.
-                </p>
-                <ul className="text-[11px] text-[#78350F] list-disc list-inside mt-1.5 space-y-0.5">
-                  <li>Legal-name inconsistency across documents</li>
-                  <li>Udyam registration certificate missing</li>
-                  <li>OEM authorization letter expired</li>
-                </ul>
-                <Link
-                  to="/verification/BID-002"
-                  className="inline-block mt-2.5 text-xs font-semibold text-[#92400E] underline hover:text-[#78350F]"
-                >
-                  Review exception details →
-                </Link>
-              </div>
+          <section className="gov-alert gov-alert-warning rounded-[2px]">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-[#D97706]" />
+            <div>
+              <h2 className="font-bold text-xs uppercase tracking-wide text-[#92400E]"
+              >
+                Attention required
+              </h2>
+              <p className="text-xs font-semibold text-[#202124] mt-1">
+                Narmada Systems &amp; Services Pvt. Ltd.
+              </p>
+              <ul className="text-[11px] text-[#78350F] list-disc list-inside mt-1.5 space-y-0.5">
+                <li>Legal-name inconsistency across documents</li>
+                <li>Udyam registration certificate missing</li>
+                <li>OEM authorization letter expired</li>
+              </ul>
+              <Link
+                to="/verification/BID-002"
+                className="inline-block mt-2.5 text-xs font-semibold underline hover:text-[#78350F] text-[#92400E]"
+              >
+                Review exception details →
+              </Link>
             </div>
           </section>
 
@@ -267,10 +266,9 @@ export const ProcurementDashboard: React.FC = () => {
         </aside>
       </div>
 
-      {/* Institutional Decision-Support Notice */}
-      <section className="border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-2.5 rounded-[2px] flex items-start gap-2 text-xs text-[#1E3A8A]">
+      <section className="gov-alert gov-alert-info rounded-[2px]">
         <ShieldCheck className="w-4 h-4 shrink-0 text-[#1D4ED8] mt-0.5" />
-        <div className="leading-relaxed">
+        <div className="leading-relaxed text-xs text-[#1e3a8a]">
           <strong>Decision-support notice:</strong> System-generated compliance assessment based on submitted bidder documents and Sandbox verification adapters. Final qualification or disqualification decision rests strictly with the designated Procurement Officer.
         </div>
       </section>

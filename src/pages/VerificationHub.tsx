@@ -13,89 +13,25 @@ import {
 import { useProcurement } from '../context/ProcurementContext';
 
 // ─── Human-readable status label & badge style ───────────────────────────────
-const STATUS_META: Record<
-  string,
-  { label: string; bg: string; text: string; border: string }
-> = {
-  PENDING_DOCUMENTS: {
-    label: 'Pending documents',
-    bg: 'bg-[#F8F9FA]',
-    text: 'text-[#475569]',
-    border: 'border-[#CBD2DE]',
-  },
-  'Pending Documents': {
-    label: 'Pending documents',
-    bg: 'bg-[#F8F9FA]',
-    text: 'text-[#475569]',
-    border: 'border-[#CBD2DE]',
-  },
-  UNDER_REVIEW: {
-    label: 'Under review',
-    bg: 'bg-[#FFFBEB]',
-    text: 'text-[#D97706]',
-    border: 'border-[#FDE68A]',
-  },
-  'Under Review': {
-    label: 'Under review',
-    bg: 'bg-[#FFFBEB]',
-    text: 'text-[#D97706]',
-    border: 'border-[#FDE68A]',
-  },
-  EXCEPTION_FOUND: {
-    label: 'Exception found',
-    bg: 'bg-[#FEF2F2]',
-    text: 'text-[#B72025]',
-    border: 'border-[#FCA5A5]',
-  },
-  'Exception Found': {
-    label: 'Exception found',
-    bg: 'bg-[#FEF2F2]',
-    text: 'text-[#B72025]',
-    border: 'border-[#FCA5A5]',
-  },
-  QUALIFIED: {
-    label: 'Qualified',
-    bg: 'bg-[#F0FDF4]',
-    text: 'text-[#15803D]',
-    border: 'border-[#BBF7D0]',
-  },
-  Qualified: {
-    label: 'Qualified',
-    bg: 'bg-[#F0FDF4]',
-    text: 'text-[#15803D]',
-    border: 'border-[#BBF7D0]',
-  },
-  DISQUALIFIED: {
-    label: 'Disqualified',
-    bg: 'bg-[#FEF2F2]',
-    text: 'text-[#B72025]',
-    border: 'border-[#FCA5A5]',
-  },
-  Disqualified: {
-    label: 'Disqualified',
-    bg: 'bg-[#FEF2F2]',
-    text: 'text-[#B72025]',
-    border: 'border-[#FCA5A5]',
-  },
-  CLARIFICATION_REQUESTED: {
-    label: 'Clarification requested',
-    bg: 'bg-[#FFFBEB]',
-    text: 'text-[#92400E]',
-    border: 'border-[#FDE68A]',
-  },
+const STATUS_META: Record<string, { label: string; badgeClass: string }> = {
+  PENDING_DOCUMENTS: { label: 'Pending documents', badgeClass: 'gov-badge-neutral' },
+  'Pending Documents': { label: 'Pending documents', badgeClass: 'gov-badge-neutral' },
+  UNDER_REVIEW: { label: 'Under review', badgeClass: 'gov-badge-warning' },
+  'Under Review': { label: 'Under review', badgeClass: 'gov-badge-warning' },
+  EXCEPTION_FOUND: { label: 'Exception found', badgeClass: 'gov-badge-error' },
+  'Exception Found': { label: 'Exception found', badgeClass: 'gov-badge-error' },
+  QUALIFIED: { label: 'Qualified', badgeClass: 'gov-badge-success' },
+  Qualified: { label: 'Qualified', badgeClass: 'gov-badge-success' },
+  DISQUALIFIED: { label: 'Disqualified', badgeClass: 'gov-badge-error' },
+  Disqualified: { label: 'Disqualified', badgeClass: 'gov-badge-error' },
+  CLARIFICATION_REQUESTED: { label: 'Clarification requested', badgeClass: 'gov-badge-warning' },
+  'Clarification Requested': { label: 'Clarification requested', badgeClass: 'gov-badge-warning' },
 };
 
 function statusBadge(status: string) {
-  const meta = STATUS_META[status] ?? {
-    label: status,
-    bg: 'bg-[#F8F9FA]',
-    text: 'text-[#475569]',
-    border: 'border-[#CBD2DE]',
-  };
+  const meta = STATUS_META[status] ?? { label: status, badgeClass: 'gov-badge-neutral' };
   return (
-    <span
-      className={`inline-block px-2 py-0.5 border text-[11px] font-medium rounded-[2px] ${meta.bg} ${meta.text} ${meta.border}`}
-    >
+    <span className={`gov-badge ${meta.badgeClass}`}>
       {meta.label}
     </span>
   );
@@ -105,21 +41,21 @@ function riskBadge(risk: string) {
   const r = (risk || '').toUpperCase();
   if (r === 'HIGH' || r === 'CRITICAL') {
     return (
-      <span className="inline-block px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]">
+      <span className="gov-badge gov-badge-error font-mono text-[11px]">
         [!] {r === 'CRITICAL' ? 'Critical' : 'High'}
       </span>
     );
   }
   if (r === 'MEDIUM') {
     return (
-      <span className="inline-block px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]">
+      <span className="gov-badge gov-badge-warning font-mono text-[11px]">
         [!] Medium
       </span>
     );
   }
   if (r === 'LOW') {
     return (
-      <span className="inline-block px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]">
+      <span className="gov-badge gov-badge-success font-mono text-[11px]">
         [✓] Low
       </span>
     );
@@ -235,8 +171,9 @@ export const VerificationHub: React.FC = () => {
 
       {/* Soft error banner (data present from previous load) */}
       {error && bidders.length > 0 && (
-        <div className="border border-[#FCA5A5] bg-[#FEF2F2] px-3 py-2 text-xs text-[#B72025] rounded-[2px]">
-          Last refresh failed: {error}
+        <div className="gov-alert gov-alert-error text-xs rounded-[2px]">
+          <AlertTriangle className="w-4 h-4 text-[#B72025] shrink-0 mt-0.5" />
+          <span>Last refresh failed: {error}</span>
         </div>
       )}
 
@@ -445,7 +382,7 @@ export const VerificationHub: React.FC = () => {
       </section>
 
       {/* Decision-support notice */}
-      <section className="border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-2.5 rounded-[2px] flex items-start gap-2 text-xs text-[#1E3A8A]">
+      <section className="gov-alert gov-alert-info rounded-[2px] text-xs text-[#1E3A8A]">
         <ShieldCheck className="w-4 h-4 shrink-0 text-[#1D4ED8] mt-0.5" />
         <div className="leading-relaxed">
           <strong>Decision-support notice:</strong> Compliance assessment is

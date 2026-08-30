@@ -13,12 +13,13 @@ export const GovBreadcrumb: React.FC = () => {
 
   const formatSegment = (seg: string) => {
     if (seg === 'dashboard') return language === 'hi' ? 'डैशबोर्ड' : 'Dashboard';
-    if (seg === 'tenders') return language === 'hi' ? 'निविदा रजिस्टर' : 'Tender Register';
-    if (seg === 'verification') return language === 'hi' ? 'बोलीदाता सत्यापन' : 'Bidder Verification';
+    if (seg === 'tenders') return language === 'hi' ? 'खरीद' : 'Procurement';
+    if (seg === 'verification') return language === 'hi' ? 'सत्यापन' : 'Verification';
+    if (seg === 'integrity') return language === 'hi' ? 'अखंडता' : 'Integrity';
     if (seg === 'documents') return language === 'hi' ? 'दस्तावेज़' : 'Documents';
     if (seg === 'upload') return language === 'hi' ? 'अपलोड और निष्कर्षण' : 'Upload & Extract';
     if (seg === 'verification-sources') return language === 'hi' ? 'सत्यापन स्रोत' : 'Verification Sources';
-    if (seg === 'reports') return language === 'hi' ? 'प्रतिवेदन' : 'Procurement Compliance Reports';
+    if (seg === 'reports') return language === 'hi' ? 'प्रतिवेदन' : 'Reports';
     if (seg === 'audit-trail' || seg === 'audit-logs') return language === 'hi' ? 'ऑडिट ट्रेल' : 'Audit Trail';
     if (seg === 'settings') return language === 'hi' ? 'सेटिंग्स' : 'Settings';
     if (seg === 'search') return language === 'hi' ? 'खोज' : 'Search';
