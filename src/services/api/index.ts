@@ -163,3 +163,13 @@ export const analyticsService = {
   getPerformanceMetrics: (): Promise<ProcessPerformanceMetrics> =>
     apiClient.analytics.getPerformanceMetrics(),
 };
+
+export const procurementService = (apiClient as any).procurement;
+
+export const integrityService = {
+  getTenderIntegrity: (tenderId: string) =>
+    (apiClient as any).procurement.getTenderIntegrity(tenderId),
+  getBidderIntegrity: (bidderId: string) =>
+    (apiClient as any).procurement.getBidderIntegrity(bidderId),
+};
+

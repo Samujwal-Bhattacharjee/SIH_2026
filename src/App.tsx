@@ -18,6 +18,7 @@ import { VerificationHub } from './pages/VerificationHub';
 import { ProcurementDocuments } from './pages/ProcurementDocuments';
 import { ProcurementAuditTrail } from './pages/ProcurementAuditTrail';
 import { VerificationSources } from './pages/VerificationSources';
+import { ProcurementIntegrity } from './pages/ProcurementIntegrity';
 
 // Route guard for authenticated session
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -87,7 +88,7 @@ export function App() {
                 <Route path="/tenders" element={<Tenders />} />
                 <Route path="/verification" element={<VerificationHub />} />
                 <Route path="/verification/:bidderId" element={<BidderVerification />} />
-                <Route path="/integrity" element={<VerificationSources />} />
+                <Route path="/integrity" element={<ProcurementIntegrity />} />
                 <Route path="/verification-sources" element={<VerificationSources />} />
                 <Route path="/sources" element={<VerificationSources />} />
                 <Route path="/audit-trail" element={<ProcurementAuditTrail />} />

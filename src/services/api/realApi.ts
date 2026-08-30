@@ -536,5 +536,13 @@ export const realApi = {
       }
       return response.json();
     },
+
+    async getTenderIntegrity(tenderId: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/tenders/${encodeURIComponent(tenderId)}/integrity`);
+    },
+
+    async getBidderIntegrity(bidderId: string): Promise<any> {
+      return request<any>(`/api/v1/procurement/bidders/${encodeURIComponent(bidderId)}/integrity`);
+    },
   },
 };

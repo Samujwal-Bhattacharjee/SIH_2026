@@ -509,3 +509,43 @@ export interface User {
   badgeNumber: string;
   sessionExpiry: string;
 }
+
+export interface IntegrityEvidence {
+  source_type: string;
+  source_id?: string | null;
+  field: string;
+  value: any;
+  description: string;
+  metadata?: Record<string, any>;
+}
+
+export interface IntegrityFinding {
+  id: string;
+  tender_id?: string | null;
+  bidder_id?: string | null;
+  related_bidder_ids: string[];
+  signal_type: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  score_impact: number;
+  confidence: number;
+  title: string;
+  reason: string;
+  evidence: IntegrityEvidence[];
+  recommended_action: string;
+  status: 'OPEN' | 'UNDER_REVIEW' | 'ACKNOWLEDGED' | 'DISMISSED' | 'RESOLVED';
+  detected_at: string;
+}
+
+export interface IntegrityAssessment {
+  tender_id?: string | null;
+  bidder_id?: string | null;
+  overall_risk_score: number;
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  confidence_score: number;
+  findings_count: number;
+  findings: IntegrityFinding[];
+  contributing_signals: string[];
+  assessed_at: string;
+  summary: string;
+}
+

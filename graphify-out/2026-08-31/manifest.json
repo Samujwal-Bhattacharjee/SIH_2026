@@ -396,9 +396,9 @@
     "semantic_hash": "aec6d59b4aee4c88e5830fbcf57ed5c9"
   },
   "src/App.tsx": {
-    "mtime": 1788113985.4341486,
-    "seen": 1788119907.745502,
-    "ast_hash": "9078953877e566e27f00b68722e440d0",
+    "mtime": 1788110893.3345935,
+    "seen": 1788110948.9165974,
+    "ast_hash": "18b9c22efaf0a36e26fd0a695a03a4d2",
     "semantic_hash": ""
   },
   "src/assets/Emblem.tsx": {
@@ -828,10 +828,10 @@
     "semantic_hash": "bac2e1b734474c996b07990e9d046a33"
   },
   "src/services/api/index.ts": {
-    "mtime": 1788113932.17104,
-    "seen": 1788119907.768442,
-    "ast_hash": "74ad862a0f336c6eeaacdef167305ab3",
-    "semantic_hash": ""
+    "mtime": 1787514013.5669682,
+    "seen": 1787863686.63167,
+    "ast_hash": "7938dc53f0f4b1e1a90ba05729497050",
+    "semantic_hash": "7938dc53f0f4b1e1a90ba05729497050"
   },
   "src/services/api/mockApi.ts": {
     "mtime": 1787514013.5683577,
@@ -840,16 +840,16 @@
     "semantic_hash": "7b8749e6dac5c8e4f46b445ab4876d3b"
   },
   "src/services/api/realApi.ts": {
-    "mtime": 1788113924.9582212,
-    "seen": 1788119907.768442,
-    "ast_hash": "dd406e3bdea6dc9108c49d0a8e4a0675",
-    "semantic_hash": ""
+    "mtime": 1787598668.1186266,
+    "seen": 1787863686.63167,
+    "ast_hash": "7e1fefbfee1cec60e4c3e8787386d51a",
+    "semantic_hash": "7e1fefbfee1cec60e4c3e8787386d51a"
   },
   "src/types/index.ts": {
-    "mtime": 1788113917.172983,
-    "seen": 1788119907.768442,
-    "ast_hash": "a4f9fc76b6b46d574c30cd8b66971747",
-    "semantic_hash": ""
+    "mtime": 1787514013.5720325,
+    "seen": 1787863686.63167,
+    "ast_hash": "cfa4a5472a6624155d4ecefc383ce656",
+    "semantic_hash": "cfa4a5472a6624155d4ecefc383ce656"
   },
   "src/vite-env.d.ts": {
     "mtime": 1786984673.6500852,
@@ -1047,12 +1047,6 @@
     "mtime": 1788112938.4148834,
     "seen": 1788113025.7068734,
     "ast_hash": "3d0fb76844a8f3e66940b57cea393673",
-    "semantic_hash": ""
-  },
-  "src/pages/ProcurementIntegrity.tsx": {
-    "mtime": 1788113969.9741614,
-    "seen": 1788119907.7614062,
-    "ast_hash": "e037f63a0ca2d32974aa379d4ed99d66",
     "semantic_hash": ""
   }
 }
