@@ -17,22 +17,22 @@ export const GovFooter: React.FC = () => {
             <Emblem size={36} monochrome />
             <div>
               <h4 className="font-serif font-bold text-sm tracking-tight text-white">
-                Government Procurement Intelligence Platform
+                {t('gov.systemTitle')}
               </h4>
               <p className="text-[10px] text-gray-300">
-                Government Procurement • Prototype / Demonstration • SIH26100
+                {t('footer.prototypeNotice')}
               </p>
             </div>
           </div>
           <p className="text-gray-300 text-[11px] leading-relaxed">
-            AI-assisted bid compliance verification and decision-support platform for government procurement. Automated OCR extraction, sandbox source validation, and evidence-backed compliance analysis.
+            {t('footer.nicAttribution')}
           </p>
         </div>
 
         {/* Col 2: Procurement Modules */}
         <div className="space-y-2">
           <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-gray-700 pb-1">
-            System Modules
+            {t('footer.systemModules')}
           </h4>
           <ul className="space-y-1.5 text-gray-300">
             <li>
@@ -76,7 +76,7 @@ export const GovFooter: React.FC = () => {
         {/* Col 3: Policies & Governance */}
         <div className="space-y-2">
           <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-gray-700 pb-1">
-            Website Policies
+            {t('footer.websitePolicies')}
           </h4>
           <ul className="space-y-1.5 text-gray-300">
             <li>
@@ -110,7 +110,7 @@ export const GovFooter: React.FC = () => {
         {/* Col 4: Support & Prototype Attribution */}
         <div className="space-y-2">
           <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-gray-700 pb-1">
-            Helpdesk &amp; Technical Support
+            {t('footer.helpdesk')}
           </h4>
           <div className="space-y-2 text-gray-300 text-[11px]">
             <div className="flex items-start space-x-2">
@@ -133,10 +133,10 @@ export const GovFooter: React.FC = () => {
       <div className="bg-[#040E1A] border-t border-gray-800 py-3 text-[11px] text-gray-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <div>
-            © 2026 Government of India • National Informatics Centre (NIC) • All Rights Reserved.
+            {t('footer.copyright')}
           </div>
           <div className="text-[10px] text-[#FF9933] font-medium">
-            Government Procurement • Prototype / Demonstration • SIH26100
+            {t('footer.prototypeNotice')}
           </div>
         </div>
       </div>

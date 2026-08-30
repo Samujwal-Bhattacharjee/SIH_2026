@@ -191,7 +191,7 @@ export const Login: React.FC = () => {
                   Government of India
                 </h2>
                 <p className="text-xs text-[#5F6368] font-medium">
-                  Procurement Decision Support Platform • SIH26100
+                  CPCL • Ministry of Petroleum & Natural Gas • SIH26100
                 </p>
               </div>
             </div>
@@ -203,7 +203,7 @@ export const Login: React.FC = () => {
                 Government Procurement Intelligence Platform
               </h1>
               <p className="text-xs text-[#5F6368] leading-relaxed">
-                AI-assisted bid compliance verification and decision-support platform for government procurement. Automated document OCR extraction, sandbox source validation, and evidence-backed evaluation.
+                An evidence-first procurement intelligence platform for verifying bidder compliance and identifying explainable procurement-integrity risks in government procurement.
               </p>
             </div>
 
@@ -219,11 +219,11 @@ export const Login: React.FC = () => {
               </div>
               <div className="flex items-start space-x-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D] flex-shrink-0 mt-0.5" />
-                <span>Supabase PostgreSQL Database &amp; Token Auth Integration</span>
+                <span>Secure Evidence &amp; Audit Infrastructure</span>
               </div>
               <div className="flex items-start space-x-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D] flex-shrink-0 mt-0.5" />
-                <span>Tamper-Evident Movement Register &amp; Immutable Audit Trail</span>
+                <span>Tamper-Evident Procurement Audit Trail</span>
               </div>
             </div>
           </div>
@@ -236,7 +236,7 @@ export const Login: React.FC = () => {
             <div className="flex items-center space-x-2">
               <span className={`inline-block w-2 h-2 rounded-full ${isSupabaseActive ? 'bg-green-500 animate-pulse' : 'bg-blue-400'}`} />
               <span className="font-mono text-[#0B2A4A] font-bold text-[10px]">
-                {isSupabaseActive ? 'SUPABASE AUTH: CONNECTED' : 'SUPABASE AUTH: READY'}
+                {isSupabaseActive ? 'SECURE AUTH: CONNECTED' : 'SECURE AUTH: SANDBOX'}
               </span>
             </div>
           </div>
@@ -290,7 +290,7 @@ export const Login: React.FC = () => {
             <p className="text-xs text-[#5F6368] mb-3">
               {authMode === 'login'
                 ? 'Sign in with your authorized official email and password.'
-                : 'Create an officer credentials account for Supabase Authentication.'}
+                : 'Create an officer credentials account for this government portal.'}
             </p>
 
             {/* Official Indian Government Error Box */}
@@ -408,7 +408,7 @@ export const Login: React.FC = () => {
                     {googleSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 text-[#0B2A4A] animate-spin" />
-                        <span>Connecting to Supabase Google OAuth...</span>
+                        <span>Connecting to Government OAuth...</span>
                       </>
                     ) : (
                       <>
@@ -431,7 +431,7 @@ export const Login: React.FC = () => {
                           />
                         </svg>
                         <span className="font-semibold text-[#0F172A] group-hover:text-[#0B2A4A]">
-                          Sign in with Google (Supabase Auth)
+                          Sign in with Google (Government SSO)
                         </span>
                       </>
                     )}

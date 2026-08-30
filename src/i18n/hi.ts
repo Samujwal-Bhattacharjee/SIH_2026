@@ -1,9 +1,10 @@
 export const hi = {
-  // Top utility & header
+  // ─── Government / Top Header ──────────────────────────────────────────────
   'gov.india': 'भारत सरकार',
-  'gov.ministry': 'सरकारी खरीद • प्रोटोटाइप / प्रदर्शन • SIH26100',
+  'gov.ministry': 'सरकारी खरीद • CPCL • पेट्रोलियम एवं प्राकृतिक गैस मंत्रालय • SIH26100',
   'gov.systemTitle': 'सरकारी खरीद आसूचना एवं बोली अनुपालन प्रणाली',
   'gov.systemSubtitle': 'GeM बोली अनुपालन • दस्तावेज़ सत्यापन • अधिकारी निर्णय समर्थन',
+  'gov.subheadline': 'सरकारी खरीद • CPCL • पेट्रोलियम एवं प्राकृतिक गैस मंत्रालय • SIH26100',
   'gov.accessibility': 'सुगम्यता विकल्प',
   'gov.skipToMain': 'मुख्य सामग्री पर जाएं',
   'gov.fontSize': 'फ़ॉन्ट आकार',
@@ -11,8 +12,9 @@ export const hi = {
   'gov.english': 'English',
   'gov.hindi': 'हिन्दी',
 
-  // Navigation
-  'nav.dashboard': 'डैशबोर्ड (मुख्य पृष्ठ)',
+  // ─── Navigation ────────────────────────────────────────────────────────────
+  'nav.dashboard': 'डैशबोर्ड',
+  'nav.procurement': 'खरीद',
   'nav.files': 'निविदाएं',
   'nav.pending': 'समीक्षाधीन बोलियां',
   'nav.documents': 'दस्तावेज़',
@@ -25,9 +27,37 @@ export const hi = {
   'nav.reports': 'खरीद अनुपालन प्रतिवेदन',
   'nav.auditLogs': 'ऑडिट ट्रेल',
   'nav.departments': 'खरीद विभाग',
-  'nav.settings': 'प्रणाली विन्यास',
+  'nav.settings': 'सेटिंग्स',
+  'nav.more': 'अन्य ▼',
+  'nav.moreGroup': 'शासन एवं प्रतिवेदन',
+  'nav.mobileGroup1': 'मुख्य परिचालन',
+  'nav.mobileGroup2': 'विश्लेषण एवं प्रशासन',
 
-  // Common Actions
+  // ─── Landing / Login Page ──────────────────────────────────────────────────
+  'landing.productTitle': 'सरकारी खरीद आसूचना एवं बोली अनुपालन प्रणाली',
+  'landing.productSubtitle': 'सरकारी खरीद • CPCL • पेट्रोलियम एवं प्राकृतिक गैस मंत्रालय • SIH26100',
+  'landing.description': 'बोलीदाता अनुपालन सत्यापन एवं सरकारी खरीद में जोखिम विश्लेषण के लिए साक्ष्य-आधारित खरीद आसूचना प्रणाली।',
+  'landing.feature1': 'साक्ष्य-आधारित बोली अनुपालन सत्यापन',
+  'landing.feature2': 'खरीद अखंडता जोखिम विश्लेषण',
+  'landing.feature3': 'OCR एवं वैधानिक दस्तावेज़ निष्कर्षण',
+  'landing.feature4': 'साक्ष्य-प्रथम अधिकारी निर्णय समर्थन',
+  'landing.feature5': 'छेड़छाड़-प्रतिरोधी खरीद ऑडिट ट्रेल',
+  'landing.nic': 'राष्ट्रीय सूचना विज्ञान केन्द्र (NIC)',
+  'landing.authReady': 'सुरक्षित प्रमाणीकरण: तैयार',
+  'landing.authConnected': 'सुरक्षित प्रमाणीकरण: संयुक्त',
+  'landing.signinTab': 'अधिकारी साइन-इन',
+  'landing.registerTab': 'नया पंजीकरण',
+  'landing.signinSubtext': 'अपने अधिकृत आधिकारिक ईमेल एवं पासवर्ड से प्रवेश करें।',
+  'landing.registerSubtext': 'इस पोर्टल हेतु अधिकारी प्रमाण-पत्र खाता बनाएं।',
+  'landing.googleOr': 'या Google SSO से साइन इन करें',
+  'landing.googleBtn': 'Google (सरकारी SSO) से प्रवेश करें',
+  'landing.googleConnecting': 'सरकारी OAuth से जुड़ रहे हैं...',
+  'landing.quickAccess': 'त्वरित मूल्यांकनकर्ता पहुंच (पूर्व-निर्धारित अधिकारी)',
+  'landing.itAct': 'इस सरकारी पोर्टल तक अनधिकृत पहुंच IT अधिनियम 2000 के अंतर्गत दंडनीय है।',
+  'landing.copyright': '© 2026 भारत सरकार • राष्ट्रीय सूचना विज्ञान केन्द्र (NIC) • प्रदर्शन एवं प्रोटोटाइप गेटवे',
+  'landing.sandboxNotice': 'सैंडबॉक्स / प्रोटोटाइप मोड',
+
+  // ─── Common Actions ────────────────────────────────────────────────────────
   'action.view': 'निविदा देखें',
   'action.track': 'मूल्यांकन ट्रैक करें',
   'action.forward': 'समीक्षा हेतु अग्रेषित करें',
@@ -36,7 +66,7 @@ export const hi = {
   'action.upload': 'दस्तावेज़ अपलोड करें',
   'action.download': 'डाउनलोड',
   'action.ocrScan': 'OCR निष्कर्षण प्रारंभ करें',
-  'action.search': 'खोजें',
+  'action.search': 'निविदाएं एवं बोलीदाता खोजें',
   'action.filter': 'फ़िल्टर',
   'action.reset': 'रीसेट',
   'action.exportCsv': 'CSV निर्यात करें',
@@ -46,8 +76,17 @@ export const hi = {
   'action.confirm': 'पुष्टि करें एवं पंजीकृत करें',
   'action.login': 'लॉग इन करें',
   'action.logout': 'लॉग आउट',
+  'action.createTender': 'निविदा बनाएं',
+  'action.uploadDoc': 'दस्तावेज़ अपलोड करें',
+  'action.addBidder': 'बोलीदाता जोड़ें',
+  'action.refresh': 'ताज़ा करें',
+  'action.retry': 'पुनः प्रयास करें',
+  'action.reviewEvidence': 'साक्ष्य समीक्षा करें',
+  'action.openAuditTrail': 'ऑडिट ट्रेल खोलें',
+  'action.viewTenderRegister': 'निविदा रजिस्टर देखें',
+  'action.printRegister': 'रजिस्टर प्रिंट करें',
 
-  // Statuses
+  // ─── Statuses ──────────────────────────────────────────────────────────────
   'status.received': 'प्रस्तुत',
   'status.registered': 'पंजीकृत',
   'status.underScrutiny': 'सत्यापनाधीन',
@@ -59,12 +98,12 @@ export const hi = {
   'status.disposed': 'पूर्ण',
   'status.overdue': 'अपवाद पाया गया',
 
-  // Priority / Risk
+  // ─── Priority / Risk ───────────────────────────────────────────────────────
   'priority.immediate': 'गंभीर जोखिम (Critical)',
   'priority.urgent': 'उच्च जोखिम (High Risk)',
   'priority.routine': 'सामान्य (Standard)',
 
-  // Table Headers
+  // ─── Table Headers ─────────────────────────────────────────────────────────
   'th.fileNo': 'निविदा संख्या',
   'th.subject': 'निविदा शीर्षक / विवरण',
   'th.department': 'खरीद विभाग',
@@ -75,16 +114,107 @@ export const hi = {
   'th.slaStatus': 'अनुपालन स्थिति',
   'th.priority': 'जोखिम स्तर',
   'th.action': 'कार्रवाई',
+  'th.tenderId': 'निविदा ID',
+  'th.tenderTitle': 'निविदा शीर्षक / बोलीदाता',
+  'th.status': 'स्थिति',
+  'th.compliance': 'अनुपालन',
+  'th.risk': 'जोखिम',
+  'th.officerAction': 'अधिकारी कार्रवाई',
+  'th.timestamp': 'समय-चिह्न',
+  'th.userActor': 'उपयोगकर्ता / कर्ता',
+  'th.entitySubject': 'इकाई / विषय',
+  'th.resultDetails': 'परिणाम एवं विवरण',
 
-  // Statistics
+  // ─── Statistics ────────────────────────────────────────────────────────────
   'stat.totalFiles': 'सक्रिय निविदाएं',
   'stat.todayReceived': 'आज प्राप्त बोलियां',
   'stat.inProcess': 'सत्यापनाधीन',
   'stat.pendingTotal': 'लंबित समीक्षाएं',
   'stat.slaOverdue': 'अपवाद पाए गए',
   'stat.disposedTotal': 'कुल मूल्यांकित',
+  'stat.activeTenders': 'सक्रिय निविदाएं',
+  'stat.underVerification': 'सत्यापनाधीन',
+  'stat.highRisk': 'उच्च जोखिम',
+  'stat.pendingDocuments': 'दस्तावेज़ लंबित',
+  'stat.exceptionsIdentified': 'अपवाद पहचाने गए',
+  'stat.withExceptions': 'अपवाद सहित',
+  'stat.pendingDocs': 'लंबित दस्तावेज़',
 
-  // Disclaimer
-  'footer.prototypeNotice': 'सरकारी खरीद • प्रोटोटाइप / प्रदर्शन • SIH26100',
-  'footer.nicAttribution': 'सरकारी खरीद सत्यापन कार्यप्रवाह हेतु अभिकल्पित एवं विकसित',
+  // ─── Dashboard Page ────────────────────────────────────────────────────────
+  'page.dashboard.workspace': 'खरीद अधिकारी कार्यक्षेत्र',
+  'page.dashboard.title': 'सरकारी खरीद अनुपालन डैशबोर्ड',
+  'page.dashboard.subtitle': 'खरीद अनुपालन मूल्यांकन • प्रोटोटाइप / प्रदर्शन • SIH26100',
+  'page.dashboard.recentAssessments': 'हालिया निविदा मूल्यांकन',
+  'page.dashboard.recentAssessmentsDesc': 'अनुपालन स्थिति साक्ष्य-आधारित है एवं अंतिम योग्यता निर्धारण हेतु अधिकारी समीक्षा आवश्यक है।',
+  'page.dashboard.attentionRequired': 'ध्यान आवश्यक',
+  'page.dashboard.verificationActivity': 'सत्यापन गतिविधि',
+  'page.dashboard.workQueue': 'कार्य कतार',
+  'page.dashboard.decisionNotice': 'निर्णय-समर्थन सूचना:',
+  'page.dashboard.decisionNoticeText': 'प्रस्तुत बोलीदाता दस्तावेज़ों एवं सैंडबॉक्स सत्यापन एडाप्टर पर आधारित प्रणाली-जनित अनुपालन मूल्यांकन। अंतिम योग्यता या अयोग्यता निर्णय का अधिकार पूर्णतः नामित खरीद अधिकारी को है।',
+  'page.dashboard.reviewExceptions': 'अपवाद विवरण समीक्षा करें',
+
+  // ─── Verification Page ─────────────────────────────────────────────────────
+  'page.verification.workspace': 'खरीद अधिकारी कार्यक्षेत्र',
+  'page.verification.title': 'सरकारी खरीद सत्यापन',
+  'page.verification.subtitle': 'अनुपालन सत्यापन आरंभ या जारी रखने हेतु बोलीदाता चुनें।',
+  'page.verification.loadingQueue': 'सत्यापन कतार लोड हो रही है…',
+  'page.verification.unableToLoad': 'सत्यापन कतार लोड करने में असमर्थ।',
+  'page.verification.verificationStatus': 'सत्यापन स्थिति',
+  'page.verification.bidderInfo': 'बोलीदाता जानकारी',
+  'page.verification.requiredDocs': 'आवश्यक दस्तावेज़',
+  'page.verification.complianceAssessment': 'अनुपालन मूल्यांकन',
+  'page.verification.evidence': 'साक्ष्य',
+  'page.verification.discrepancies': 'विसंगतियां',
+  'page.verification.officerReview': 'अधिकारी समीक्षा',
+  'page.verification.summaryStats': 'सत्यापन सारांश',
+  'page.verification.searchPlaceholder': 'बोलीदाता नाम या ID से खोजें…',
+
+  // ─── Integrity Page ────────────────────────────────────────────────────────
+  'page.integrity.workspace': 'खरीद अखंडता विश्लेषण',
+  'page.integrity.title': 'सरकारी खरीद अखंडता',
+  'page.integrity.subtitle': 'व्याख्यात्मक अखंडता जोखिम संकेत एवं खरीद विसंगति विश्लेषण।',
+  'page.integrity.riskSignals': 'जोखिम संकेत',
+  'page.integrity.integrityRisk': 'अखंडता जोखिम',
+  'page.integrity.recommendedAction': 'अनुशंसित कार्रवाई',
+  'page.integrity.vendorRelationships': 'विक्रेता संबंध',
+  'page.integrity.bidPatternAnalysis': 'बोली पैटर्न विश्लेषण',
+  'page.integrity.tenderInfo': 'निविदा जानकारी',
+  'page.integrity.selectTender': 'निविदा चुनें',
+  'page.integrity.selectBidder': 'बोलीदाता चुनें',
+  'page.integrity.allBidders': 'सभी बोलीदाता',
+  'page.integrity.findings': 'अखंडता निष्कर्ष',
+
+  // ─── Audit Trail Page ──────────────────────────────────────────────────────
+  'page.audit.workspace': 'छेड़छाड़-प्रतिरोधी गतिविधि रजिस्टर',
+  'page.audit.title': 'सरकारी खरीद ऑडिट ट्रेल',
+  'page.audit.subtitle': 'दस्तावेज़ अपलोड, स्वचालित OCR निष्कर्षण, अनुपालन निष्कर्ष एवं अधिकारी निर्णयों का कालानुक्रमिक लॉग।',
+  'page.audit.registerEntries': 'ऑडिट रजिस्टर प्रविष्टियां',
+  'page.audit.systemTimestamp': 'सिस्टम समय-चिह्न: Asia/Kolkata (IST)',
+  'page.audit.printRegister': 'रजिस्टर प्रिंट करें',
+  'page.audit.searchPlaceholder': 'कार्रवाई या उपयोगकर्ता खोजें...',
+  'page.audit.allActions': 'सभी कार्रवाइयां',
+  'page.audit.uploads': 'अपलोड',
+  'page.audit.verifications': 'सत्यापन',
+  'page.audit.officerDecisions': 'अधिकारी निर्णय',
+
+  // ─── Documents / OCR ───────────────────────────────────────────────────────
+  'page.documents.title': 'दस्तावेज़ भंडार',
+  'page.documents.upload': 'दस्तावेज़ अपलोड',
+  'page.documents.ocr': 'OCR दस्तावेज़ निष्कर्षण',
+  'page.documents.requiredDocs': 'आवश्यक दस्तावेज़',
+
+  // ─── Header ────────────────────────────────────────────────────────────────
+  'header.searchPlaceholder': 'निविदा ID, बोलीदाता, दस्तावेज़ खोजें...',
+  'header.notifications': 'सूचनाएं',
+  'header.pendingActions': 'लंबित अधिकारी कार्रवाइयां',
+  'header.profile': 'अधिकारी प्रोफ़ाइल',
+  'header.systemCredentials': 'सिस्टम प्रमाण-पत्र एवं भूमिकाएं',
+
+  // ─── Footer ────────────────────────────────────────────────────────────────
+  'footer.prototypeNotice': 'सरकारी खरीद • CPCL • पेट्रोलियम एवं प्राकृतिक गैस मंत्रालय • SIH26100',
+  'footer.nicAttribution': 'पेट्रोलियम क्षेत्र की सरकारी खरीद में बोलीदाता अनुपालन सत्यापन हेतु साक्ष्य-आधारित खरीद आसूचना प्रणाली।',
+  'footer.systemModules': 'प्रणाली मॉड्यूल',
+  'footer.websitePolicies': 'वेबसाइट नीतियां',
+  'footer.helpdesk': 'सहायता केंद्र एवं तकनीकी सहायता',
+  'footer.copyright': '© 2026 भारत सरकार • राष्ट्रीय सूचना विज्ञान केन्द्र (NIC) • सर्वाधिकार सुरक्षित।',
 };

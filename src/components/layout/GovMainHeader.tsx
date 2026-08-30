@@ -43,14 +43,10 @@ export const GovMainHeader: React.FC = () => {
           <Emblem size={52} />
           <div className="border-l border-[#CBD2DE] pl-3">
             <div className="font-serif font-extrabold text-lg sm:text-xl text-[#0B2A4A] tracking-tight leading-tight group-hover:text-[#123B63] transition-colors">
-              {language === 'hi'
-                ? 'बोली अनुपालन सत्यापन प्रणाली'
-                : 'Government Procurement Intelligence Platform'}
+              {t('gov.systemTitle')}
             </div>
             <div className="text-[11px] sm:text-xs text-[#5F6368] font-sans font-medium flex items-center space-x-1.5 mt-0.5">
-              <span>Government Procurement • Prototype / Demonstration</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-[#0B2A4A] font-semibold">SIH26100</span>
+              <span>{t('gov.ministry')}</span>
             </div>
           </div>
         </Link>
@@ -64,7 +60,7 @@ export const GovMainHeader: React.FC = () => {
             title="Global Search (Ctrl+K)"
           >
             <Search className="w-3.5 h-3.5 text-[#0B2A4A]" />
-            <span>Search tender ID, bidder, document...</span>
+            <span>{t('header.searchPlaceholder')}</span>
             <kbd className="font-mono text-[10px] px-1 py-0.5 bg-white border border-[#CBD2DE] rounded-[2px] text-gray-500">
               Ctrl+K
             </kbd>
@@ -90,9 +86,9 @@ export const GovMainHeader: React.FC = () => {
               <div className="absolute right-0 mt-2 w-84 bg-white border border-[#0B2A4A] rounded-[2px] shadow-xl z-50 animate-in fade-in">
                 <div className="px-3.5 py-2 bg-[#0B2A4A] text-white flex items-center justify-between">
                   <span className="font-serif font-bold text-xs">
-                    Notifications ({alerts.length})
+                    {t('header.notifications')} ({alerts.length})
                   </span>
-                  <span className="text-[10px] text-gray-300 font-mono">2 pending officer actions</span>
+                  <span className="text-[10px] text-gray-300 font-mono">{t('header.pendingActions')}</span>
                 </div>
                 <div className="max-h-72 overflow-y-auto divide-y divide-[#D9DDE3]">
                   {alerts.map((alert) => (
@@ -164,7 +160,7 @@ export const GovMainHeader: React.FC = () => {
                     className="w-full text-left px-3 py-1.5 text-xs text-[#202124] hover:bg-[#F0F2F5] rounded-[2px] flex items-center space-x-2 cursor-pointer"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-[#0B2A4A]" />
-                    <span>System Credentials & Roles</span>
+                    <span>{t('header.systemCredentials')}</span>
                   </button>
                   <button
                     onClick={handleLogout}

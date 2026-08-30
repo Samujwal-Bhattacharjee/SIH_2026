@@ -1,9 +1,10 @@
 export const en = {
-  // Top utility & header
+  // ─── Government / Top Header ──────────────────────────────────────────────
   'gov.india': 'Government of India',
-  'gov.ministry': 'Government Procurement • Prototype / Demonstration • SIH26100',
+  'gov.ministry': 'Government Procurement • CPCL • Ministry of Petroleum & Natural Gas • SIH26100',
   'gov.systemTitle': 'Government Procurement Intelligence Platform',
   'gov.systemSubtitle': 'GeM Bid Compliance • Document Verification • Officer Decision Support',
+  'gov.subheadline': 'Government Procurement • CPCL • Ministry of Petroleum & Natural Gas • SIH26100',
   'gov.accessibility': 'Accessibility Options',
   'gov.skipToMain': 'Skip to Main Content',
   'gov.fontSize': 'Font Size',
@@ -11,8 +12,9 @@ export const en = {
   'gov.english': 'English',
   'gov.hindi': 'हिन्दी',
 
-  // Navigation
+  // ─── Navigation ────────────────────────────────────────────────────────────
   'nav.dashboard': 'Dashboard',
+  'nav.procurement': 'Procurement',
   'nav.files': 'Tenders',
   'nav.pending': 'Under Review',
   'nav.documents': 'Documents',
@@ -26,8 +28,36 @@ export const en = {
   'nav.auditLogs': 'Audit Trail',
   'nav.departments': 'Procuring Departments',
   'nav.settings': 'Settings',
+  'nav.more': 'More ▼',
+  'nav.moreGroup': 'Governance & Reporting',
+  'nav.mobileGroup1': 'Core Operations',
+  'nav.mobileGroup2': 'Analytics & Administration',
 
-  // Common Actions
+  // ─── Landing / Login Page ──────────────────────────────────────────────────
+  'landing.productTitle': 'Government Procurement Intelligence Platform',
+  'landing.productSubtitle': 'Government Procurement • CPCL • Ministry of Petroleum & Natural Gas • SIH26100',
+  'landing.description': 'An evidence-first procurement intelligence platform for verifying bidder compliance and identifying explainable procurement-integrity risks in government procurement.',
+  'landing.feature1': 'Evidence-Backed Bid Compliance Verification',
+  'landing.feature2': 'Procurement Integrity Risk Analysis',
+  'landing.feature3': 'OCR & Statutory Document Extraction',
+  'landing.feature4': 'Evidence-First Officer Decision Support',
+  'landing.feature5': 'Tamper-Evident Procurement Audit Trail',
+  'landing.nic': 'National Informatics Centre (NIC)',
+  'landing.authReady': 'SECURE AUTH: READY',
+  'landing.authConnected': 'SECURE AUTH: CONNECTED',
+  'landing.signinTab': 'Officer Sign-In',
+  'landing.registerTab': 'New Registration',
+  'landing.signinSubtext': 'Sign in with your authorized official email and password.',
+  'landing.registerSubtext': 'Create an officer credentials account for this portal.',
+  'landing.googleOr': 'Or Sign In with Google SSO',
+  'landing.googleBtn': 'Sign in with Google (Government SSO)',
+  'landing.googleConnecting': 'Connecting to Government OAuth...',
+  'landing.quickAccess': 'Quick Evaluator Access (Preset Officers)',
+  'landing.itAct': 'Unauthorized access to this government portal is punishable under the IT Act 2000.',
+  'landing.copyright': '© 2026 Government of India • National Informatics Centre (NIC) • Demonstration & Prototype Gateway',
+  'landing.sandboxNotice': 'Sandbox / Prototype Mode',
+
+  // ─── Common Actions ────────────────────────────────────────────────────────
   'action.view': 'View Tender',
   'action.track': 'Track Assessment',
   'action.forward': 'Submit for Review',
@@ -46,8 +76,17 @@ export const en = {
   'action.confirm': 'Confirm & Register',
   'action.login': 'Sign In',
   'action.logout': 'Sign Out',
+  'action.createTender': 'Create Tender',
+  'action.uploadDoc': 'Upload Document',
+  'action.addBidder': 'Add Bidder',
+  'action.refresh': 'Refresh',
+  'action.retry': 'Retry',
+  'action.reviewEvidence': 'Review Evidence',
+  'action.openAuditTrail': 'Open Audit Trail',
+  'action.viewTenderRegister': 'View Tender Register',
+  'action.printRegister': 'Print Register',
 
-  // Statuses
+  // ─── Statuses ──────────────────────────────────────────────────────────────
   'status.received': 'Submitted',
   'status.registered': 'Registered',
   'status.underScrutiny': 'Under Verification',
@@ -59,12 +98,12 @@ export const en = {
   'status.disposed': 'Completed',
   'status.overdue': 'Exception Found',
 
-  // Priority / Risk
+  // ─── Priority / Risk ───────────────────────────────────────────────────────
   'priority.immediate': 'Critical Risk',
   'priority.urgent': 'High Risk',
   'priority.routine': 'Standard',
 
-  // Table Headers
+  // ─── Table Headers ─────────────────────────────────────────────────────────
   'th.fileNo': 'Tender Number',
   'th.subject': 'Tender Title / Scope',
   'th.department': 'Procuring Department',
@@ -75,16 +114,107 @@ export const en = {
   'th.slaStatus': 'Compliance Status',
   'th.priority': 'Risk Level',
   'th.action': 'Action',
+  'th.tenderId': 'Tender ID',
+  'th.tenderTitle': 'Tender Title / Bidder',
+  'th.status': 'Status',
+  'th.compliance': 'Compliance',
+  'th.risk': 'Risk',
+  'th.officerAction': 'Officer Action',
+  'th.timestamp': 'Timestamp',
+  'th.userActor': 'User / Actor',
+  'th.entitySubject': 'Entity / Subject',
+  'th.resultDetails': 'Result & Details',
 
-  // Statistics
+  // ─── Statistics ────────────────────────────────────────────────────────────
   'stat.totalFiles': 'Active Tenders',
   'stat.todayReceived': 'Bids Submitted Today',
   'stat.inProcess': 'Under Verification',
   'stat.pendingTotal': 'Pending Reviews',
   'stat.slaOverdue': 'Exceptions Detected',
   'stat.disposedTotal': 'Total Evaluated',
+  'stat.activeTenders': 'Active tenders',
+  'stat.underVerification': 'Under verification',
+  'stat.highRisk': 'High risk',
+  'stat.pendingDocuments': 'Pending documents',
+  'stat.exceptionsIdentified': 'Exceptions identified',
+  'stat.withExceptions': 'With exceptions',
+  'stat.pendingDocs': 'Pending docs',
 
-  // Disclaimer
-  'footer.prototypeNotice': 'Government Procurement • Prototype / Demonstration • SIH26100',
-  'footer.nicAttribution': 'Designed and Developed for Government Procurement Verification Workflows',
+  // ─── Dashboard Page ────────────────────────────────────────────────────────
+  'page.dashboard.workspace': 'Procurement Officer Workspace',
+  'page.dashboard.title': 'Procurement Compliance Dashboard',
+  'page.dashboard.subtitle': 'Procurement compliance assessment • Prototype / Demonstration • SIH26100',
+  'page.dashboard.recentAssessments': 'Recent tender assessments',
+  'page.dashboard.recentAssessmentsDesc': 'Compliance status is evidence-backed and requires officer review before final qualification.',
+  'page.dashboard.attentionRequired': 'Attention required',
+  'page.dashboard.verificationActivity': 'Verification activity',
+  'page.dashboard.workQueue': 'Work queue',
+  'page.dashboard.decisionNotice': 'Decision-support notice:',
+  'page.dashboard.decisionNoticeText': 'System-generated compliance assessment based on submitted bidder documents and Sandbox verification adapters. Final qualification or disqualification decision rests strictly with the designated Procurement Officer.',
+  'page.dashboard.reviewExceptions': 'Review exception details',
+
+  // ─── Verification Page ─────────────────────────────────────────────────────
+  'page.verification.workspace': 'Procurement Officer Workspace',
+  'page.verification.title': 'Procurement Verification',
+  'page.verification.subtitle': 'Select a bidder to begin or continue compliance verification.',
+  'page.verification.loadingQueue': 'Loading verification queue…',
+  'page.verification.unableToLoad': 'Unable to load verification queue.',
+  'page.verification.verificationStatus': 'Verification Status',
+  'page.verification.bidderInfo': 'Bidder Information',
+  'page.verification.requiredDocs': 'Required Documents',
+  'page.verification.complianceAssessment': 'Compliance Assessment',
+  'page.verification.evidence': 'Evidence',
+  'page.verification.discrepancies': 'Discrepancies',
+  'page.verification.officerReview': 'Officer Review',
+  'page.verification.summaryStats': 'Verification Summary',
+  'page.verification.searchPlaceholder': 'Search by bidder name or ID…',
+
+  // ─── Integrity Page ────────────────────────────────────────────────────────
+  'page.integrity.workspace': 'Procurement Integrity Analysis',
+  'page.integrity.title': 'Procurement Integrity',
+  'page.integrity.subtitle': 'Explainable integrity risk signals and procurement anomaly analysis.',
+  'page.integrity.riskSignals': 'Risk Signals',
+  'page.integrity.integrityRisk': 'Integrity Risk',
+  'page.integrity.recommendedAction': 'Recommended Action',
+  'page.integrity.vendorRelationships': 'Vendor Relationships',
+  'page.integrity.bidPatternAnalysis': 'Bid Pattern Analysis',
+  'page.integrity.tenderInfo': 'Tender Information',
+  'page.integrity.selectTender': 'Select Tender',
+  'page.integrity.selectBidder': 'Select Bidder',
+  'page.integrity.allBidders': 'All Bidders',
+  'page.integrity.findings': 'Integrity Findings',
+
+  // ─── Audit Trail Page ──────────────────────────────────────────────────────
+  'page.audit.workspace': 'Tamper-Evident Activity Register',
+  'page.audit.title': 'Procurement Audit Trail',
+  'page.audit.subtitle': 'Chronological log of document uploads, automated OCR extractions, compliance findings, and officer decisions.',
+  'page.audit.registerEntries': 'Audit register entries',
+  'page.audit.systemTimestamp': 'System timestamp: Asia/Kolkata (IST)',
+  'page.audit.printRegister': 'Print register',
+  'page.audit.searchPlaceholder': 'Search action or user...',
+  'page.audit.allActions': 'All actions',
+  'page.audit.uploads': 'Uploads',
+  'page.audit.verifications': 'Verifications',
+  'page.audit.officerDecisions': 'Officer decisions',
+
+  // ─── Documents / OCR ───────────────────────────────────────────────────────
+  'page.documents.title': 'Document Repository',
+  'page.documents.upload': 'Document Upload',
+  'page.documents.ocr': 'OCR / Text Extraction',
+  'page.documents.requiredDocs': 'Required Documents',
+
+  // ─── Header ────────────────────────────────────────────────────────────────
+  'header.searchPlaceholder': 'Search tender ID, bidder, document...',
+  'header.notifications': 'Notifications',
+  'header.pendingActions': 'pending officer actions',
+  'header.profile': 'Officer Profile',
+  'header.systemCredentials': 'System Credentials & Roles',
+
+  // ─── Footer ────────────────────────────────────────────────────────────────
+  'footer.prototypeNotice': 'Government Procurement • CPCL • Ministry of Petroleum & Natural Gas • SIH26100',
+  'footer.nicAttribution': 'An evidence-first procurement intelligence platform for verifying bidder compliance in petroleum-sector government procurement.',
+  'footer.systemModules': 'System Modules',
+  'footer.websitePolicies': 'Website Policies',
+  'footer.helpdesk': 'Helpdesk & Technical Support',
+  'footer.copyright': '© 2026 Government of India • National Informatics Centre (NIC) • All Rights Reserved.',
 };

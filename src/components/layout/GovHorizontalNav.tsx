@@ -182,14 +182,14 @@ export const GovHorizontalNav: React.FC = () => {
                   : 'bg-[#071A2E] text-gray-200 hover:text-white hover:bg-[#123F6D] border-[#174A7C]'
               }`}
             >
-              <span>{language === 'hi' ? 'अन्य ▼' : 'More ▼'}</span>
+              <span>{t('nav.more')}</span>
               <ChevronDown className="w-3 h-3 ml-0.5" />
             </button>
 
             {moreDropdownOpen && (
               <div className="absolute right-0 mt-1 w-56 bg-[#0B3558] border border-[#174A7C] rounded-[2px] shadow-lg py-1 z-50 divide-y divide-[#123F6D]">
                 <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-300 tracking-wider">
-                  Governance &amp; Administrative MIS
+                  {t('nav.moreGroup')}
                 </div>
                 <div className="py-1">
                   {secondaryNavItems.map((sub) => {
@@ -221,7 +221,7 @@ export const GovHorizontalNav: React.FC = () => {
           {/* Mobile Header Banner & Hamburger Toggle */}
           <div className="flex md:hidden items-center justify-between w-full">
             <span className="text-xs font-serif font-bold text-white flex items-center space-x-1.5">
-              <span>SIH26100 • GeM Bid Compliance Verification</span>
+              <span>SIH26100 • {language === 'hi' ? 'GeM बोली अनुपालन सत्यापन' : 'GeM Bid Compliance Verification'}</span>
             </span>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -239,7 +239,7 @@ export const GovHorizontalNav: React.FC = () => {
         <div className="md:hidden bg-[#071A2E] border-t border-[#123F6D] px-4 py-3 space-y-3 divide-y divide-gray-800">
           <div>
             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-1.5">
-              Core Operations &amp; Registries
+              {t('nav.mobileGroup1')}
             </span>
             <div className="grid grid-cols-2 gap-1">
               {primaryNavItems.map((item) => {
@@ -273,7 +273,7 @@ export const GovHorizontalNav: React.FC = () => {
 
           <div className="pt-2">
             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-1.5">
-              Analytics &amp; System Administration
+              {t('nav.mobileGroup2')}
             </span>
             <div className="grid grid-cols-2 gap-1">
               {secondaryNavItems.map((item) => {

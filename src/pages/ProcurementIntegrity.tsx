@@ -25,6 +25,7 @@ import {
 import { apiClient, isUsingMockApi } from '../services/api/apiClient';
 import { IntegrityAssessment, IntegrityFinding, IntegrityEvidence } from '../types';
 import { useProcurement } from '../context/ProcurementContext';
+import { useLanguage } from '../context/LanguageContext';
 
 // ─── Human-readable Signal Types & Badges ─────────────────────────────────────
 const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
@@ -64,6 +65,7 @@ const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
 
 export const ProcurementIntegrity: React.FC = () => {
   const { bidders, tenderId: contextTenderId } = useProcurement();
+  const { t } = useLanguage();
 
   const [tendersList, setTendersList] = useState<any[]>([]);
   const [selectedTenderId, setSelectedTenderId] = useState<string>(contextTenderId || 'TEN-2026-001');
@@ -207,32 +209,32 @@ export const ProcurementIntegrity: React.FC = () => {
   return (
     <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans">
       {/* ─── Breadcrumb & Title Bar ────────────────────────────────────────── */}
-      <div className="border-b border-[#D9DDE3] pb-3 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-[3px] shadow-sm border">
+      <div className="border-b border-[#CBD5E1] pb-3 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-[2px] shadow-xs border">
         <div>
-          <div className="flex items-center gap-1 text-[11px] font-semibold text-[#475569] uppercase tracking-wider">
-            <span>Procurement Operations</span>
+          <div className="flex items-center gap-1 text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
+            <span>{t('page.integrity.workspace')}</span>
             <ChevronRight className="w-3 h-3 text-[#94A3B8]" />
-            <span className="text-[#0B2A4A]">Integrity Review</span>
+            <span className="text-[#0B2A4A]">{t('page.integrity.findings')}</span>
           </div>
           <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] mt-1 flex items-center gap-2">
             <ShieldAlert className="w-6 h-6 text-[#0B2A4A]" />
-            Procurement Integrity Officer Workspace
+            {t('page.integrity.title')}
           </h1>
           <p className="text-xs text-[#475569] mt-0.5">
-            Deterministic signal detection, bid pattern analysis, and evidence-backed integrity evaluation for procurement officers.
+            {t('page.integrity.subtitle')}
           </p>
         </div>
 
         {/* Live Engine Indicator & Refresh */}
         <div className="flex items-center gap-2 self-start md:self-center">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px]">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px]">
             <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
             Real-Time Integrity Engine
           </span>
           <button
             onClick={loadIntegrityData}
             disabled={loading}
-            className="px-3 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] border border-[#0B2A4A] flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+            className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             title="Refresh assessment from backend database"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -242,7 +244,7 @@ export const ProcurementIntegrity: React.FC = () => {
       </div>
 
       {/* ─── Context Selector Control Bar ──────────────────────────────────── */}
-      <div className="bg-[#F8FAFC] border border-[#D9DDE3] rounded-[3px] p-3 shadow-xs">
+      <div className="bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] p-3 shadow-xs">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             {/* Tender Selection */}
@@ -306,7 +308,7 @@ export const ProcurementIntegrity: React.FC = () => {
 
       {/* ─── Loading State ─────────────────────────────────────────────────── */}
       {loading && (
-        <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-12 text-center shadow-sm">
+        <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-12 text-center shadow-xs">
           <div className="flex flex-col items-center justify-center space-y-3">
             <RefreshCw className="w-8 h-8 text-[#0B2A4A] animate-spin" />
             <div className="font-semibold text-sm text-[#0B2A4A]">Loading procurement integrity assessment...</div>
@@ -319,7 +321,7 @@ export const ProcurementIntegrity: React.FC = () => {
 
       {/* ─── Error State ───────────────────────────────────────────────────── */}
       {!loading && error && (
-        <div className="bg-[#FEF2F2] border border-[#F87171] rounded-[3px] p-6 shadow-sm">
+        <div className="bg-[#FEF2F2] border border-[#F87171] rounded-[2px] p-6 shadow-xs">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-6 h-6 text-[#DC2626] flex-shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -328,7 +330,7 @@ export const ProcurementIntegrity: React.FC = () => {
               <div className="mt-3">
                 <button
                   onClick={loadIntegrityData}
-                  className="px-3 py-1.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-semibold rounded-[2px] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="ux4g-btn ux4g-btn-danger ux4g-btn-sm inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Retry Assessment</span>
@@ -345,7 +347,7 @@ export const ProcurementIntegrity: React.FC = () => {
           {/* ── 1. Top KPI Summary Row ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Risk Tier */}
-            <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-3.5 shadow-xs flex flex-col justify-between">
+            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
               <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
                 Integrity Risk Classification
               </div>
@@ -358,7 +360,7 @@ export const ProcurementIntegrity: React.FC = () => {
             </div>
 
             {/* Numerical Score */}
-            <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-3.5 shadow-xs flex flex-col justify-between">
+            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
               <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
                 Composite Risk Score
               </div>
@@ -385,7 +387,7 @@ export const ProcurementIntegrity: React.FC = () => {
             </div>
 
             {/* Confidence Score */}
-            <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-3.5 shadow-xs flex flex-col justify-between">
+            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
               <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
                 Deterministic Confidence
               </div>
@@ -403,7 +405,7 @@ export const ProcurementIntegrity: React.FC = () => {
             </div>
 
             {/* Active Findings Count */}
-            <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-3.5 shadow-xs flex flex-col justify-between">
+            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
               <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
                 Identified Signals
               </div>
