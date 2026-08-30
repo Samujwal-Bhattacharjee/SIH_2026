@@ -66,10 +66,10 @@
     "semantic_hash": "1dcf32b407de9165603fcafc5bbdc2a3"
   },
   "backend/app/api/routes/procurement.py": {
-    "mtime": 1787598668.0943747,
-    "seen": 1787863686.6306608,
-    "ast_hash": "68407f486c65bf955756da829ee0536c",
-    "semantic_hash": "68407f486c65bf955756da829ee0536c"
+    "mtime": 1788096120.3159666,
+    "seen": 1788096237.4269867,
+    "ast_hash": "6840ae14004e98af4584c51354c8c675",
+    "semantic_hash": ""
   },
   "backend/app/api/routes/projects.py": {
     "mtime": 1787514013.4496725,
@@ -993,6 +993,48 @@
     "mtime": 1786984099.3781676,
     "seen": 1788092041.07238,
     "ast_hash": "9960a24288958394ac50e57ff638b036",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/__init__.py": {
+    "mtime": 1788095904.9171462,
+    "seen": 1788096237.435852,
+    "ast_hash": "1aef237644b920d91ba65bcb6a91044f",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/bid_analyzer.py": {
+    "mtime": 1788096182.1006312,
+    "seen": 1788096237.435852,
+    "ast_hash": "a297f8466afd3b8fd505219257b400bf",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/feature_extractor.py": {
+    "mtime": 1788096112.692366,
+    "seen": 1788096237.435852,
+    "ast_hash": "ec83cbcfe747642aeeb9a9a659d707e3",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/models.py": {
+    "mtime": 1788095844.7252212,
+    "seen": 1788096237.435852,
+    "ast_hash": "f6d370bb0fb47a8a3d2cf42bc766b36b",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/relationship_analyzer.py": {
+    "mtime": 1788095868.112622,
+    "seen": 1788096237.435852,
+    "ast_hash": "128c537e5268fdf6342a555b17dda110",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/risk_engine.py": {
+    "mtime": 1788095898.169107,
+    "seen": 1788096237.435852,
+    "ast_hash": "a1d45d83292187e6c53b7681050eabc6",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_integrity_engine.py": {
+    "mtime": 1788096197.6227932,
+    "seen": 1788096237.4506774,
+    "ast_hash": "2c57739582f329052738092dba14af37",
     "semantic_hash": ""
   }
 }
