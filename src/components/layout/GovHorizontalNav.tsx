@@ -3,20 +3,11 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   FolderKanban,
-  Clock,
-  FileText,
-  ScanLine,
-  Search,
-  BrainCircuit,
-  GitBranch,
-  AlertOctagon,
-  Cpu,
-  BarChart3,
-  ScrollText,
-  Building2,
-  Settings,
   ShieldCheck,
-  ClipboardCheck,
+  ShieldAlert,
+  ScrollText,
+  BarChart3,
+  Settings,
   Menu,
   X,
   ChevronLeft,
@@ -43,22 +34,17 @@ export const GovHorizontalNav: React.FC = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  // Primary Horizontal Navigation Items (Core Workflow & Intelligence)
+  // Primary Horizontal Navigation Items — 5-item structure (SIH final round)
   const primaryNavItems: NavItem[] = [
     { name: 'Dashboard', nameHi: 'डैशबोर्ड', key: 'dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Tenders', nameHi: 'निविदाएं', key: 'tenders', path: '/tenders', icon: FolderKanban },
-    { name: 'Bidder Verification', nameHi: 'बोलीदाता सत्यापन', key: 'verification', path: '/verification/BID-001', icon: ShieldCheck, badge: '1' },
-    { name: 'Documents', nameHi: 'दस्तावेज़', key: 'documents', path: '/documents', icon: FileText },
-    { name: 'Upload & Extract', nameHi: 'अपलोड और निष्कर्षण', key: 'upload', path: '/documents/upload', icon: ScanLine },
-    { name: 'Compliance', nameHi: 'अनुपालन', key: 'compliance', path: '/verification/BID-002', icon: ClipboardCheck },
-    { name: 'Verification Sources', nameHi: 'सत्यापन स्रोत', key: 'sources', path: '/verification-sources', icon: Search },
-    { name: 'Reports', nameHi: 'प्रतिवेदन', key: 'reports', path: '/reports', icon: BarChart3 },
-    { name: 'Audit Trail', nameHi: 'ऑडिट ट्रेल', key: 'audit', path: '/audit-trail', icon: ScrollText },
+    { name: 'Procurement', nameHi: 'खरीद', key: 'tenders', path: '/tenders', icon: FolderKanban },
+    { name: 'Verification', nameHi: 'सत्यापन', key: 'verification', path: '/verification', icon: ShieldCheck },
+    { name: 'Integrity', nameHi: 'अखंडता', key: 'integrity', path: '/integrity', icon: ShieldAlert },
+    { name: 'Audit', nameHi: 'ऑडिट', key: 'audit', path: '/audit-trail', icon: ScrollText },
   ];
 
   // Secondary Navigation Items grouped in "More ▼" Dropdown
   const secondaryNavItems: NavItem[] = [
-    { name: 'Verification Sources', nameHi: 'सत्यापन स्रोत', key: 'sources', path: '/verification-sources', icon: Building2 },
     { name: 'Reports', nameHi: 'प्रतिवेदन', key: 'reports', path: '/reports', icon: BarChart3 },
     { name: 'Settings', nameHi: 'सेटिंग्स', key: 'settings', path: '/settings', icon: Settings },
   ];

@@ -6,22 +6,8 @@ import { LanguageProvider } from './context/LanguageContext';
 import { AppLayout } from './components/layout/AppLayout';
 
 import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
-import { Projects } from './pages/Projects';
-import { ProjectDetail } from './pages/ProjectDetail';
-import { Files } from './pages/Files';
-import { FileDetail } from './pages/FileDetail';
-import { PendingFiles } from './pages/PendingFiles';
-import { Documents } from './pages/Documents';
-import { UploadDocument } from './pages/UploadDocument';
 import { Search } from './pages/Search';
-import { Intelligence } from './pages/Intelligence';
-import { Workflow } from './pages/Workflow';
-import { Risk } from './pages/Risk';
-import { Simulation } from './pages/Simulation';
 import { Reports } from './pages/Reports';
-import { AuditLogs } from './pages/AuditLogs';
-import { Departments } from './pages/Departments';
 import { Settings } from './pages/Settings';
 import { Loader2 } from 'lucide-react';
 import { ProcurementProvider } from './context/ProcurementContext';
@@ -31,6 +17,7 @@ import { BidderVerification } from './pages/BidderVerification';
 import { ProcurementDocuments } from './pages/ProcurementDocuments';
 import { ProcurementAuditTrail } from './pages/ProcurementAuditTrail';
 import { VerificationSources } from './pages/VerificationSources';
+import { useProcurement } from './context/ProcurementContext';
 
 // Route guard for authenticated session
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -69,6 +56,16 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+// Verification landing: redirects to the first active bidder or shows the tenders page
+const VerificationLanding: React.FC = () => {
+  const { bidders } = useProcurement();
+  const firstBidder = bidders[0];
+  if (firstBidder) {
+    return <Navigate to={`/verification/${firstBidder.id}`} replace />;
+  }
+  return <Navigate to="/tenders" replace />;
+};
+
 export function App() {
   return (
     <LanguageProvider>
@@ -98,7 +95,9 @@ export function App() {
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<ProcurementDashboard />} />
                 <Route path="/tenders" element={<Tenders />} />
+                <Route path="/verification" element={<VerificationLanding />} />
                 <Route path="/verification/:bidderId" element={<BidderVerification />} />
+                <Route path="/integrity" element={<VerificationSources />} />
                 <Route path="/verification-sources" element={<VerificationSources />} />
                 <Route path="/sources" element={<VerificationSources />} />
                 <Route path="/audit-trail" element={<ProcurementAuditTrail />} />
@@ -110,12 +109,12 @@ export function App() {
                 <Route path="/files/:caseId" element={<Navigate to="/tenders" replace />} />
                 <Route path="/cases" element={<Navigate to="/tenders" replace />} />
                 <Route path="/cases/:caseId" element={<Navigate to="/tenders" replace />} />
-                <Route path="/pending" element={<Navigate to="/verification/BID-002" replace />} />
-                <Route path="/intelligence" element={<Navigate to="/verification/BID-001" replace />} />
+                <Route path="/pending" element={<Navigate to="/verification" replace />} />
+                <Route path="/intelligence" element={<Navigate to="/verification" replace />} />
                 <Route path="/analytics" element={<Navigate to="/reports" replace />} />
-                <Route path="/workflow" element={<Navigate to="/verification-sources" replace />} />
-                <Route path="/risk" element={<Navigate to="/verification/BID-002" replace />} />
-                <Route path="/simulation" element={<Navigate to="/verification-sources" replace />} />
+                <Route path="/workflow" element={<Navigate to="/integrity" replace />} />
+                <Route path="/risk" element={<Navigate to="/verification" replace />} />
+                <Route path="/simulation" element={<Navigate to="/integrity" replace />} />
                 <Route path="/audit-logs" element={<Navigate to="/audit-trail" replace />} />
 
                 {/* Document Repository & OCR Scan */}
@@ -128,9 +127,6 @@ export function App() {
 
                 {/* Procurement Compliance Reports */}
                 <Route path="/reports" element={<Reports />} />
-
-                {/* Departments Directory */}
-                <Route path="/departments" element={<Departments />} />
 
                 {/* System Settings */}
                 <Route path="/settings" element={<Settings />} />
