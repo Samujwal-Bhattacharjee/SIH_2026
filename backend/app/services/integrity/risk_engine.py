@@ -146,6 +146,9 @@ def assess_tender_integrity(
     Consumes live persistent store data or custom test fixtures.
     """
     tender = ps.get_tender_by_id(tender_id)
+    if not tender and custom_bidders is None:
+        raise ValueError(f"Tender '{tender_id}' not found")
+
     tender_title = tender.get("title", f"Tender {tender_id}") if tender else f"Tender {tender_id}"
     estimated_val = float(tender.get("estimated_value", 0)) if tender else None
 
@@ -156,12 +159,25 @@ def assess_tender_integrity(
         raw_bidders = ps.get_bidders(tender_id)
         bidders = [extract_bidder_features(b, tender_id) for b in raw_bidders]
 
-    # Load historical tenders (or pull from DB)
+    # Load historical tenders (or pull from DB and enrich with participants & winners)
     if custom_historical_tenders is not None:
         historical_tenders = custom_historical_tenders
     else:
         all_tenders = ps.get_tenders()
-        historical_tenders = [t for t in all_tenders if t.get("id") != tender_id]
+        historical_tenders = []
+        for t in all_tenders:
+            if t.get("id") != tender_id:
+                t_copy = dict(t)
+                t_bidders = ps.get_bidders(t.get("id"))
+                t_copy["participants"] = t_bidders
+                winners = [
+                    b for b in t_bidders
+                    if b.get("status") in ("AWARDED", "WINNER") or b.get("officer_decision") == "QUALIFIED"
+                ]
+                if winners:
+                    t_copy["winner_id"] = winners[0].get("id")
+                    t_copy["winner_name"] = winners[0].get("legal_name")
+                historical_tenders.append(t_copy)
 
     all_findings: List[IntegrityFinding] = []
 
@@ -213,17 +229,7 @@ def assess_bidder_integrity(
     """
     bidder = ps.get_bidder_by_id(bidder_id)
     if not bidder:
-        return IntegrityAssessment(
-            bidder_id=bidder_id,
-            overall_risk_score=0.0,
-            risk_level=RiskLevel.LOW,
-            confidence_score=1.0,
-            findings_count=0,
-            findings=[],
-            contributing_signals=[],
-            assessed_at=datetime.now(timezone.utc).isoformat(),
-            summary=f"Bidder '{bidder_id}' not found in procurement registry."
-        )
+        raise ValueError(f"Bidder '{bidder_id}' not found in procurement registry.")
 
     t_id = tender_id or bidder.get("tender_id") or "TEN-2026-001"
     tender_assessment = assess_tender_integrity(t_id)

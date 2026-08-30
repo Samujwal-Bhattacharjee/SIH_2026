@@ -396,9 +396,9 @@
     "semantic_hash": "aec6d59b4aee4c88e5830fbcf57ed5c9"
   },
   "src/App.tsx": {
-    "mtime": 1788110430.5802844,
-    "seen": 1788110517.7092836,
-    "ast_hash": "ef60f6b0412afdce1e23cece551e47b1",
+    "mtime": 1788110893.3345935,
+    "seen": 1788110948.9165974,
+    "ast_hash": "18b9c22efaf0a36e26fd0a695a03a4d2",
     "semantic_hash": ""
   },
   "src/assets/Emblem.tsx": {
@@ -546,21 +546,21 @@
     "semantic_hash": "a59a4a500c4f5263b4cc222559787cc7"
   },
   "src/components/layout/GovBreadcrumb.tsx": {
-    "mtime": 1787514013.518735,
-    "seen": 1787863686.6306608,
-    "ast_hash": "60d4aa0061d71de55d6e0453fc43d029",
-    "semantic_hash": "60d4aa0061d71de55d6e0453fc43d029"
+    "mtime": 1788112972.6143293,
+    "seen": 1788113025.695248,
+    "ast_hash": "371e1d5c29959eacf1ebfc014d0f1bb3",
+    "semantic_hash": ""
   },
   "src/components/layout/GovFooter.tsx": {
-    "mtime": 1787514013.5230856,
-    "seen": 1787863686.63167,
-    "ast_hash": "ee4ac215875b81406e003d7b10f9c005",
-    "semantic_hash": "ee4ac215875b81406e003d7b10f9c005"
+    "mtime": 1788112981.068067,
+    "seen": 1788113025.695248,
+    "ast_hash": "850f7d2cac7a62789e5be30bbe6a55fa",
+    "semantic_hash": ""
   },
   "src/components/layout/GovHorizontalNav.tsx": {
-    "mtime": 1788110389.9817958,
-    "seen": 1788110517.7181697,
-    "ast_hash": "d70609e563b01a08aca47e2d2101b713",
+    "mtime": 1788112720.075118,
+    "seen": 1788113025.695248,
+    "ast_hash": "6c908f73cea69112495ba5eae2ccaaf4",
     "semantic_hash": ""
   },
   "src/components/layout/GovMainHeader.tsx": {
@@ -672,9 +672,9 @@
     "semantic_hash": "a0f55cce4b416027df4a6fdbd0432bc6"
   },
   "src/pages/BidderVerification.tsx": {
-    "mtime": 1788094748.7143815,
-    "seen": 1788095063.7642975,
-    "ast_hash": "f6e935687aed25d7847d9ceb77469a67",
+    "mtime": 1788112963.0799594,
+    "seen": 1788113025.7018628,
+    "ast_hash": "792ee366b390cfe226b8080cb4543b03",
     "semantic_hash": ""
   },
   "src/pages/CaseDetail.tsx": {
@@ -738,22 +738,22 @@
     "semantic_hash": "2d20e057c8b6d360870b7259ef64ca92"
   },
   "src/pages/ProcurementAuditTrail.tsx": {
-    "mtime": 1787598668.1124227,
-    "seen": 1787863686.63167,
-    "ast_hash": "04291458eb775e69cd77a90596464c24",
-    "semantic_hash": "04291458eb775e69cd77a90596464c24"
+    "mtime": 1788112945.5401063,
+    "seen": 1788113025.7048733,
+    "ast_hash": "68cdca9aa2b47378b0d8ba0abff823ac",
+    "semantic_hash": ""
   },
   "src/pages/ProcurementDashboard.tsx": {
-    "mtime": 1787598668.1139572,
-    "seen": 1787863686.63167,
-    "ast_hash": "8281fcf78725e49b8ad87a1ab890a0da",
-    "semantic_hash": "8281fcf78725e49b8ad87a1ab890a0da"
+    "mtime": 1788112754.2456117,
+    "seen": 1788113025.7048733,
+    "ast_hash": "b11a4d402adbf5cc582e935f48c19625",
+    "semantic_hash": ""
   },
   "src/pages/ProcurementDocuments.tsx": {
-    "mtime": 1787598668.1139572,
-    "seen": 1787863686.63167,
-    "ast_hash": "aa1ddd4dedd26e652d321f3e25fc9afb",
-    "semantic_hash": "aa1ddd4dedd26e652d321f3e25fc9afb"
+    "mtime": 1788112913.4065068,
+    "seen": 1788113025.7048733,
+    "ast_hash": "2bc1f201bacd1cc03389e1a5056973da",
+    "semantic_hash": ""
   },
   "src/pages/ProjectDetail.tsx": {
     "mtime": 1787514013.5502913,
@@ -798,10 +798,10 @@
     "semantic_hash": "0e09a887ccc65e19c1e439215ca15b5e"
   },
   "src/pages/Tenders.tsx": {
-    "mtime": 1787598668.1139572,
-    "seen": 1787863686.63167,
-    "ast_hash": "c067b13edc45f7506bad63e9ea005725",
-    "semantic_hash": "c067b13edc45f7506bad63e9ea005725"
+    "mtime": 1788112789.7232454,
+    "seen": 1788113025.7068734,
+    "ast_hash": "911665a32adf0398110751065b5f8c8f",
+    "semantic_hash": ""
   },
   "src/pages/UploadDocument.tsx": {
     "mtime": 1787514001.0889554,
@@ -810,10 +810,10 @@
     "semantic_hash": "2eb5bd62127ff2e8f0a8f3828643e308"
   },
   "src/pages/VerificationSources.tsx": {
-    "mtime": 1787514013.5634582,
-    "seen": 1787863686.63167,
-    "ast_hash": "c3d3512e5353a5a6a88f4232711a3a30",
-    "semantic_hash": "c3d3512e5353a5a6a88f4232711a3a30"
+    "mtime": 1788112814.0948484,
+    "seen": 1788113025.7068734,
+    "ast_hash": "cd28243210507d3fc82dc504625f9bc4",
+    "semantic_hash": ""
   },
   "src/pages/Workflow.tsx": {
     "mtime": 1787514013.565542,
@@ -1041,6 +1041,12 @@
     "mtime": 1788096084.5578516,
     "seen": 1788110517.739114,
     "ast_hash": "3b51471361a34ee4863dd1f47c58788c",
+    "semantic_hash": ""
+  },
+  "src/pages/VerificationHub.tsx": {
+    "mtime": 1788112938.4148834,
+    "seen": 1788113025.7068734,
+    "ast_hash": "3d0fb76844a8f3e66940b57cea393673",
     "semantic_hash": ""
   }
 }

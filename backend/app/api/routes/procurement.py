@@ -27,7 +27,7 @@ from app.core import procurement_store as ps
 from app.services.ocr_service import classify_document_type
 from app.services.procurement_service import DEFAULT_TENDER_REQUIREMENTS, run_full_verification
 from app.services.document_service import validate_file, process_ocr_from_bytes
-from app.services.integrity import assess_tender_integrity, assess_bidder_integrity
+from app.services.integrity import assess_tender_integrity, assess_bidder_integrity, IntegrityAssessment
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -476,19 +476,27 @@ async def get_procurement_dashboard(user: dict = Depends(get_current_user)):
 # PROCUREMENT INTEGRITY ENGINE
 # ============================================================
 
-@router.get("/tenders/{tender_id}/integrity", summary="Get tender procurement integrity assessment")
+@router.get(
+    "/tenders/{tender_id}/integrity",
+    response_model=IntegrityAssessment,
+    summary="Get tender procurement integrity assessment"
+)
 async def get_tender_integrity_endpoint(tender_id: str, user: dict = Depends(get_current_user)):
     """Run deterministic integrity analysis for a tender and its participating bidders."""
     tender = ps.get_tender_by_id(tender_id)
     if not tender:
-        raise HTTPException(status_code=404, detail="Tender not found")
+        raise HTTPException(status_code=404, detail=f"Tender '{tender_id}' not found")
     return assess_tender_integrity(tender["id"])
 
 
-@router.get("/bidders/{bidder_id}/integrity", summary="Get bidder procurement integrity assessment")
+@router.get(
+    "/bidders/{bidder_id}/integrity",
+    response_model=IntegrityAssessment,
+    summary="Get bidder procurement integrity assessment"
+)
 async def get_bidder_integrity_endpoint(bidder_id: str, user: dict = Depends(get_current_user)):
     """Run deterministic integrity analysis for a specific bidder."""
     bidder = ps.get_bidder_by_id(bidder_id)
     if not bidder:
-        raise HTTPException(status_code=404, detail="Bidder not found")
+        raise HTTPException(status_code=404, detail=f"Bidder '{bidder_id}' not found")
     return assess_bidder_integrity(bidder_id)

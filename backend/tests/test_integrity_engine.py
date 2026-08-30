@@ -538,21 +538,138 @@ def test_api_tender_and_bidder_integrity(auth_client):
     res = auth_client.get("/api/v1/procurement/tenders/TEN-2026-001/integrity")
     assert res.status_code == 200
     data = res.json()
+    assert data["tender_id"] == "TEN-2026-001"
     assert "overall_risk_score" in data
     assert "risk_level" in data
+    assert data["risk_level"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
     assert "confidence_score" in data
+    assert 0.0 <= data["confidence_score"] <= 1.0
+    assert "findings_count" in data
     assert "findings" in data
+    assert isinstance(data["findings"], list)
+    assert "contributing_signals" in data
     assert "summary" in data
+    assert "assessed_at" in data
 
     # 2. Bidder Integrity Endpoint
     res_b = auth_client.get("/api/v1/procurement/bidders/BID-001/integrity")
     assert res_b.status_code == 200
     data_b = res_b.json()
+    assert data_b["bidder_id"] == "BID-001"
     assert "overall_risk_score" in data_b
     assert "risk_level" in data_b
-    assert "bidder_id" in data_b
-    assert data_b["bidder_id"] == "BID-001"
+    assert data_b["risk_level"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
+    assert "findings" in data_b
+    assert "summary" in data_b
 
-    # 3. 404 for non-existent tender
-    res_404 = auth_client.get("/api/v1/procurement/tenders/NON-EXISTENT/integrity")
-    assert res_404.status_code == 404
+
+def test_api_missing_entities_404_error(auth_client):
+    """Verify non-existent tenders and bidders return proper 404 status codes."""
+    # Non-existent tender
+    res_t404 = auth_client.get("/api/v1/procurement/tenders/TEN-NON-EXISTENT-999/integrity")
+    assert res_t404.status_code == 404
+    assert "not found" in res_t404.json()["detail"].lower()
+
+    # Non-existent bidder
+    res_b404 = auth_client.get("/api/v1/procurement/bidders/BID-NON-EXISTENT-999/integrity")
+    assert res_b404.status_code == 404
+    assert "not found" in res_b404.json()["detail"].lower()
+
+
+def test_sparse_data_scenarios():
+    """Verify graceful handling for sparse datasets: no historical data, single tender, single bidder."""
+    # Scenario A: Zero bidders in a tender
+    assessment_empty = assess_tender_integrity(
+        tender_id="TEN-EMPTY",
+        custom_bidders=[],
+        custom_historical_tenders=[]
+    )
+    assert assessment_empty.risk_level == RiskLevel.LOW
+    assert assessment_empty.overall_risk_score == 0.0
+    assert assessment_empty.findings_count == 0
+    assert len(assessment_empty.findings) == 0
+
+    # Scenario B: Single bidder in a tender
+    single_bidder = [
+        BidderFeature(
+            bidder_id="BID-SOLO",
+            tender_id="TEN-SOLO",
+            legal_name="Solo Infrastructure Ltd",
+            normalized_name="solo infrastructure ltd",
+            gstin="27AABCS1234S1Z1",
+            pan="AABCS1234S",
+            quote_amount=5000000.0,
+        )
+    ]
+    assessment_solo = assess_tender_integrity(
+        tender_id="TEN-SOLO",
+        custom_bidders=single_bidder,
+        custom_historical_tenders=[]
+    )
+    assert assessment_solo.risk_level == RiskLevel.LOW
+    assert assessment_solo.overall_risk_score == 0.0
+    assert assessment_solo.findings_count == 0
+
+    # Scenario C: Multiple bidders but only 1 historical tender (insufficient for rotation or concentration)
+    two_bidders = [
+        BidderFeature(
+            bidder_id="BID-X1",
+            tender_id="TEN-TWO",
+            legal_name="Xerox Logistics Pvt Ltd",
+            normalized_name="xerox logistics pvt ltd",
+            gstin="27AABCX1111X1Z1",
+            pan="AABCX1111X",
+            quote_amount=8000000.0,
+        ),
+        BidderFeature(
+            bidder_id="BID-X2",
+            tender_id="TEN-TWO",
+            legal_name="Yankee Engineering Corp",
+            normalized_name="yankee engineering corp",
+            gstin="27AABCY2222Y1Z2",
+            pan="AABCY2222Y",
+            quote_amount=9500000.0,
+        ),
+    ]
+    single_history = [{"id": "HT-OLD-1", "winner_id": "BID-X1", "participants": ["BID-X1", "BID-X2"]}]
+    assessment_sparse = assess_tender_integrity(
+        tender_id="TEN-TWO",
+        custom_bidders=two_bidders,
+        custom_historical_tenders=single_history
+    )
+    assert assessment_sparse.risk_level == RiskLevel.LOW
+    assert assessment_sparse.overall_risk_score == 0.0
+    assert assessment_sparse.findings_count == 0
+
+
+def test_frontend_contract_structure_and_safety_language(auth_client):
+    """Verify that the API response contract strictly matches frontend requirements and contains no accusatory terms."""
+    res = auth_client.get("/api/v1/procurement/tenders/TEN-2026-001/integrity")
+    assert res.status_code == 200
+    body = res.json()
+
+    # Top-level required keys
+    required_top_keys = ["tender_id", "overall_risk_score", "risk_level", "confidence_score", "findings_count", "findings", "contributing_signals", "assessed_at", "summary"]
+    for key in required_top_keys:
+        assert key in body, f"Missing required top-level key: {key}"
+
+    # Verify findings structure if present
+    for finding in body.get("findings", []):
+        finding_keys = ["id", "signal_type", "severity", "score_impact", "confidence", "title", "reason", "evidence", "recommended_action", "status", "detected_at"]
+        for fk in finding_keys:
+            assert fk in finding, f"Finding missing key: {fk}"
+
+        # Evidence structure
+        for ev in finding.get("evidence", []):
+            assert "source_type" in ev
+            assert "field" in ev
+            assert "value" in ev
+            assert "description" in ev
+
+        # Safety keywords check
+        forbidden = ["CORRUPTION DETECTED", "FRAUD CONFIRMED", "BRIBE FOUND", "GUILTY OF COLLUSION"]
+        for f_word in forbidden:
+            assert f_word not in finding["title"].upper()
+            assert f_word not in finding["reason"].upper()
+            assert f_word not in finding["recommended_action"].upper()
+
