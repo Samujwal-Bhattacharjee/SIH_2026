@@ -12,13 +12,23 @@ dist
 dist-ssr
 *.local
 
-# Environment files
+# Environment and Credential files
 .env
 .env.*
 !.env.example
 backend/.env
 backend/.env.*
 !backend/.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+secrets.json
+credentials.json
+service_account*.json
+
 
 # Python
 __pycache__/

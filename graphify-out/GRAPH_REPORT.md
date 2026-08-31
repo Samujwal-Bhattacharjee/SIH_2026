@@ -1,16 +1,16 @@
 # Graph Report - SIH  (2026-08-31)
 
 ## Corpus Check
-- 172 files · ~132,393 words
+- 174 files · ~136,869 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1680 nodes · 3370 edges · 104 communities (94 shown, 10 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 53 edges (avg confidence: 0.93)
+- 1719 nodes · 3432 edges · 107 communities (96 shown, 11 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 56 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `846ee244`
+- Built from commit: `8ac48c06`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,11 +20,11 @@
 - priority_engine.py
 - AppLayout.tsx
 - types/index.ts
-- cases.py
+- security.py
 - get_supabase
 - calculate_deadline_status
 - procurement.py
-- ProcurementContext.tsx
+- ProcurementIntegrity.tsx
 - case_service.py
 - Communities (88 total, 14 thin omitted)
 - compilerOptions
@@ -38,7 +38,7 @@
 - detect_case_bottleneck
 - api/index.ts
 - process_ocr
-- create_case
+- cases.py
 - dependencies
 - GOIP Backend — Government File Tracking & Administrative Intelligence System
 - compilerOptions
@@ -51,15 +51,15 @@
 - calculate_case_risk
 - predict_delay
 - extract_text_from_pdf_digital
-- update_case
+- extract_fields_from_text
 - test_documents.py
 - calculate_risk
 - react
-- get_case
-- App.tsx
-- alert_service.py
+- extract_la_fields
+- RelationshipGraph.tsx
+- enrich_case_with_deadlines
 - TestDocumentStatus
-- SystemContext.tsx
+- useAuth
 - GOIP — Government Operations Intelligence Platform
 - generate_land_projects.py
 - plugins
@@ -90,7 +90,7 @@
 - realApi.ts
 - 21. Development Principles
 - 3. Key Capabilities
-- @xyflow/react
+- auth.py
 - TestMLPrediction
 - GOIP — Environment Variables & Configuration Guide
 - 8. Typical Data Flow
@@ -98,19 +98,22 @@
 - 10. Environment Configuration
 - 5. Technology Stack
 - 9. Getting Started
-- react-dom
+- UX4G (User Experience for Government) Design Guidelines
 - react-router-dom
 - @tailwindcss/postcss
+- Enum
+- ProcurementContext.tsx
 - generate_la_recommendations
-- BidderVerification.tsx
-- list_alerts
-- postcss
-- mark_alert_read
-- useProcurement
+- VerificationHub.tsx
+- @supabase/supabase-js
+- tailwindcss
+- lucide-react
+- App.tsx
+- tailwind-merge
 
 ## God Nodes (most connected - your core abstractions)
-1. `get_supabase()` - 66 edges
-2. `react` - 65 edges
+1. `react` - 66 edges
+2. `get_supabase()` - 66 edges
 3. `Communities (88 total, 14 thin omitted)` - 63 edges
 4. `validate_file()` - 28 edges
 5. `assess_tender_integrity()` - 28 edges
@@ -135,15 +138,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (104 total, 10 thin omitted)
+## Communities (107 total, 11 thin omitted)
 
 ### Community 0 - "seed.py"
-Cohesion: 0.19
-Nodes (10): main(), random_date(), Generate a random past date within the given range., seed_case_actions(), seed_cases(), seed_departments(), seed_documents(), seed_land_acquisition_projects() (+2 more)
+Cohesion: 0.15
+Nodes (12): calculate_deadline(), Calculate the limitation deadline. Args: start_date: ISO date string (YYYY-MM-…, main(), random_date(), Generate a random past date within the given range., seed_case_actions(), seed_cases(), seed_departments() (+4 more)
 
 ### Community 1 - "TestFieldExtraction"
-Cohesion: 0.06
-Nodes (23): extract_la_fields(), fields_to_ocr_list(), _find_date_near_keyword(), _parse_date(), Any, Land Acquisition Document Field Extractor…, Convert extracted fields dict to the OCRField list format expected by the…, Attempt to parse a date string into ISO format. Returns None on failure. (+15 more)
+Cohesion: 0.18
+Nodes (4): Tests for regex-based structured field extraction., Helper: run extraction and return {key: value} dict., Smoke test: realistic court order text extracts at least case number and court., TestFieldExtraction
 
 ### Community 2 - "priority_engine.py"
 Cohesion: 0.24
@@ -157,9 +160,9 @@ Nodes (13): Emblem(), EmblemProps, AppLayout(), GovBreadcrumb(), GovFooter(), Go
 Cohesion: 0.08
 Nodes (23): RiskAttributionPanelProps, FileMovementTimeline(), FileMovementTimelineProps, CustomWorkflowNode, WorkflowDrawerProps, CaseEvent, CaseStage, CaseStatus (+15 more)
 
-### Community 5 - "cases.py"
-Cohesion: 0.07
-Nodes (33): delete_case(), Cases routes — CRUD endpoints for case management. All business logic delegated…, Permanently delete a case. Restricted to ADMINISTRATOR role., Document routes — upload, OCR, retrieval, and download endpoints. Route prefix:…, OCR process endpoint — accepts a raw file upload for immediate OCR. Used by the…, check_verification(), BaseModel, get (+25 more)
+### Community 5 - "security.py"
+Cohesion: 0.08
+Nodes (29): Dashboard route — returns real aggregate statistics from the database. No…, Document routes — upload, OCR, retrieval, and download endpoints. Route prefix:…, OCR process endpoint — accepts a raw file upload for immediate OCR. Used by the…, check_verification(), BaseModel, get, post, verification_sources() (+21 more)
 
 ### Community 6 - "get_supabase"
 Cohesion: 0.11
@@ -173,13 +176,13 @@ Nodes (25): calculate_case_age(), calculate_days_remaining(), calculate_deadline
 Cohesion: 0.06
 Nodes (86): actor_name(), add_bidder_to_tender(), BidderCreate, create_tender(), DecisionRequest, get_bidder_compliance(), get_bidder_detail(), get_bidder_documents_list() (+78 more)
 
-### Community 9 - "ProcurementContext.tsx"
-Cohesion: 0.10
-Nodes (24): AppSidebar(), NAV_ITEMS, AuditEvent, Bidder, compliantRequirements, Discrepancy, exceptionRequirements, initialBidders (+16 more)
+### Community 9 - "ProcurementIntegrity.tsx"
+Cohesion: 0.18
+Nodes (11): AppSidebar(), NAV_ITEMS, ProcurementIntegrity(), SIGNAL_LABELS, Settings(), apiClient, isUsingMockApi(), mockApi (+3 more)
 
 ### Community 10 - "case_service.py"
-Cohesion: 0.10
-Nodes (29): Update the status of a case (PENDING, APPROVED, DISPOSED, etc.)., update_status(), get_dashboard_metrics(), get, Dashboard route — returns real aggregate statistics from the database. No…, Returns aggregate operational statistics computed from the live database. Every…, put, update_project() (+21 more)
+Cohesion: 0.13
+Nodes (20): get_dashboard_metrics(), get, Returns aggregate operational statistics computed from the live database. Every…, _create_audit_log(), forward_case(), get_case_by_id(), _map_db_case_to_frontend(), _map_db_doc_to_frontend() (+12 more)
 
 ### Community 11 - "Communities (88 total, 14 thin omitted)"
 Cohesion: 0.03
@@ -206,8 +209,8 @@ Cohesion: 0.15
 Nodes (18): MOCK_AUDIT_LOGS, MOCK_BOTTLENECKS, MOCK_CASE_EVENTS, MOCK_CASES, MOCK_DASHBOARD_METRICS, MOCK_DOCUMENTS, MOCK_PERFORMANCE_METRICS, MOCK_PROCESS_MAP (+10 more)
 
 ### Community 17 - "schemas/__init__.py"
-Cohesion: 0.06
-Nodes (61): _create_default_profile(), get_me(), login(), logout(), get, post, Authentication routes. Delegates to Supabase Auth for actual credential…, Authenticate using Supabase Auth. Returns the Supabase JWT token and the user… (+53 more)
+Cohesion: 0.14
+Nodes (25): AlertOut, AuditLogOut, BottleneckAnalysis, CaseEventOut, CaseListResponse, CaseOut, DashboardMetrics, DepartmentInfo (+17 more)
 
 ### Community 18 - "GOIP Backend API Contract Specification"
 Cohesion: 0.08
@@ -226,16 +229,16 @@ Cohesion: 0.11
 Nodes (19): GovTable(), GovTableProps, TableColumn, DISTRICTS, LA_STAGES, RISK_LEVELS, auditService, dashboardService (+11 more)
 
 ### Community 22 - "process_ocr"
-Cohesion: 0.15
-Nodes (14): post, UploadFile, Trigger OCR processing on an already-uploaded document. Pipeline: 1. Retrieve…, Upload a document and attach it to a case. - Validates file type (PDF, PNG,…, run_ocr_on_document(), upload_document(), create_project(), post (+6 more)
+Cohesion: 0.18
+Nodes (12): post, UploadFile, Trigger OCR processing on an already-uploaded document. Pipeline: 1. Retrieve…, Upload a document and attach it to a case. - Validates file type (PDF, PNG,…, run_ocr_on_document(), upload_document(), UploadFile, upload_project_document() (+4 more)
 
-### Community 23 - "create_case"
-Cohesion: 0.29
-Nodes (7): create_case(), forward_case(), post, Forward a case to a different officer, desk, or workflow stage. Records an…, Toggle the 'flagged for review' marker on a case., Register a new case (inward file docket). Automatically: - Assigns a file…, toggle_flag()
+### Community 23 - "cases.py"
+Cohesion: 0.10
+Nodes (25): create_case(), delete_case(), forward_case(), get_case(), list_cases(), get, post, put (+17 more)
 
 ### Community 24 - "dependencies"
 Cohesion: 0.12
-Nodes (17): clsx, framer-motion, lucide-react, dependencies, clsx, framer-motion, lucide-react, react (+9 more)
+Nodes (17): clsx, framer-motion, dependencies, clsx, framer-motion, react, react-dom, recharts (+9 more)
 
 ### Community 25 - "GOIP Backend — Government File Tracking & Administrative Intelligence System"
 Cohesion: 0.09
@@ -251,19 +254,19 @@ Nodes (20): GovBadge, StatusBadge(), StatusBadgeProps, GovCard(), GovCardProps, 
 
 ### Community 28 - "devDependencies"
 Cohesion: 0.11
-Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, tailwindcss, @types/node, @types/react (+11 more)
+Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, @types/node, @types/react (+11 more)
 
 ### Community 29 - "SIH 2026 — Complete Codebase Audit, Remaining Work & Team Task Allocation"
 Cohesion: 0.09
 Nodes (22): 10. Team Task Allocation & Responsibilities, 11. Exact File Ownership Matrix, 12. Task Priority Framework (P0 – P3), 13. Practical 7-Day Execution Timeline, 14. 5-Minute SIH Winning Demo Script, 15. Remaining Risks & Mitigations, 1. Project Architecture, 2. Current Implementation Status Matrix (+14 more)
 
 ### Community 30 - "projects.py"
-Cohesion: 0.18
-Nodes (15): _enrich_project_with_ml(), get_project(), get_project_delay_factors(), get_project_prediction(), LandProjectCreate, LandProjectUpdate, list_projects(), BaseModel (+7 more)
+Cohesion: 0.17
+Nodes (16): create_project(), _enrich_project_with_ml(), get_project(), get_project_prediction(), LandProjectCreate, LandProjectUpdate, list_projects(), BaseModel (+8 more)
 
 ### Community 31 - "deadline_service.py"
 Cohesion: 0.08
-Nodes (26): calculate_age_days(), calculate_days_remaining(), calculate_deadline(), get_deadline_status(), map_deadline_status_to_case_status(), map_deadline_status_to_priority(), map_deadline_status_to_risk_level(), parse_iso_date() (+18 more)
+Nodes (23): calculate_age_days(), calculate_days_remaining(), get_deadline_status(), map_deadline_status_to_case_status(), map_deadline_status_to_priority(), map_deadline_status_to_risk_level(), parse_iso_date(), parse_iso_datetime() (+15 more)
 
 ### Community 32 - "process_ocr_from_bytes"
 Cohesion: 0.18
@@ -274,16 +277,16 @@ Cohesion: 0.16
 Nodes (11): calculate_case_risk(), Any, date, Calculate an explainable, deterministic risk score and breakdown for a case.…, Tests for deterministic risk scoring and point breakdowns., Case with 45 days remaining and no stagnation scores LOW risk., Overdue case receives severe penalty and scores CRITICAL (>= 70)., Overdue legal opinion adds +15 points to the breakdown. (+3 more)
 
 ### Community 34 - "predict_delay"
-Cohesion: 0.26
-Nodes (12): _deterministic_fallback(), _estimate_delay_days(), _get_top_factors(), _get_top_factors_with_importance(), predict_delay(), Any, Prediction Engine — Real-time delay prediction for land acquisition projects.…, Estimate predicted delay days from probability and project context. This uses a… (+4 more)
+Cohesion: 0.21
+Nodes (15): get_project_delay_factors(), get_feature_importance(), Return feature importance dict, or empty dict if not available., _deterministic_fallback(), _estimate_delay_days(), _get_top_factors(), _get_top_factors_with_importance(), predict_delay() (+7 more)
 
 ### Community 35 - "extract_text_from_pdf_digital"
 Cohesion: 0.17
 Nodes (10): extract_text_from_pdf_digital(), Extract text directly from a digital (non-scanned) PDF using PyMuPDF. Fast and…, Tests for digital PDF text extraction via PyMuPDF., PyMuPDF should extract non-empty text from a digital PDF., Extracted text should contain the content we embedded., Corrupted/empty input should not crash — returns empty string., Non-PDF binary data should not crash — returns empty string., Main entry point should return (text, confidence, engine) for a PDF. (+2 more)
 
-### Community 36 - "update_case"
-Cohesion: 0.67
-Nodes (3): put, Update editable fields of an existing case., update_case()
+### Community 36 - "extract_fields_from_text"
+Cohesion: 0.15
+Nodes (8): extract_fields_from_text(), Attempt to extract structured fields from raw OCR text using regex patterns.…, Backend tests for critical functionality. These tests use unit-testing patterns…, Tests for regex-based field extraction in ocr_service.py., TestOCRService, Fields not found should be absent from the list, not present with null., All confidence scores must be between 0 and 1., All regex-extracted fields should have isExtracted=True.
 
 ### Community 37 - "test_documents.py"
 Cohesion: 0.13
@@ -297,25 +300,25 @@ Nodes (5): calculate_risk(), Calculate a transparent risk score for a case. Args
 Cohesion: 0.10
 Nodes (15): react, StatutoryDeadlineEngineProps, EmptyStateProps, GovButton(), GovButtonProps, TableSkeleton(), StatutoryCountdownProps, TechnicalCardProps (+7 more)
 
-### Community 40 - "get_case"
-Cohesion: 0.40
-Nodes (5): get_case(), list_cases(), get, List cases with optional filtering and pagination. Officers see all cases…, Returns a single case with its complete: - File movement timeline (events) -…
+### Community 40 - "extract_la_fields"
+Cohesion: 0.17
+Nodes (12): extract_la_fields(), fields_to_ocr_list(), _find_date_near_keyword(), _parse_date(), Any, Land Acquisition Document Field Extractor…, Convert extracted fields dict to the OCRField list format expected by the…, Attempt to parse a date string into ISO format. Returns None on failure. (+4 more)
 
-### Community 41 - "App.tsx"
-Cohesion: 0.21
-Nodes (11): App(), ProtectedRoute(), PublicRoute(), useAuth(), getRandomCaptcha(), Login(), Search(), Settings() (+3 more)
+### Community 41 - "RelationshipGraph.tsx"
+Cohesion: 0.11
+Nodes (18): BidderInput, BidderNodeData, buildGraph(), C, colForField(), edgeColorForField(), EdgeSel, fieldLabel() (+10 more)
 
-### Community 42 - "alert_service.py"
-Cohesion: 0.22
-Nodes (10): post, Re-evaluate all active cases and generate/update alerts accordingly., trigger_alert_refresh(), _create_alert(), Alert Service — generates real, data-driven alerts from the database. No random…, Run alert generation across ALL active cases. Call this on a schedule or after…, Insert a new alert if one of the same type for this case doesn't already exist.…, Evaluate a single case and generate/update alerts as appropriate. Called… (+2 more)
+### Community 42 - "enrich_case_with_deadlines"
+Cohesion: 0.11
+Nodes (21): list_alerts(), mark_alert_read(), get, post, put, List all alerts. Filter by read status or severity., Mark a specific alert as read., Re-evaluate all active cases and generate/update alerts accordingly. (+13 more)
 
 ### Community 43 - "TestDocumentStatus"
 Cohesion: 0.22
 Nodes (7): Tests for OCR status transitions and persistence logic., Document ocr_status values should be a known set., When process_ocr() succeeds, the DB record should be updated to COMPLETED. We…, When storage download fails, ocr_status must be set to FAILED., process_ocr() should raise ValueError when document_id is not found., TestDocumentStatus, patch
 
-### Community 44 - "SystemContext.tsx"
-Cohesion: 0.21
-Nodes (10): AppHeader(), GlobalSearchModal(), GovMainHeader(), SystemStatusDrawer(), INITIAL_ALERTS, SystemAlert, SystemContext, SystemContextType (+2 more)
+### Community 44 - "useAuth"
+Cohesion: 0.15
+Nodes (15): ProtectedRoute(), PublicRoute(), AppHeader(), GlobalSearchModal(), GovMainHeader(), SystemStatusDrawer(), useAuth(), INITIAL_ALERTS (+7 more)
 
 ### Community 45 - "GOIP — Government Operations Intelligence Platform"
 Cohesion: 0.10
@@ -417,6 +420,10 @@ Nodes (7): 21. Development Principles, Deterministic rules remain deterministic,
 Cohesion: 0.29
 Nodes (7): 3.1 Process Discovery, 3.2 Bottleneck & Rework Detection, 3.3 Delay-Risk Prediction, 3.4 Deterministic Statutory Deadline Engine, 3.5 What-If Simulation, 3.6 Document Intake & OCR, 3. Key Capabilities
 
+### Community 75 - "auth.py"
+Cohesion: 0.14
+Nodes (22): _create_default_profile(), get_me(), login(), logout(), get, post, Authentication routes. Delegates to Supabase Auth for actual credential…, Authenticate using Supabase Auth or local officer credentials. Returns a valid… (+14 more)
+
 ### Community 88 - "TestMLPrediction"
 Cohesion: 0.18
 Nodes (6): Confirm forbidden target columns are NOT in input features., Feature vector handles empty/partial dictionaries gracefully., Model produces probability in [0.0, 1.0] and valid risk levels., Clean project with 100% docs and no disputes should be low risk., Project with active conflict, dispute, and compensation delay is high risk., TestMLPrediction
@@ -445,45 +452,49 @@ Nodes (3): 5. Technology Stack, Backend / Intelligence, Frontend
 Cohesion: 0.67
 Nodes (3): 9. Getting Started, Frontend Installation, Prerequisites
 
-### Community 98 - "generate_la_recommendations"
+### Community 95 - "UX4G (User Experience for Government) Design Guidelines"
+Cohesion: 0.17
+Nodes (11): 1. Overview & Core Philosophy, 2. Color Palette & Semantic Tokens, 3. Typography & Hierarchy, 4.1. Status Badges (`GovBadge`), 4.2. Action Buttons (`GovButton`), 4.3. High-Density Tables (`GovTable`), 4. Standard UI Components, 5. Bilingual & GIGW Standards (+3 more)
+
+### Community 98 - "Enum"
+Cohesion: 0.29
+Nodes (12): CaseStage, CaseStatus, LegalOpinionStatus, MovementStatus, OCRStatus, PriorityLevel, Enum, str (+4 more)
+
+### Community 99 - "ProcurementContext.tsx"
+Cohesion: 0.11
+Nodes (18): AuditEvent, Bidder, CheckStatus, compliantRequirements, Discrepancy, exceptionRequirements, initialBidders, nowTime() (+10 more)
+
+### Community 100 - "generate_la_recommendations"
 Cohesion: 0.29
 Nodes (6): get_project_recommendations(), generate_la_recommendations(), Any, Generate structured, transparent operational recommendations for Land…, Recommendations match detected factors., TestBottleneckAndRecommendations
 
-### Community 99 - "BidderVerification.tsx"
-Cohesion: 0.29
-Nodes (6): CheckStatus, ALLOWED_TYPES, Banner, BannerKind, BidderVerification(), DECISION_LABELS
+### Community 101 - "VerificationHub.tsx"
+Cohesion: 0.60
+Nodes (4): riskBadge(), STATUS_META, statusBadge(), VerificationHub()
 
-### Community 100 - "list_alerts"
-Cohesion: 0.67
-Nodes (3): list_alerts(), get, List all alerts. Filter by read status or severity.
-
-### Community 102 - "mark_alert_read"
-Cohesion: 0.67
-Nodes (3): mark_alert_read(), put, Mark a specific alert as read.
-
-### Community 107 - "useProcurement"
-Cohesion: 0.23
-Nodes (9): useProcurement(), ProcurementAuditTrail(), ExtractedField, ProcurementDocuments(), Tenders(), riskBadge(), STATUS_META, statusBadge() (+1 more)
+### Community 107 - "App.tsx"
+Cohesion: 0.20
+Nodes (11): App(), useProcurement(), ProcurementAuditTrail(), ProcurementDashboard(), ExtractedField, ProcurementDocuments(), Search(), Tenders() (+3 more)
 
 ## Knowledge Gaps
-- **380 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+375 more)
+- **397 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+392 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `get_supabase()` connect `get_supabase` to `seed.py`, `generate_la_recommendations`, `list_alerts`, `cases.py`, `mark_alert_read`, `update_case`, `case_service.py`, `alert_service.py`, `schemas/__init__.py`, `get_document`, `process_ocr`, `create_case`, `projects.py`, `test_land_acquisition.py`?**
+- **Why does `get_supabase()` connect `get_supabase` to `seed.py`, `predict_delay`, `generate_la_recommendations`, `security.py`, `case_service.py`, `enrich_case_with_deadlines`, `auth.py`, `get_document`, `process_ocr`, `cases.py`, `projects.py`, `test_land_acquisition.py`?**
   _High betweenness centrality (0.050) - this node is a cross-community bridge._
-- **Why does `validate_file()` connect `validate_file` to `process_ocr_from_bytes`, `cases.py`, `test_documents.py`, `procurement.py`, `process_ocr`, `process_ocr`, `projects.py`, `deadline_service.py`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
-- **Why does `extract_fields_from_text()` connect `TestFieldExtraction` to `process_ocr_from_bytes`, `test_documents.py`, `procurement_service.py`, `process_ocr`, `deadline_service.py`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `validate_file()` connect `validate_file` to `process_ocr_from_bytes`, `extract_fields_from_text`, `security.py`, `test_documents.py`, `procurement.py`, `process_ocr`, `process_ocr`, `projects.py`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+- **Why does `get_current_user()` connect `security.py` to `get_supabase`, `procurement.py`, `enrich_case_with_deadlines`, `auth.py`, `test_integrity_engine.py`, `cases.py`, `projects.py`?**
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
 - **What connects `$schema`, `typescript`, `oxc` to the rest of the system?**
-  _380 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `TestFieldExtraction` be split into smaller, more focused modules?**
-  _Cohesion score 0.059506531204644414 - nodes in this community are weakly interconnected._
+  _397 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `seed.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.14619883040935672 - nodes in this community are weakly interconnected._
 - **Should `types/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.08266129032258064 - nodes in this community are weakly interconnected._
-- **Should `cases.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.07188160676532769 - nodes in this community are weakly interconnected._
+- **Should `security.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.07965860597439545 - nodes in this community are weakly interconnected._

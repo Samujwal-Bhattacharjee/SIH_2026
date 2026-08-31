@@ -41,13 +41,13 @@ export const FormField: React.FC<FormFieldProps> = ({
 };
 
 export const inputBaseClasses =
-  'w-full px-3 py-1.5 text-sm bg-white border border-[#D9DDE3] rounded-[3px] text-[#202124] placeholder-gray-400 focus:outline-none focus:border-[#0B2A4A] focus:ring-1 focus:ring-[#0B2A4A] transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed';
+  'w-full px-3 py-1.5 text-xs bg-white border border-[#CBD5E1] rounded-[2px] text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#0B2A4A] focus:ring-1 focus:ring-[#0B2A4A] transition-colors disabled:bg-[#F1F5F9] disabled:cursor-not-allowed';
 
 export const inputErrorClasses =
-  'w-full px-3 py-1.5 text-sm bg-white border border-[#C62828] rounded-[3px] text-[#202124] placeholder-gray-400 focus:outline-none focus:border-[#C62828] focus:ring-1 focus:ring-[#C62828] transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed';
+  'w-full px-3 py-1.5 text-xs bg-white border border-[#B72025] rounded-[2px] text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#B72025] focus:ring-1 focus:ring-[#B72025] transition-colors disabled:bg-[#F1F5F9] disabled:cursor-not-allowed';
 
 export const selectBaseClasses =
-  'w-full px-3 py-1.5 text-sm bg-white border border-[#D9DDE3] rounded-[3px] text-[#202124] focus:outline-none focus:border-[#0B2A4A] focus:ring-1 focus:ring-[#0B2A4A] transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed';
+  'w-full px-3 py-1.5 text-xs bg-white border border-[#CBD5E1] rounded-[2px] text-[#0F172A] focus:outline-none focus:border-[#0B2A4A] focus:ring-1 focus:ring-[#0B2A4A] transition-colors disabled:bg-[#F1F5F9] disabled:cursor-not-allowed';
 
 export const textareaBaseClasses =
-  'w-full px-3 py-2 text-sm bg-white border border-[#D9DDE3] rounded-[3px] text-[#202124] placeholder-gray-400 focus:outline-none focus:border-[#0B2A4A] focus:ring-1 focus:ring-[#0B2A4A] transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed';
+  'w-full px-3 py-2 text-xs bg-white border border-[#CBD5E1] rounded-[2px] text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#0B2A4A] focus:ring-1 focus:ring-[#0B2A4A] transition-colors disabled:bg-[#F1F5F9] disabled:cursor-not-allowed';

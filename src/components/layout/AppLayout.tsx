@@ -10,7 +10,7 @@ import { GlobalSearchModal } from './GlobalSearchModal';
 
 export const AppLayout: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F6F8] text-[#202124] selection:bg-[#0B2A4A] selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-[#0F172A] selection:bg-[#0B2A4A] selection:text-white">
       {/* 1. Top Utility Strip (Accessibility, Language, Font Size) */}
       <GovTopStrip />
 

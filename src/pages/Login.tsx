@@ -31,7 +31,7 @@ const getRandomCaptcha = (): string => {
 export const Login: React.FC = () => {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('director.operations@goip.gov.in');
-  const [password, setPassword] = useState('your-password-here');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [department, setDepartment] = useState('General Administration');
   const [captchaInput, setCaptchaInput] = useState('');
@@ -112,13 +112,14 @@ export const Login: React.FC = () => {
   const handleDemoSignIn = async (demoEmail: string) => {
     setAuthMode('login');
     setEmail(demoEmail);
-    setPassword('your-password-here');
+    const demoPassword = (import.meta as any).env?.VITE_DEMO_PASSWORD || '';
+    setPassword(demoPassword);
     setCaptchaInput(captchaCode);
     setError(null);
     setHasCaptchaError(false);
     setSubmitting(true);
     try {
-      await signIn(demoEmail, 'your-password-here');
+      await signIn(demoEmail, demoPassword);
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Authentication failed.');

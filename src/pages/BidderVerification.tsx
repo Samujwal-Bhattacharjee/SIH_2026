@@ -210,7 +210,7 @@ export const BidderVerification: React.FC = () => {
   return (
     <div className="space-y-4 font-sans pb-8">
       {/* Navigation Breadcrumb */}
-      <div className="flex items-center justify-between text-xs text-[#475569] border-b border-[#D9DDE3] pb-2.5">
+      <div className="flex items-center justify-between text-xs text-[#475569] border-b border-[#CBD5E1] pb-2.5">
         <div className="flex items-center gap-1.5">
           <Link
             to="/tenders"
@@ -225,7 +225,7 @@ export const BidderVerification: React.FC = () => {
         <button
           onClick={handleRunVerification}
           disabled={verifying || loading}
-          className="px-3 py-1 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+          className="ux4g-btn ux4g-btn-primary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {verifying ? (
             <RotateCw className="w-3.5 h-3.5 animate-spin" />
@@ -239,10 +239,10 @@ export const BidderVerification: React.FC = () => {
       {/* Banner — success or error */}
       {banner && (
         <div
-          className={`gov-alert text-xs font-medium ${
+          className={`ux4g-alert text-xs font-medium shadow-xs ${
             banner.kind === 'success'
-              ? 'gov-alert-success text-[#15803D]'
-              : 'gov-alert-error text-[#B72025]'
+              ? 'ux4g-alert-success text-[#15803D]'
+              : 'ux4g-alert-error text-[#B72025]'
           }`}
         >
           <div className="flex items-center gap-2 flex-1">
@@ -255,7 +255,7 @@ export const BidderVerification: React.FC = () => {
           </div>
           <button
             onClick={() => setBanner(null)}
-            className="ml-4 underline text-xs cursor-pointer shrink-0"
+            className="ml-4 underline text-xs cursor-pointer shrink-0 font-semibold"
           >
             Dismiss
           </button>
@@ -263,22 +263,22 @@ export const BidderVerification: React.FC = () => {
       )}
 
       {/* Bidder Identification & Compliance Header */}
-      <section className="bg-white border border-[#D9DDE3] rounded-[2px] p-4">
+      <section className="bg-white border border-[#CBD5E1] rounded-[2px] p-4 shadow-xs">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-[#F0F4F8] px-2 py-0.5 border border-[#CBD2DE]">
+              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-[#F1F5F9] px-2 py-0.5 border border-[#CBD5E1] rounded-[2px]">
                 TENDER: GEM/2026/B/418207
               </span>
-              <span className="text-xs text-[#475569]">• Bidder verification workspace</span>
+              <span className="text-xs text-[#64748B]">• Bidder verification workspace</span>
             </div>
             <h1 className="font-serif font-bold text-xl text-[#0B2A4A] mt-1">{bidder.name}</h1>
-            <p className="text-xs text-[#475569] mt-0.5">
+            <p className="text-xs text-[#64748B] mt-0.5">
               Supply and Installation of Network Infrastructure for Government Administrative Offices
             </p>
           </div>
 
-          <div className="flex items-center border border-[#D9DDE3] divide-x divide-[#D9DDE3] bg-[#F8F9FA] rounded-[2px] text-xs">
+          <div className="flex items-center border border-[#CBD5E1] divide-x divide-[#CBD5E1] bg-[#F8FAFC] rounded-[2px] text-xs">
             <div className="px-3.5 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
                 Status

@@ -79,7 +79,7 @@ export const Tenders: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="gov-alert gov-alert-success text-xs">
+        <div className="ux4g-alert ux4g-alert-success text-xs">
           <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
           <span className="flex-1">{statusMessage}</span>
           <button onClick={() => setStatusMessage(null)} className="text-[#15803D] text-xs underline cursor-pointer">Dismiss</button>
@@ -87,11 +87,11 @@ export const Tenders: React.FC = () => {
       )}
 
       {/* Active Tender Specification */}
-      <section className="bg-white border border-[#D9DDE3] rounded-[2px]">
-        <div className="p-4 border-b border-[#D9DDE3] flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-[#F8F9FA]">
+      <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
+        <div className="p-4 border-b border-[#CBD5E1] flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-[#F8FAFC]">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-white px-2 py-0.5 border border-[#CBD2DE]">
+              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-white px-2 py-0.5 border border-[#CBD5E1] rounded-[2px]">
                 GEM/2026/B/418207
               </span>
               <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE] rounded-[2px] text-[10px] font-bold">
@@ -101,14 +101,14 @@ export const Tenders: React.FC = () => {
             <h2 className="font-serif font-bold text-base text-[#0B2A4A] mt-1.5">
               Supply and Installation of Network Infrastructure for Government Administrative Offices
             </h2>
-            <p className="text-xs text-[#475569] mt-0.5">
+            <p className="text-xs text-[#64748B] mt-0.5">
               Department of Administrative Reforms • Bid closing: 30 Aug 2026 • Estimated value: ₹4,50,00,000
             </p>
           </div>
 
           <Link
             to="/documents"
-            className="px-3 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+            className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <ScanLine className="w-3.5 h-3.5" />
             <span>Upload bidder documents</span>
@@ -117,19 +117,19 @@ export const Tenders: React.FC = () => {
 
         {/* Structured Eligibility Rules Strip */}
         <div className="p-4">
-          <span className="text-[11px] uppercase font-semibold text-[#475569] block mb-2">
+          <span className="text-[11px] uppercase font-bold text-[#64748B] block mb-2 tracking-wide">
             Structured eligibility criteria (7 requirements):
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
             {statutoryRequirements.map((req) => (
-              <div key={req.id} className="p-2.5 bg-[#F5F5F5] border border-[#D9DDE3] rounded-[2px] text-xs">
-                <span className="text-[10px] uppercase font-semibold text-[#737373] block">
+              <div key={req.id} className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] hover:border-[#CBD5E1] rounded-[2px] text-xs transition-colors">
+                <span className="text-[10px] uppercase font-semibold text-[#64748B] block">
                   {req.category}
                 </span>
-                <strong className="text-[#0B2A4A] text-xs block mt-0.5">
+                <strong className="text-[#0B2A4A] text-xs block mt-0.5 font-semibold">
                   {req.name}
                 </strong>
-                <span className={`text-[10px] font-semibold mt-1 block ${req.mandatory ? 'text-[#B72025]' : 'text-[#15803D]'}`}>
+                <span className={`text-[10px] font-bold mt-1 block ${req.mandatory ? 'text-[#B72025]' : 'text-[#15803D]'}`}>
                   {req.mandatory ? 'Mandatory' : 'Optional / Preference'}
                 </span>
               </div>
@@ -141,55 +141,55 @@ export const Tenders: React.FC = () => {
       {/* Forms Section: Create Tender & Add Bidder */}
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Create Tender Form */}
-        <form onSubmit={submitTender} className="bg-white border border-[#D9DDE3] p-4 rounded-[2px]">
-          <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5 border-b border-[#E6E9EF] pb-2">
+        <form onSubmit={submitTender} className="bg-white border border-[#CBD5E1] p-4 rounded-[2px] shadow-xs">
+          <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5 border-b border-[#E2E8F0] pb-2">
             <FilePlus2 className="w-4 h-4 text-[#0B2A4A]" />
             Create tender record
           </h2>
 
-          <div className="mt-3 space-y-2.5">
+          <div className="mt-3 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-[#202124] mb-0.5">
+              <label className="ux4g-label">
                 Tender title *
               </label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter procurement tender title"
-                className="w-full border border-[#CBD2DE] px-2.5 py-1.5 text-xs rounded-[2px] focus:outline-[#0B2A4A]"
+                className="ux4g-input"
               />
-              <span className="text-[10px] text-[#475569] block mt-0.5">
+              <span className="text-[10px] text-[#64748B] block mt-0.5">
                 Official GeM or CPPP procurement description.
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-semibold text-[#202124] mb-0.5">
+                <label className="ux4g-label">
                   Department *
                 </label>
                 <input
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full border border-[#CBD2DE] px-2.5 py-1.5 text-xs rounded-[2px] focus:outline-[#0B2A4A]"
+                  className="ux4g-input"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#202124] mb-0.5">
+                <label className="ux4g-label">
                   Bid closing date *
                 </label>
                 <input
                   type="date"
                   value={closingDate}
                   onChange={(e) => setClosingDate(e.target.value)}
-                  className="w-full border border-[#CBD2DE] px-2.5 py-1.5 text-xs rounded-[2px] focus:outline-[#0B2A4A]"
+                  className="ux4g-input"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="mt-1 px-3 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-md mt-1 cursor-pointer"
             >
               Create tender record
             </button>
@@ -197,56 +197,56 @@ export const Tenders: React.FC = () => {
         </form>
 
         {/* Add Bidder Form */}
-        <form onSubmit={submitBidder} className="bg-white border border-[#D9DDE3] p-4 rounded-[2px]">
-          <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5 border-b border-[#E6E9EF] pb-2">
+        <form onSubmit={submitBidder} className="bg-white border border-[#CBD5E1] p-4 rounded-[2px] shadow-xs">
+          <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5 border-b border-[#E2E8F0] pb-2">
             <Plus className="w-4 h-4 text-[#0B2A4A]" />
             Add participating bidder
           </h2>
 
-          <div className="mt-3 space-y-2.5">
+          <div className="mt-3 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-[#202124] mb-0.5">
+              <label className="ux4g-label">
                 Bidder legal name *
               </label>
               <input
                 value={bidderName}
                 onChange={(e) => setBidderName(e.target.value)}
                 placeholder="Enter bidder registered legal entity name"
-                className="w-full border border-[#CBD2DE] px-2.5 py-1.5 text-xs rounded-[2px] focus:outline-[#0B2A4A]"
+                className="ux4g-input"
               />
-              <span className="text-[10px] text-[#475569] block mt-0.5">
+              <span className="text-[10px] text-[#64748B] block mt-0.5">
                 Name must match statutory registration certificates.
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-semibold text-[#202124] mb-0.5">
+                <label className="ux4g-label">
                   GSTIN (Optional)
                 </label>
                 <input
                   value={bidderGstin}
                   onChange={(e) => setBidderGstin(e.target.value)}
                   placeholder="27AABCT4180Q1ZV"
-                  className="w-full border border-[#CBD2DE] px-2.5 py-1.5 text-xs rounded-[2px] font-mono focus:outline-[#0B2A4A]"
+                  className="ux4g-input font-mono"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#202124] mb-0.5">
+                <label className="ux4g-label">
                   PAN (Optional)
                 </label>
                 <input
                   value={bidderPan}
                   onChange={(e) => setBidderPan(e.target.value)}
                   placeholder="AABCT4180Q"
-                  className="w-full border border-[#CBD2DE] px-2.5 py-1.5 text-xs rounded-[2px] font-mono focus:outline-[#0B2A4A]"
+                  className="ux4g-input font-mono"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="mt-1 px-3 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-md mt-1 cursor-pointer"
             >
               Enroll bidder in tender
             </button>
@@ -255,30 +255,30 @@ export const Tenders: React.FC = () => {
       </div>
 
       {/* Participating Bidders Register Table */}
-      <section className="bg-white border border-[#D9DDE3] rounded-[2px]">
-        <div className="p-3 border-b border-[#D9DDE3] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
+        <div className="p-3 border-b border-[#CBD5E1] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">
               Participating bidders register
             </h2>
-            <p className="text-[11px] text-[#475569]">
+            <p className="text-[11px] text-[#64748B]">
               Enrolled bidders, document submission status, compliance scores, and evidence links.
             </p>
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-[#475569] absolute left-2.5 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-[#64748B] absolute left-2.5 top-2.5" />
             <input
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
               placeholder="Search bidder ID or name..."
-              className="w-full pl-8 pr-3 py-1.5 border border-[#CBD2DE] text-xs rounded-[2px] focus:outline-[#0B2A4A]"
+              className="ux4g-input pl-8"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="gov-table">
+          <table className="ux4g-table">
             <thead>
               <tr>
                 <th>Bidder ID</th>
@@ -297,13 +297,13 @@ export const Tenders: React.FC = () => {
                     {b.id}
                   </td>
                   <td>
-                    <strong className="text-xs text-[#202124] block">{b.name}</strong>
-                    <span className="text-[11px] text-[#475569]">
+                    <strong className="text-xs text-[#0F172A] block">{b.name}</strong>
+                    <span className="text-[11px] text-[#64748B]">
                       {b.exceptions > 0 ? `${b.exceptions} exception(s) detected` : 'All statutory requirements verified'}
                     </span>
                   </td>
                   <td>
-                    <span className="text-xs text-[#202124] font-medium">
+                    <span className="text-xs text-[#334155] font-medium">
                       {b.documents} files attached
                     </span>
                   </td>
@@ -327,7 +327,7 @@ export const Tenders: React.FC = () => {
                   </td>
                   <td>
                     <span
-                      className={`inline-block px-2 py-0.5 border text-[11px] font-medium rounded-[2px] ${
+                      className={`inline-block px-2 py-0.5 border text-[11px] font-semibold rounded-[2px] ${
                         b.status === 'Qualified' || b.status === 'Verified'
                           ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
                           : b.status === 'Exception Found' || b.status === 'Disqualified'

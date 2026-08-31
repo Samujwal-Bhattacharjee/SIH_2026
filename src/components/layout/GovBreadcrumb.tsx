@@ -29,19 +29,19 @@ export const GovBreadcrumb: React.FC = () => {
 
   return (
     <>
-      <div className="bg-[#F0F2F5] border-b border-[#D9DDE3] px-3 sm:px-6 py-1.5 select-none font-sans">
+      <div className="bg-[#F1F5F9] border-b border-[#CBD5E1] px-3 sm:px-6 py-1.5 select-none font-sans">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
           {/* Breadcrumb Trail */}
-          <nav className="flex items-center space-x-1.5 text-[#5F6368] font-medium" aria-label="Breadcrumb">
-            <Link to="/dashboard" className="hover:text-[#0B3558] flex items-center space-x-1">
-              <Home className="w-3.5 h-3.5 text-[#0B3558]" />
+          <nav className="flex items-center space-x-1.5 text-[#64748B] font-medium" aria-label="Breadcrumb">
+            <Link to="/dashboard" className="hover:text-[#0B2A4A] flex items-center space-x-1">
+              <Home className="w-3.5 h-3.5 text-[#0B2A4A]" />
               <span>{language === 'hi' ? 'मुख्य पृष्ठ' : 'Home'}</span>
             </Link>
 
             {pathSegments.length === 0 ? (
               <>
                 <ChevronRight className="w-3 h-3 text-gray-400" />
-                <span className="text-[#0B3558] font-bold">
+                <span className="text-[#0B2A4A] font-bold">
                   {language === 'hi' ? 'डैशबोर्ड' : 'Dashboard'}
                 </span>
               </>
@@ -54,11 +54,11 @@ export const GovBreadcrumb: React.FC = () => {
                   <React.Fragment key={url}>
                     <ChevronRight className="w-3 h-3 text-gray-400" />
                     {isLast ? (
-                      <span className="text-[#0B3558] font-bold tracking-tight">
+                      <span className="text-[#0B2A4A] font-bold tracking-tight">
                         {formatSegment(segment)}
                       </span>
                     ) : (
-                      <Link to={url} className="hover:text-[#0B3558]">
+                      <Link to={url} className="hover:text-[#0B2A4A]">
                         {formatSegment(segment)}
                       </Link>
                     )}
@@ -70,7 +70,7 @@ export const GovBreadcrumb: React.FC = () => {
 
           {/* Right Status Counters & Operational Action */}
           <div className="flex items-center space-x-3">
-            <div className="hidden lg:flex items-center space-x-3 text-[11px] text-[#475569] border-r border-[#CBD2DE] pr-3 font-sans">
+            <div className="hidden lg:flex items-center space-x-3 text-[11px] text-[#475569] border-r border-[#CBD5E1] pr-3 font-sans">
               <span>
                 Active tenders: <strong className="text-[#0B2A4A] font-mono">04</strong>
               </span>
@@ -91,7 +91,7 @@ export const GovBreadcrumb: React.FC = () => {
             {/* Create Tender Action */}
             <button
               onClick={() => navigate('/tenders')}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-[#0B3558] hover:bg-[#123F6D] text-white text-xs font-semibold rounded-[3px] shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] shadow-xs transition-colors cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span>Create Tender</span>
