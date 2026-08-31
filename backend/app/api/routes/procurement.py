@@ -27,7 +27,12 @@ from app.core import procurement_store as ps
 from app.services.ocr_service import classify_document_type
 from app.services.procurement_service import DEFAULT_TENDER_REQUIREMENTS, run_full_verification
 from app.services.document_service import validate_file, process_ocr_from_bytes
-from app.services.integrity import assess_tender_integrity, assess_bidder_integrity, IntegrityAssessment
+from app.services.integrity import (
+    assess_tender_integrity,
+    assess_bidder_integrity,
+    IntegrityAssessment,
+    FindingStatus,
+)
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -63,7 +68,9 @@ class RequirementReviewRequest(BaseModel):
     status: str = Field(..., description="Verified | Failed | Pending | Needs Review | Not Applicable")
 
 
-def actor_name(user: dict) -> str:
+def actor_name(user: Optional[Dict[str, Any]]) -> str:
+    if not isinstance(user, dict):
+        return "Procurement Officer"
     return str(user.get("name") or user.get("email") or "Procurement Officer")
 
 
@@ -504,7 +511,7 @@ async def get_tender_integrity_endpoint(tender_id: str, user: dict = Depends(get
         for f in assessment.findings:
             if f.id in review_map:
                 try:
-                    f = f.copy(update={"status": FindingStatus(review_map[f.id])})
+                    f = f.model_copy(update={"status": FindingStatus(review_map[f.id])})
                 except Exception:
                     pass
             updated_findings.append(f)

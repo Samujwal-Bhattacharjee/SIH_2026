@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FilePlus2,
-  Upload,
   ShieldCheck,
   ShieldAlert,
   AlertTriangle,
-  ClipboardList,
   ChevronRight,
-  Info,
-  Network,
-  ExternalLink,
+  CheckCircle2,
+  ScrollText,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
 import { apiClient } from '../services/api/apiClient';
 import { useLanguage } from '../context/LanguageContext';
 
 export const ProcurementDashboard: React.FC = () => {
-  const { bidders, audit, refreshData, error } = useProcurement();
+  const { bidders, refreshData, error } = useProcurement();
   const { t } = useLanguage();
   const [metrics, setMetrics] = useState<any>({
     active_tenders: 0,
@@ -46,23 +43,21 @@ export const ProcurementDashboard: React.FC = () => {
 
   const activeTendersCount = metrics.active_tenders || 0;
   const underVerificationCount = metrics.bids_under_verification || 0;
-  const highRiskCount = metrics.high_risk_bidders || 0;
-  const pendingDocsCount = metrics.pending_documents || 0;
-  const totalExceptionsCount = metrics.verification_exceptions || 0;
   const integrityReviews: any[] = metrics.integrity_reviews || [];
   const integritySummary = metrics.integrity_summary || { reviews_requiring_attention: 0, high_risk_cases: 0, total_findings: 0 };
+  const highRiskCasesCount = (integritySummary.high_risk_cases || 0) + (metrics.high_risk_bidders || 0);
 
   const getRiskBadge = (level: string) => {
     const l = (level || '').toUpperCase();
     switch (l) {
       case 'CRITICAL':
       case 'HIGH':
-        return <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5]">[!] {l} RISK</span>;
+        return <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5] whitespace-nowrap">[!] {l} RISK</span>;
       case 'MEDIUM':
-        return <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A]">[!] MEDIUM</span>;
+        return <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A] whitespace-nowrap">[!] MEDIUM</span>;
       case 'LOW':
       default:
-        return <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]">[✓] LOW</span>;
+        return <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] whitespace-nowrap">[✓] LOW</span>;
     }
   };
 
@@ -83,6 +78,73 @@ export const ProcurementDashboard: React.FC = () => {
         return sig.replace(/_/g, ' ');
     }
   };
+
+  // ── Unified Actionable Items (Priority Ordered: High-Risk Integrity -> Pending Verification -> Document Exceptions)
+  const actionableItems = useMemo(() => {
+    const items: any[] = [];
+
+    // 1. High/Medium Integrity Reviews
+    integrityReviews.forEach((rev) => {
+      items.push({
+        id: `INT-${rev.tender_id}`,
+        category: 'INTEGRITY',
+        tender_number: rev.tender_number || rev.tender_id,
+        tender_id: rev.tender_id,
+        tender_title: rev.title,
+        bidder_names: rev.bidders?.join(', ') || 'Participating Vendors',
+        risk_level: rev.risk_level || 'HIGH',
+        risk_score: rev.risk_score,
+        issue: rev.contributing_signals?.length
+          ? `${rev.contributing_signals.map(formatSignalLabel).join(', ')} (${rev.findings_count} finding${rev.findings_count > 1 ? 's' : ''})`
+          : `${rev.findings_count || 1} integrity signals requiring officer review`,
+        action_label: 'Review Integrity',
+        action_url: `/integrity?tender=${rev.tender_id}`,
+        urgent: rev.risk_level === 'HIGH' || rev.risk_level === 'CRITICAL',
+      });
+    });
+
+    // 2. Bidders with Discrepancies / High Risk
+    bidders
+      .filter((b) => b.risk === 'HIGH' || b.status === 'Exception Found' || b.status === 'Disqualified')
+      .forEach((b) => {
+        items.push({
+          id: `EXC-${b.id}`,
+          category: 'EXCEPTION',
+          tender_number: (b as any).tender_number || 'GEM/2026/B/418207',
+          tender_id: (b as any).tender_id || 'TEN-2026-001',
+          tender_title: 'Network Infrastructure Modernization',
+          bidder_names: b.name,
+          risk_level: b.risk || 'HIGH',
+          risk_score: b.score,
+          issue: 'Cross-document discrepancy / Expired statutory declaration',
+          action_label: 'Inspect Evidence',
+          action_url: `/verification/${b.id}`,
+          urgent: true,
+        });
+      });
+
+    // 3. Bidders Pending Verification
+    bidders
+      .filter((b) => b.status === 'Needs Review' || b.status === 'Pending')
+      .forEach((b) => {
+        items.push({
+          id: `VER-${b.id}`,
+          category: 'VERIFICATION',
+          tender_number: (b as any).tender_number || 'GEM/2026/B/418207',
+          tender_id: (b as any).tender_id || 'TEN-2026-001',
+          tender_title: 'Network Infrastructure Modernization',
+          bidder_names: b.name,
+          risk_level: b.risk || 'MEDIUM',
+          risk_score: b.score,
+          issue: 'Statutory compliance verification & document evaluation pending',
+          action_label: 'Start Verification',
+          action_url: `/verification/${b.id}`,
+          urgent: false,
+        });
+      });
+
+    return items;
+  }, [integrityReviews, bidders]);
 
   return (
     <div className="space-y-4 font-sans pb-8">
@@ -106,7 +168,7 @@ export const ProcurementDashboard: React.FC = () => {
             className="ux4g-btn ux4g-btn-secondary ux4g-btn-md flex items-center gap-1.5 cursor-pointer"
           >
             <ShieldAlert className="w-3.5 h-3.5 text-[#0B2A4A]" />
-            <span>Integrity Engine</span>
+            <span>Integrity Workspace</span>
           </button>
           <button
             onClick={() => navigate('/tenders')}
@@ -116,11 +178,11 @@ export const ProcurementDashboard: React.FC = () => {
             <span>{t('action.createTender')}</span>
           </button>
           <button
-            onClick={() => navigate('/documents')}
+            onClick={() => navigate('/audit-trail')}
             className="ux4g-btn ux4g-btn-secondary ux4g-btn-md flex items-center gap-1.5 cursor-pointer"
           >
-            <Upload className="w-3.5 h-3.5 text-[#0B2A4A]" />
-            <span>{t('action.uploadDoc')}</span>
+            <ScrollText className="w-3.5 h-3.5 text-[#0B2A4A]" />
+            <span>Audit Register</span>
           </button>
         </div>
       </div>
@@ -132,144 +194,139 @@ export const ProcurementDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Horizontal Operational Statistics Strip (UX4G Government Pattern) */}
+      {/* ── 1. Summary: 4 Essential KPIs (No Decorative Redundancy) ─────────── */}
       <section
-        className="bg-white border border-[#CBD5E1] rounded-[2px] px-4 py-3 shadow-xs"
-        aria-label="Summary Statistics"
+        className="bg-white border border-[#CBD5E1] rounded-[2px] p-3 shadow-xs"
+        aria-label="Procurement Key Performance Indicators"
       >
-        <div className="flex flex-wrap items-center justify-between gap-y-2 divide-x divide-[#E2E8F0] text-xs">
-          <div className="pr-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">{t('stat.activeTenders')}</span>
-            <strong className="text-base font-bold text-[#0B2A4A] font-mono">
-              {String(activeTendersCount).padStart(2, '0')}
-            </strong>
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#E2E8F0] text-xs">
+          {/* Active Procurements */}
+          <div className="px-3 py-1">
+            <span className="text-[#64748B] block text-[11px] font-semibold uppercase tracking-wider">
+              Active Procurements
+            </span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <strong className="text-xl font-bold text-[#0B2A4A] font-mono">
+                {String(activeTendersCount).padStart(2, '0')}
+              </strong>
+              <span className="text-[10px] text-[#64748B]">Active tenders</span>
+            </div>
           </div>
 
-          <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">{t('stat.underVerification')}</span>
-            <strong className="text-base font-bold text-[#0B2A4A] font-mono">
-              {String(underVerificationCount).padStart(2, '0')}
-            </strong>
+          {/* Pending Verification */}
+          <div className="px-3 py-1">
+            <span className="text-[#64748B] block text-[11px] font-semibold uppercase tracking-wider">
+              Pending Verification
+            </span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <strong className="text-xl font-bold text-[#0B2A4A] font-mono">
+                {String(underVerificationCount).padStart(2, '0')}
+              </strong>
+              <span className="text-[10px] text-[#64748B]">Bids awaiting review</span>
+            </div>
           </div>
 
-          <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">Integrity Risk Signals</span>
-            <strong className="text-base font-bold text-[#B72025] font-mono">
-              {String(integritySummary.total_findings || 0).padStart(2, '0')}
-            </strong>
+          {/* Integrity Reviews */}
+          <div className="px-3 py-1">
+            <span className="text-[#64748B] block text-[11px] font-semibold uppercase tracking-wider">
+              Integrity Reviews
+            </span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <strong className="text-xl font-bold text-[#D97706] font-mono">
+                {String(integritySummary.reviews_requiring_attention || 0).padStart(2, '0')}
+              </strong>
+              <span className="text-[10px] text-[#64748B]">Pattern alerts</span>
+            </div>
           </div>
 
-          <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">Tenders Requiring Integrity Review</span>
-            <strong className="text-base font-bold text-[#D97706] font-mono">
-              {String(integritySummary.reviews_requiring_attention || 0).padStart(2, '0')}
-            </strong>
-          </div>
-
-          <div className="pl-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">{t('stat.exceptionsIdentified')}</span>
-            <strong className="text-base font-bold text-[#B72025] font-mono">
-              {String(totalExceptionsCount).padStart(2, '0')}
-            </strong>
+          {/* High-Risk Cases */}
+          <div className="px-3 py-1">
+            <span className="text-[#64748B] block text-[11px] font-semibold uppercase tracking-wider">
+              High-Risk Cases
+            </span>
+            <div className="flex items-baseline gap-2 mt-1">
+              <strong className="text-xl font-bold text-[#B72025] font-mono">
+                {String(highRiskCasesCount).padStart(2, '0')}
+              </strong>
+              <span className="text-[10px] text-[#B72025] font-semibold">Priority review</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── REAL PROCUREMENT INTEGRITY & RISK SIGNALS SECTION ─────────────── */}
+      {/* ── 2. ATTENTION REQUIRED: Actionable Procurement Queue ─────────────── */}
       <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
         <div className="px-4 py-3 border-b border-[#CBD5E1] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-[2px] bg-[#0B2A4A] text-white flex items-center justify-center">
-              <ShieldAlert className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-[2px] bg-[#B72025] text-white flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4" />
             </div>
             <div>
               <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-2">
-                <span>Procurement Integrity Decision Support</span>
-                {integritySummary.high_risk_cases > 0 && (
-                  <span className="px-2 py-0.2 text-[10px] font-bold rounded-[2px] bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5]">
-                    {integritySummary.high_risk_cases} High-Risk Review{integritySummary.high_risk_cases > 1 ? 's' : ''}
-                  </span>
-                )}
+                <span>Attention Required (Actionable Procurement Queue)</span>
+                <span className="px-2 py-0.2 text-[10px] font-bold rounded-[2px] bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5]">
+                  {actionableItems.length} Case{actionableItems.length === 1 ? '' : 's'}
+                </span>
               </h2>
               <p className="text-[11px] text-[#64748B] mt-0.5">
-                Deterministic cross-bidder pattern detection, corporate linkage analysis, and price clustering flags.
+                Priority cross-bidder integrity flags, pending statutory document verifications, and compliance exceptions requiring officer action.
               </p>
             </div>
           </div>
-
-          <Link
-            to="/integrity"
-            className="text-xs font-semibold text-[#0B2A4A] hover:underline flex items-center gap-1 self-start sm:self-center"
-          >
-            <span>Open Integrity Workspace</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
 
-        {integrityReviews.length > 0 ? (
+        {actionableItems.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="ux4g-table text-xs">
               <thead>
                 <tr>
-                  <th>Tender Identifier</th>
-                  <th>Procurement Title &amp; Sector</th>
-                  <th>Integrity Risk Level</th>
-                  <th>Detected Pattern Signals</th>
-                  <th>Involved Bidders</th>
-                  <th className="text-right">Officer Action</th>
+                  <th className="w-[180px]">Tender Identifier</th>
+                  <th className="w-[220px]">Bidder / Participating Entities</th>
+                  <th className="w-[120px]">Risk Tier</th>
+                  <th>Identified Issue / Signal</th>
+                  <th className="text-right w-[140px]">Officer Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
-                {integrityReviews.slice(0, 4).map((rev) => (
-                  <tr key={rev.tender_id} className="hover:bg-[#F8FAFC] transition-colors">
-                    <td className="font-mono text-xs font-semibold text-[#0B2A4A] whitespace-nowrap">
-                      {rev.tender_number || rev.tender_id}
-                      <span className="block text-[10px] text-[#64748B] font-normal">{rev.tender_id}</span>
-                    </td>
-                    <td>
-                      <strong className="text-xs text-[#0F172A] block">{rev.title}</strong>
-                      <span className="text-[11px] text-[#64748B]">
-                        {rev.department} • {rev.category || 'General Procurement'}
+                {actionableItems.map((item) => (
+                  <tr
+                    key={item.id}
+                    className={`hover:bg-[#F8FAFC] transition-colors ${
+                      item.urgent ? 'bg-[#FFFDFD]' : ''
+                    }`}
+                  >
+                    <td className="font-mono text-xs font-semibold text-[#0B2A4A] align-top">
+                      <div>{item.tender_number}</div>
+                      <span className="text-[10px] text-[#64748B] font-normal block truncate max-w-[170px]" title={item.tender_title}>
+                        {item.tender_title}
                       </span>
                     </td>
-                    <td>
+                    <td className="align-top">
+                      <strong className="text-xs text-[#0F172A] block leading-tight">
+                        {item.bidder_names}
+                      </strong>
+                    </td>
+                    <td className="align-top">
                       <div className="flex items-center gap-1.5">
-                        {getRiskBadge(rev.risk_level)}
-                        <span className="text-[11px] font-mono text-[#475569] font-bold">
-                          {rev.risk_score ? `${rev.risk_score.toFixed(0)}/100` : '0/100'}
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex flex-wrap gap-1">
-                        {(rev.contributing_signals || []).map((sig: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-[2px] bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1]"
-                          >
-                            {formatSignalLabel(sig)}
+                        {getRiskBadge(item.risk_level)}
+                        {item.risk_score != null && (
+                          <span className="text-[11px] font-mono text-[#475569] font-bold">
+                            {typeof item.risk_score === 'number' ? `${Math.round(item.risk_score)}/100` : ''}
                           </span>
-                        ))}
-                        {(!rev.contributing_signals || rev.contributing_signals.length === 0) && (
-                          <span className="text-[11px] text-[#64748B] italic">No active signals</span>
                         )}
                       </div>
                     </td>
-                    <td>
-                      <div className="text-[11px] text-[#334155] max-w-[200px]">
-                        {(rev.bidders || []).length > 0 ? (
-                          <span>{rev.bidders.join(', ')}</span>
-                        ) : (
-                          <span className="text-[#64748B] italic">Multiple bidders</span>
-                        )}
+                    <td className="align-top text-[#334155]">
+                      <div className="text-[11px] leading-relaxed">
+                        {item.issue}
                       </div>
                     </td>
-                    <td className="text-right whitespace-nowrap">
+                    <td className="text-right align-top whitespace-nowrap">
                       <Link
-                        to={`/integrity?tender=${rev.tender_id}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-[#0B2A4A] text-white hover:bg-[#123B63] rounded-[2px] transition-colors"
+                        to={item.action_url}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-[#0B2A4A] text-white hover:bg-[#123B63] rounded-[2px] transition-colors shadow-2xs"
                       >
-                        <span>Review Integrity</span>
+                        <span>{item.action_label}</span>
                         <ChevronRight className="w-3 h-3" />
                       </Link>
                     </td>
@@ -279,176 +336,101 @@ export const ProcurementDashboard: React.FC = () => {
             </table>
           </div>
         ) : (
-          <div className="p-6 text-center text-xs text-[#64748B]">
-            <ShieldCheck className="w-5 h-5 text-[#15803D] mx-auto mb-1" />
-            No active integrity review alerts. All evaluated tenders currently reflect normal competitive patterns.
+          <div className="p-8 text-center text-xs text-[#64748B]">
+            <CheckCircle2 className="w-6 h-6 text-[#15803D] mx-auto mb-1.5" />
+            <strong className="text-sm text-[#0F172A] block">All Procurements Clear</strong>
+            No urgent exceptions or high-risk signals currently pending officer attention. All active procurements are within normal statutory thresholds.
           </div>
         )}
       </section>
 
-      {/* Main Operational Grid: Assessments Table + Administrative Work Queue */}
-      <div className="grid lg:grid-cols-3 gap-4 items-start">
-        {/* Left 2 Cols: Recent Tender Assessments Table */}
-        <section className="lg:col-span-2 bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
-          <div className="px-4 py-3 border-b border-[#CBD5E1] bg-[#F8FAFC] flex items-center justify-between">
-            <div>
-              <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">
-                {t('page.dashboard.recentAssessments')}
-              </h2>
-              <p className="text-[11px] text-[#64748B] mt-0.5">
-                {t('page.dashboard.recentAssessmentsDesc')}
-              </p>
-            </div>
-            <Link
-              to="/tenders"
-              className="text-xs font-semibold text-[#0B2A4A] hover:underline flex items-center gap-0.5"
-            >
-              {t('action.viewTenderRegister')} <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
+      {/* ── 3. RECENT PROCUREMENT: Evaluations & Compliance Register ──────── */}
+      <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
+        <div className="px-4 py-3 border-b border-[#CBD5E1] bg-[#F8FAFC] flex items-center justify-between">
+          <div>
+            <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">
+              {t('page.dashboard.recentAssessments')}
+            </h2>
+            <p className="text-[11px] text-[#64748B] mt-0.5">
+              Consolidated evaluation register of active bids, compliance scores, and statutory document status.
+            </p>
           </div>
+          <Link
+            to="/tenders"
+            className="text-xs font-semibold text-[#0B2A4A] hover:underline flex items-center gap-0.5"
+          >
+            {t('action.viewTenderRegister')} <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
 
-          <div className="overflow-x-auto">
-            <table className="ux4g-table">
-              <thead>
-                <tr>
-                  <th>{t('th.tenderId')}</th>
-                  <th>{t('th.tenderTitle')}</th>
-                  <th>{t('th.status')}</th>
-                  <th>{t('th.compliance')}</th>
-                  <th>{t('th.risk')}</th>
-                  <th className="text-right">{t('th.officerAction')}</th>
+        <div className="overflow-x-auto">
+          <table className="ux4g-table text-xs">
+            <thead>
+              <tr>
+                <th>{t('th.tenderId')}</th>
+                <th>{t('th.tenderTitle')}</th>
+                <th>{t('th.status')}</th>
+                <th>{t('th.compliance')}</th>
+                <th>{t('th.risk')}</th>
+                <th className="text-right">{t('th.officerAction')}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E2E8F0]">
+              {bidders.map((b) => (
+                <tr key={b.id} className="hover:bg-[#F8FAFC] transition-colors">
+                  <td className="font-mono text-xs font-semibold text-[#0B2A4A] whitespace-nowrap">
+                    {(b as any).tender_number || 'GEM/2026/B/418207'}
+                  </td>
+                  <td>
+                    <strong className="text-xs text-[#0F172A] block">{b.name}</strong>
+                    <span className="text-[11px] text-[#64748B]">
+                      Network infrastructure • {b.documents} document{b.documents === 1 ? '' : 's'}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={`inline-block px-2 py-0.5 border text-[11px] font-medium rounded-[2px] ${
+                        b.status === 'Qualified' || b.status === 'Verified'
+                          ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                          : b.status === 'Exception Found' || b.status === 'Disqualified'
+                          ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                          : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                      }`}
+                    >
+                      {b.status}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="font-semibold text-xs text-[#0B2A4A] font-mono">
+                      {b.score ? `${Math.round(b.score)}/100` : '—'}
+                    </span>
+                  </td>
+                  <td>
+                    {getRiskBadge(b.risk)}
+                  </td>
+                  <td className="text-right whitespace-nowrap">
+                    <Link
+                      to={`/verification/${b.id}`}
+                      className="inline-flex items-center text-xs font-semibold text-[#0B2A4A] hover:underline"
+                    >
+                      {t('action.reviewEvidence')} →
+                    </Link>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {bidders.map((b) => (
-                  <tr key={b.id}>
-                    <td className="font-mono text-xs font-semibold text-[#0B2A4A]">
-                      GEM/2026/B/418207
-                    </td>
-                    <td>
-                      <strong className="text-xs text-[#202124] block">{b.name}</strong>
-                      <span className="text-[11px] text-[#475569]">
-                        Network infrastructure • {b.documents} documents
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`inline-block px-2 py-0.5 border text-[11px] font-medium rounded-[2px] ${
-                          b.status === 'Qualified' || b.status === 'Verified'
-                            ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
-                            : b.status === 'Exception Found' || b.status === 'Disqualified'
-                            ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
-                            : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
-                        }`}
-                      >
-                        {b.status}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="font-semibold text-xs text-[#0B2A4A]">
-                        {b.score ? `${b.score}/100` : '—'}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`inline-block px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
-                          b.risk === 'HIGH' || b.risk === 'CRITICAL'
-                            ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
-                            : b.risk === 'MEDIUM'
-                            ? 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
-                            : 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
-                        }`}
-                      >
-                        {b.risk === 'HIGH' ? '[!] High' : b.risk === 'MEDIUM' ? '[!] Medium' : '[✓] Low'}
-                      </span>
-                    </td>
-                    <td className="text-right whitespace-nowrap">
-                      <Link
-                        to={`/verification/${b.id}`}
-                        className="inline-flex items-center text-xs font-semibold text-[#0B2A4A] hover:underline"
-                      >
-                        {t('action.reviewEvidence')} →
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Right Column: Work Queue & Attention Required */}
-        <aside className="space-y-4">
-          {/* Attention Required Panel with Real Integrity High-Risk Link */}
-          <section className="ux4g-alert ux4g-alert-warning rounded-[2px] shadow-xs">
-            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-[#D97706]" />
-            <div>
-              <h2 className="font-bold text-xs uppercase tracking-wide text-[#92400E]">
-                {t('page.dashboard.attentionRequired')}
-              </h2>
-              <p className="text-xs font-semibold text-[#0F172A] mt-1">
-                {integrityReviews.length > 0
-                  ? `${integrityReviews[0].tender_number}: High Integrity Alert`
-                  : 'Narmada Systems & Services Pvt. Ltd.'}
-              </p>
-              <ul className="text-[11px] text-[#78350F] list-disc list-inside mt-1.5 space-y-0.5">
-                {integrityReviews.length > 0 ? (
-                  <>
-                    <li>{integrityReviews[0].findings_count} integrity review findings flagged</li>
-                    <li>Related bidder &amp; common statutory identifier signals</li>
-                    <li>Itemized cost breakdown verification recommended</li>
-                  </>
-                ) : (
-                  <>
-                    <li>Legal-name inconsistency across documents</li>
-                    <li>Udyam registration certificate missing</li>
-                    <li>OEM authorization letter expired</li>
-                  </>
-                )}
-              </ul>
-              <Link
-                to={integrityReviews.length > 0 ? `/integrity?tender=${integrityReviews[0].tender_id}` : '/verification/BID-002'}
-                className="inline-block mt-2.5 text-xs font-semibold underline hover:text-[#78350F] text-[#92400E]"
-              >
-                {integrityReviews.length > 0 ? 'Review Integrity Findings →' : `${t('page.dashboard.reviewExceptions')} →`}
-              </Link>
-            </div>
-          </section>
-
-          {/* Verification Activity Work Queue */}
-          <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
-            <div className="p-3 border-b border-[#CBD5E1] bg-[#F8FAFC] flex items-center justify-between">
-              <h2 className="font-serif font-bold text-xs text-[#0B2A4A] uppercase tracking-wide flex items-center gap-1.5">
-                <ClipboardList className="w-3.5 h-3.5 text-[#0B2A4A]" />
-                {t('page.dashboard.verificationActivity')}
-              </h2>
-              <span className="text-[10px] text-[#64748B] font-mono">{t('page.dashboard.workQueue')}</span>
-            </div>
-
-            <div className="divide-y divide-[#E2E8F0]">
-              {audit.slice(0, 4).map((item) => (
-                <div key={item.id} className="p-3 text-xs">
-                  <div className="flex items-center justify-between">
-                    <strong className="text-xs text-[#0F172A] font-semibold">{item.action}</strong>
-                    <span className="font-mono text-[10px] text-[#64748B]">{item.time}</span>
-                  </div>
-                  <p className="text-[11px] text-[#475569] mt-0.5 leading-relaxed">{item.detail}</p>
-                </div>
               ))}
-            </div>
+              {bidders.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="p-6 text-center text-xs text-[#64748B]">
+                    No active bidder assessments loaded.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-            <div className="p-2.5 bg-[#F8FAFC] border-t border-[#CBD5E1] text-right">
-              <Link
-                to="/audit-trail"
-                className="text-xs font-semibold text-[#0B2A4A] hover:underline"
-              >
-                {t('action.openAuditTrail')} →
-              </Link>
-            </div>
-          </section>
-        </aside>
-      </div>
-
+      {/* ── 4. Statutory Advisory Notice (NIC/UX4G Pattern) ─────────────────── */}
       <section className="ux4g-alert ux4g-alert-info rounded-[2px] shadow-xs">
         <ShieldCheck className="w-4 h-4 shrink-0 text-[#1D4ED8] mt-0.5" />
         <div className="leading-relaxed text-xs text-[#1E3A8A]">
