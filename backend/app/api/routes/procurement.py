@@ -90,7 +90,8 @@ async def get_tender_detail(tender_id: str, user: dict = Depends(get_current_use
     tender = ps.get_tender_by_id(tender_id)
     if not tender:
         raise HTTPException(status_code=404, detail="Tender not found")
-    reqs = ps.get_tender_requirements(tender["id"])
+    target_id = str(tender.get("id") or tender_id)
+    reqs = ps.get_tender_requirements(target_id)
     return {**tender, "requirements": reqs}
 
 
@@ -108,14 +109,17 @@ async def create_tender(body: TenderCreate, user: dict = Depends(get_current_use
         "created_by": actor_name(user),
     }
     created = ps.create_tender_record(tender_data)
+    tender_id_val = str(created.get("id") or "")
+    tender_num = str(created.get("tender_number") or body.tender_number or "")
+    tender_title = str(created.get("title") or body.title or "")
     ps.log_audit_event(
         action="Tender created",
         actor=actor_name(user),
-        tender_id=created["id"],
-        description=f"Tender '{created['tender_number']}' — {created['title']} registered with statutory criteria.",
-        actor_user_id=str(user.get("id") or ""),
+        tender_id=tender_id_val,
+        description=f"Tender '{tender_num}' — {tender_title} registered with statutory criteria.",
+        actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
-    reqs = ps.get_tender_requirements(created["id"])
+    reqs = ps.get_tender_requirements(tender_id_val)
     return {**created, "requirements": reqs}
 
 
@@ -133,7 +137,7 @@ async def list_tender_bidders(tender_id: str, user: dict = Depends(get_current_u
 async def add_bidder_to_tender(tender_id: str, body: BidderCreate, user: dict = Depends(get_current_user)):
     """Register a new bidder in a tender."""
     tender = ps.get_tender_by_id(tender_id)
-    target_tender_id = tender["id"] if tender else tender_id
+    target_tender_id = str(tender.get("id") or tender_id) if tender else tender_id
 
     created = ps.create_bidder_record(target_tender_id, {
         "legal_name": body.legal_name,
@@ -141,14 +145,15 @@ async def add_bidder_to_tender(tender_id: str, body: BidderCreate, user: dict = 
         "pan": body.pan,
         "udyam_number": body.udyam_number,
     })
+    created_bidder_id = str(created.get("id") or "")
 
     ps.log_audit_event(
         action="Bidder enrolled",
         actor=actor_name(user),
         tender_id=target_tender_id,
-        bidder_id=created["id"],
+        bidder_id=created_bidder_id,
         description=f"Enrolled bidder '{body.legal_name}' into tender.",
-        actor_user_id=str(user.get("id") or ""),
+        actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
 
     return created
@@ -183,7 +188,7 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
         "requirements": results,
         "discrepancies": discrepancies,
         "recommendations": [],
-        "assessment_updated_at": bidder.get("updated_at") if bidder else None,
+        "assessment_updated_at": bidder.get("updated_at") if isinstance(bidder, dict) else None,
     }
 
 
@@ -232,10 +237,11 @@ async def upload_bidder_document(
         logger.warning(f"OCR processing note: {e}")
         ocr_result = {"extractedFields": [], "extractedText": "", "confidenceScore": 0.0, "ocrEngine": "none"}
 
-    extracted_fields: List[Dict[str, Any]] = ocr_result.get("extractedFields") if isinstance(ocr_result.get("extractedFields"), list) else []
-    extracted_text: str = str(ocr_result.get("extractedText") or "")
-    confidence: float = float(ocr_result.get("confidenceScore") or 0.0)
-    engine_used: str = str(ocr_result.get("ocrEngine") or "PyMuPDF + Regex Parser")
+    raw_fields = ocr_result.get("extractedFields") if isinstance(ocr_result, dict) else None
+    extracted_fields: List[Dict[str, Any]] = [f for f in raw_fields if isinstance(f, dict)] if isinstance(raw_fields, list) else []
+    extracted_text: str = str(ocr_result.get("extractedText") or "") if isinstance(ocr_result, dict) else ""
+    confidence: float = float(ocr_result.get("confidenceScore") or 0.0) if isinstance(ocr_result, dict) else 0.0
+    engine_used: str = str(ocr_result.get("ocrEngine") or "PyMuPDF + Regex Parser") if isinstance(ocr_result, dict) else "PyMuPDF + Regex Parser"
 
     # Step 2: Classify document type if auto
     if document_type == "auto" or not document_type:
@@ -286,16 +292,18 @@ async def upload_bidder_document(
         bidder_id=bidder_id,
         document_id=doc_id,
         description=f"Uploaded '{filename}' classified as '{classified_type}'.",
-        actor_user_id=str(user.get("id") or ""),
+        actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
+    score_val = assessment.get("compliance_score", 0) if isinstance(assessment, dict) else 0
+    risk_val = assessment.get("risk_level", "LOW") if isinstance(assessment, dict) else "LOW"
     ps.log_audit_event(
         action="OCR & Verification completed",
         actor="Verification Engine",
         tender_id=tender_id,
         bidder_id=bidder_id,
         document_id=doc_id,
-        description=f"Extracted {len(extracted_fields)} field(s) ({engine_used}). Assessment: Score {assessment['compliance_score']}/100, Risk: {assessment['risk_level']}.",
-        metadata={"score": assessment["compliance_score"], "risk": assessment["risk_level"]},
+        description=f"Extracted {len(extracted_fields)} field(s) ({engine_used}). Assessment: Score {score_val}/100, Risk: {risk_val}.",
+        metadata={"score": score_val, "risk": risk_val},
     )
 
     updated_bidder = ps.get_bidder_by_id(bidder_id)
@@ -344,13 +352,18 @@ async def verify_bidder(bidder_id: str, user: dict = Depends(get_current_user)):
 
     ps.save_compliance_assessment(bidder_id, tender_id, assessment)
 
+    score_val = assessment.get("compliance_score", 0) if isinstance(assessment, dict) else 0
+    risk_val = assessment.get("risk_level", "LOW") if isinstance(assessment, dict) else "LOW"
+    discrepancies_list = assessment.get("discrepancies") if isinstance(assessment, dict) else None
+    discrepancies_count = len(discrepancies_list) if isinstance(discrepancies_list, list) else 0
+
     ps.log_audit_event(
         action="Compliance assessment completed",
         actor="Verification Engine",
         tender_id=tender_id,
         bidder_id=bidder_id,
-        description=f"Compliance Score: {assessment['compliance_score']}/100, Risk: {assessment['risk_level']}. {len(assessment.get('discrepancies', []))} discrepancy(ies).",
-        metadata={"score": assessment["compliance_score"], "risk": assessment["risk_level"]},
+        description=f"Compliance Score: {score_val}/100, Risk: {risk_val}. {discrepancies_count} discrepancy(ies).",
+        metadata={"score": score_val, "risk": risk_val},
     )
 
     return assessment
@@ -393,7 +406,7 @@ async def record_officer_decision(
         tender_id=str(bidder.get("tender_id") or ""),
         bidder_id=bidder_id,
         description=f"Decision: {body.decision}. Officer Remarks: {body.note or 'No remarks provided.'}",
-        actor_user_id=str(user.get("id") or ""),
+        actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
 
     return updated
@@ -433,7 +446,7 @@ async def review_requirement(
         tender_id=str(bidder.get("tender_id") or ""),
         bidder_id=bidder_id,
         description=f"Requirement '{requirement_id}' marked '{persistent_status}'.",
-        actor_user_id=str(user.get("id") or ""),
+        actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
 
     return {"bidder_id": bidder_id, "requirement_id": requirement_id, "status": persistent_status}
@@ -500,15 +513,16 @@ async def get_tender_integrity_endpoint(tender_id: str, user: dict = Depends(get
     tender = ps.get_tender_by_id(tender_id)
     if not tender:
         raise HTTPException(status_code=404, detail=f"Tender '{tender_id}' not found")
-    assessment = assess_tender_integrity(tender["id"])
+    target_tender_id = str(tender.get("id") or tender_id)
+    assessment = assess_tender_integrity(target_tender_id)
 
     # Merge any persistent officer review status overrides
-    reviews = ps.get_integrity_finding_reviews(tender_id=tender["id"])
+    reviews = ps.get_integrity_finding_reviews(tender_id=target_tender_id)
     if reviews:
-        review_map = {}
+        review_map: Dict[str, str] = {}
         for r in reviews:
-            if r.get("finding_id") and r["finding_id"] not in review_map:
-                review_map[r["finding_id"]] = r["status"]
+            if isinstance(r, dict) and r.get("finding_id") and r["finding_id"] not in review_map:
+                review_map[str(r["finding_id"])] = str(r.get("status") or "")
 
         updated_findings = []
         for f in assessment.findings:
@@ -565,6 +579,6 @@ async def review_integrity_finding_endpoint(
         action=body.action or f"Marked {clean_status}",
         note=body.note,
         officer_name=actor_name(user),
-        actor_user_id=str(user.get("id") or ""),
+        actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
     return res

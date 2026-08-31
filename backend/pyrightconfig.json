@@ -1,14 +1,25 @@
 {
-  "include": ["."],
+  "include": [
+    "."
+  ],
   "exclude": [
     "**/__pycache__",
     "**/.pytest_cache",
-    "**/pyrefly_virtual/**",
-    "**/_inmemory/**"
+    "**/.pyretty_virtual",
+    "**/.pyretty_virtual/**",
+    "**/.pyrefly_virtual",
+    "**/.pyrefly_virtual/**",
+    "**/_inmemory",
+    "**/_inmemory/**",
+    "**/*_inmemory*",
+    "**/*_inmemory*/**",
+    "**/.venv",
+    "**/.venv/**"
   ],
   "pythonVersion": "3.10",
-  "pythonPath": "C:/Users/Samujwal/AppData/Local/Programs/Python/Python310/python.exe",
-  "extraPaths": ["."],
+  "extraPaths": [
+    "."
+  ],
   "reportMissingImports": "warning",
   "reportMissingModuleSource": "none"
 }
