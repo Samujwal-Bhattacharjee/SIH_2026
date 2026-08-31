@@ -66,9 +66,9 @@
     "semantic_hash": "1dcf32b407de9165603fcafc5bbdc2a3"
   },
   "backend/app/api/routes/procurement.py": {
-    "mtime": 1788179752.7251325,
-    "seen": 1788180054.8100364,
-    "ast_hash": "b58ccf75a7c15072d2578539fed66914",
+    "mtime": 1788181291.5958745,
+    "seen": 1788181362.5435402,
+    "ast_hash": "c1e3995c885774b32a54b6c9ddc83208",
     "semantic_hash": ""
   },
   "backend/app/api/routes/projects.py": {
@@ -108,9 +108,9 @@
     "semantic_hash": "21643e871acfe8afae1088d8fd186ad2"
   },
   "backend/app/core/procurement_store.py": {
-    "mtime": 1788178407.144273,
-    "seen": 1788179447.5969553,
-    "ast_hash": "1a9e7ce63b37dbde9bfb32da660cd4db",
+    "mtime": 1788180219.5770013,
+    "seen": 1788180258.619608,
+    "ast_hash": "db9f060f522d4db6311ed401109b80c2",
     "semantic_hash": ""
   },
   "backend/app/core/security.py": {
@@ -312,10 +312,10 @@
     "semantic_hash": "113fdc12ac4413b462427dc9f5c82543"
   },
   "backend/pyrightconfig.json": {
-    "mtime": 1787514001.0538106,
-    "seen": 1787863686.6306608,
-    "ast_hash": "e3e8b7b175f7fe9e5697ac2f7140c24a",
-    "semantic_hash": "e3e8b7b175f7fe9e5697ac2f7140c24a"
+    "mtime": 1788180710.3280208,
+    "seen": 1788180767.325122,
+    "ast_hash": "2c3ea860a47bd84822b36b7ca0268c41",
+    "semantic_hash": ""
   },
   "backend/seed.py": {
     "mtime": 1787514013.5037942,
@@ -390,10 +390,10 @@
     "semantic_hash": "c1ee9ce6a4fe04105dbf8e619390df5e"
   },
   "pyrightconfig.json": {
-    "mtime": 1787514001.0704398,
-    "seen": 1787863686.6306608,
-    "ast_hash": "aec6d59b4aee4c88e5830fbcf57ed5c9",
-    "semantic_hash": "aec6d59b4aee4c88e5830fbcf57ed5c9"
+    "mtime": 1788180704.8384697,
+    "seen": 1788180767.3293514,
+    "ast_hash": "d835023006fd4393284b575a184da9d8",
+    "semantic_hash": ""
   },
   "src/App.tsx": {
     "mtime": 1788113985.4341486,
@@ -1002,9 +1002,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/bid_analyzer.py": {
-    "mtime": 1788178523.281394,
-    "seen": 1788179447.6003888,
-    "ast_hash": "dadeeda531517ed2097db789ac3e8f45",
+    "mtime": 1788181003.6511824,
+    "seen": 1788181111.3525167,
+    "ast_hash": "dca187442ec52080b22102c5830acc45",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/feature_extractor.py": {
@@ -1032,9 +1032,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_integrity_engine.py": {
-    "mtime": 1788178445.2940753,
-    "seen": 1788179447.609113,
-    "ast_hash": "a59b8da9df281fe776a1243e52106ed5",
+    "mtime": 1788181059.570199,
+    "seen": 1788181111.3587153,
+    "ast_hash": "41551c0f3e5c1a43ba0b5b249c2aa212",
     "semantic_hash": ""
   },
   "implementation_plan.md": {
