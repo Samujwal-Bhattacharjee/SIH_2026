@@ -236,7 +236,7 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     };
 
     try {
-      await (apiClient as any).procurement.addBidder(tenderId || 'TEN-2026-001', { legal_name: name, gstin, pan });
+      await (apiClient as any).procurement.addBidder(tenderId!, { legal_name: name, gstin, pan });
       if (isUsingMockApi()) { setBidders((items) => [...items, newBidder]); log('Bidder added', `${name} added to tender.`); }
       else await refreshData();
     } catch (e) {

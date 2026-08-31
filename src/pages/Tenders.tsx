@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  FilePlus2,
+  FileText,
   Plus,
-  ScanLine,
+  Upload,
   Search,
-  Filter,
-  CheckCircle2,
+  Check,
+  Clock,
   AlertTriangle,
-  ArrowRight,
-  FolderKanban,
-  Building2,
+  ChevronRight,
+  CheckCircle2,
   Calendar,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
 
 export const Tenders: React.FC = () => {
-  const { bidders, addTender, addBidder } = useProcurement();
+  const { bidders, addTender, addBidder, error } = useProcurement();
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState('');
   const [department, setDepartment] = useState('Department of Administrative Reforms');
   const [closingDate, setClosingDate] = useState('2026-08-30');
-  const [estimatedValue, setEstimatedValue] = useState('4,50,00,000');
   const [bidderName, setBidderName] = useState('');
   const [bidderGstin, setBidderGstin] = useState('');
   const [bidderPan, setBidderPan] = useState('');
@@ -48,13 +48,13 @@ export const Tenders: React.FC = () => {
   };
 
   const statutoryRequirements = [
-    { id: '1', name: 'Valid GST registration', category: 'Statutory compliance', mandatory: true },
-    { id: '2', name: 'PAN and Income Tax declaration', category: 'Statutory compliance', mandatory: true },
-    { id: '3', name: 'Udyam / MSME registration', category: 'Government recognition', mandatory: false },
-    { id: '4', name: 'OEM authorization (MAF)', category: 'Technical eligibility', mandatory: true },
-    { id: '5', name: 'Minimum annual turnover', category: 'Financial eligibility', mandatory: true },
-    { id: '6', name: 'No blacklisting / debarment', category: 'Mandatory declaration', mandatory: true },
-    { id: '7', name: 'Local content declaration (Make in India)', category: 'Preference order', mandatory: false },
+    { id: '1', category: 'STATUTORY COMPLIANCE', name: 'Valid GST registration', mandatory: true },
+    { id: '2', category: 'STATUTORY COMPLIANCE', name: 'PAN and Income Tax declaration', mandatory: true },
+    { id: '3', category: 'GOVERNMENT RECOGNITION', name: 'Udyam / MSME registration', mandatory: false },
+    { id: '4', category: 'TECHNICAL ELIGIBILITY', name: 'OEM authorization (MAF)', mandatory: true },
+    { id: '5', category: 'FINANCIAL ELIGIBILITY', name: 'Minimum annual turnover', mandatory: true },
+    { id: '6', category: 'MANDATORY DECLARATION', name: 'No blacklisting / debarment', mandatory: true },
+    { id: '7', category: 'PREFERENCE ORDER', name: 'Local content declaration (Make in India)', mandatory: false },
   ];
 
   const filteredBidders = bidders.filter(
@@ -64,290 +64,341 @@ export const Tenders: React.FC = () => {
   );
 
   return (
-    <div className="space-y-4 font-sans pb-8">
-      {/* Header */}
-      <div className="border-b border-[#D9DDE3] pb-3">
-        <span className="text-[11px] uppercase font-semibold text-[#475569] tracking-wider block">
-          Tender Register &amp; Bidder Management
-        </span>
-        <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] mt-0.5">
+    <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
+      {/* ── Page Header Strip ────────────────────────────────────────────── */}
+      <div className="pt-1">
+        <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#0F172A] tracking-tight">
           Tender Compliance Workspace
         </h1>
-        <p className="text-xs text-[#475569] mt-0.5">
+        <p className="text-xs text-[#64748B] mt-1">
           Define tender criteria, enroll participating bidders, and initiate document verification workflows.
         </p>
       </div>
 
       {statusMessage && (
-        <div className="ux4g-alert ux4g-alert-success text-xs">
-          <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
-          <span className="flex-1">{statusMessage}</span>
-          <button onClick={() => setStatusMessage(null)} className="text-[#15803D] text-xs underline cursor-pointer">Dismiss</button>
+        <div className="bg-[#F0FDF4] border border-[#BBF7D0] p-3 rounded-[4px] text-xs text-[#15803D] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
+            <span>{statusMessage}</span>
+          </div>
+          <button
+            onClick={() => setStatusMessage(null)}
+            className="text-[#15803D] underline cursor-pointer text-xs font-semibold"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 
-      {/* Active Tender Specification */}
-      <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
-        <div className="p-4 border-b border-[#CBD5E1] flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-[#F8FAFC]">
+      {error && (
+        <div className="bg-[#FEF2F2] border border-[#FCA5A5] p-3 rounded-[4px] text-xs text-[#B72025] flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-[#B72025] shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* ── Active Tender Specification Card ──────────────────────────────── */}
+      <section className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-white px-2 py-0.5 border border-[#CBD5E1] rounded-[2px]">
+              <span className="font-mono text-xs font-bold text-[#0F172A]">
                 GEM/2026/B/418207
               </span>
-              <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE] rounded-[2px] text-[10px] font-bold">
+              <span className="px-2.5 py-0.5 bg-[#EDE9FE] text-[#6D28D9] rounded-full text-[11px] font-semibold">
                 Active tender
               </span>
             </div>
-            <h2 className="font-serif font-bold text-base text-[#0B2A4A] mt-1.5">
+
+            <h2 className="font-serif font-bold text-base sm:text-lg text-[#0F172A] mt-2 leading-snug">
               Supply and Installation of Network Infrastructure for Government Administrative Offices
             </h2>
-            <p className="text-xs text-[#64748B] mt-0.5">
+
+            <p className="text-xs text-[#64748B] mt-1">
               Department of Administrative Reforms • Bid closing: 30 Aug 2026 • Estimated value: ₹4,50,00,000
             </p>
           </div>
 
           <Link
             to="/documents"
-            className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center gap-1.5 cursor-pointer shrink-0"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] shrink-0 transition-colors"
           >
-            <ScanLine className="w-3.5 h-3.5" />
+            <Upload className="w-4 h-4 text-[#0F172A]" />
             <span>Upload bidder documents</span>
           </Link>
         </div>
+      </section>
 
-        {/* Structured Eligibility Rules Strip */}
-        <div className="p-4">
-          <span className="text-[11px] uppercase font-bold text-[#64748B] block mb-2 tracking-wide">
-            Structured eligibility criteria (7 requirements):
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-            {statutoryRequirements.map((req) => (
-              <div key={req.id} className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] hover:border-[#CBD5E1] rounded-[2px] text-xs transition-colors">
-                <span className="text-[10px] uppercase font-semibold text-[#64748B] block">
-                  {req.category}
-                </span>
-                <strong className="text-[#0B2A4A] text-xs block mt-0.5 font-semibold">
-                  {req.name}
-                </strong>
-                <span className={`text-[10px] font-bold mt-1 block ${req.mandatory ? 'text-[#B72025]' : 'text-[#15803D]'}`}>
-                  {req.mandatory ? 'Mandatory' : 'Optional / Preference'}
-                </span>
-              </div>
-            ))}
-          </div>
+      {/* ── Structured Eligibility Criteria (7 Requirements) ───────────────── */}
+      <section className="space-y-3">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+          STRUCTURED ELIGIBILITY CRITERIA (7 REQUIREMENTS):
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {statutoryRequirements.map((req) => (
+            <div
+              key={req.id}
+              className="bg-white border border-[#E5E7EB] rounded-[4px] p-4 shadow-2xs hover:border-[#CBD5E1] transition-colors"
+            >
+              <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider block">
+                {req.category}
+              </span>
+              <strong className="text-xs font-bold text-[#0F172A] block mt-1.5 leading-snug">
+                {req.name}
+              </strong>
+              <span
+                className={`text-[11px] font-semibold block mt-2.5 ${
+                  req.mandatory ? 'text-[#DC2626]' : 'text-[#4F46E5]'
+                }`}
+              >
+                {req.mandatory ? 'Mandatory' : 'Optional / Preference'}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Forms Section: Create Tender & Add Bidder */}
-      <div className="grid lg:grid-cols-2 gap-4">
-        {/* Create Tender Form */}
-        <form onSubmit={submitTender} className="bg-white border border-[#CBD5E1] p-4 rounded-[2px] shadow-xs">
-          <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5 border-b border-[#E2E8F0] pb-2">
-            <FilePlus2 className="w-4 h-4 text-[#0B2A4A]" />
-            Create tender record
-          </h2>
-
-          <div className="mt-3 space-y-3">
+      {/* ── Two Forms: Create Tender Record & Add Participating Bidder ────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Form: Create Tender Record */}
+        <section className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
+          <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+            <FileText className="w-4 h-4 text-[#0F172A]" />
             <div>
-              <label className="ux4g-label">
+              <h2 className="font-bold text-sm text-[#0F172A]">
+                Create tender record
+              </h2>
+              <p className="text-[11px] text-[#64748B] mt-0.5">
+                Official GeM or CPPP procurement description.
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={submitTender} className="mt-4 space-y-4 text-xs">
+            <div>
+              <label className="block font-semibold text-[#0F172A] mb-1">
                 Tender title *
               </label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter procurement tender title"
-                className="ux4g-input"
+                className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
               />
-              <span className="text-[10px] text-[#64748B] block mt-0.5">
-                Official GeM or CPPP procurement description.
-              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="ux4g-label">
+                <label className="block font-semibold text-[#0F172A] mb-1">
                   Department *
                 </label>
                 <input
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="ux4g-input"
+                  className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
                 />
               </div>
+
               <div>
-                <label className="ux4g-label">
+                <label className="block font-semibold text-[#0F172A] mb-1">
                   Bid closing date *
                 </label>
-                <input
-                  type="date"
-                  value={closingDate}
-                  onChange={(e) => setClosingDate(e.target.value)}
-                  className="ux4g-input"
-                />
+                <div className="relative">
+                  <input
+                    type="date"
+                    value={closingDate}
+                    onChange={(e) => setClosingDate(e.target.value)}
+                    className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                  />
+                </div>
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="ux4g-btn ux4g-btn-primary ux4g-btn-md mt-1 cursor-pointer"
-            >
-              Create tender record
-            </button>
-          </div>
-        </form>
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] cursor-pointer"
+              >
+                Create tender record
+              </button>
+            </div>
+          </form>
+        </section>
 
-        {/* Add Bidder Form */}
-        <form onSubmit={submitBidder} className="bg-white border border-[#CBD5E1] p-4 rounded-[2px] shadow-xs">
-          <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5 border-b border-[#E2E8F0] pb-2">
-            <Plus className="w-4 h-4 text-[#0B2A4A]" />
-            Add participating bidder
-          </h2>
-
-          <div className="mt-3 space-y-3">
+        {/* Right Form: Add Participating Bidder */}
+        <section className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
+          <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+            <Plus className="w-4 h-4 text-[#0F172A]" />
             <div>
-              <label className="ux4g-label">
+              <h2 className="font-bold text-sm text-[#0F172A]">
+                Add participating bidder
+              </h2>
+              <p className="text-[11px] text-[#64748B] mt-0.5">
+                Name must match statutory registration certificates.
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={submitBidder} className="mt-4 space-y-4 text-xs">
+            <div>
+              <label className="block font-semibold text-[#0F172A] mb-1">
                 Bidder legal name *
               </label>
               <input
                 value={bidderName}
                 onChange={(e) => setBidderName(e.target.value)}
                 placeholder="Enter bidder registered legal entity name"
-                className="ux4g-input"
+                className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
               />
-              <span className="text-[10px] text-[#64748B] block mt-0.5">
-                Name must match statutory registration certificates.
-              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="ux4g-label">
+                <label className="block font-semibold text-[#0F172A] mb-1">
                   GSTIN (Optional)
                 </label>
                 <input
                   value={bidderGstin}
                   onChange={(e) => setBidderGstin(e.target.value)}
                   placeholder="27AABCT4180Q1ZV"
-                  className="ux4g-input font-mono"
+                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] font-mono focus:outline-none focus:border-[#2E0854]"
                 />
               </div>
+
               <div>
-                <label className="ux4g-label">
+                <label className="block font-semibold text-[#0F172A] mb-1">
                   PAN (Optional)
                 </label>
                 <input
                   value={bidderPan}
                   onChange={(e) => setBidderPan(e.target.value)}
                   placeholder="AABCT4180Q"
-                  className="ux4g-input font-mono"
+                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] font-mono focus:outline-none focus:border-[#2E0854]"
                 />
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="ux4g-btn ux4g-btn-primary ux4g-btn-md mt-1 cursor-pointer"
-            >
-              Enroll bidder in tender
-            </button>
-          </div>
-        </form>
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[#0B1536] hover:bg-[#1E053A] text-white rounded-[2px] text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+              >
+                Enroll bidder in tender
+              </button>
+            </div>
+          </form>
+        </section>
       </div>
 
-      {/* Participating Bidders Register Table */}
-      <section className="bg-white border border-[#CBD5E1] rounded-[2px] shadow-xs">
-        <div className="p-3 border-b border-[#CBD5E1] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      {/* ── Participating Bidders Register Table ───────────────────────────── */}
+      <section className="bg-white border border-[#E5E7EB] rounded-[4px] shadow-2xs overflow-hidden">
+        {/* Soft Lavender Header Banner */}
+        <div className="bg-[#FAF8FD] p-4 border-b border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">
+            <h2 className="font-bold text-base text-[#0F172A]">
               Participating bidders register
             </h2>
-            <p className="text-[11px] text-[#64748B]">
+            <p className="text-xs text-[#64748B] mt-0.5">
               Enrolled bidders, document submission status, compliance scores, and evidence links.
             </p>
           </div>
 
-          <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-[#64748B] absolute left-2.5 top-2.5" />
+          <div className="relative w-full sm:w-72">
+            <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
               placeholder="Search bidder ID or name..."
-              className="ux4g-input pl-8"
+              className="w-full bg-white border border-[#CBD5E1] rounded-[4px] pl-8 pr-3 py-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="ux4g-table">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr>
-                <th>Bidder ID</th>
-                <th>Legal entity name</th>
-                <th>Submitted documents</th>
-                <th>Compliance score</th>
-                <th>Risk level</th>
-                <th>Status</th>
-                <th className="text-right">Action</th>
+              <tr className="border-b border-[#E5E7EB] text-[#475569]">
+                <th className="py-3 px-4 font-semibold w-[120px]">Bidder ID</th>
+                <th className="py-3 px-4 font-semibold">Legal entity name</th>
+                <th className="py-3 px-4 font-semibold w-[180px]">Submitted documents</th>
+                <th className="py-3 px-4 font-semibold w-[140px]">Compliance score</th>
+                <th className="py-3 px-4 font-semibold w-[120px]">Risk level</th>
+                <th className="py-3 px-4 font-semibold w-[140px]">Status</th>
+                <th className="py-3 px-4 font-semibold text-right w-[160px]">Action</th>
               </tr>
             </thead>
-            <tbody>
-              {filteredBidders.map((b) => (
-                <tr key={b.id}>
-                  <td className="font-mono text-xs font-semibold text-[#0B2A4A]">
-                    {b.id}
-                  </td>
-                  <td>
-                    <strong className="text-xs text-[#0F172A] block">{b.name}</strong>
-                    <span className="text-[11px] text-[#64748B]">
-                      {b.exceptions > 0 ? `${b.exceptions} exception(s) detected` : 'All statutory requirements verified'}
-                    </span>
-                  </td>
-                  <td>
-                    <span className="text-xs text-[#334155] font-medium">
-                      {b.documents} files attached
-                    </span>
-                  </td>
-                  <td>
-                    <span className="font-semibold text-xs text-[#0B2A4A]">
-                      {b.score ? `${b.score}/100` : '—'}
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className={`inline-block px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
-                        b.risk === 'HIGH' || b.risk === 'CRITICAL'
-                          ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
-                          : b.risk === 'MEDIUM'
-                          ? 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
-                          : 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
-                      }`}
-                    >
-                      {b.risk === 'HIGH' ? '[!] High' : b.risk === 'MEDIUM' ? '[!] Medium' : '[✓] Low'}
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className={`inline-block px-2 py-0.5 border text-[11px] font-semibold rounded-[2px] ${
-                        b.status === 'Qualified' || b.status === 'Verified'
-                          ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
-                          : b.status === 'Exception Found' || b.status === 'Disqualified'
-                          ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
-                          : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
-                      }`}
-                    >
-                      {b.status}
-                    </span>
-                  </td>
-                  <td className="text-right">
-                    <Link
-                      to={`/verification/${b.id}`}
-                      className="inline-flex items-center text-xs font-semibold text-[#0B2A4A] hover:underline"
-                    >
-                      Open assessment →
-                    </Link>
+            <tbody className="divide-y divide-[#E5E7EB]">
+              {filteredBidders.length > 0 ? (
+                filteredBidders.map((b) => (
+                  <tr key={b.id} className="hover:bg-[#F9FAFB] transition-colors">
+                    {/* Bidder ID */}
+                    <td className="py-3.5 px-4 font-mono text-xs text-[#0F172A]">
+                      {b.id}
+                    </td>
+
+                    {/* Legal Entity Name */}
+                    <td className="py-3.5 px-4">
+                      <strong className="text-xs text-[#1E0A45] block font-bold">
+                        {b.name}
+                      </strong>
+                      <span className="text-[11px] block mt-0.5">
+                        {b.exceptions > 0 ? (
+                          <span className="text-[#DC2626] font-medium">
+                            {b.exceptions} exception(s) detected
+                          </span>
+                        ) : (
+                          <span className="text-[#64748B]">
+                            All statutory requirements verified
+                          </span>
+                        )}
+                      </span>
+                    </td>
+
+                    {/* Submitted Documents */}
+                    <td className="py-3.5 px-4 text-xs text-[#0F172A]">
+                      {b.documents || 0} files attached
+                    </td>
+
+                    {/* Compliance Score */}
+                    <td className="py-3.5 px-4 font-bold text-sm text-[#0F172A] font-mono">
+                      {b.score ? `${Math.round(b.score)}/100` : '—'}
+                    </td>
+
+                    {/* Risk Level */}
+                    <td className="py-3.5 px-4">
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#15803D]">
+                        <Check className="w-3.5 h-3.5 text-[#15803D]" />
+                        <span>Low</span>
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td className="py-3.5 px-4">
+                      <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-[2px] bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                        {b.status || 'Under Review'}
+                      </span>
+                    </td>
+
+                    {/* Action Link */}
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <Link
+                        to={`/verification/${b.id}`}
+                        className="text-xs font-semibold text-[#2E0854] hover:underline inline-flex items-center gap-0.5"
+                      >
+                        <span>Open assessment</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-xs text-[#64748B]">
+                    No participating bidders enrolled yet. Add a bidder above to begin compliance verification.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

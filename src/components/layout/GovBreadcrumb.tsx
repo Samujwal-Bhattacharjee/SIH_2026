@@ -29,19 +29,19 @@ export const GovBreadcrumb: React.FC = () => {
 
   return (
     <>
-      <div className="bg-[#F1F5F9] border-b border-[#CBD5E1] px-3 sm:px-6 py-1.5 select-none font-sans">
+      <div className="bg-transparent px-4 sm:px-6 lg:px-8 py-2.5 select-none font-sans">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
           {/* Breadcrumb Trail */}
-          <nav className="flex items-center space-x-1.5 text-[#64748B] font-medium" aria-label="Breadcrumb">
-            <Link to="/dashboard" className="hover:text-[#4A154B] flex items-center space-x-1 transition-colors">
-              <Home className="w-3.5 h-3.5 text-[#4A154B]" />
+          <nav className="flex items-center space-x-1.5 text-[#64748B] text-xs font-medium" aria-label="Breadcrumb">
+            <Link to="/dashboard" className="hover:text-[#0F172A] flex items-center space-x-1 transition-colors">
+              <Home className="w-3.5 h-3.5 text-[#64748B]" />
               <span>{language === 'hi' ? 'मुख्य पृष्ठ' : 'Home'}</span>
             </Link>
 
             {pathSegments.length === 0 ? (
               <>
                 <ChevronRight className="w-3 h-3 text-gray-400" />
-                <span className="text-[#0B2A4A] font-bold">
+                <span className="text-[#0F172A] font-bold">
                   {language === 'hi' ? 'डैशबोर्ड' : 'Dashboard'}
                 </span>
               </>
@@ -54,11 +54,11 @@ export const GovBreadcrumb: React.FC = () => {
                   <React.Fragment key={url}>
                     <ChevronRight className="w-3 h-3 text-gray-400" />
                     {isLast ? (
-                      <span className="text-[#0B2A4A] font-bold tracking-tight">
+                      <span className="text-[#0F172A] font-bold">
                         {formatSegment(segment)}
                       </span>
                     ) : (
-                      <Link to={url} className="hover:text-[#4A154B] transition-colors">
+                      <Link to={url} className="hover:text-[#0F172A] transition-colors">
                         {formatSegment(segment)}
                       </Link>
                     )}

@@ -280,7 +280,7 @@ export const BidderVerification: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <Link
-            to={`/integrity?tender=${(bidder as any)?.tender_id || 'TEN-2026-001'}`}
+            to={(bidder as any)?.tender_id ? `/integrity?tender=${(bidder as any).tender_id}` : '/integrity'}
             className="ux4g-btn ux4g-btn-secondary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer"
             title="Inspect cross-tender integrity signals and relationship graphs"
           >

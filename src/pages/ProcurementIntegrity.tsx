@@ -75,7 +75,7 @@ export const ProcurementIntegrity: React.FC = () => {
 
   const queryTender = searchParams.get('tender');
   const [tendersList, setTendersList] = useState<any[]>([]);
-  const [selectedTenderId, setSelectedTenderId] = useState<string>(queryTender || contextTenderId || 'TEN-2026-001');
+  const [selectedTenderId, setSelectedTenderId] = useState<string>(queryTender || contextTenderId || '');
   const [selectedBidderId, setSelectedBidderId] = useState<string>('ALL');
 
   const [assessment, setAssessment] = useState<IntegrityAssessment | null>(null);
@@ -105,7 +105,10 @@ export const ProcurementIntegrity: React.FC = () => {
           const list = await procurement.getTenders();
           if (mounted && Array.isArray(list) && list.length > 0) {
             setTendersList(list);
+            // Auto-select first real tender if nothing is selected yet
             if (!queryTender && !selectedTenderId && list[0]?.id) {
+              setSelectedTenderId(list[0].id);
+            } else if (!queryTender && selectedTenderId === '' && list[0]?.id) {
               setSelectedTenderId(list[0].id);
             }
           }
@@ -283,7 +286,7 @@ export const ProcurementIntegrity: React.FC = () => {
                     </option>
                   ))
                 ) : (
-                  <option value="TEN-2026-001">TEN-2026-001 — Network Infrastructure</option>
+                  <option value="" disabled>No tenders loaded—connect to backend</option>
                 )}
               </select>
             </div>

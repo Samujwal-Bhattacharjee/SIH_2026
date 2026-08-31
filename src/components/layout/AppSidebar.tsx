@@ -17,10 +17,10 @@ import { isUsingMockApi } from '../../services/api/apiClient';
 const NAV_ITEMS = [
   { id: '01', name: 'DASHBOARD', path: '/dashboard', icon: LayoutDashboard },
   { id: '02', name: 'TENDERS', path: '/tenders', icon: FolderKanban },
-  { id: '03', name: 'BIDDER VERIFICATION', path: '/verification/BID-001', icon: ShieldCheck },
+  { id: '03', name: 'BIDDER VERIFICATION', path: '/verification', icon: ShieldCheck },
   { id: '04', name: 'DOCUMENTS', path: '/documents', icon: FileText },
   { id: '05', name: 'UPLOAD & EXTRACT', path: '/documents/upload', icon: ScanLine },
-  { id: '06', name: 'COMPLIANCE', path: '/verification/BID-002', icon: ClipboardCheck },
+  { id: '06', name: 'COMPLIANCE', path: '/integrity', icon: ClipboardCheck },
   { id: '07', name: 'VERIFICATION SOURCES', path: '/verification-sources', icon: Search },
   { id: '08', name: 'REPORTS', path: '/reports', icon: BarChart3 },
   { id: '09', name: 'AUDIT TRAIL', path: '/audit-trail', icon: ScrollText },

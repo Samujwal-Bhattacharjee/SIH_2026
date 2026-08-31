@@ -349,7 +349,7 @@ export const Dashboard: React.FC = () => {
               </button>
 
               <button
-                onClick={() => navigate('/verification/BID-001')}
+                onClick={() => navigate('/verification')}
                 className="p-3 bg-[#F8F9FA] hover:bg-[#EEF2F7] border border-[#CBD2DE] rounded-[2px] text-left transition-colors cursor-pointer"
               >
                 <TrendingUp className="w-4 h-4 text-[#0B3558] mb-1" />
