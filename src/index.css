@@ -2,7 +2,16 @@
 @import "tailwindcss";
 
 @theme {
-  /* Government Navy Brand Palette (Institutional, NIC/UX4G Style) */
+  /* UX4G Primary Purple & Government Navy Brand Palette */
+  --color-ux4g-purple-950: #2A0E30;
+  --color-ux4g-purple-900: #3B1A42;
+  --color-ux4g-purple-800: #4A154B;
+  --color-ux4g-purple-700: #581C87;
+  --color-ux4g-purple-600: #6B21A8;
+  --color-ux4g-purple-500: #7E22CE;
+  --color-ux4g-purple-100: #F3E8FF;
+  --color-ux4g-purple-50: #FAF5FF;
+
   --color-gov-navy-950: #040E1A;
   --color-gov-navy-900: #0B2A4A;
   --color-gov-navy-800: #123B63;
@@ -30,6 +39,7 @@
   --color-gov-border-subtle: #E2E8F0;
   --color-gov-border-strong: #94A3B8;
   --color-gov-border-navy: #0B2A4A;
+  --color-gov-border-purple: #4A154B;
 
   /* Status Colors */
   --color-gov-red: #B72025;
@@ -57,13 +67,17 @@
 
 /* ── UX4G 3.0 Design Tokens & Approved Root Overrides ───────────────────── */
 :root {
-  /* UX4G Approved Brand Overrides (National Government Theme) */
-  --ux4g-bg-brand-primary-strong: #0B2A4A !important;
-  --ux4g-bg-brand-primary-hover: #123B63 !important;
-  --ux4g-bg-brand-primary-active: #040E1A !important;
-  --ux4g-text-brand-primary-default: #0B2A4A !important;
-  --ux4g-border-brand-primary-strong: #0B2A4A !important;
-  --ux4g-focus-outline: #0B2A4A !important;
+  /* UX4G Approved Brand (Purple Primary + National Navy Secondary) */
+  --ux4g-primary-purple: #4A154B;
+  --ux4g-primary-purple-hover: #3B1A42;
+  --ux4g-primary-navy: #0B2A4A;
+  --ux4g-primary-navy-hover: #123B63;
+  --ux4g-bg-brand-primary-strong: #4A154B !important;
+  --ux4g-bg-brand-primary-hover: #3B1A42 !important;
+  --ux4g-bg-brand-primary-active: #2A0E30 !important;
+  --ux4g-text-brand-primary-default: #4A154B !important;
+  --ux4g-border-brand-primary-strong: #4A154B !important;
+  --ux4g-focus-outline: #4A154B !important;
 
   /* Accent & Status Tokens */
   --ux4g-accent-saffron: #FF9933 !important;
@@ -212,16 +226,17 @@ body {
   color: var(--ux4g-text-neutral-primary);
   vertical-align: middle;
   font-size: var(--fs-label);
+  transition: background-color 0.12s ease;
 }
 
 .ux4g-table tbody tr:nth-child(even), .gov-table tbody tr:nth-child(even) {
   background-color: var(--ux4g-bg-neutral-default);
 }
 .ux4g-table tbody tr:hover, .gov-table tbody tr:hover {
-  background-color: #F0F7FF;
+  background-color: #F0F5FA;
 }
 
-/* ── UX4G Status Badges ───────────────────────────────────────────────────── */
+/* ── UX4G Status Badges & Tags ────────────────────────────────────────────── */
 .ux4g-badge, .gov-badge {
   display: inline-flex;
   align-items: center;
@@ -232,13 +247,28 @@ body {
   font-weight: 600;
   border: 1px solid transparent;
   white-space: nowrap;
+  transition: background-color 0.15s ease;
 }
 .ux4g-badge-primary { background: #E6EEF5; color: #0B2A4A; border-color: #CBD5E1; }
+.ux4g-badge-purple { background: #FAF5FF; color: #4A154B; border-color: #E9D5FF; }
 .ux4g-badge-success, .gov-badge-success { background: #F0FDF4; color: #15803D; border-color: #BBF7D0; }
 .ux4g-badge-warning, .gov-badge-warning { background: #FFFBEB; color: #B45309; border-color: #FDE68A; }
 .ux4g-badge-error, .gov-badge-error   { background: #FEF2F2; color: #B72025; border-color: #FCA5A5; }
 .ux4g-badge-info, .gov-badge-info    { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
 .ux4g-badge-neutral, .gov-badge-neutral { background: #F1F5F9; color: #475569; border-color: #CBD5E1; }
+
+.ux4g-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+}
 
 /* ── UX4G Alerts ──────────────────────────────────────────────────────────── */
 .ux4g-alert, .gov-alert {
@@ -249,13 +279,15 @@ body {
   border-left: 4px solid transparent;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: var(--fs-label);
+  animation: govFadeIn 0.2s ease-out;
 }
 .ux4g-alert-success, .gov-alert-success { background: #F0FDF4; border-color: #15803D; }
 .ux4g-alert-warning, .gov-alert-warning { background: #FFFBEB; border-color: #D97706; }
 .ux4g-alert-error, .gov-alert-error   { background: #FEF2F2; border-color: #B72025; }
 .ux4g-alert-info, .gov-alert-info    { background: #EFF6FF; border-color: #1D4ED8; }
+.ux4g-alert-purple { background: #FAF5FF; border-color: #4A154B; }
 
-/* ── UX4G Button Primitives (Section 2 & Section 12) ───────────────────────── */
+/* ── UX4G Button Primitives ────────────────────────────────────────────────── */
 .ux4g-btn, .gov-btn {
   display: inline-flex;
   align-items: center;
@@ -267,10 +299,13 @@ body {
   font-size: var(--fs-label);
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
   white-space: nowrap;
   border: 1px solid transparent;
   text-decoration: none;
+}
+.ux4g-btn:active:not(:disabled), .gov-btn:active:not(:disabled) {
+  transform: translateY(0.5px);
 }
 .ux4g-btn:disabled, .gov-btn:disabled {
   opacity: 0.6;
@@ -286,6 +321,18 @@ body {
 .ux4g-btn-primary:hover:not(:disabled), .gov-btn-primary:hover:not(:disabled) {
   background: var(--ux4g-bg-brand-primary-hover);
   border-color: var(--ux4g-bg-brand-primary-hover);
+  box-shadow: var(--ux4g-elevation-2);
+}
+
+.ux4g-btn-navy {
+  background: var(--ux4g-primary-navy);
+  color: white;
+  border-color: var(--ux4g-primary-navy);
+  box-shadow: var(--ux4g-elevation-1);
+}
+.ux4g-btn-navy:hover:not(:disabled) {
+  background: var(--ux4g-primary-navy-hover);
+  border-color: var(--ux4g-primary-navy-hover);
 }
 
 .ux4g-btn-secondary, .gov-btn-secondary {
@@ -296,6 +343,7 @@ body {
 }
 .ux4g-btn-secondary:hover:not(:disabled), .gov-btn-secondary:hover:not(:disabled) {
   background: var(--ux4g-bg-neutral-soft);
+  border-color: var(--ux4g-border-neutral-strong);
 }
 
 .ux4g-btn-outline-primary {
@@ -304,7 +352,16 @@ body {
   border-color: var(--ux4g-border-brand-primary-strong);
 }
 .ux4g-btn-outline-primary:hover:not(:disabled) {
-  background: #F0F5FA;
+  background: #FAF5FF;
+}
+
+.ux4g-btn-ghost {
+  background: transparent;
+  color: var(--ux4g-text-neutral-primary);
+  border-color: transparent;
+}
+.ux4g-btn-ghost:hover:not(:disabled) {
+  background: var(--ux4g-bg-neutral-soft);
 }
 
 .ux4g-btn-danger, .gov-btn-danger {
@@ -333,16 +390,69 @@ body {
 .ux4g-btn-md { height: 36px; padding: 0 14px; font-size: var(--fs-label); }
 .ux4g-btn-lg { height: 42px; padding: 0 18px; font-size: var(--fs-body); }
 
+.ux4g-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ux4g-border-neutral-default);
+  background: var(--ux4g-bg-neutral-elevated);
+  color: var(--ux4g-text-neutral-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ux4g-icon-btn:hover:not(:disabled) {
+  background: var(--ux4g-bg-neutral-soft);
+  border-color: var(--ux4g-border-neutral-strong);
+}
+
 /* ── UX4G Card ────────────────────────────────────────────────────────────── */
 .ux4g-card, .gov-card {
   background-color: var(--ux4g-bg-neutral-elevated);
   border: 1px solid var(--ux4g-border-neutral-default);
   border-radius: var(--radius-sm);
   box-shadow: var(--ux4g-elevation-1);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.ux4g-card:hover, .gov-card:hover {
+  box-shadow: var(--ux4g-elevation-2);
+}
+
+/* ── UX4G Tabs ────────────────────────────────────────────────────────────── */
+.ux4g-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-bottom: 2px solid var(--ux4g-border-neutral-default);
+}
+.ux4g-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--ux4g-text-neutral-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.ux4g-tab:hover {
+  color: var(--ux4g-bg-brand-primary-strong);
+  background-color: var(--ux4g-bg-neutral-soft);
+}
+.ux4g-tab-active {
+  color: var(--ux4g-bg-brand-primary-strong);
+  border-bottom-color: var(--ux4g-accent-saffron);
+  font-weight: 700;
 }
 
 /* ── UX4G Form Controls ───────────────────────────────────────────────────── */
-.ux4g-input {
+.ux4g-input, .ux4g-select {
   display: block;
   width: 100%;
   padding: 6px 10px;
@@ -351,12 +461,12 @@ body {
   background-color: var(--ux4g-bg-neutral-elevated);
   border: 1px solid var(--ux4g-border-neutral-default);
   border-radius: var(--radius-sm);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.ux4g-input:focus {
+.ux4g-input:focus, .ux4g-select:focus {
   border-color: var(--ux4g-border-brand-primary-strong);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(11, 42, 74, 0.15);
+  box-shadow: 0 0 0 2px rgba(74, 21, 75, 0.15);
 }
 .ux4g-label {
   display: block;
@@ -364,6 +474,50 @@ body {
   font-weight: 600;
   color: var(--ux4g-text-neutral-secondary);
   margin-bottom: 4px;
+}
+
+/* ── Micro-Animations & Keyframes ─────────────────────────────────────────── */
+@keyframes govFadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes govSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes govScaleIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-gov-fade-in {
+  animation: govFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-gov-slide-down {
+  animation: govSlideDown 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-gov-scale-in {
+  animation: govScaleIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Accessibility & Reduced Motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .gov-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 /* ── Print ─────────────────────────────────────────────────────────────────── */

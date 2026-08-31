@@ -8,7 +8,7 @@ export const GovFooter: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-[#071A2E] text-white border-t-4 border-[#0B2A4A] mt-auto select-none font-sans">
+    <footer className="bg-[#1E0922] text-white border-t-4 border-[#4A154B] mt-auto select-none font-sans">
       {/* Upper Footer Links */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-4 gap-8 text-xs">
         {/* Col 1: System Identity */}
@@ -19,8 +19,8 @@ export const GovFooter: React.FC = () => {
               <h4 className="font-serif font-bold text-sm tracking-tight text-white">
                 {t('gov.systemTitle')}
               </h4>
-              <p className="text-[10px] text-gray-300">
-                {t('footer.prototypeNotice')}
+              <p className="text-[10px] text-purple-200">
+                Government Procurement • CPCL • MoPNG • SIH26100
               </p>
             </div>
           </div>
@@ -31,7 +31,7 @@ export const GovFooter: React.FC = () => {
 
         {/* Col 2: Procurement Modules */}
         <div className="space-y-2">
-          <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-gray-700 pb-1">
+          <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-purple-900/80 pb-1">
             {t('footer.systemModules')}
           </h4>
           <ul className="space-y-1.5 text-gray-300">
@@ -75,7 +75,7 @@ export const GovFooter: React.FC = () => {
 
         {/* Col 3: Policies & Governance */}
         <div className="space-y-2">
-          <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-gray-700 pb-1">
+          <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-purple-900/80 pb-1">
             {t('footer.websitePolicies')}
           </h4>
           <ul className="space-y-1.5 text-gray-300">
@@ -109,7 +109,7 @@ export const GovFooter: React.FC = () => {
 
         {/* Col 4: Support & Prototype Attribution */}
         <div className="space-y-2">
-          <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-gray-700 pb-1">
+          <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-[#FF9933] border-b border-purple-900/80 pb-1">
             {t('footer.helpdesk')}
           </h4>
           <div className="space-y-2 text-gray-300 text-[11px]">
@@ -130,7 +130,7 @@ export const GovFooter: React.FC = () => {
       </div>
 
       {/* Lower Copyright & Prototype Strip */}
-      <div className="bg-[#040E1A] border-t border-gray-800 py-3 text-[11px] text-gray-400">
+      <div className="bg-[#120515] border-t border-purple-950 py-3 text-[11px] text-gray-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <div>
             {t('footer.copyright')}
@@ -143,3 +143,5 @@ export const GovFooter: React.FC = () => {
     </footer>
   );
 };
+
+export default GovFooter;

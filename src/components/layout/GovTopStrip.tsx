@@ -1,43 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Eye, Type } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 export const GovTopStrip: React.FC = () => {
   const { language, setLanguage, fontSize, setFontSize, t } = useLanguage();
+  const [highContrast, setHighContrast] = useState(false);
+
+  const toggleContrast = () => {
+    const next = !highContrast;
+    setHighContrast(next);
+    if (next) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  };
 
   return (
-    <div className="w-full bg-[#071A2E] text-white text-xs select-none border-b border-[#0B2A4A]">
+    <div className="w-full bg-[#1E0922] text-white text-xs select-none border-b border-[#3B1A42] font-sans">
       {/* Indian Tricolour top border */}
       <div className="gov-tricolour-bar" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-        {/* Left: Ministry & Country Attribution */}
-        <div className="flex items-center space-x-2 font-medium tracking-wide">
-          <span className="font-serif">{t('gov.india')}</span>
+        {/* Left: Complete Government Attribution Hierarchy */}
+        <div className="flex items-center flex-wrap gap-x-1.5 font-medium tracking-wide">
+          <span className="font-serif font-bold text-gray-100">{t('gov.india')}</span>
           <span className="text-gray-400">|</span>
-          <span className="hidden md:inline text-gray-200">{t('gov.ministry')}</span>
+          <span className="text-gray-200">Government Procurement</span>
+          <span className="text-gray-400 hidden sm:inline">|</span>
+          <span className="text-[#FF9933] font-semibold hidden sm:inline">CPCL</span>
+          <span className="text-gray-400 hidden md:inline">|</span>
+          <span className="text-gray-200 hidden md:inline">Ministry of Petroleum &amp; Natural Gas</span>
+          <span className="text-gray-400 hidden lg:inline">|</span>
+          <span className="font-mono text-[#F3E8FF] text-[10px] hidden lg:inline">SIH26100</span>
         </div>
 
         {/* Right: Accessibility Controls & Language Switcher */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <a
             href="#main-content"
-            className="text-gray-300 hover:text-white underline text-[11px] hidden sm:inline"
+            className="text-gray-300 hover:text-white underline text-[11px] hidden sm:inline focus:outline-none focus:ring-1 focus:ring-white"
           >
             {t('gov.skipToMain')}
           </a>
 
           <span className="text-gray-500 hidden sm:inline">|</span>
 
+          {/* High Contrast / Accessibility Toggle */}
+          <button
+            onClick={toggleContrast}
+            title={highContrast ? "Standard Contrast" : "High Contrast Theme"}
+            className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-[2px] text-[11px] transition-colors cursor-pointer ${
+              highContrast
+                ? 'bg-[#FF9933] text-black font-bold'
+                : 'text-gray-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Eye className="w-3 h-3" />
+            <span className="hidden sm:inline">Accessibility</span>
+          </button>
+
+          <span className="text-gray-500">|</span>
+
           {/* Font Resizing Controls */}
           <div className="flex items-center space-x-1">
-            <span className="text-gray-400 hidden lg:inline mr-1">{t('gov.fontSize')}:</span>
             <button
               onClick={() => setFontSize('normal')}
               title="Standard Font Size"
-              className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] ${
+              className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] cursor-pointer transition-colors ${
                 fontSize === 'normal'
-                  ? 'bg-white text-[#0B2A4A] font-bold'
-                  : 'text-gray-300 hover:text-white'
+                  ? 'bg-white text-[#4A154B] font-bold'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               A-
@@ -45,10 +78,10 @@ export const GovTopStrip: React.FC = () => {
             <button
               onClick={() => setFontSize('large')}
               title="Large Font Size"
-              className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] ${
+              className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] cursor-pointer transition-colors ${
                 fontSize === 'large'
-                  ? 'bg-white text-[#0B2A4A] font-bold'
-                  : 'text-gray-300 hover:text-white'
+                  ? 'bg-white text-[#4A154B] font-bold'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               A
@@ -56,10 +89,10 @@ export const GovTopStrip: React.FC = () => {
             <button
               onClick={() => setFontSize('larger')}
               title="Extra Large Font Size"
-              className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] ${
+              className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] cursor-pointer transition-colors ${
                 fontSize === 'larger'
-                  ? 'bg-white text-[#0B2A4A] font-bold'
-                  : 'text-gray-300 hover:text-white'
+                  ? 'bg-white text-[#4A154B] font-bold'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               A+
@@ -69,13 +102,13 @@ export const GovTopStrip: React.FC = () => {
           <span className="text-gray-500">|</span>
 
           {/* Bilingual Switcher */}
-          <div className="flex items-center space-x-1.5 font-medium">
+          <div className="flex items-center space-x-1 font-medium">
             <button
               onClick={() => setLanguage('en')}
-              className={`px-1.5 py-0.5 rounded-[2px] transition-colors ${
+              className={`px-1.5 py-0.5 rounded-[2px] transition-colors cursor-pointer ${
                 language === 'en'
-                  ? 'bg-[#123B63] text-white font-bold border border-white/30'
-                  : 'text-gray-300 hover:text-white'
+                  ? 'bg-[#4A154B] text-white font-bold border border-purple-300/40 shadow-xs'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               English
@@ -83,10 +116,10 @@ export const GovTopStrip: React.FC = () => {
             <span className="text-gray-400">/</span>
             <button
               onClick={() => setLanguage('hi')}
-              className={`px-1.5 py-0.5 rounded-[2px] transition-colors ${
+              className={`px-1.5 py-0.5 rounded-[2px] transition-colors cursor-pointer ${
                 language === 'hi'
-                  ? 'bg-[#123B63] text-white font-bold border border-white/30'
-                  : 'text-gray-300 hover:text-white'
+                  ? 'bg-[#4A154B] text-white font-bold border border-purple-300/40 shadow-xs'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               हिन्दी
@@ -97,3 +130,5 @@ export const GovTopStrip: React.FC = () => {
     </div>
   );
 };
+
+export default GovTopStrip;

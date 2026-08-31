@@ -33,8 +33,8 @@ export const GovBreadcrumb: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
           {/* Breadcrumb Trail */}
           <nav className="flex items-center space-x-1.5 text-[#64748B] font-medium" aria-label="Breadcrumb">
-            <Link to="/dashboard" className="hover:text-[#0B2A4A] flex items-center space-x-1">
-              <Home className="w-3.5 h-3.5 text-[#0B2A4A]" />
+            <Link to="/dashboard" className="hover:text-[#4A154B] flex items-center space-x-1 transition-colors">
+              <Home className="w-3.5 h-3.5 text-[#4A154B]" />
               <span>{language === 'hi' ? 'मुख्य पृष्ठ' : 'Home'}</span>
             </Link>
 
@@ -58,7 +58,7 @@ export const GovBreadcrumb: React.FC = () => {
                         {formatSegment(segment)}
                       </span>
                     ) : (
-                      <Link to={url} className="hover:text-[#0B2A4A]">
+                      <Link to={url} className="hover:text-[#4A154B] transition-colors">
                         {formatSegment(segment)}
                       </Link>
                     )}
@@ -91,9 +91,9 @@ export const GovBreadcrumb: React.FC = () => {
             {/* Create Tender Action */}
             <button
               onClick={() => navigate('/tenders')}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-[#4A154B] hover:bg-[#3B1A42] text-white text-xs font-semibold rounded-[2px] shadow-xs transition-all cursor-pointer"
             >
-              <PlusCircle className="w-3.5 h-3.5" />
+              <PlusCircle className="w-3.5 h-3.5 text-[#FF9933]" />
               <span>Create Tender</span>
             </button>
           </div>

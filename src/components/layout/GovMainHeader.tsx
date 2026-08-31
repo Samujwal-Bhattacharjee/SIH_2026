@@ -39,14 +39,20 @@ export const GovMainHeader: React.FC = () => {
     <header className="bg-white border-b border-[#D9DDE3] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
         {/* Left: Emblem + Institutional Portal Name */}
-        <Link to="/dashboard" className="flex items-center space-x-3.5 group focus:outline-none">
+        <Link to="/dashboard" className="flex items-center space-x-3.5 group focus:outline-none focus:ring-2 focus:ring-[#4A154B] rounded-[2px] p-1">
           <Emblem size={52} />
-          <div className="border-l border-[#CBD2DE] pl-3">
-            <div className="font-serif font-extrabold text-lg sm:text-xl text-[#0B2A4A] tracking-tight leading-tight group-hover:text-[#123B63] transition-colors">
+          <div className="border-l-2 border-[#D9DDE3] pl-3.5">
+            <div className="font-serif font-extrabold text-lg sm:text-xl text-[#0B2A4A] tracking-tight leading-tight group-hover:text-[#4A154B] transition-colors">
               {t('gov.systemTitle')}
             </div>
-            <div className="text-[11px] sm:text-xs text-[#5F6368] font-sans font-medium flex items-center space-x-1.5 mt-0.5">
-              <span>{t('gov.ministry')}</span>
+            <div className="text-[11px] sm:text-xs text-[#5F6368] font-sans font-medium flex items-center flex-wrap gap-x-1.5 mt-0.5">
+              <span>Government Procurement</span>
+              <span>•</span>
+              <span className="text-[#D97706] font-semibold">CPCL</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="hidden sm:inline">Ministry of Petroleum &amp; Natural Gas</span>
+              <span className="hidden md:inline">•</span>
+              <span className="font-mono text-[#4A154B] font-semibold text-[10px] hidden md:inline">SIH26100</span>
             </div>
           </div>
         </Link>
@@ -56,12 +62,12 @@ export const GovMainHeader: React.FC = () => {
           {/* Quick Search Shortcut */}
           <button
             onClick={openSearch}
-            className="hidden md:flex items-center space-x-2 px-3 py-1.5 bg-[#F5F6F8] hover:bg-[#EEF2F7] border border-[#CBD2DE] rounded-[2px] text-xs text-[#475569] transition-colors cursor-pointer"
+            className="hidden md:flex items-center space-x-2 px-3 py-1.5 bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-[#CBD5E1] hover:border-[#94A3B8] rounded-[2px] text-xs text-[#475569] transition-all cursor-pointer shadow-2xs"
             title="Global Search (Ctrl+K)"
           >
-            <Search className="w-3.5 h-3.5 text-[#0B2A4A]" />
+            <Search className="w-3.5 h-3.5 text-[#4A154B]" />
             <span>{t('header.searchPlaceholder')}</span>
-            <kbd className="font-mono text-[10px] px-1 py-0.5 bg-white border border-[#CBD2DE] rounded-[2px] text-gray-500">
+            <kbd className="font-mono text-[10px] px-1.5 py-0.5 bg-white border border-[#CBD5E1] rounded-[2px] text-gray-500 shadow-2xs">
               Ctrl+K
             </kbd>
           </button>

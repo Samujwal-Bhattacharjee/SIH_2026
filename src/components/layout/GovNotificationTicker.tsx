@@ -49,10 +49,10 @@ export const GovNotificationTicker: React.FC = () => {
   }, [mode, isPaused]);
 
   return (
-    <div className="w-full bg-[#071A2E] text-white border-y border-[#D97706] shadow-inner select-none">
+    <div className="w-full bg-[#2A0E30] text-white border-y border-[#D97706] shadow-inner select-none font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center h-8 text-xs">
         {/* Left Official Tag / Badge */}
-        <div className="flex items-center space-x-1.5 shrink-0 pr-3 border-r border-[#173F67]">
+        <div className="flex items-center space-x-1.5 shrink-0 pr-3 border-r border-purple-900">
           <span className="px-2 py-0.5 bg-[#D97706] text-white font-serif font-bold text-[10px] tracking-wider uppercase rounded-[1px] shadow-sm">
             CIRCULAR
           </span>

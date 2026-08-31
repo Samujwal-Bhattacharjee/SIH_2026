@@ -9,7 +9,7 @@ interface GovCardProps {
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
-  highlightBorder?: 'none' | 'navy' | 'red' | 'saffron' | 'green';
+  highlightBorder?: 'none' | 'purple' | 'navy' | 'red' | 'saffron' | 'green';
   noPadding?: boolean;
 }
 
@@ -26,24 +26,25 @@ export const GovCard: React.FC<GovCardProps> = ({
   noPadding = false,
 }) => {
   const borderHighlightClass = {
-    none: 'border-[#D9DDE3]',
-    navy: 'border-[#CBD2DE] border-t-2 border-t-[#0B3558]',
-    red: 'border-[#CBD2DE] border-l-4 border-l-[#B72025]',
-    saffron: 'border-[#CBD2DE] border-l-4 border-l-[#E87511]',
-    green: 'border-[#CBD2DE] border-l-4 border-l-[#15803D]',
+    none: 'border-[#CBD5E1]',
+    purple: 'border-[#CBD5E1] border-t-2 border-t-[#4A154B]',
+    navy: 'border-[#CBD5E1] border-t-2 border-t-[#0B2A4A]',
+    red: 'border-[#CBD5E1] border-l-4 border-l-[#B72025]',
+    saffron: 'border-[#CBD5E1] border-l-4 border-l-[#D97706]',
+    green: 'border-[#CBD5E1] border-l-4 border-l-[#15803D]',
   }[highlightBorder];
 
   return (
     <section
-      className={`bg-white border rounded-[2px] ${borderHighlightClass} ${className} font-sans`}
+      className={`bg-white border rounded-[2px] shadow-xs hover:shadow-sm transition-all duration-150 ${borderHighlightClass} ${className} font-sans`}
     >
       {(title || headerAction) && (
         <div
-          className={`px-4 py-2.5 bg-[#F8F9FA] border-b border-[#D9DDE3] flex flex-wrap items-center justify-between gap-2 ${headerClassName}`}
+          className={`px-4 py-2.5 bg-[#F8FAFC] border-b border-[#CBD5E1] flex flex-wrap items-center justify-between gap-2 ${headerClassName}`}
         >
           <div>
             {typeof title === 'string' ? (
-              <h3 className="font-serif font-bold text-sm text-[#0B3558] tracking-tight uppercase">
+              <h3 className="font-serif font-bold text-sm text-[#0B2A4A] tracking-tight uppercase">
                 {title}
               </h3>
             ) : (

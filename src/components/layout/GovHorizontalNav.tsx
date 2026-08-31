@@ -13,6 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  FileText,
+  Database,
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -45,6 +47,8 @@ export const GovHorizontalNav: React.FC = () => {
 
   // Secondary Navigation Items grouped in "More ▼" Dropdown
   const secondaryNavItems: NavItem[] = [
+    { name: 'Documents', nameHi: 'दस्तावेज़', key: 'documents', path: '/documents', icon: FileText },
+    { name: 'Verification Sources', nameHi: 'सत्यापन स्रोत', key: 'sources', path: '/verification-sources', icon: Database },
     { name: 'Reports', nameHi: 'प्रतिवेदन', key: 'reports', path: '/reports', icon: BarChart3 },
     { name: 'Settings', nameHi: 'सेटिंग्स', key: 'settings', path: '/settings', icon: Settings },
   ];
@@ -100,7 +104,7 @@ export const GovHorizontalNav: React.FC = () => {
 
   return (
     <nav
-      className="bg-[#0B3558] text-white border-b-2 border-[#E67E22] shadow-sm select-none sticky top-0 z-30 font-sans"
+      className="bg-[#4A154B] text-white border-b-2 border-[#FF9933] shadow-sm select-none sticky top-0 z-30 font-sans"
       aria-label="Departmental Navigation"
     >
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
@@ -136,10 +140,10 @@ export const GovHorizontalNav: React.FC = () => {
                   to={item.path}
                   className={({ isActive }) => {
                     const active = isActive || (item.key === 'verification' && location.pathname.startsWith('/verification'));
-                    return `flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors border-b-2 h-full ${
+                    return `flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-medium whitespace-nowrap transition-all duration-150 border-b-2 h-full ${
                       active
-                        ? 'active-nav-link bg-[#F0F5FA] text-[#0B2A4A] border-[#FF9933] font-semibold'
-                        : 'text-gray-200 hover:bg-[#123F6D]/40 hover:text-white border-transparent'
+                        ? 'active-nav-link bg-white text-[#4A154B] border-[#FF9933] font-bold shadow-xs'
+                        : 'text-purple-100 hover:bg-white/10 hover:text-white border-transparent'
                     }`;
                   }}
                 >
@@ -163,7 +167,7 @@ export const GovHorizontalNav: React.FC = () => {
             aria-label="Scroll navigation right"
             className={`hidden md:flex items-center justify-center w-7 h-8 text-white rounded-[2px] transition-opacity cursor-pointer ${
               canScrollRight
-                ? 'opacity-100 hover:bg-[#123F6D] bg-[#071A2E]'
+                ? 'opacity-100 hover:bg-white/10 bg-black/20'
                 : 'opacity-20 cursor-default pointer-events-none'
             }`}
           >
@@ -176,10 +180,10 @@ export const GovHorizontalNav: React.FC = () => {
               type="button"
               onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
               onBlur={() => setTimeout(() => setMoreDropdownOpen(false), 200)}
-              className={`flex items-center space-x-1 px-3 py-1.5 text-xs font-semibold rounded-[2px] transition-colors border ${
+              className={`flex items-center space-x-1 px-3 py-1.5 text-xs font-semibold rounded-[2px] transition-all cursor-pointer border ${
                 isSecondaryActive
-                  ? 'bg-[#123F6D] text-white border-[#FF9933]'
-                  : 'bg-[#071A2E] text-gray-200 hover:text-white hover:bg-[#123F6D] border-[#174A7C]'
+                  ? 'bg-white text-[#4A154B] border-[#FF9933]'
+                  : 'bg-black/20 text-purple-100 hover:text-white hover:bg-white/10 border-white/20'
               }`}
             >
               <span>{t('nav.more')}</span>
@@ -187,8 +191,8 @@ export const GovHorizontalNav: React.FC = () => {
             </button>
 
             {moreDropdownOpen && (
-              <div className="absolute right-0 mt-1 w-56 bg-[#0B3558] border border-[#174A7C] rounded-[2px] shadow-lg py-1 z-50 divide-y divide-[#123F6D]">
-                <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-300 tracking-wider">
+              <div className="absolute right-0 mt-1 w-56 bg-[#3B1A42] border border-purple-300/30 rounded-[2px] shadow-xl py-1 z-50 divide-y divide-purple-900/60 animate-gov-slide-down">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-purple-200 tracking-wider">
                   {t('nav.moreGroup')}
                 </div>
                 <div className="py-1">
@@ -203,8 +207,8 @@ export const GovHorizontalNav: React.FC = () => {
                         className={({ isActive }) =>
                           `flex items-center space-x-2 px-3 py-2 text-xs transition-colors ${
                             isActive
-                              ? 'bg-[#123F6D] text-white font-bold border-l-2 border-[#FF9933]'
-                              : 'text-gray-200 hover:bg-[#123F6D] hover:text-white'
+                              ? 'bg-[#4A154B] text-white font-bold border-l-2 border-[#FF9933]'
+                              : 'text-purple-100 hover:bg-white/10 hover:text-white'
                           }`
                         }
                       >
