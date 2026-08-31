@@ -303,6 +303,32 @@
       "source_location": "L366"
     },
     {
+      "id": "src_types_index_documenttype",
+      "label": "DocumentType",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "documenttype",
+      "source_file": "src/types/index.ts",
+      "source_location": "L339"
+    },
+    {
+      "id": "src_types_index_ocrresult",
+      "label": "OCRResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "ocrresult",
+      "source_file": "src/types/index.ts",
+      "source_location": "L328"
+    },
+    {
       "id": "src_types_index_officerinfo",
       "label": "OfficerInfo",
       "_callable": true,
@@ -381,6 +407,19 @@
       "source_location": "L13"
     },
     {
+      "id": "src_types_index_auditlog",
+      "label": "AuditLog",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "auditlog",
+      "source_file": "src/types/index.ts",
+      "source_location": "L392"
+    },
+    {
       "id": "src_types_index_bottleneckanalysis",
       "label": "BottleneckAnalysis",
       "_callable": true,
@@ -405,6 +444,32 @@
       "norm_label": "dashboardmetrics",
       "source_file": "src/types/index.ts",
       "source_location": "L460"
+    },
+    {
+      "id": "src_types_index_simulationintervention",
+      "label": "SimulationIntervention",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "simulationintervention",
+      "source_file": "src/types/index.ts",
+      "source_location": "L407"
+    },
+    {
+      "id": "src_types_index_simulationresult",
+      "label": "SimulationResult",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "simulationresult",
+      "source_file": "src/types/index.ts",
+      "source_location": "L424"
     },
     {
       "id": "src_types_index_simulationscenariooption",
@@ -719,6 +784,45 @@
       "source_location": "L333"
     },
     {
+      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengineprops",
+      "label": "StatutoryDeadlineEngineProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "statutorydeadlineengineprops",
+      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_common_statutorycountdown_statutorycountdownprops",
+      "label": "StatutoryCountdownProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "statutorycountdownprops",
+      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_common_technicalcard_technicalcardprops",
+      "label": "TechnicalCardProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "technicalcardprops",
+      "source_file": "src/components/common/TechnicalCard.tsx",
+      "source_location": "L3"
+    },
+    {
       "id": "backend_tests_test_intelligence_testbottleneckdetection",
       "label": "TestBottleneckDetection",
       "_callable": true,
@@ -732,69 +836,30 @@
       "source_location": "L128"
     },
     {
-      "id": "src_components_common_govtable_govtableprops",
-      "label": "GovTableProps",
+      "id": "src_types_index_processmapdata",
+      "label": "ProcessMapData",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 21,
       "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "govtableprops",
-      "source_file": "src/components/common/GovTable.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_components_common_govtable_tablecolumn",
-      "label": "TableColumn",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "tablecolumn",
-      "source_file": "src/components/common/GovTable.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_types_index_auditlog",
-      "label": "AuditLog",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "auditlog",
+      "norm_label": "processmapdata",
       "source_file": "src/types/index.ts",
-      "source_location": "L392"
+      "source_location": "L295"
     },
     {
-      "id": "src_types_index_simulationintervention",
-      "label": "SimulationIntervention",
+      "id": "src_types_index_processperformancemetrics",
+      "label": "ProcessPerformanceMetrics",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 21,
       "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "simulationintervention",
+      "norm_label": "processperformancemetrics",
       "source_file": "src/types/index.ts",
-      "source_location": "L407"
-    },
-    {
-      "id": "src_types_index_simulationresult",
-      "label": "SimulationResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "simulationresult",
-      "source_file": "src/types/index.ts",
-      "source_location": "L424"
+      "source_location": "L476"
     },
     {
       "id": "backend_app_schemas_init_casecreate",
@@ -875,32 +940,6 @@
       "source_location": "L292"
     },
     {
-      "id": "src_components_common_govbadge_statusbadgeprops",
-      "label": "StatusBadgeProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "statusbadgeprops",
-      "source_file": "src/components/common/GovBadge.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_common_govcard_govcardprops",
-      "label": "GovCardProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "govcardprops",
-      "source_file": "src/components/common/GovCard.tsx",
-      "source_location": "L3"
-    },
-    {
       "id": "src_components_common_govmodal_govmodalprops",
       "label": "GovModalProps",
       "_callable": true,
@@ -951,71 +990,6 @@
       "norm_label": "documentrecord",
       "source_file": "src/types/index.ts",
       "source_location": "L350"
-    },
-    {
-      "id": "src_types_index_documenttype",
-      "label": "DocumentType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "documenttype",
-      "source_file": "src/types/index.ts",
-      "source_location": "L339"
-    },
-    {
-      "id": "src_types_index_govfilestatus",
-      "label": "GovFileStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "govfilestatus",
-      "source_file": "src/types/index.ts",
-      "source_location": "L49"
-    },
-    {
-      "id": "src_types_index_ocrresult",
-      "label": "OCRResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "ocrresult",
-      "source_file": "src/types/index.ts",
-      "source_location": "L328"
-    },
-    {
-      "id": "src_types_index_prioritylevel",
-      "label": "PriorityLevel",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "prioritylevel",
-      "source_file": "src/types/index.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_types_index_risklevel",
-      "label": "RiskLevel",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "risklevel",
-      "source_file": "src/types/index.ts",
-      "source_location": "L47"
     },
     {
       "id": "src_assets_emblem_emblemprops",
@@ -1213,19 +1187,6 @@
       "source_location": "L93"
     },
     {
-      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengineprops",
-      "label": "StatutoryDeadlineEngineProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "statutorydeadlineengineprops",
-      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
-      "source_location": "L4"
-    },
-    {
       "id": "src_components_common_emptystate_emptystateprops",
       "label": "EmptyStateProps",
       "_callable": true,
@@ -1252,30 +1213,43 @@
       "source_location": "L4"
     },
     {
-      "id": "src_components_common_statutorycountdown_statutorycountdownprops",
-      "label": "StatutoryCountdownProps",
+      "id": "src_components_common_govcard_govcardprops",
+      "label": "GovCardProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "statutorycountdownprops",
-      "source_file": "src/components/common/StatutoryCountdown.tsx",
-      "source_location": "L4"
+      "norm_label": "govcardprops",
+      "source_file": "src/components/common/GovCard.tsx",
+      "source_location": "L3"
     },
     {
-      "id": "src_components_common_technicalcard_technicalcardprops",
-      "label": "TechnicalCardProps",
+      "id": "src_components_common_govtable_govtableprops",
+      "label": "GovTableProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "technicalcardprops",
-      "source_file": "src/components/common/TechnicalCard.tsx",
-      "source_location": "L3"
+      "norm_label": "govtableprops",
+      "source_file": "src/components/common/GovTable.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_components_common_govtable_tablecolumn",
+      "label": "TableColumn",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "tablecolumn",
+      "source_file": "src/components/common/GovTable.tsx",
+      "source_location": "L4"
     },
     {
       "id": "src_pages_workflow_landworkflowstage",
@@ -1291,43 +1265,17 @@
       "source_location": "L20"
     },
     {
-      "id": "src_types_index_processmapdata",
-      "label": "ProcessMapData",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "processmapdata",
-      "source_file": "src/types/index.ts",
-      "source_location": "L295"
-    },
-    {
-      "id": "src_types_index_processperformancemetrics",
-      "label": "ProcessPerformanceMetrics",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "processperformancemetrics",
-      "source_file": "src/types/index.ts",
-      "source_location": "L476"
-    },
-    {
-      "id": "src_components_cases_riskattributionpanel_riskattributionpanelprops",
-      "label": "RiskAttributionPanelProps",
+      "id": "src_components_common_govbadge_statusbadgeprops",
+      "label": "StatusBadgeProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "riskattributionpanelprops",
-      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
-      "source_location": "L5"
+      "norm_label": "statusbadgeprops",
+      "source_file": "src/components/common/GovBadge.tsx",
+      "source_location": "L4"
     },
     {
       "id": "src_components_files_filemovementtimeline_filemovementtimelineprops",
@@ -1421,6 +1369,19 @@
       "source_location": "L160"
     },
     {
+      "id": "src_types_index_govfilestatus",
+      "label": "GovFileStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "govfilestatus",
+      "source_file": "src/types/index.ts",
+      "source_location": "L49"
+    },
+    {
       "id": "src_types_index_landacquisitionstage",
       "label": "LandAcquisitionStage",
       "_callable": true,
@@ -1458,6 +1419,19 @@
       "norm_label": "ocrfield",
       "source_file": "src/types/index.ts",
       "source_location": "L320"
+    },
+    {
+      "id": "src_types_index_prioritylevel",
+      "label": "PriorityLevel",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "prioritylevel",
+      "source_file": "src/types/index.ts",
+      "source_location": "L45"
     },
     {
       "id": "src_types_index_projectbottleneckresponse",
@@ -1551,17 +1525,17 @@
       "source_location": "L89"
     },
     {
-      "id": "src_types_index_riskprediction",
-      "label": "RiskPrediction",
+      "id": "src_types_index_risklevel",
+      "label": "RiskLevel",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "riskprediction",
+      "norm_label": "risklevel",
       "source_file": "src/types/index.ts",
-      "source_location": "L96"
+      "source_location": "L47"
     },
     {
       "id": "src_types_index_workflowedgedata",
@@ -2084,6 +2058,19 @@
       "source_location": "L54"
     },
     {
+      "id": "src_components_cases_riskattributionpanel_riskattributionpanelprops",
+      "label": "RiskAttributionPanelProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "realApi.ts",
+      "file_type": "code",
+      "norm_label": "riskattributionpanelprops",
+      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
+      "source_location": "L5"
+    },
+    {
       "id": "src_context_authcontext_authcontexttype",
       "label": "AuthContextType",
       "_callable": true,
@@ -2095,6 +2082,19 @@
       "norm_label": "authcontexttype",
       "source_file": "src/context/AuthContext.tsx",
       "source_location": "L6"
+    },
+    {
+      "id": "src_types_index_riskprediction",
+      "label": "RiskPrediction",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "realApi.ts",
+      "file_type": "code",
+      "norm_label": "riskprediction",
+      "source_file": "src/types/index.ts",
+      "source_location": "L96"
     },
     {
       "id": "src_types_index_user",
@@ -2188,6 +2188,19 @@
       "source_location": "L25"
     },
     {
+      "id": "src_context_procurementcontext_checkstatus",
+      "label": "CheckStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "checkstatus",
+      "source_file": "src/context/ProcurementContext.tsx",
+      "source_location": "L4"
+    },
+    {
       "id": "src_context_procurementcontext_discrepancy",
       "label": "Discrepancy",
       "_callable": true,
@@ -2214,6 +2227,19 @@
       "source_location": "L48"
     },
     {
+      "id": "src_context_procurementcontext_requirement",
+      "label": "Requirement",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "requirement",
+      "source_file": "src/context/ProcurementContext.tsx",
+      "source_location": "L7"
+    },
+    {
       "id": "src_context_procurementcontext_risklevel",
       "label": "RiskLevel",
       "_callable": true,
@@ -2225,6 +2251,45 @@
       "norm_label": "risklevel",
       "source_file": "src/context/ProcurementContext.tsx",
       "source_location": "L5"
+    },
+    {
+      "id": "src_pages_bidderverification_banner",
+      "label": "Banner",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "banner",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L56"
+    },
+    {
+      "id": "src_pages_bidderverification_bannerkind",
+      "label": "BannerKind",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "bannerkind",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L55"
+    },
+    {
+      "id": "src_pages_bidderverification_bidderview",
+      "label": "BidderView",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "bidderview",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L61"
     },
     {
       "id": "src_types_index_integrityevidence",
@@ -2251,71 +2316,6 @@
       "norm_label": "integrityfinding",
       "source_file": "src/types/index.ts",
       "source_location": "L522"
-    },
-    {
-      "id": "src_context_procurementcontext_checkstatus",
-      "label": "CheckStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "checkstatus",
-      "source_file": "src/context/ProcurementContext.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_context_procurementcontext_requirement",
-      "label": "Requirement",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "requirement",
-      "source_file": "src/context/ProcurementContext.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_pages_bidderverification_banner",
-      "label": "Banner",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "banner",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L56"
-    },
-    {
-      "id": "src_pages_bidderverification_bannerkind",
-      "label": "BannerKind",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "bannerkind",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L55"
-    },
-    {
-      "id": "src_pages_bidderverification_bidderview",
-      "label": "BidderView",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "bidderview",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L61"
     },
     {
       "id": "backend_app_schemas_init_casestage",
@@ -3539,40 +3539,16 @@
       "source_location": "L446"
     },
     {
-      "id": "src_pages_login_getrandomcaptcha",
-      "label": "getRandomCaptcha()",
+      "id": "src_pages_bidderverification_bidderverification",
+      "label": "BidderVerification()",
       "_callable": true,
       "_origin": "ast",
       "community": 105,
       "community_name": "App.tsx",
       "file_type": "code",
-      "norm_label": "getrandomcaptcha()",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_pages_login_login",
-      "label": "Login()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "login()",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L31"
-    },
-    {
-      "id": "src_pages_procurementaudittrail_procurementaudittrail",
-      "label": "ProcurementAuditTrail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "procurementaudittrail()",
-      "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L6"
+      "norm_label": "bidderverification()",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L76"
     },
     {
       "id": "src_pages_procurementdashboard_procurementdashboard",
@@ -3597,6 +3573,18 @@
       "norm_label": "procurementdocuments()",
       "source_file": "src/pages/ProcurementDocuments.tsx",
       "source_location": "L21"
+    },
+    {
+      "id": "src_pages_procurementintegrity_procurementintegrity",
+      "label": "ProcurementIntegrity()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 105,
+      "community_name": "App.tsx",
+      "file_type": "code",
+      "norm_label": "procurementintegrity()",
+      "source_file": "src/pages/ProcurementIntegrity.tsx",
+      "source_location": "L71"
     },
     {
       "id": "src_pages_search_search",
@@ -4367,30 +4355,6 @@
       "source_location": "L13"
     },
     {
-      "id": "src_components_files_fileforwardmodal_fileforwardmodal",
-      "label": "FileForwardModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "fileforwardmodal()",
-      "source_file": "src/components/files/FileForwardModal.tsx",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_components_files_fileregistermodal_fileregistermodal",
-      "label": "FileRegisterModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "fileregistermodal()",
-      "source_file": "src/components/files/FileRegisterModal.tsx",
-      "source_location": "L15"
-    },
-    {
       "id": "src_pages_departments_departments",
       "label": "Departments()",
       "_callable": true,
@@ -4403,28 +4367,28 @@
       "source_location": "L19"
     },
     {
-      "id": "src_pages_files_files",
-      "label": "Files()",
+      "id": "src_pages_login_getrandomcaptcha",
+      "label": "getRandomCaptcha()",
       "_callable": true,
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "files()",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L44"
+      "norm_label": "getrandomcaptcha()",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L22"
     },
     {
-      "id": "src_pages_pendingfiles_pendingfiles",
-      "label": "PendingFiles()",
+      "id": "src_pages_login_login",
+      "label": "Login()",
       "_callable": true,
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "pendingfiles()",
-      "source_file": "src/pages/PendingFiles.tsx",
-      "source_location": "L11"
+      "norm_label": "login()",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L31"
     },
     {
       "id": "src_pages_uploaddocument_uploaddocument",
@@ -4509,6 +4473,18 @@
       "norm_label": "test_insufficient_historical_data_does_not_manufacture_signals()",
       "source_file": "backend/tests/test_integrity_engine.py",
       "source_location": "L296"
+    },
+    {
+      "id": "src_pages_simulation_simulation",
+      "label": "Simulation()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "simulation()",
+      "source_file": "src/pages/Simulation.tsx",
+      "source_location": "L19"
     },
     {
       "id": "src_services_api_mockapi_delay",
@@ -4727,6 +4703,42 @@
       "source_location": "L380"
     },
     {
+      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengine",
+      "label": "StatutoryDeadlineEngine()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "statutorydeadlineengine()",
+      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_components_common_statutorycountdown_statutorycountdown",
+      "label": "StatutoryCountdown()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "statutorycountdown()",
+      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_components_common_technicalcard_technicalcard",
+      "label": "TechnicalCard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "technicalcard()",
+      "source_file": "src/components/common/TechnicalCard.tsx",
+      "source_location": "L13"
+    },
+    {
       "id": "backend_tests_test_intelligence_testbottleneckdetection_test_bottleneck_using_movements_history",
       "label": ".test_bottleneck_using_movements_history()",
       "_callable": true,
@@ -4787,64 +4799,16 @@
       "source_location": "L203"
     },
     {
-      "id": "src_components_common_govtable_govtable",
-      "label": "GovTable()",
+      "id": "src_pages_intelligence_intelligence",
+      "label": "Intelligence()",
       "_callable": true,
       "_origin": "ast",
       "community": 21,
       "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "govtable()",
-      "source_file": "src/components/common/GovTable.tsx",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_pages_auditlogs_auditlogs",
-      "label": "AuditLogs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "auditlogs()",
-      "source_file": "src/pages/AuditLogs.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_pages_projects_projects",
-      "label": "Projects()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "projects()",
-      "source_file": "src/pages/Projects.tsx",
-      "source_location": "L50"
-    },
-    {
-      "id": "src_pages_risk_risk",
-      "label": "Risk()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "risk()",
-      "source_file": "src/pages/Risk.tsx",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_pages_simulation_simulation",
-      "label": "Simulation()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "simulation()",
-      "source_file": "src/pages/Simulation.tsx",
-      "source_location": "L19"
+      "norm_label": "intelligence()",
+      "source_file": "src/pages/Intelligence.tsx",
+      "source_location": "L23"
     },
     {
       "id": "backend_app_api_routes_documents_run_ocr_on_document",
@@ -4931,30 +4895,6 @@
       "source_location": "L87"
     },
     {
-      "id": "src_components_common_govbadge_statusbadge",
-      "label": "StatusBadge()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "statusbadge()",
-      "source_file": "src/components/common/GovBadge.tsx",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_components_common_govcard_govcard",
-      "label": "GovCard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "govcard()",
-      "source_file": "src/components/common/GovCard.tsx",
-      "source_location": "L16"
-    },
-    {
       "id": "src_components_common_govmodal_govmodal",
       "label": "GovModal()",
       "_callable": true,
@@ -4989,18 +4929,6 @@
       "norm_label": "documentviewermodal()",
       "source_file": "src/components/documents/DocumentViewerModal.tsx",
       "source_location": "L25"
-    },
-    {
-      "id": "src_pages_documents_documents",
-      "label": "Documents()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "documents()",
-      "source_file": "src/pages/Documents.tsx",
-      "source_location": "L24"
     },
     {
       "id": "src_pages_filedetail_filedetail",
@@ -6155,18 +6083,6 @@
       "source_location": "L162"
     },
     {
-      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengine",
-      "label": "StatutoryDeadlineEngine()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "statutorydeadlineengine()",
-      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
-      "source_location": "L10"
-    },
-    {
       "id": "src_components_common_emptystate_emptystate",
       "label": "EmptyState()",
       "_callable": true,
@@ -6189,6 +6105,30 @@
       "norm_label": "govbutton()",
       "source_file": "src/components/common/GovButton.tsx",
       "source_location": "L12"
+    },
+    {
+      "id": "src_components_common_govcard_govcard",
+      "label": "GovCard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "govcard()",
+      "source_file": "src/components/common/GovCard.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_components_common_govtable_govtable",
+      "label": "GovTable()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "govtable()",
+      "source_file": "src/components/common/GovTable.tsx",
+      "source_location": "L27"
     },
     {
       "id": "src_components_common_loadingskeleton_cardskeleton",
@@ -6215,40 +6155,100 @@
       "source_location": "L3"
     },
     {
-      "id": "src_components_common_statutorycountdown_statutorycountdown",
-      "label": "StatutoryCountdown()",
+      "id": "src_components_files_fileforwardmodal_fileforwardmodal",
+      "label": "FileForwardModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "statutorycountdown()",
-      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "norm_label": "fileforwardmodal()",
+      "source_file": "src/components/files/FileForwardModal.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_components_files_fileregistermodal_fileregistermodal",
+      "label": "FileRegisterModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "fileregistermodal()",
+      "source_file": "src/components/files/FileRegisterModal.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_pages_auditlogs_auditlogs",
+      "label": "AuditLogs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "auditlogs()",
+      "source_file": "src/pages/AuditLogs.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_pages_documents_documents",
+      "label": "Documents()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "documents()",
+      "source_file": "src/pages/Documents.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_pages_files_files",
+      "label": "Files()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "files()",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L44"
+    },
+    {
+      "id": "src_pages_pendingfiles_pendingfiles",
+      "label": "PendingFiles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "pendingfiles()",
+      "source_file": "src/pages/PendingFiles.tsx",
       "source_location": "L11"
     },
     {
-      "id": "src_components_common_technicalcard_technicalcard",
-      "label": "TechnicalCard()",
+      "id": "src_pages_projects_projects",
+      "label": "Projects()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "technicalcard()",
-      "source_file": "src/components/common/TechnicalCard.tsx",
-      "source_location": "L13"
+      "norm_label": "projects()",
+      "source_file": "src/pages/Projects.tsx",
+      "source_location": "L50"
     },
     {
-      "id": "src_pages_intelligence_intelligence",
-      "label": "Intelligence()",
+      "id": "src_pages_risk_risk",
+      "label": "Risk()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "intelligence()",
-      "source_file": "src/pages/Intelligence.tsx",
-      "source_location": "L23"
+      "norm_label": "risk()",
+      "source_file": "src/pages/Risk.tsx",
+      "source_location": "L21"
     },
     {
       "id": "src_pages_workflow_workflow",
@@ -6275,16 +6275,16 @@
       "source_location": "L5"
     },
     {
-      "id": "src_components_cases_riskattributionpanel_riskattributionpanel",
-      "label": "RiskAttributionPanel()",
+      "id": "src_components_common_govbadge_statusbadge",
+      "label": "StatusBadge()",
       "_callable": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "riskattributionpanel()",
-      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
-      "source_location": "L9"
+      "norm_label": "statusbadge()",
+      "source_file": "src/components/common/GovBadge.tsx",
+      "source_location": "L10"
     },
     {
       "id": "src_components_files_filemovementtimeline_filemovementtimeline",
@@ -8291,6 +8291,18 @@
       "source_location": "L57"
     },
     {
+      "id": "src_components_cases_riskattributionpanel_riskattributionpanel",
+      "label": "RiskAttributionPanel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "realApi.ts",
+      "file_type": "code",
+      "norm_label": "riskattributionpanel()",
+      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
+      "source_location": "L9"
+    },
+    {
       "id": "src_context_authcontext_authprovider",
       "label": "AuthProvider()",
       "_callable": true,
@@ -8747,16 +8759,16 @@
       "source_location": "L134"
     },
     {
-      "id": "src_pages_procurementintegrity_procurementintegrity",
-      "label": "ProcurementIntegrity()",
+      "id": "src_pages_procurementaudittrail_procurementaudittrail",
+      "label": "ProcurementAuditTrail()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "ProcurementContext.tsx",
       "file_type": "code",
-      "norm_label": "procurementintegrity()",
-      "source_file": "src/pages/ProcurementIntegrity.tsx",
-      "source_location": "L71"
+      "norm_label": "procurementaudittrail()",
+      "source_file": "src/pages/ProcurementAuditTrail.tsx",
+      "source_location": "L7"
     },
     {
       "id": "src_services_api_apiclient_isusingmockapi",
@@ -8769,18 +8781,6 @@
       "norm_label": "isusingmockapi()",
       "source_file": "src/services/api/apiClient.ts",
       "source_location": "L10"
-    },
-    {
-      "id": "src_pages_bidderverification_bidderverification",
-      "label": "BidderVerification()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "bidderverification()",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L76"
     },
     {
       "id": "backend_app_core_procurement_store_seed_initial_data",
@@ -9423,14 +9423,14 @@
       "source_location": "L1"
     },
     {
-      "id": "src_pages_procurementaudittrail",
-      "label": "ProcurementAuditTrail.tsx",
+      "id": "src_pages_procurementdashboard",
+      "label": "ProcurementDashboard.tsx",
       "_origin": "ast",
       "community": 105,
       "community_name": "App.tsx",
       "file_type": "code",
-      "norm_label": "procurementaudittrail.tsx",
-      "source_file": "src/pages/ProcurementAuditTrail.tsx",
+      "norm_label": "procurementdashboard.tsx",
+      "source_file": "src/pages/ProcurementDashboard.tsx",
       "source_location": "L1"
     },
     {
@@ -10498,28 +10498,6 @@
       "source_location": "L159"
     },
     {
-      "id": "package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 110,
-      "community_name": "tailwindcss",
-      "file_type": "code",
-      "norm_label": "tailwindcss",
-      "source_file": "package.json",
-      "source_location": "L35"
-    },
-    {
-      "id": "package_json_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 110,
-      "community_name": "tailwindcss",
-      "file_type": "concept",
-      "norm_label": "tailwindcss",
-      "source_file": "package.json",
-      "source_location": "L35"
-    },
-    {
       "id": "backend_app_api_routes_cases_py_get",
       "label": "get",
       "_origin": "ast",
@@ -11235,17 +11213,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_mock_data_mock_departments",
-      "label": "MOCK_DEPARTMENTS",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "mock_departments",
-      "source_file": "src/mock/data.ts",
-      "source_location": "L29"
-    },
-    {
       "id": "src_mock_data_mock_officers",
       "label": "MOCK_OFFICERS",
       "_origin": "ast",
@@ -11255,17 +11222,6 @@
       "norm_label": "mock_officers",
       "source_file": "src/mock/data.ts",
       "source_location": "L128"
-    },
-    {
-      "id": "src_pages_cases",
-      "label": "Cases.tsx",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "cases.tsx",
-      "source_file": "src/pages/Cases.tsx",
-      "source_location": "L1"
     },
     {
       "id": "src_pages_departments",
@@ -11279,39 +11235,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_pages_files",
-      "label": "Files.tsx",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "files.tsx",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_files_stages",
-      "label": "STAGES",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "stages",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_pages_files_statuses",
-      "label": "STATUSES",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "statuses",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L31"
-    },
-    {
       "id": "src_pages_login",
       "label": "Login.tsx",
       "_origin": "ast",
@@ -11323,14 +11246,14 @@
       "source_location": "L1"
     },
     {
-      "id": "src_pages_pendingfiles",
-      "label": "PendingFiles.tsx",
+      "id": "src_pages_search",
+      "label": "Search.tsx",
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "pendingfiles.tsx",
-      "source_file": "src/pages/PendingFiles.tsx",
+      "norm_label": "search.tsx",
+      "source_file": "src/pages/Search.tsx",
       "source_location": "L1"
     },
     {
@@ -11741,6 +11664,17 @@
       "source_location": "L1221"
     },
     {
+      "id": "src_mock_data_mock_departments",
+      "label": "MOCK_DEPARTMENTS",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "mock_departments",
+      "source_file": "src/mock/data.ts",
+      "source_location": "L29"
+    },
+    {
       "id": "src_mock_data_mock_documents",
       "label": "MOCK_DOCUMENTS",
       "_origin": "ast",
@@ -11794,6 +11728,28 @@
       "norm_label": "mock_user",
       "source_file": "src/mock/data.ts",
       "source_location": "L18"
+    },
+    {
+      "id": "src_pages_simulation",
+      "label": "Simulation.tsx",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "simulation.tsx",
+      "source_file": "src/pages/Simulation.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_api_index_simulationservice",
+      "label": "simulationService",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "mockApi.ts",
+      "file_type": "code",
+      "norm_label": "simulationservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L154"
     },
     {
       "id": "src_services_api_mockapi",
@@ -12251,6 +12207,39 @@
       "source_location": "L381"
     },
     {
+      "id": "src_components_cases_statutorydeadlineengine",
+      "label": "StatutoryDeadlineEngine.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "statutorydeadlineengine.tsx",
+      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_common_statutorycountdown",
+      "label": "StatutoryCountdown.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "statutorycountdown.tsx",
+      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_common_technicalcard",
+      "label": "TechnicalCard.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "StatutoryDeadlineEngine.tsx",
+      "file_type": "code",
+      "norm_label": "technicalcard.tsx",
+      "source_file": "src/components/common/TechnicalCard.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "backend_tests_test_intelligence_rationale_129",
       "label": "Tests for file stagnation and workflow bottleneck detection.",
       "_origin": "ast",
@@ -12317,91 +12306,25 @@
       "source_location": "L204"
     },
     {
-      "id": "src_components_common_govtable",
-      "label": "GovTable.tsx",
+      "id": "src_pages_analytics",
+      "label": "Analytics.tsx",
       "_origin": "ast",
       "community": 21,
       "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "govtable.tsx",
-      "source_file": "src/components/common/GovTable.tsx",
+      "norm_label": "analytics.tsx",
+      "source_file": "src/pages/Analytics.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_pages_auditlogs",
-      "label": "AuditLogs.tsx",
+      "id": "src_pages_intelligence",
+      "label": "Intelligence.tsx",
       "_origin": "ast",
       "community": 21,
       "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "auditlogs.tsx",
-      "source_file": "src/pages/AuditLogs.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_projects",
-      "label": "Projects.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "projects.tsx",
-      "source_file": "src/pages/Projects.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_projects_districts",
-      "label": "DISTRICTS",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "districts",
-      "source_file": "src/pages/Projects.tsx",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_pages_projects_la_stages",
-      "label": "LA_STAGES",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "la_stages",
-      "source_file": "src/pages/Projects.tsx",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_pages_projects_risk_levels",
-      "label": "RISK_LEVELS",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "risk_levels",
-      "source_file": "src/pages/Projects.tsx",
-      "source_location": "L48"
-    },
-    {
-      "id": "src_pages_risk",
-      "label": "Risk.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "risk.tsx",
-      "source_file": "src/pages/Risk.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_simulation",
-      "label": "Simulation.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "simulation.tsx",
-      "source_file": "src/pages/Simulation.tsx",
+      "norm_label": "intelligence.tsx",
+      "source_file": "src/pages/Intelligence.tsx",
       "source_location": "L1"
     },
     {
@@ -12414,6 +12337,17 @@
       "norm_label": "api/index.ts",
       "source_file": "src/services/api/index.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "src_services_api_index_analyticsservice",
+      "label": "analyticsService",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "analyticsservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L162"
     },
     {
       "id": "src_services_api_index_auditservice",
@@ -12515,15 +12449,15 @@
       "source_location": "L118"
     },
     {
-      "id": "src_services_api_index_simulationservice",
-      "label": "simulationService",
+      "id": "src_services_api_index_workflowservice",
+      "label": "workflowService",
       "_origin": "ast",
       "community": 21,
       "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "simulationservice",
+      "norm_label": "workflowservice",
       "source_file": "src/services/api/index.ts",
-      "source_location": "L154"
+      "source_location": "L111"
     },
     {
       "id": "backend_app_api_routes_documents_py_post",
@@ -13363,17 +13297,6 @@
       "source_location": "L22"
     },
     {
-      "id": "src_components_common_govbadge",
-      "label": "GovBadge.tsx",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "govbadge.tsx",
-      "source_file": "src/components/common/GovBadge.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_common_govbadge_govbadge",
       "label": "GovBadge",
       "_origin": "ast",
@@ -13385,17 +13308,6 @@
       "source_location": "L142"
     },
     {
-      "id": "src_components_common_govcard",
-      "label": "GovCard.tsx",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "govcard.tsx",
-      "source_file": "src/components/common/GovCard.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_common_govmodal",
       "label": "GovModal.tsx",
       "_origin": "ast",
@@ -13404,17 +13316,6 @@
       "file_type": "code",
       "norm_label": "govmodal.tsx",
       "source_file": "src/components/common/GovModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_common_statusbadge",
-      "label": "StatusBadge.tsx",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "statusbadge.tsx",
-      "source_file": "src/components/common/StatusBadge.tsx",
       "source_location": "L1"
     },
     {
@@ -13451,17 +13352,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_layout_globalsearchmodal",
-      "label": "GlobalSearchModal.tsx",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "globalsearchmodal.tsx",
-      "source_file": "src/components/layout/GlobalSearchModal.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_pages_casedetail",
       "label": "CaseDetail.tsx",
       "_origin": "ast",
@@ -13470,17 +13360,6 @@
       "file_type": "code",
       "norm_label": "casedetail.tsx",
       "source_file": "src/pages/CaseDetail.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_documents",
-      "label": "Documents.tsx",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "documents.tsx",
-      "source_file": "src/pages/Documents.tsx",
       "source_location": "L1"
     },
     {
@@ -13503,17 +13382,6 @@
       "file_type": "code",
       "norm_label": "projectdetail.tsx",
       "source_file": "src/pages/ProjectDetail.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_search",
-      "label": "Search.tsx",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "search.tsx",
-      "source_file": "src/pages/Search.tsx",
       "source_location": "L1"
     },
     {
@@ -13572,15 +13440,15 @@
       "source_location": "L34"
     },
     {
-      "id": "package_devdependencies_types_node",
-      "label": "@types/node",
+      "id": "package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 28,
       "community_name": "devDependencies",
       "file_type": "code",
-      "norm_label": "@types/node",
+      "norm_label": "tailwindcss",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L35"
     },
     {
       "id": "package_devdependencies_types_react",
@@ -13660,6 +13528,17 @@
       "source_location": "L33"
     },
     {
+      "id": "package_json_tailwindcss",
+      "label": "tailwindcss",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "devDependencies",
+      "file_type": "concept",
+      "norm_label": "tailwindcss",
+      "source_file": "package.json",
+      "source_location": "L35"
+    },
+    {
       "id": "postcss",
       "label": "postcss",
       "_origin": "ast",
@@ -13669,17 +13548,6 @@
       "norm_label": "postcss",
       "source_file": "package.json",
       "source_location": "L34"
-    },
-    {
-      "id": "types_node",
-      "label": "@types/node",
-      "_origin": "ast",
-      "community": 28,
-      "community_name": "devDependencies",
-      "file_type": "concept",
-      "norm_label": "@types/node",
-      "source_file": "package.json",
-      "source_location": "L28"
     },
     {
       "id": "types_react",
@@ -15322,17 +15190,6 @@
       "source_location": "L97"
     },
     {
-      "id": "src_components_cases_statutorydeadlineengine",
-      "label": "StatutoryDeadlineEngine.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "statutorydeadlineengine.tsx",
-      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_common_emptystate",
       "label": "EmptyState.tsx",
       "_origin": "ast",
@@ -15355,6 +15212,28 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_common_govcard",
+      "label": "GovCard.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "govcard.tsx",
+      "source_file": "src/components/common/GovCard.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_common_govtable",
+      "label": "GovTable.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "govtable.tsx",
+      "source_file": "src/components/common/GovTable.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_common_loadingskeleton",
       "label": "LoadingSkeleton.tsx",
       "_origin": "ast",
@@ -15366,36 +15245,25 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_common_statutorycountdown",
-      "label": "StatutoryCountdown.tsx",
+      "id": "src_pages_auditlogs",
+      "label": "AuditLogs.tsx",
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "statutorycountdown.tsx",
-      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "norm_label": "auditlogs.tsx",
+      "source_file": "src/pages/AuditLogs.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_common_technicalcard",
-      "label": "TechnicalCard.tsx",
+      "id": "src_pages_cases",
+      "label": "Cases.tsx",
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "technicalcard.tsx",
-      "source_file": "src/components/common/TechnicalCard.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_analytics",
-      "label": "Analytics.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "analytics.tsx",
-      "source_file": "src/pages/Analytics.tsx",
+      "norm_label": "cases.tsx",
+      "source_file": "src/pages/Cases.tsx",
       "source_location": "L1"
     },
     {
@@ -15410,14 +15278,113 @@
       "source_location": "L1"
     },
     {
-      "id": "src_pages_intelligence",
-      "label": "Intelligence.tsx",
+      "id": "src_pages_documents",
+      "label": "Documents.tsx",
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "intelligence.tsx",
-      "source_file": "src/pages/Intelligence.tsx",
+      "norm_label": "documents.tsx",
+      "source_file": "src/pages/Documents.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_files",
+      "label": "Files.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "files.tsx",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_files_stages",
+      "label": "STAGES",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "stages",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_pages_files_statuses",
+      "label": "STATUSES",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "statuses",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L31"
+    },
+    {
+      "id": "src_pages_pendingfiles",
+      "label": "PendingFiles.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "pendingfiles.tsx",
+      "source_file": "src/pages/PendingFiles.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_projects",
+      "label": "Projects.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "projects.tsx",
+      "source_file": "src/pages/Projects.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_projects_districts",
+      "label": "DISTRICTS",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "districts",
+      "source_file": "src/pages/Projects.tsx",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_pages_projects_la_stages",
+      "label": "LA_STAGES",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "la_stages",
+      "source_file": "src/pages/Projects.tsx",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_pages_projects_risk_levels",
+      "label": "RISK_LEVELS",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "risk_levels",
+      "source_file": "src/pages/Projects.tsx",
+      "source_location": "L48"
+    },
+    {
+      "id": "src_pages_risk",
+      "label": "Risk.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "risk.tsx",
+      "source_file": "src/pages/Risk.tsx",
       "source_location": "L1"
     },
     {
@@ -15454,28 +15421,6 @@
       "source_location": "L32"
     },
     {
-      "id": "src_services_api_index_analyticsservice",
-      "label": "analyticsService",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "analyticsservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L162"
-    },
-    {
-      "id": "src_services_api_index_workflowservice",
-      "label": "workflowService",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "workflowservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L111"
-    },
-    {
       "id": "ref_react",
       "label": "react",
       "_origin": "ast",
@@ -15498,14 +15443,25 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_cases_riskattributionpanel",
-      "label": "RiskAttributionPanel.tsx",
+      "id": "src_components_common_govbadge",
+      "label": "GovBadge.tsx",
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "riskattributionpanel.tsx",
-      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
+      "norm_label": "govbadge.tsx",
+      "source_file": "src/components/common/GovBadge.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_common_statusbadge",
+      "label": "StatusBadge.tsx",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "statusbadge.tsx",
+      "source_file": "src/components/common/StatusBadge.tsx",
       "source_location": "L1"
     },
     {
@@ -15517,6 +15473,17 @@
       "file_type": "code",
       "norm_label": "filemovementtimeline.tsx",
       "source_file": "src/components/files/FileMovementTimeline.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_globalsearchmodal",
+      "label": "GlobalSearchModal.tsx",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "globalsearchmodal.tsx",
+      "source_file": "src/components/layout/GlobalSearchModal.tsx",
       "source_location": "L1"
     },
     {
@@ -19568,6 +19535,17 @@
       "source_location": "L2"
     },
     {
+      "id": "src_components_cases_riskattributionpanel",
+      "label": "RiskAttributionPanel.tsx",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "realApi.ts",
+      "file_type": "code",
+      "norm_label": "riskattributionpanel.tsx",
+      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_context_authcontext",
       "label": "AuthContext.tsx",
       "_origin": "ast",
@@ -20209,6 +20187,28 @@
       "source_location": "L1"
     },
     {
+      "id": "package_devdependencies_types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 88,
+      "community_name": "@types/node",
+      "file_type": "code",
+      "norm_label": "@types/node",
+      "source_file": "package.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 88,
+      "community_name": "@types/node",
+      "file_type": "concept",
+      "norm_label": "@types/node",
+      "source_file": "package.json",
+      "source_location": "L28"
+    },
+    {
       "id": "env_setup",
       "label": "ENV_SETUP.md",
       "_origin": "ast",
@@ -20358,14 +20358,47 @@
       "source_location": "L131"
     },
     {
-      "id": "src_pages_procurementdashboard",
-      "label": "ProcurementDashboard.tsx",
+      "id": "src_pages_bidderverification",
+      "label": "BidderVerification.tsx",
       "_origin": "ast",
       "community": 9,
       "community_name": "ProcurementContext.tsx",
       "file_type": "code",
-      "norm_label": "procurementdashboard.tsx",
-      "source_file": "src/pages/ProcurementDashboard.tsx",
+      "norm_label": "bidderverification.tsx",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_bidderverification_allowed_types",
+      "label": "ALLOWED_TYPES",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "allowed_types",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L52"
+    },
+    {
+      "id": "src_pages_bidderverification_decision_labels",
+      "label": "DECISION_LABELS",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "decision_labels",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_pages_procurementaudittrail",
+      "label": "ProcurementAuditTrail.tsx",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ProcurementContext.tsx",
+      "file_type": "code",
+      "norm_label": "procurementaudittrail.tsx",
+      "source_file": "src/pages/ProcurementAuditTrail.tsx",
       "source_location": "L1"
     },
     {
@@ -20481,39 +20514,6 @@
       "norm_label": "simulation",
       "source_file": "README.md",
       "source_location": "L380"
-    },
-    {
-      "id": "src_pages_bidderverification",
-      "label": "BidderVerification.tsx",
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "bidderverification.tsx",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_bidderverification_allowed_types",
-      "label": "ALLOWED_TYPES",
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "allowed_types",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L52"
-    },
-    {
-      "id": "src_pages_bidderverification_decision_labels",
-      "label": "DECISION_LABELS",
-      "_origin": "ast",
-      "community": 91,
-      "community_name": "BidderVerification.tsx",
-      "file_type": "code",
-      "norm_label": "decision_labels",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L24"
     },
     {
       "id": "readme_10_environment_configuration",
@@ -28791,18 +28791,6 @@
     },
     {
       "source": "src_pages_procurementaudittrail_procurementaudittrail",
-      "target": "src_context_procurementcontext_useprocurement",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "src_pages_procurementaudittrail_procurementaudittrail",
       "target": "src_context_languagecontext_uselanguage",
       "relation": "calls",
       "_origin": "ast",
@@ -37035,14 +37023,14 @@
     },
     {
       "source": "src_pages_procurementaudittrail",
-      "target": "src_context_procurementcontext_useprocurement",
+      "target": "src_services_api_apiclient_apiclient",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -37054,7 +37042,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -42735,14 +42723,14 @@
     },
     {
       "source": "src_pages_procurementaudittrail",
-      "target": "src_context_procurementcontext",
+      "target": "src_services_api_apiclient",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L3",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -42754,7 +42742,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -53390,7 +53378,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -62503,5 +62491,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ac7fe96e96052083fb04258183561ade744be72f"
+  "built_at_commit": "a0f93e44b9b5f05cd74e845aacf1bfbb48ba9639"
 }

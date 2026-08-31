@@ -1,22 +1,23 @@
 # Graph Report - SIH  (2026-08-31)
 
 ## Corpus Check
-- 175 files · ~144,898 words
+- 175 files · ~145,338 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1792 nodes · 3602 edges · 109 communities (99 shown, 10 thin omitted)
+- 1792 nodes · 3601 edges · 109 communities (99 shown, 10 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 76 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ac7fe96e`
+- Built from commit: `a0f93e44`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - _map_db_doc_standalone
 - TestFieldExtraction
+- StatutoryDeadlineEngine.tsx
 - useLanguage
 - types/index.ts
 - security.py
@@ -90,9 +91,9 @@
 - 21. Development Principles
 - 3. Key Capabilities
 - auth.py
+- @types/node
 - GOIP — Environment Variables & Configuration Guide
 - 8. Typical Data Flow
-- BidderVerification.tsx
 - 10. Environment Configuration
 - 5. Technology Stack
 - 9. Getting Started
@@ -108,7 +109,6 @@
 - alert_service.py
 - tailwind-merge
 - get_bidders
-- tailwindcss
 - get_case
 - TestPriorityAndDashboardAggregation
 - lucide-react
@@ -150,13 +150,17 @@ Nodes (5): _map_db_doc_standalone(), Inline version of _map_db_doc_to_frontend f
 Cohesion: 0.06
 Nodes (23): extract_la_fields(), fields_to_ocr_list(), _find_date_near_keyword(), _parse_date(), Any, Land Acquisition Document Field Extractor…, Convert extracted fields dict to the OCRField list format expected by the…, Attempt to parse a date string into ISO format. Returns None on failure. (+15 more)
 
+### Community 2 - "StatutoryDeadlineEngine.tsx"
+Cohesion: 0.17
+Nodes (3): StatutoryDeadlineEngineProps, StatutoryCountdownProps, TechnicalCardProps
+
 ### Community 3 - "useLanguage"
 Cohesion: 0.17
 Nodes (13): Emblem(), EmblemProps, AppLayout(), GovBreadcrumb(), GovFooter(), GovHorizontalNav(), NavItem, GovNotificationTicker() (+5 more)
 
 ### Community 4 - "types/index.ts"
 Cohesion: 0.08
-Nodes (23): RiskAttributionPanelProps, FileMovementTimeline(), FileMovementTimelineProps, CustomWorkflowNode, WorkflowDrawerProps, CaseEvent, CaseStage, CaseStatus (+15 more)
+Nodes (26): StatusBadge(), StatusBadgeProps, FileMovementTimeline(), FileMovementTimelineProps, CustomWorkflowNode, WorkflowDrawerProps, CaseEvent, CaseStage (+18 more)
 
 ### Community 5 - "security.py"
 Cohesion: 0.06
@@ -175,8 +179,8 @@ Cohesion: 0.17
 Nodes (35): create_bidder_record(), create_tender_record(), get_all_procurement_documents(), get_audit_trail(), get_bidder_by_id(), get_bidder_documents(), get_compliance_results(), get_dashboard_summary() (+27 more)
 
 ### Community 9 - "ProcurementContext.tsx"
-Cohesion: 0.11
-Nodes (21): AppSidebar(), NAV_ITEMS, AuditEvent, Bidder, compliantRequirements, Discrepancy, exceptionRequirements, initialBidders (+13 more)
+Cohesion: 0.09
+Nodes (28): AppSidebar(), NAV_ITEMS, AuditEvent, Bidder, CheckStatus, compliantRequirements, Discrepancy, exceptionRequirements (+20 more)
 
 ### Community 10 - "test_core.py"
 Cohesion: 0.12
@@ -195,16 +199,16 @@ Cohesion: 0.05
 Nodes (44): classify_document_type(), extract_procurement_fields(), Extract procurement-specific structured fields from OCR text. Used for bid…, Classify a document type from its OCR text using deterministic rules. Returns a…, calculate_compliance_score(), calculate_risk_level(), check_blacklisting_declaration(), check_gst_present() (+36 more)
 
 ### Community 14 - "UploadDocument.tsx"
-Cohesion: 0.13
-Nodes (25): FormField(), FormFieldProps, inputBaseClasses, inputErrorClasses, selectBaseClasses, textareaBaseClasses, FileForwardModal(), FileForwardModalProps (+17 more)
+Cohesion: 0.14
+Nodes (23): FormField(), FormFieldProps, inputBaseClasses, inputErrorClasses, selectBaseClasses, textareaBaseClasses, FileForwardModalProps, FileRegisterModalProps (+15 more)
 
 ### Community 15 - "RiskLevel"
 Cohesion: 0.15
 Nodes (32): analyze_bid_rotation(), analyze_repeated_participation(), analyze_winner_concentration(), Any, IntegrityFinding, Bid & Historical Pattern Analyzer — Procurement Integrity Engine…, Detect disproportionate historical award concentration for any current…, Detect repeated joint participation of the same bidder cohort across multiple… (+24 more)
 
 ### Community 16 - "mockApi.ts"
-Cohesion: 0.15
-Nodes (18): MOCK_AUDIT_LOGS, MOCK_BOTTLENECKS, MOCK_CASE_EVENTS, MOCK_CASES, MOCK_DASHBOARD_METRICS, MOCK_DOCUMENTS, MOCK_PERFORMANCE_METRICS, MOCK_PROCESS_MAP (+10 more)
+Cohesion: 0.12
+Nodes (23): MOCK_AUDIT_LOGS, MOCK_BOTTLENECKS, MOCK_CASE_EVENTS, MOCK_CASES, MOCK_DASHBOARD_METRICS, MOCK_DEPARTMENTS, MOCK_DOCUMENTS, MOCK_PERFORMANCE_METRICS (+15 more)
 
 ### Community 17 - "schemas/__init__.py"
 Cohesion: 0.16
@@ -223,8 +227,8 @@ Cohesion: 0.17
 Nodes (7): Tests for file stagnation and workflow bottleneck detection., File pending 3 days at Officer Review is not a bottleneck., File pending 10 days (>7 days) is flagged as MODERATE bottleneck., File pending 16 days (>15 days) is flagged as CRITICAL bottleneck., Uses movement log timestamps to determine dwell days accurately., Resolved or disposed cases do not produce active bottlenecks., TestBottleneckDetection
 
 ### Community 21 - "api/index.ts"
-Cohesion: 0.11
-Nodes (19): GovTable(), GovTableProps, TableColumn, DISTRICTS, LA_STAGES, RISK_LEVELS, auditService, dashboardService (+11 more)
+Cohesion: 0.16
+Nodes (14): Intelligence(), analyticsService, auditService, dashboardService, documentService, fileService, integrityService, procurementService (+6 more)
 
 ### Community 22 - "upload_document"
 Cohesion: 0.33
@@ -247,12 +251,12 @@ Cohesion: 0.10
 Nodes (19): ES2023, node, vite.config.ts, compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module (+11 more)
 
 ### Community 27 - "FileDetail.tsx"
-Cohesion: 0.12
-Nodes (20): GovBadge, StatusBadge(), StatusBadgeProps, GovCard(), GovCardProps, GovModal(), GovModalProps, DOCUMENT_TYPES (+12 more)
+Cohesion: 0.19
+Nodes (11): GovBadge, GovModal(), GovModalProps, DOCUMENT_TYPES, DocumentUploadModal(), DocumentUploadModalProps, DocumentViewerModal(), DocumentViewerModalProps (+3 more)
 
 ### Community 28 - "devDependencies"
 Cohesion: 0.11
-Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, @types/node, @types/react (+11 more)
+Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, tailwindcss, @types/react (+11 more)
 
 ### Community 29 - "SIH 2026 — Complete Codebase Audit, Remaining Work & Team Task Allocation"
 Cohesion: 0.09
@@ -295,8 +299,8 @@ Cohesion: 0.31
 Nodes (5): calculate_risk(), Calculate a transparent risk score for a case. Args: case: Raw case dict from…, Tests for risk_service.py — no database needed., Helper to create a minimal case dict for risk calculation., TestRiskService
 
 ### Community 39 - "react"
-Cohesion: 0.10
-Nodes (15): react, StatutoryDeadlineEngineProps, EmptyStateProps, GovButton(), GovButtonProps, TableSkeleton(), StatutoryCountdownProps, TechnicalCardProps (+7 more)
+Cohesion: 0.12
+Nodes (20): react, EmptyStateProps, GovButton(), GovButtonProps, GovCard(), GovCardProps, GovTable(), GovTableProps (+12 more)
 
 ### Community 40 - "aggregate_integrity_findings"
 Cohesion: 0.24
@@ -411,8 +415,8 @@ Cohesion: 0.23
 Nodes (8): Language, LanguageContext, LanguageContextType, LanguageProvider(), TranslationKey, translations, en, hi
 
 ### Community 72 - "realApi.ts"
-Cohesion: 0.33
-Nodes (8): AuthContext, AuthContextType, AuthProvider(), isSupabaseConfigured(), mapSupabaseUserToAppUser(), supabase, authService, User
+Cohesion: 0.23
+Nodes (10): RiskAttributionPanelProps, AuthContext, AuthContextType, AuthProvider(), isSupabaseConfigured(), mapSupabaseUserToAppUser(), supabase, authService (+2 more)
 
 ### Community 73 - "21. Development Principles"
 Cohesion: 0.29
@@ -433,10 +437,6 @@ Nodes (5): 1. Backend Environment Variables (`backend/.env`), 2. Frontend Enviro
 ### Community 90 - "8. Typical Data Flow"
 Cohesion: 0.50
 Nodes (4): 8. Typical Data Flow, Case Intelligence, Document Intelligence, Simulation
-
-### Community 91 - "BidderVerification.tsx"
-Cohesion: 0.25
-Nodes (8): CheckStatus, Requirement, ALLOWED_TYPES, Banner, BannerKind, BidderVerification(), BidderView, DECISION_LABELS
 
 ### Community 92 - "10. Environment Configuration"
 Cohesion: 0.67
@@ -471,8 +471,8 @@ Cohesion: 0.17
 Nodes (13): download_document(), get_document(), get_document_status(), list_documents(), get, List documents, optionally filtered by case, search term, or OCR status., Get a single document's metadata, extracted text, and structured OCR fields.…, Lightweight endpoint for polling OCR processing status. Returns: {id,… (+5 more)
 
 ### Community 105 - "App.tsx"
-Cohesion: 0.12
-Nodes (21): App(), ProtectedRoute(), PublicRoute(), useAuth(), useProcurement(), getRandomCaptcha(), Login(), ProcurementAuditTrail() (+13 more)
+Cohesion: 0.13
+Nodes (20): App(), ProtectedRoute(), PublicRoute(), useAuth(), useProcurement(), BidderVerification(), ProcurementDashboard(), ExtractedField (+12 more)
 
 ### Community 107 - "alert_service.py"
 Cohesion: 0.22
