@@ -38,6 +38,24 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+def _safe_float(value: Any, default: float = 0.0) -> float:
+    """
+    Safely convert an arbitrary OCR metadata value to float.
+    Handles: int, float, numeric str, None, list, dict, and any unknown type.
+    Never raises — malformed OCR metadata must not crash document upload.
+    """
+    if isinstance(value, float):
+        return value
+    if isinstance(value, int):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return default
+    return default
+
+
 # ============================================================
 # SCHEMAS
 # ============================================================
@@ -240,7 +258,7 @@ async def upload_bidder_document(
     raw_fields = ocr_result.get("extractedFields") if isinstance(ocr_result, dict) else None
     extracted_fields: List[Dict[str, Any]] = [f for f in raw_fields if isinstance(f, dict)] if isinstance(raw_fields, list) else []
     extracted_text: str = str(ocr_result.get("extractedText") or "") if isinstance(ocr_result, dict) else ""
-    confidence: float = float(ocr_result.get("confidenceScore") or 0.0) if isinstance(ocr_result, dict) else 0.0
+    confidence: float = _safe_float(ocr_result.get("confidenceScore")) if isinstance(ocr_result, dict) else 0.0
     engine_used: str = str(ocr_result.get("ocrEngine") or "PyMuPDF + Regex Parser") if isinstance(ocr_result, dict) else "PyMuPDF + Regex Parser"
 
     # Step 2: Classify document type if auto
