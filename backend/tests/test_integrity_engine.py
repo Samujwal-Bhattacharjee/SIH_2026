@@ -48,6 +48,7 @@ from app.services.integrity.risk_engine import (
 
 
 from app.core.security import get_current_user
+from app.core import procurement_store as ps
 
 
 @pytest.fixture
@@ -552,10 +553,13 @@ def test_api_tender_and_bidder_integrity(auth_client):
     assert "assessed_at" in data
 
     # 2. Bidder Integrity Endpoint
-    res_b = auth_client.get("/api/v1/procurement/bidders/BID-001/integrity")
+    bidders = ps.get_bidders()
+    assert len(bidders) > 0
+    target_bidder_id = bidders[0]["id"]
+    res_b = auth_client.get(f"/api/v1/procurement/bidders/{target_bidder_id}/integrity")
     assert res_b.status_code == 200
     data_b = res_b.json()
-    assert data_b["bidder_id"] == "BID-001"
+    assert data_b["bidder_id"] == target_bidder_id
     assert "overall_risk_score" in data_b
     assert "risk_level" in data_b
     assert data_b["risk_level"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
@@ -672,4 +676,119 @@ def test_frontend_contract_structure_and_safety_language(auth_client):
             assert f_word not in finding["title"].upper()
             assert f_word not in finding["reason"].upper()
             assert f_word not in finding["recommended_action"].upper()
+
+
+# ============================================================
+# SYNTHETIC SCENARIO VALIDATION TESTS (8 REQUIRED SCENARIOS)
+# ============================================================
+
+def test_scenario_1_clean_dataset_live():
+    """Scenario 1: TEN-2026-001 with independent bidders must evaluate to LOW risk with 0 findings."""
+    assessment = assess_tender_integrity("TEN-2026-001")
+    assert assessment.risk_level == RiskLevel.LOW
+    assert assessment.overall_risk_score < 25.0
+    assert assessment.findings_count == 0
+    assert len(assessment.findings) == 0
+    assert "LOW RISK" in assessment.summary
+
+
+def test_scenario_2_bid_price_clustering_live():
+    """Scenario 2: TEN-2026-002 with 3 bids within 0.28% delta triggers BID_PRICE_ANOMALY."""
+    assessment = assess_tender_integrity("TEN-2026-002")
+    signals = [f.signal_type for f in assessment.findings]
+    assert SignalType.BID_PRICE_ANOMALY in signals
+
+    price_finding = [f for f in assessment.findings if f.signal_type == SignalType.BID_PRICE_ANOMALY][0]
+    assert price_finding.severity == RiskLevel.MEDIUM
+    assert price_finding.score_impact == 20.0
+    assert len(price_finding.evidence) == 3
+    assert "boq" in price_finding.recommended_action.lower() or "rate" in price_finding.recommended_action.lower()
+
+
+def test_scenario_3_repeated_participation_cohort_live():
+    """Scenario 3: TEN-2026-003 with recurring cohort across 5 historical tenders triggers REPEATED_PARTICIPATION_PATTERN."""
+    assessment = assess_tender_integrity("TEN-2026-003")
+    signals = [f.signal_type for f in assessment.findings]
+    assert SignalType.REPEATED_PARTICIPATION_PATTERN in signals
+
+    cohort_findings = [f for f in assessment.findings if f.signal_type == SignalType.REPEATED_PARTICIPATION_PATTERN]
+    assert len(cohort_findings) >= 1
+    for cf in cohort_findings:
+        assert cf.severity == RiskLevel.LOW
+        assert cf.evidence[0].value >= 3
+
+
+def test_scenario_4_winner_concentration_live():
+    """Scenario 4: TEN-2026-004 with Vindhyachal winning 4 of 4 historical renewable tenders triggers REPEATED_WINNER_PATTERN."""
+    assessment = assess_tender_integrity("TEN-2026-004")
+    signals = [f.signal_type for f in assessment.findings]
+    assert SignalType.REPEATED_WINNER_PATTERN in signals
+
+    win_finding = [f for f in assessment.findings if f.signal_type == SignalType.REPEATED_WINNER_PATTERN][0]
+    assert win_finding.severity == RiskLevel.LOW
+    assert "4/4" in win_finding.evidence[0].value or "100" in win_finding.evidence[0].value
+    assert "Vindhyachal" in win_finding.title or "Vindhyachal" in win_finding.reason
+
+
+def test_scenario_5_bid_rotation_live():
+    """Scenario 5: TEN-2026-005 with historical alternating cycle triggers BID_ROTATION_PATTERN."""
+    assessment = assess_tender_integrity("TEN-2026-005")
+    signals = [f.signal_type for f in assessment.findings]
+    assert SignalType.BID_ROTATION_PATTERN in signals
+
+    rot_finding = [f for f in assessment.findings if f.signal_type == SignalType.BID_ROTATION_PATTERN][0]
+    assert rot_finding.severity == RiskLevel.MEDIUM
+    assert len(rot_finding.evidence) > 0
+    assert "winner_sequence" in rot_finding.evidence[0].field
+
+
+def test_scenario_6_related_bidders_consolidated_live():
+    """Scenario 6: TEN-2026-006 with Shivalik entities sharing PAN/GSTIN/address consolidates into 1 RELATED_BIDDER finding."""
+    assessment = assess_tender_integrity("TEN-2026-006")
+    related_findings = [f for f in assessment.findings if f.signal_type == SignalType.RELATED_BIDDER]
+    assert len(related_findings) == 1
+
+    rf = related_findings[0]
+    assert rf.severity == RiskLevel.HIGH
+    assert len(rf.evidence) >= 3
+    evidence_fields = [ev.field for ev in rf.evidence]
+    assert "pan" in evidence_fields
+    assert "gstin" in evidence_fields
+    assert "registered_address" in evidence_fields
+
+
+def test_scenario_7_multi_signal_elevated_risk_live():
+    """Scenario 7: TEN-2026-007 combining related bidders + price clustering + cohort evaluates to HIGH/CRITICAL calculated tier."""
+    assessment = assess_tender_integrity("TEN-2026-007")
+    assert assessment.risk_level in (RiskLevel.HIGH, RiskLevel.CRITICAL)
+    assert assessment.overall_risk_score >= 50.0
+    assert len(assessment.contributing_signals) >= 2
+    assert SignalType.RELATED_BIDDER in assessment.contributing_signals
+    assert SignalType.BID_PRICE_ANOMALY in assessment.contributing_signals
+
+
+def test_scenario_8_false_positive_control_live():
+    """Scenario 8: TEN-2026-008 with legitimate competitive bidding in specialized GIS domain produces LOW risk."""
+    assessment = assess_tender_integrity("TEN-2026-008")
+    assert assessment.risk_level == RiskLevel.LOW
+    assert assessment.overall_risk_score < 25.0
+    assert assessment.findings_count == 0
+
+
+def test_synthetic_procurement_history_idempotency():
+    """Verify that reseeding synthetic history produces identical record counts and deterministic integrity outputs."""
+    from app.core.procurement_store import reset_and_seed_procurement_data
+    counts = reset_and_seed_procurement_data()
+    assert counts["tenders"] == 17
+    assert counts["bidders"] == 55
+    assert counts["documents"] >= 100
+
+    # Repeat assessment on TEN-2026-007 twice to ensure identical output
+    run1 = assess_tender_integrity("TEN-2026-007")
+    run2 = assess_tender_integrity("TEN-2026-007")
+    assert run1.overall_risk_score == run2.overall_risk_score
+    assert run1.risk_level == run2.risk_level
+    assert run1.findings_count == run2.findings_count
+    assert run1.contributing_signals == run2.contributing_signals
+
 

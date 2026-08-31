@@ -1005,12 +1005,78 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
           title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
           department: 'Department of Administrative Reforms',
           status: 'ACTIVE',
+          category: 'Network Infrastructure',
+          estimated_value: 45000000.0,
+        },
+        {
+          id: 'TEN-2026-002',
+          tender_number: 'GEM/2026/B/519302',
+          title: 'Procurement of Enterprise Cloud Storage and High-Availability Backup Subsystems',
+          department: 'Department of Information Technology',
+          status: 'ACTIVE',
+          category: 'Cloud Infrastructure',
+          estimated_value: 25000000.0,
+        },
+        {
+          id: 'TEN-2026-003',
+          tender_number: 'GEM/2026/B/621415',
+          title: 'Supply of Edge Routing Hardware and Structured Switching Systems',
+          department: 'Department of Information Technology',
+          status: 'ACTIVE',
+          category: 'IT & Telecommunications',
+          estimated_value: 32000000.0,
+        },
+        {
+          id: 'TEN-2026-004',
+          tender_number: 'GEM/2026/B/732528',
+          title: 'Turnkey EPC Contract for 50MW Solar Photovoltaic Power Plant Expansion',
+          department: 'Ministry of New and Renewable Energy',
+          status: 'ACTIVE',
+          category: 'Renewable Energy',
+          estimated_value: 350000000.0,
+        },
+        {
+          id: 'TEN-2026-005',
+          tender_number: 'GEM/2026/B/843639',
+          title: 'Statewide Network Operation Center (NOC) Annual Operation & Maintenance',
+          department: 'Department of Information Technology',
+          status: 'ACTIVE',
+          category: 'IT & Telecommunications',
+          estimated_value: 50000000.0,
+        },
+        {
+          id: 'TEN-2026-006',
+          tender_number: 'GEM/2026/B/954741',
+          title: 'Comprehensive Smart City Command & Control Software Modernization',
+          department: 'Ministry of Housing and Urban Affairs',
+          status: 'ACTIVE',
+          category: 'Software Solutions',
+          estimated_value: 60000000.0,
+        },
+        {
+          id: 'TEN-2026-007',
+          tender_number: 'GEM/2026/B/965852',
+          title: 'Design, Deployment & Unified Management of High-Security Cyber Defense Operations',
+          department: 'Department of Information Technology',
+          status: 'ACTIVE',
+          category: 'IT & Telecommunications',
+          estimated_value: 80000000.0,
+        },
+        {
+          id: 'TEN-2026-008',
+          tender_number: 'GEM/2026/B/976963',
+          title: 'Supply of Certified Precision Survey and GIS Photogrammetry Equipment',
+          department: 'Survey of India',
+          status: 'ACTIVE',
+          category: 'Geospatial & Survey',
+          estimated_value: 18000000.0,
         },
       ];
     },
     async getTender(id: string): Promise<any> {
       await delay(100);
-      return {
+      const tenders = await this.getTenders();
+      return tenders.find((t: any) => t.id === id) || {
         id,
         tender_number: 'GEM/2026/B/418207',
         title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
@@ -1023,10 +1089,24 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     },
     async getBidders(tenderId: string): Promise<any[]> {
       await delay(150);
+      if (tenderId === 'TEN-2026-006') {
+        return [
+          { id: 'BID-115', legal_name: 'Shivalik Cloud Matrix Pvt. Ltd.', name: 'Shivalik Cloud Matrix Pvt. Ltd.', score: 85, risk: 'HIGH', status: 'Under Review', documents: 2, exceptions: 1 },
+          { id: 'BID-116', legal_name: 'Shivalik Enterprise Systems LLP', name: 'Shivalik Enterprise Systems LLP', score: 82, risk: 'HIGH', status: 'Under Review', documents: 2, exceptions: 1 },
+          { id: 'BID-117', legal_name: 'Tapti Solutions & Analytics Pvt. Ltd.', name: 'Tapti Solutions & Analytics Pvt. Ltd.', score: 90, risk: 'LOW', status: 'Under Review', documents: 2, exceptions: 0 },
+        ];
+      }
+      if (tenderId === 'TEN-2026-007') {
+        return [
+          { id: 'BID-118', legal_name: 'Shivalik Cloud Matrix Pvt. Ltd.', name: 'Shivalik Cloud Matrix Pvt. Ltd.', score: 85, risk: 'HIGH', status: 'Under Review', documents: 2, exceptions: 1 },
+          { id: 'BID-119', legal_name: 'Shivalik Enterprise Systems LLP', name: 'Shivalik Enterprise Systems LLP', score: 82, risk: 'HIGH', status: 'Under Review', documents: 2, exceptions: 1 },
+          { id: 'BID-120', legal_name: 'Kaveri Digital Solutions Ltd.', name: 'Kaveri Digital Solutions Ltd.', score: 92, risk: 'LOW', status: 'Under Review', documents: 2, exceptions: 0 },
+        ];
+      }
       return [
-        { id: 'BID-001', name: 'Triveni Infotech Solutions Pvt. Ltd.', score: 87, risk: 'LOW', status: 'Under Review', documents: 7, exceptions: 1 },
-        { id: 'BID-002', name: 'Narmada Systems & Services Pvt. Ltd.', score: 54, risk: 'HIGH', status: 'Exception Found', documents: 5, exceptions: 4 },
-        { id: 'BID-003', name: 'Vindhya Digital Technologies LLP', score: 68, risk: 'MEDIUM', status: 'Under Review', documents: 4, exceptions: 2 },
+        { id: 'BID-001', legal_name: 'Triveni Infotech Solutions Pvt. Ltd.', name: 'Triveni Infotech Solutions Pvt. Ltd.', score: 87, risk: 'LOW', status: 'Under Review', documents: 7, exceptions: 1 },
+        { id: 'BID-002', legal_name: 'Nilgiri Hardware & Telecom Pvt. Ltd.', name: 'Nilgiri Hardware & Telecom Pvt. Ltd.', score: 85, risk: 'LOW', status: 'Under Review', documents: 5, exceptions: 0 },
+        { id: 'BID-003', legal_name: 'Mahanadi Security & Surveillance Pvt. Ltd.', name: 'Mahanadi Security & Surveillance Pvt. Ltd.', score: 88, risk: 'LOW', status: 'Under Review', documents: 4, exceptions: 0 },
       ];
     },
     async addBidder(tenderId: string, bidder: any): Promise<any> {
@@ -1035,7 +1115,7 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     },
     async getBidder(id: string): Promise<any> {
       await delay(100);
-      return { id, name: id === 'BID-002' ? 'Narmada Systems & Services Pvt. Ltd.' : 'Triveni Infotech Solutions Pvt. Ltd.' };
+      return { id, name: id === 'BID-002' ? 'Nilgiri Hardware & Telecom Pvt. Ltd.' : 'Triveni Infotech Solutions Pvt. Ltd.' };
     },
     async verifyBidder(bidderId: string): Promise<any> {
       await delay(300);
@@ -1043,7 +1123,7 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     },
     async getCompliance(bidderId: string): Promise<any> {
       await delay(200);
-      return { bidder_id: bidderId, compliance_score: bidderId === 'BID-002' ? 54 : 87, risk_level: bidderId === 'BID-002' ? 'HIGH' : 'LOW' };
+      return { bidder_id: bidderId, compliance_score: 87, risk_level: 'LOW' };
     },
     async recordDecision(bidderId: string, decision: string, note?: string): Promise<any> {
       await delay(200);
@@ -1099,6 +1179,67 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
           documents_count: 1,
           exceptions_count: 0
         }
+      };
+    },
+    async getTenderIntegrity(tenderId: string): Promise<any> {
+      await delay(200);
+      if (tenderId === 'TEN-2026-006' || tenderId === 'TEN-2026-007') {
+        return {
+          tender_id: tenderId,
+          overall_risk_score: tenderId === 'TEN-2026-007' ? 70.0 : 35.0,
+          risk_level: tenderId === 'TEN-2026-007' ? 'HIGH' : 'MEDIUM',
+          confidence_score: 0.95,
+          findings_count: tenderId === 'TEN-2026-007' ? 3 : 1,
+          contributing_signals: ['RELATED_BIDDER', 'BID_PRICE_ANOMALY'],
+          assessed_at: new Date().toISOString(),
+          summary: `Integrity evaluation identified review signals for tender '${tenderId}'. Composite risk is categorized as elevated.`,
+          findings: [
+            {
+              id: 'INT-REL-01',
+              tender_id: tenderId,
+              related_bidder_ids: ['BID-115', 'BID-116'],
+              signal_type: 'RELATED_BIDDER',
+              severity: 'HIGH',
+              score_impact: 35.0,
+              confidence: 0.98,
+              title: 'Common Entity Linkage: Shivalik Cloud Matrix Pvt. Ltd. & Shivalik Enterprise Systems LLP',
+              reason: "Entities 'Shivalik Cloud Matrix Pvt. Ltd.' and 'Shivalik Enterprise Systems LLP' share statutory identifiers (PAN: AABCS7007S, GSTIN: 05AABCS7007S1Z5) and registered address.",
+              evidence: [
+                { source_type: 'CORPORATE_REGISTRY', field: 'pan', value: 'AABCS7007S', description: 'Identical Permanent Account Number (PAN: AABCS7007S) submitted by both entities.' },
+                { source_type: 'CORPORATE_REGISTRY', field: 'gstin', value: '05AABCS7007S1Z5', description: 'Identical GSTIN submitted by both entities.' },
+                { source_type: 'BID_SUBMISSION', field: 'registered_address', value: 'Suite 201, IT Park Sahastradhara Road, Dehradun 248013', description: 'Identical registered office address submitted by both entities.' }
+              ],
+              recommended_action: 'Request clarification from bidders regarding corporate relationship under GFR Rule 144.',
+              status: 'OPEN',
+              detected_at: new Date().toISOString(),
+            },
+          ],
+        };
+      }
+      return {
+        tender_id: tenderId,
+        overall_risk_score: 0.0,
+        risk_level: 'LOW',
+        confidence_score: 0.95,
+        findings_count: 0,
+        contributing_signals: [],
+        assessed_at: new Date().toISOString(),
+        summary: `Integrity evaluation for tender '${tenderId}' completed. No anomalous bid patterns detected. Overall status: LOW RISK (0/100).`,
+        findings: [],
+      };
+    },
+    async getBidderIntegrity(bidderId: string): Promise<any> {
+      await delay(150);
+      return {
+        bidder_id: bidderId,
+        overall_risk_score: 0.0,
+        risk_level: 'LOW',
+        confidence_score: 0.90,
+        findings_count: 0,
+        contributing_signals: [],
+        assessed_at: new Date().toISOString(),
+        summary: `No anomalous integrity signals identified for bidder '${bidderId}'. Status: LOW RISK (0/100).`,
+        findings: [],
       };
     },
   },

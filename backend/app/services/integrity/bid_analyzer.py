@@ -20,6 +20,7 @@ from app.services.integrity.models import (
     RiskLevel,
     SignalType,
 )
+from app.services.integrity.feature_extractor import normalize_entity_name
 
 
 # ============================================================
@@ -153,10 +154,11 @@ def analyze_winner_concentration(
     vendor_tender_history: Dict[str, List[str]] = {}
 
     for t in historical_tenders:
-        winner = t.get("winner_id") or t.get("winner_name") or t.get("awarded_bidder")
+        winner = t.get("winner_name") or t.get("winner_id") or t.get("awarded_bidder")
         if winner:
             total_awards += 1
-            norm_w = str(winner).strip().lower()
+            w_str = str(winner).strip()
+            norm_w = normalize_entity_name(w_str) if not w_str.lower().startswith("bid-") else w_str.lower()
             vendor_wins[norm_w] = vendor_wins.get(norm_w, 0) + 1
             if norm_w not in vendor_tender_history:
                 vendor_tender_history[norm_w] = []
@@ -174,7 +176,7 @@ def analyze_winner_concentration(
         # Check matching win count
         wins = 0
         for win_key, count in vendor_wins.items():
-            if win_key == b_id_norm or win_key in norm_name or norm_name in win_key:
+            if win_key == b_id_norm or win_key == norm_name or win_key in norm_name or norm_name in win_key:
                 wins += count
 
         win_ratio = wins / total_awards if total_awards > 0 else 0.0
@@ -335,9 +337,11 @@ def analyze_bid_rotation(
     # Sequence of winners in chronological order
     winner_sequence = []
     for t in historical_tenders:
-        w = t.get("winner_id") or t.get("winner_name")
+        w = t.get("winner_name") or t.get("winner_id")
         if w:
-            winner_sequence.append(str(w).strip().lower())
+            w_str = str(w).strip()
+            norm_w = normalize_entity_name(w_str) if not w_str.lower().startswith("bid-") else w_str.lower()
+            winner_sequence.append(norm_w)
 
     if len(winner_sequence) < MIN_TENDERS_FOR_ROTATION:
         return []

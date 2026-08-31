@@ -122,6 +122,7 @@ def init_db():
             risk_level          TEXT DEFAULT 'MEDIUM',
             officer_decision    TEXT,
             officer_note        TEXT,
+            quote_amount        REAL,
             decided_at          TEXT,
             decided_by          TEXT,
             created_at          TEXT NOT NULL,
@@ -228,6 +229,14 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_bidder_audit_created ON bidder_audit_events(created_at DESC);
         """)
 
+        # Migration: ensure quote_amount column exists on bidders table
+        try:
+            cols = [c[1] for c in conn.execute("PRAGMA table_info(bidders)").fetchall()]
+            if cols and "quote_amount" not in cols:
+                conn.execute("ALTER TABLE bidders ADD COLUMN quote_amount REAL")
+        except Exception:
+            pass
+
         # Check if database is empty and needs initial seeding
         cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM tenders")
@@ -236,127 +245,21 @@ def init_db():
 
 
 def seed_initial_data(conn: sqlite3.Connection):
-    """Seed baseline tender, requirements, bidders, and audit log."""
-    now = datetime.now(timezone.utc).isoformat()
-    tender_id = "TEN-2026-001"
+    """Seed synthetic procurement history with realistic multi-scenario data."""
+    try:
+        from app.services.integrity.synthetic_history import seed_synthetic_procurement_history
+        seed_synthetic_procurement_history(conn)
+        logger.info("Procurement persistent database initialized with synthetic history dataset.")
+    except Exception as e:
+        logger.error(f"Error seeding synthetic procurement data: {e}", exc_info=True)
 
-    # 1. Tender
-    conn.execute("""
-        INSERT INTO tenders (id, tender_number, title, department, description, bid_closing_date, estimated_value, category, status, local_content_class, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        tender_id,
-        "GEM/2026/B/418207",
-        "Supply and Installation of Network Infrastructure for Government Administrative Offices",
-        "Department of Administrative Reforms",
-        "Procurement of enterprise-grade switches, routers, security gateways, and structured cabling.",
-        "2026-08-30",
-        45000000.00,
-        "Network Infrastructure",
-        "ACTIVE",
-        "CLASS_I",
-        now,
-        now
-    ))
 
-    # 2. Requirements
-    for req in DEFAULT_TENDER_REQUIREMENTS:
-        conn.execute("""
-            INSERT INTO tender_requirements (id, tender_id, requirement_id, name, category, is_mandatory, description, verification_rule, weight, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            str(uuid.uuid4()),
-            tender_id,
-            req["requirement_id"],
-            req["name"],
-            req["category"],
-            1 if req.get("is_mandatory", True) else 0,
-            req.get("description", ""),
-            req.get("verification_rule", ""),
-            req.get("weight", 1.0),
-            now
-        ))
-
-    # 3. Bidders
-    bidders_seed = [
-        ("BID-001", tender_id, "Triveni Infotech Solutions Pvt. Ltd.", "27AABCT4180Q1ZV", "AABCT4180Q", "UDYAM-MH-19-0042186", "UNDER_REVIEW", 87.0, "LOW"),
-        ("BID-002", tender_id, "Narmada Systems & Services Pvt. Ltd.", "33AABCN8821R1Z8", "AABCN8821R", None, "EXCEPTION_FOUND", 54.0, "HIGH"),
-        ("BID-003", tender_id, "Vindhya Digital Technologies LLP", "07AABCV3319M1ZS", "AABCV3319M", "UDYAM-DL-02-0084920", "UNDER_REVIEW", 68.0, "MEDIUM"),
-    ]
-    for b_id, t_id, name, gstin, pan, udyam, st, sc, rk in bidders_seed:
-        conn.execute("""
-            INSERT INTO bidders (id, tender_id, legal_name, gstin, pan, udyam_number, status, compliance_score, risk_level, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (b_id, t_id, name, gstin, pan, udyam, st, sc, rk, now, now))
-
-    # 4. Seed documents for BID-001 & BID-002
-    sample_docs = [
-        ("DOC-001-GST", "BID-001", "Triveni_GST_Certificate.pdf", "GST Certificate", [
-            {"key": "gstin", "value": "27AABCT4180Q1ZV", "confidence": 0.96, "isExtracted": True},
-            {"key": "legalName", "value": "Triveni Infotech Solutions Pvt. Ltd.", "confidence": 0.92, "isExtracted": True},
-            {"key": "pan", "value": "AABCT4180Q", "confidence": 0.95, "isExtracted": True},
-        ]),
-        ("DOC-001-PAN", "BID-001", "Triveni_PAN_Card.pdf", "PAN Card", [
-            {"key": "pan", "value": "AABCT4180Q", "confidence": 0.95, "isExtracted": True},
-            {"key": "legalName", "value": "Triveni Infotech Solutions Pvt. Ltd.", "confidence": 0.90, "isExtracted": True},
-        ]),
-        ("DOC-001-UDYAM", "BID-001", "Triveni_Udyam_Registration.pdf", "Udyam/MSME Certificate", [
-            {"key": "udyamNumber", "value": "UDYAM-MH-19-0042186", "confidence": 0.94, "isExtracted": True},
-            {"key": "legalName", "value": "Triveni Infotech Solutions Pvt. Ltd.", "confidence": 0.91, "isExtracted": True},
-        ]),
-        ("DOC-002-GST", "BID-002", "Narmada_GSTN_Doc.pdf", "GST Certificate", [
-            {"key": "gstin", "value": "33AABCN8821R1Z8", "confidence": 0.96, "isExtracted": True},
-            {"key": "legalName", "value": "Narmada Systems Private Limited", "confidence": 0.90, "isExtracted": True},
-        ]),
-        ("DOC-002-PAN", "BID-002", "PAN_Card_Narmada.pdf", "PAN Card", [
-            {"key": "pan", "value": "AABCN8821R", "confidence": 0.95, "isExtracted": True},
-            {"key": "legalName", "value": "Narmada Services Limited", "confidence": 0.88, "isExtracted": True},
-        ]),
-        ("DOC-002-OEM", "BID-002", "Expired_OEM_Letter.pdf", "OEM Authorization", [
-            {"key": "oemReference", "value": "MAF/2024/991", "confidence": 0.92, "isExtracted": True},
-            {"key": "expiryDate", "value": "31/03/2025", "confidence": 0.95, "isExtracted": True},
-        ]),
-    ]
-    for d_id, b_id, fname, dtype, fields in sample_docs:
-        conn.execute("""
-            INSERT INTO documents (id, file_name, file_type, file_size, document_type, ocr_status, extracted_fields, ocr_engine, ocr_confidence, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (d_id, fname, "application/pdf", 125000, dtype, "COMPLETED", json.dumps(fields), "PyMuPDF + Regex Parser", 0.95, now))
-        conn.execute("""
-            INSERT INTO bidder_documents (id, bidder_id, document_id, document_type, created_at)
-            VALUES (?, ?, ?, ?, ?)
-        """, (str(uuid.uuid4()), b_id, d_id, dtype, now))
-
-    # 5. Discrepancies for BID-002
-    conn.execute("""
-        INSERT INTO discrepancies (id, bidder_id, discrepancy_type, severity, field_name, expected_value, found_value, description, recommendation, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        str(uuid.uuid4()),
-        "BID-002",
-        "NAME_MISMATCH",
-        "HIGH",
-        "legalName",
-        "Narmada Systems Private Limited",
-        "Narmada Services Limited",
-        "Legal entity name inconsistency between GST certificate and PAN card.",
-        "Request clarification from bidder regarding official registered name.",
-        now
-    ))
-
-    # 6. Audit logs
-    audit_seeds = [
-        (tender_id, "BID-001", "Tender registered", "Procurement Officer", "GEM/2026/B/418207 created with 7 statutory criteria."),
-        (tender_id, "BID-001", "OCR & Verification Completed", "Verification Engine", "GST, PAN, Udyam extracted for Triveni Infotech Solutions Pvt. Ltd."),
-        (tender_id, "BID-002", "Discrepancy Flagged", "Cross-Document Engine", "Legal name mismatch and expired OEM authorization detected for Narmada Systems."),
-    ]
-    for t_id, b_id, act, actor, desc in audit_seeds:
-        conn.execute("""
-            INSERT INTO bidder_audit_events (id, tender_id, bidder_id, action, actor, description, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (str(uuid.uuid4()), t_id, b_id, act, actor, desc, now))
-
-    logger.info("Procurement persistent database initialized with baseline data.")
+def reset_and_seed_procurement_data() -> Dict[str, int]:
+    """Manually reset and reseed the procurement database with synthetic history."""
+    init_db()
+    with get_db() as conn:
+        from app.services.integrity.synthetic_history import seed_synthetic_procurement_history
+        return seed_synthetic_procurement_history(conn)
 
 
 # ============================================================

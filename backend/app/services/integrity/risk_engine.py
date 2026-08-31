@@ -179,6 +179,13 @@ def assess_tender_integrity(
                     t_copy["winner_name"] = winners[0].get("legal_name")
                 historical_tenders.append(t_copy)
 
+        # Domain category matching: If there are sufficient historical tenders in the same category, prioritize them
+        tender_cat = tender.get("category") if tender else None
+        if tender_cat:
+            same_cat = [t for t in historical_tenders if t.get("category") == tender_cat and (t.get("winner_name") or t.get("winner_id"))]
+            if len(same_cat) >= 4:
+                historical_tenders = same_cat
+
     all_findings: List[IntegrityFinding] = []
 
     # 1. Analyze Related Bidders & Shared Entities

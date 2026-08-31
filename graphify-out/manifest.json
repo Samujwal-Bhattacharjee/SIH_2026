@@ -108,10 +108,10 @@
     "semantic_hash": "21643e871acfe8afae1088d8fd186ad2"
   },
   "backend/app/core/procurement_store.py": {
-    "mtime": 1787514013.4543436,
-    "seen": 1787863686.6306608,
-    "ast_hash": "05ae8241244203fa8d6aa6d7d8d10054",
-    "semantic_hash": "05ae8241244203fa8d6aa6d7d8d10054"
+    "mtime": 1788176902.9903917,
+    "seen": 1788177779.5623033,
+    "ast_hash": "4f1acd11f8a75b244d4bce1a770e4502",
+    "semantic_hash": ""
   },
   "backend/app/core/security.py": {
     "mtime": 1788120635.5261185,
@@ -834,10 +834,10 @@
     "semantic_hash": ""
   },
   "src/services/api/mockApi.ts": {
-    "mtime": 1787514013.5683577,
-    "seen": 1787863686.63167,
-    "ast_hash": "7b8749e6dac5c8e4f46b445ab4876d3b",
-    "semantic_hash": "7b8749e6dac5c8e4f46b445ab4876d3b"
+    "mtime": 1788177731.0069263,
+    "seen": 1788177779.6174264,
+    "ast_hash": "948b709ae9a0b08a5364832eef015440",
+    "semantic_hash": ""
   },
   "src/services/api/realApi.ts": {
     "mtime": 1788113924.9582212,
@@ -1002,9 +1002,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/bid_analyzer.py": {
-    "mtime": 1788096182.1006312,
-    "seen": 1788096237.435852,
-    "ast_hash": "a297f8466afd3b8fd505219257b400bf",
+    "mtime": 1788177082.4848847,
+    "seen": 1788177779.5643096,
+    "ast_hash": "fcc3c62c32499e21b0f5d340b559df72",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/feature_extractor.py": {
@@ -1026,15 +1026,15 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/risk_engine.py": {
-    "mtime": 1788113638.126161,
-    "seen": 1788113700.6036441,
-    "ast_hash": "27df8d51af464cf503dec8da5314e6ec",
+    "mtime": 1788176911.8791425,
+    "seen": 1788177779.5643096,
+    "ast_hash": "1c2e37fe71f4659e771b3f7a124c1a0b",
     "semantic_hash": ""
   },
   "backend/tests/test_integrity_engine.py": {
-    "mtime": 1788113663.7031312,
-    "seen": 1788113700.6141346,
-    "ast_hash": "5339cfe423fec3a70b95311999bcd0ce",
+    "mtime": 1788177141.0649898,
+    "seen": 1788177779.5813472,
+    "ast_hash": "0dfdab7b3ed3aaf4ca8d34ca41256146",
     "semantic_hash": ""
   },
   "implementation_plan.md": {
@@ -1065,6 +1065,12 @@
     "mtime": 1788129595.5545282,
     "seen": 1788129893.4763,
     "ast_hash": "8b59c43eb39b696b5e866752d2b33a5a",
+    "semantic_hash": ""
+  },
+  "backend/app/services/integrity/synthetic_history.py": {
+    "mtime": 1788176876.2402523,
+    "seen": 1788177779.5643096,
+    "ast_hash": "dd5d12a293271b59072ce8a78b3487af",
     "semantic_hash": ""
   }
 }
