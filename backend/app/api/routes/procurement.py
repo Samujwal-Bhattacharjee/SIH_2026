@@ -167,12 +167,15 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
 
     # If compliance results not computed yet, run live verification
     if not results and docs:
-        reqs = ps.get_tender_requirements(bidder["tender_id"]) or DEFAULT_TENDER_REQUIREMENTS
+        tender_id = str(bidder.get("tender_id") or "TEN-2026-001")
+        reqs = ps.get_tender_requirements(tender_id) or DEFAULT_TENDER_REQUIREMENTS
         assessment = run_full_verification(bidder, reqs, docs)
-        ps.save_compliance_assessment(bidder_id, bidder["tender_id"], assessment)
+        ps.save_compliance_assessment(bidder_id, tender_id, assessment)
         results = ps.get_compliance_results(bidder_id)
         discrepancies = ps.get_discrepancies(bidder_id)
-        bidder = ps.get_bidder_by_id(bidder_id)
+        refreshed = ps.get_bidder_by_id(bidder_id)
+        if refreshed:
+            bidder = refreshed
 
     return {
         "bidder": bidder,
@@ -180,7 +183,7 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
         "requirements": results,
         "discrepancies": discrepancies,
         "recommendations": [],
-        "assessment_updated_at": bidder.get("updated_at"),
+        "assessment_updated_at": bidder.get("updated_at") if bidder else None,
     }
 
 
@@ -212,8 +215,8 @@ async def upload_bidder_document(
         raise HTTPException(status_code=404, detail=f"Bidder '{bidder_id}' not found")
 
     file_bytes = await file.read()
-    filename = file.filename or "uploaded_document"
-    content_type = file.content_type or "application/pdf"
+    filename = str(file.filename or "uploaded_document")
+    content_type = str(file.content_type or "application/pdf")
 
     # Validate
     error = validate_file(filename=filename, content_type=content_type, file_size=len(file_bytes))
@@ -229,16 +232,16 @@ async def upload_bidder_document(
         logger.warning(f"OCR processing note: {e}")
         ocr_result = {"extractedFields": [], "extractedText": "", "confidenceScore": 0.0, "ocrEngine": "none"}
 
-    extracted_fields = ocr_result.get("extractedFields", [])
-    extracted_text = ocr_result.get("extractedText", "")
-    confidence = ocr_result.get("confidenceScore", 0.0)
-    engine_used = ocr_result.get("ocrEngine", "PyMuPDF + Regex Parser")
+    extracted_fields: List[Dict[str, Any]] = ocr_result.get("extractedFields") if isinstance(ocr_result.get("extractedFields"), list) else []
+    extracted_text: str = str(ocr_result.get("extractedText") or "")
+    confidence: float = float(ocr_result.get("confidenceScore") or 0.0)
+    engine_used: str = str(ocr_result.get("ocrEngine") or "PyMuPDF + Regex Parser")
 
     # Step 2: Classify document type if auto
     if document_type == "auto" or not document_type:
-        classified_type = classify_document_type(extracted_text, filename)
+        classified_type: str = classify_document_type(extracted_text, filename)
     else:
-        classified_type = document_type
+        classified_type: str = document_type
 
     # Step 3: Persist document to database
     doc_id = f"DOC-{bidder_id}-{now[11:19].replace(':', '')}"
@@ -263,7 +266,7 @@ async def upload_bidder_document(
 
     # Step 5: Fetch all bidder documents & re-run compliance verification
     all_docs = ps.get_bidder_documents(bidder_id)
-    tender_id = bidder.get("tender_id") or "TEN-2026-001"
+    tender_id = str(bidder.get("tender_id") or "TEN-2026-001")
     reqs = ps.get_tender_requirements(tender_id) or DEFAULT_TENDER_REQUIREMENTS
 
     assessment = run_full_verification(
@@ -305,7 +308,7 @@ async def upload_bidder_document(
         "confidence": confidence,
         "engine": engine_used,
         "assessment": assessment,
-        "bidder": updated_bidder,
+        "bidder": updated_bidder or bidder,
     }
 
 
@@ -330,7 +333,7 @@ async def verify_bidder(bidder_id: str, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Bidder not found")
 
     docs = ps.get_bidder_documents(bidder_id)
-    tender_id = bidder.get("tender_id") or "TEN-2026-001"
+    tender_id = str(bidder.get("tender_id") or "TEN-2026-001")
     reqs = ps.get_tender_requirements(tender_id) or DEFAULT_TENDER_REQUIREMENTS
 
     assessment = run_full_verification(
@@ -387,7 +390,7 @@ async def record_officer_decision(
     ps.log_audit_event(
         action=f"Officer decision: {body.decision}",
         actor=officer,
-        tender_id=bidder.get("tender_id"),
+        tender_id=str(bidder.get("tender_id") or ""),
         bidder_id=bidder_id,
         description=f"Decision: {body.decision}. Officer Remarks: {body.note or 'No remarks provided.'}",
         actor_user_id=str(user.get("id") or ""),
@@ -427,7 +430,7 @@ async def review_requirement(
     ps.log_audit_event(
         action="Requirement review updated",
         actor=actor_name(user),
-        tender_id=bidder.get("tender_id"),
+        tender_id=str(bidder.get("tender_id") or ""),
         bidder_id=bidder_id,
         description=f"Requirement '{requirement_id}' marked '{persistent_status}'.",
         actor_user_id=str(user.get("id") or ""),
