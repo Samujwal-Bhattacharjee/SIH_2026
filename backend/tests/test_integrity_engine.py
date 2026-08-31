@@ -792,3 +792,65 @@ def test_synthetic_procurement_history_idempotency():
     assert run1.contributing_signals == run2.contributing_signals
 
 
+def test_officer_finding_review_and_audit_integration(auth_client):
+    """Verify that officer review actions update finding status and record immutable audit events."""
+    # 1. Fetch live findings for TEN-2026-006
+    res = auth_client.get("/api/v1/procurement/tenders/TEN-2026-006/integrity")
+    assert res.status_code == 200
+    data = res.json()
+    assert len(data["findings"]) > 0
+    target_finding = data["findings"][0]
+    finding_id = target_finding["id"]
+
+    # 2. Post an officer review action (ACKNOWLEDGED with note)
+    review_payload = {
+        "status": "ACKNOWLEDGED",
+        "tender_id": "TEN-2026-006",
+        "action": "Acknowledge & Record Review",
+        "note": "Corporate relationship under review pursuant to GFR 144.",
+    }
+    rev_res = auth_client.post(
+        f"/api/v1/procurement/integrity/findings/{finding_id}/review",
+        json=review_payload,
+    )
+    assert rev_res.status_code == 200
+    rev_data = rev_res.json()
+    assert rev_data["status"] == "ACKNOWLEDGED"
+    assert rev_data["finding_id"] == finding_id
+
+    # 3. Verify that re-fetching tender integrity returns the updated ACKNOWLEDGED status
+    recheck_res = auth_client.get("/api/v1/procurement/tenders/TEN-2026-006/integrity")
+    assert recheck_res.status_code == 200
+    updated_finding = [f for f in recheck_res.json()["findings"] if f["id"] == finding_id][0]
+    assert updated_finding["status"] == "ACKNOWLEDGED"
+
+    # 4. Verify that an audit event was logged in the official audit trail
+    audit_res = auth_client.get("/api/v1/procurement/audit?tender_id=TEN-2026-006")
+    assert audit_res.status_code == 200
+    audit_events = audit_res.json()
+    matching_events = [e for e in audit_events if finding_id in str(e.get("description", "")) or "Integrity Finding" in str(e.get("action", ""))]
+    assert len(matching_events) > 0
+    assert "ACKNOWLEDGED" in matching_events[0]["description"]
+
+
+def test_dashboard_summary_includes_real_integrity_metrics(auth_client):
+    """Verify that the dashboard endpoint delivers real integrity highlights and active reviews."""
+    dash_res = auth_client.get("/api/v1/procurement/dashboard")
+    assert dash_res.status_code == 200
+    body = dash_res.json()
+
+    assert "integrity_reviews" in body
+    assert "integrity_summary" in body
+    assert isinstance(body["integrity_reviews"], list)
+    assert len(body["integrity_reviews"]) > 0
+
+    # Ensure top risk cases (TEN-2026-007) are prioritized at the top
+    top_review = body["integrity_reviews"][0]
+    assert "tender_id" in top_review
+    assert "risk_score" in top_review
+    assert "risk_level" in top_review
+    assert "findings_count" in top_review
+    assert top_review["risk_score"] >= 30.0
+
+
+

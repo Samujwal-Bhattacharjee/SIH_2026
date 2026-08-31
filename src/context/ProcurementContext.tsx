@@ -55,6 +55,7 @@ interface ProcurementContextValue {
   runVerification: (bidderId: string) => Promise<any>;
   decide: (bidderId: string, decision: string, note: string) => Promise<void>;
   updateRequirement: (bidderId: string, requirementId: string, status: CheckStatus) => Promise<void>;
+  recordIntegrityReview: (findingId: string, status: string, note?: string, tenderId?: string, bidderId?: string, action?: string) => Promise<any>;
   refreshData: () => Promise<void>;
   tenderId: string | null;
   documents: any[];
@@ -387,6 +388,37 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     log('Requirement review updated', `${requirementId} marked ${status} for ${bidderId}.`);
   };
 
+  const recordIntegrityReview = async (
+    findingId: string,
+    status: string,
+    note?: string,
+    tId?: string,
+    bId?: string,
+    action?: string
+  ) => {
+    try {
+      const res = await (apiClient as any).procurement.recordIntegrityFindingReview(findingId, {
+        status,
+        note,
+        tender_id: tId || tenderId || undefined,
+        bidder_id: bId || undefined,
+        action: action || `Marked ${status}`,
+      });
+      log(
+        `Integrity Finding ${status.replace('_', ' ').toLowerCase()}`,
+        `Finding ${findingId} status set to '${status}'. ${note ? `Note: ${note}` : ''}`,
+        'Procurement Officer'
+      );
+      if (!isUsingMockApi()) {
+        await refreshData();
+      }
+      return res;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to record integrity review.');
+      throw e;
+    }
+  };
+
   return (
     <ProcurementContext.Provider
       value={{
@@ -399,6 +431,7 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         runVerification,
         decide,
         updateRequirement,
+        recordIntegrityReview,
         refreshData,
         tenderId,
         documents,

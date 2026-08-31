@@ -544,5 +544,12 @@ export const realApi = {
     async getBidderIntegrity(bidderId: string): Promise<any> {
       return request<any>(`/api/v1/procurement/bidders/${encodeURIComponent(bidderId)}/integrity`);
     },
+
+    async recordIntegrityFindingReview(findingId: string, data: { status: string; tender_id?: string; bidder_id?: string; action?: string; note?: string }): Promise<any> {
+      return request<any>(`/api/v1/procurement/integrity/findings/${encodeURIComponent(findingId)}/review`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
   },
 };

@@ -472,9 +472,13 @@ async def get_procurement_dashboard(user: dict = Depends(get_current_user)):
     return ps.get_dashboard_summary()
 
 
-# ============================================================
-# PROCUREMENT INTEGRITY ENGINE
-# ============================================================
+class FindingReviewRequest(BaseModel):
+    status: str = "ACKNOWLEDGED"
+    tender_id: Optional[str] = None
+    bidder_id: Optional[str] = None
+    action: Optional[str] = None
+    note: Optional[str] = None
+
 
 @router.get(
     "/tenders/{tender_id}/integrity",
@@ -486,7 +490,27 @@ async def get_tender_integrity_endpoint(tender_id: str, user: dict = Depends(get
     tender = ps.get_tender_by_id(tender_id)
     if not tender:
         raise HTTPException(status_code=404, detail=f"Tender '{tender_id}' not found")
-    return assess_tender_integrity(tender["id"])
+    assessment = assess_tender_integrity(tender["id"])
+
+    # Merge any persistent officer review status overrides
+    reviews = ps.get_integrity_finding_reviews(tender_id=tender["id"])
+    if reviews:
+        review_map = {}
+        for r in reviews:
+            if r.get("finding_id") and r["finding_id"] not in review_map:
+                review_map[r["finding_id"]] = r["status"]
+
+        updated_findings = []
+        for f in assessment.findings:
+            if f.id in review_map:
+                try:
+                    f = f.copy(update={"status": FindingStatus(review_map[f.id])})
+                except Exception:
+                    pass
+            updated_findings.append(f)
+        assessment.findings = updated_findings
+
+    return assessment
 
 
 @router.get(
@@ -500,3 +524,37 @@ async def get_bidder_integrity_endpoint(bidder_id: str, user: dict = Depends(get
     if not bidder:
         raise HTTPException(status_code=404, detail=f"Bidder '{bidder_id}' not found")
     return assess_bidder_integrity(bidder_id)
+
+
+@router.post(
+    "/integrity/findings/{finding_id}/review",
+    summary="Record officer review action on an integrity finding"
+)
+async def review_integrity_finding_endpoint(
+    finding_id: str,
+    body: FindingReviewRequest,
+    user: dict = Depends(get_current_user)
+):
+    """
+    Record officer review status on an integrity finding (OPEN, UNDER_REVIEW, ACKNOWLEDGED, DISMISSED, RESOLVED).
+    Logs an immutable audit trail event with the officer identity and review notes.
+    """
+    valid_statuses = {"OPEN", "UNDER_REVIEW", "ACKNOWLEDGED", "DISMISSED", "RESOLVED"}
+    clean_status = body.status.upper().strip().replace(" ", "_")
+    if clean_status not in valid_statuses:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status '{body.status}'. Must be one of {sorted(list(valid_statuses))}"
+        )
+
+    res = ps.record_integrity_finding_review(
+        finding_id=finding_id,
+        status=clean_status,
+        tender_id=body.tender_id,
+        bidder_id=body.bidder_id,
+        action=body.action or f"Marked {clean_status}",
+        note=body.note,
+        officer_name=actor_name(user),
+        actor_user_id=str(user.get("id") or ""),
+    )
+    return res

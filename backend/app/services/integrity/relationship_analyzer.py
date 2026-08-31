@@ -9,6 +9,7 @@ Shared corporate identifiers represent administrative linkages requiring review,
 not automatic evidence of collusion. All findings are grouped into unified relationship
 clusters to prevent artificial risk score inflation (double-counting protection).
 """
+import hashlib
 import uuid
 from typing import Dict, List, Set, Tuple
 from app.services.integrity.models import (
@@ -173,7 +174,8 @@ def analyze_related_bidders(
                     score_impact = 20.0
 
                 confidence = max(confidence_scores) if confidence_scores else 0.85
-                finding_id = f"INT-REL-{uuid.uuid4().hex[:8]}"
+                pair_hash = hashlib.md5(f"{tender_id}:{min(b1.bidder_id, b2.bidder_id)}:{max(b1.bidder_id, b2.bidder_id)}".encode()).hexdigest()[:8].upper()
+                finding_id = f"INT-REL-{pair_hash}"
 
                 finding = IntegrityFinding(
                     id=finding_id,

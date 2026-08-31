@@ -227,6 +227,23 @@ def init_db():
         );
 
         CREATE INDEX IF NOT EXISTS idx_bidder_audit_created ON bidder_audit_events(created_at DESC);
+
+        CREATE TABLE IF NOT EXISTS integrity_finding_reviews (
+            id                  TEXT PRIMARY KEY,
+            finding_id          TEXT NOT NULL,
+            tender_id           TEXT,
+            bidder_id           TEXT,
+            status              TEXT NOT NULL DEFAULT 'OPEN',
+            action              TEXT,
+            note                TEXT,
+            officer_name        TEXT NOT NULL DEFAULT 'Procurement Officer',
+            actor_user_id       TEXT,
+            created_at          TEXT NOT NULL,
+            updated_at          TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_integrity_reviews_finding ON integrity_finding_reviews(finding_id);
+        CREATE INDEX IF NOT EXISTS idx_integrity_reviews_tender ON integrity_finding_reviews(tender_id);
         """)
 
         # Migration: ensure quote_amount column exists on bidders table
@@ -675,6 +692,77 @@ def get_audit_trail(tender_id: Optional[str] = None, bidder_id: Optional[str] = 
 
 
 # ============================================================
+# ============================================================
+# INTEGRITY FINDING REVIEWS & OFFICER DECISION SUPPORT
+# ============================================================
+
+def record_integrity_finding_review(
+    finding_id: str,
+    status: str,
+    tender_id: Optional[str] = None,
+    bidder_id: Optional[str] = None,
+    action: Optional[str] = None,
+    note: Optional[str] = None,
+    officer_name: str = "Procurement Officer",
+    actor_user_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Record an officer review action on an integrity finding (OPEN, UNDER_REVIEW, ACKNOWLEDGED, DISMISSED, RESOLVED).
+    Persists the review record and logs an immutable audit event using the existing audit system.
+    """
+    init_db()
+    now = datetime.now(timezone.utc).isoformat()
+    review_id = f"REV-{finding_id}-{uuid.uuid4().hex[:6]}"
+    with get_db() as conn:
+        conn.execute("""
+            INSERT INTO integrity_finding_reviews (
+                id, finding_id, tender_id, bidder_id, status, action, note, officer_name, actor_user_id, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (review_id, finding_id, tender_id, bidder_id, status, action, note, officer_name, actor_user_id, now, now))
+
+    # Re-use existing audit logging architecture
+    audit_action = f"Integrity Finding {status.replace('_', ' ').title()}"
+    audit_desc = (
+        f"Integrity finding '{finding_id}' marked '{status}' by {officer_name}."
+        + (f" Action: {action}." if action else "")
+        + (f" Officer note: {note}" if note else "")
+    )
+    log_audit_event(
+        action=audit_action,
+        actor=officer_name,
+        tender_id=tender_id,
+        bidder_id=bidder_id,
+        description=audit_desc,
+        actor_user_id=actor_user_id,
+        metadata={"finding_id": finding_id, "status": status, "action": action, "note": note}
+    )
+    return {
+        "id": review_id,
+        "finding_id": finding_id,
+        "tender_id": tender_id,
+        "bidder_id": bidder_id,
+        "status": status,
+        "action": action,
+        "note": note,
+        "officer_name": officer_name,
+        "updated_at": now,
+    }
+
+
+def get_integrity_finding_reviews(tender_id: Optional[str] = None, finding_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Retrieve recorded officer reviews for findings."""
+    init_db()
+    with get_db() as conn:
+        if finding_id:
+            rows = conn.execute("SELECT * FROM integrity_finding_reviews WHERE finding_id = ? ORDER BY updated_at DESC", (finding_id,)).fetchall()
+        elif tender_id:
+            rows = conn.execute("SELECT * FROM integrity_finding_reviews WHERE tender_id = ? ORDER BY updated_at DESC", (tender_id,)).fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM integrity_finding_reviews ORDER BY updated_at DESC").fetchall()
+        return rows_to_list(rows)
+
+
+# ============================================================
 # DASHBOARD AGGREGATES
 # ============================================================
 
@@ -688,16 +776,51 @@ def get_dashboard_summary() -> Dict[str, Any]:
         reviewing_statuses = {"PENDING_DOCUMENTS", "UNDER_REVIEW", "EXCEPTION_FOUND", "Under Review", "Exception Found", "Pending Documents"}
         completed_statuses = {"QUALIFIED", "DISQUALIFIED", "COMPLIANT", "Qualified", "Disqualified"}
 
-        active_tenders = sum(1 for t in tenders if t.get("status") == "ACTIVE")
+        active_tenders = [t for t in tenders if t.get("status") == "ACTIVE"]
+        active_tenders_count = len(active_tenders)
         under_verification = sum(1 for b in bidders if b.get("status") in reviewing_statuses)
         completed_assessments = sum(1 for b in bidders if b.get("status") in completed_statuses)
         high_risk_bidders = sum(1 for b in bidders if str(b.get("risk_level")).upper() in ("HIGH", "CRITICAL"))
         pending_docs = sum(1 for b in bidders if "PENDING" in str(b.get("status")).upper() or b.get("documents_count", 0) == 0)
 
-        recent_audit = rows_to_list(conn.execute("SELECT * FROM bidder_audit_events ORDER BY created_at DESC LIMIT 5").fetchall())
+        recent_audit = rows_to_list(conn.execute("SELECT * FROM bidder_audit_events ORDER BY created_at DESC LIMIT 6").fetchall())
+
+        # Real Integrity Dashboard Metrics (computed deterministically from backend state)
+        from app.services.integrity.risk_engine import assess_tender_integrity
+
+        integrity_reviews: List[Dict[str, Any]] = []
+        for t in active_tenders:
+            try:
+                res = assess_tender_integrity(t["id"])
+                if res.findings_count > 0 or res.risk_level.value in ("HIGH", "CRITICAL", "MEDIUM"):
+                    tender_bidders = [b.get("legal_name") for b in get_bidders(t["id"])]
+                    integrity_reviews.append({
+                        "tender_id": t["id"],
+                        "tender_number": t.get("tender_number"),
+                        "title": t.get("title"),
+                        "department": t.get("department"),
+                        "category": t.get("category"),
+                        "risk_score": res.overall_risk_score,
+                        "risk_level": res.risk_level.value,
+                        "findings_count": res.findings_count,
+                        "contributing_signals": res.contributing_signals,
+                        "summary": res.summary,
+                        "bidders": tender_bidders[:3],
+                    })
+            except Exception as ex:
+                logger.warning(f"Dashboard integrity evaluation note for {t.get('id')}: {ex}")
+
+        # Sort integrity reviews by risk_score DESC
+        integrity_reviews.sort(key=lambda r: r.get("risk_score", 0), reverse=True)
+
+        integrity_summary = {
+            "reviews_requiring_attention": len(integrity_reviews),
+            "high_risk_cases": sum(1 for r in integrity_reviews if r.get("risk_level") in ("HIGH", "CRITICAL")),
+            "total_findings": sum(r.get("findings_count", 0) for r in integrity_reviews),
+        }
 
         return {
-            "active_tenders": active_tenders,
+            "active_tenders": active_tenders_count,
             "bids_under_verification": under_verification,
             "completed_assessments": completed_assessments,
             "high_risk_bidders": high_risk_bidders,
@@ -705,4 +828,6 @@ def get_dashboard_summary() -> Dict[str, Any]:
             "verification_exceptions": discrepancies,
             "bidders": bidders,
             "recent_audit": recent_audit,
+            "integrity_reviews": integrity_reviews,
+            "integrity_summary": integrity_summary,
         }

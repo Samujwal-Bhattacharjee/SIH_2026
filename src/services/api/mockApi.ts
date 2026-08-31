@@ -988,12 +988,52 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     async getDashboard(): Promise<any> {
       await delay(150);
       return {
-        active_tenders: 4,
-        bids_under_verification: 3,
+        active_tenders: 8,
+        bids_under_verification: 6,
         completed_assessments: 12,
-        high_risk_bidders: 1,
+        high_risk_bidders: 2,
         pending_documents: 2,
         verification_exceptions: 5,
+        integrity_reviews: [
+          {
+            tender_id: 'TEN-2026-007',
+            tender_number: 'GEM/2026/B/965852',
+            title: 'Design, Deployment & Unified Management of High-Security Cyber Defense Operations',
+            department: 'Department of Information Technology',
+            risk_score: 70.0,
+            risk_level: 'HIGH',
+            findings_count: 3,
+            contributing_signals: ['RELATED_BIDDER', 'BID_PRICE_ANOMALY'],
+            bidders: ['Shivalik Cloud Matrix Pvt. Ltd.', 'Shivalik Enterprise Systems LLP'],
+          },
+          {
+            tender_id: 'TEN-2026-006',
+            tender_number: 'GEM/2026/B/954741',
+            title: 'Comprehensive Smart City Command & Control Software Modernization',
+            department: 'Ministry of Housing and Urban Affairs',
+            risk_score: 35.0,
+            risk_level: 'MEDIUM',
+            findings_count: 1,
+            contributing_signals: ['RELATED_BIDDER'],
+            bidders: ['Shivalik Cloud Matrix Pvt. Ltd.', 'Shivalik Enterprise Systems LLP'],
+          },
+          {
+            tender_id: 'TEN-2026-002',
+            tender_number: 'GEM/2026/B/519302',
+            title: 'Procurement of Enterprise Cloud Storage and High-Availability Backup Subsystems',
+            department: 'Department of Information Technology',
+            risk_score: 37.5,
+            risk_level: 'MEDIUM',
+            findings_count: 4,
+            contributing_signals: ['BID_PRICE_ANOMALY'],
+            bidders: ['Brahmaputra Engineering & Infotech Pvt. Ltd.', 'Kaveri Digital Solutions Ltd.'],
+          },
+        ],
+        integrity_summary: {
+          reviews_requiring_attention: 3,
+          high_risk_cases: 1,
+          total_findings: 8,
+        },
       };
     },
     async getTenders(): Promise<any[]> {
@@ -1240,6 +1280,18 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
         assessed_at: new Date().toISOString(),
         summary: `No anomalous integrity signals identified for bidder '${bidderId}'. Status: LOW RISK (0/100).`,
         findings: [],
+      };
+    },
+    async recordIntegrityFindingReview(findingId: string, data: any): Promise<any> {
+      await delay(150);
+      return {
+        id: `REV-${findingId}-${Date.now()}`,
+        finding_id: findingId,
+        status: data.status || 'ACKNOWLEDGED',
+        action: data.action || 'Acknowledge & Record Review',
+        note: data.note || '',
+        officer_name: 'Procurement Officer',
+        updated_at: new Date().toISOString(),
       };
     },
   },

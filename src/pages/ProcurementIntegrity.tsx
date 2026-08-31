@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -11,6 +12,7 @@ import {
   Info,
   CheckCircle2,
   Building,
+  Building2,
   FileText,
   Clock,
   Layers,
@@ -22,6 +24,7 @@ import {
   X,
   SlidersHorizontal,
   Network,
+  UserCheck,
 } from 'lucide-react';
 import { apiClient, isUsingMockApi } from '../services/api/apiClient';
 import { IntegrityAssessment, IntegrityFinding, IntegrityEvidence } from '../types';
@@ -44,8 +47,8 @@ const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
     description: 'Financial quotes clustered within a narrow margin (<= 1.0% delta).',
   },
   REPEATED_WINNER_PATTERN: {
-    label: 'Winner Concentration Signal',
-    description: 'Historical award concentration across evaluated procurement exercises.',
+    label: 'Winner Concentration',
+    description: 'Historical award concentration exceeding statistical thresholds.',
   },
   REPEATED_PARTICIPATION_PATTERN: {
     label: 'Repeated Cohort Signal',
@@ -66,11 +69,13 @@ const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
 };
 
 export const ProcurementIntegrity: React.FC = () => {
-  const { bidders, tenderId: contextTenderId } = useProcurement();
+  const { bidders, tenderId: contextTenderId, recordIntegrityReview } = useProcurement();
   const { t } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  const queryTender = searchParams.get('tender');
   const [tendersList, setTendersList] = useState<any[]>([]);
-  const [selectedTenderId, setSelectedTenderId] = useState<string>(contextTenderId || 'TEN-2026-001');
+  const [selectedTenderId, setSelectedTenderId] = useState<string>(queryTender || contextTenderId || 'TEN-2026-001');
   const [selectedBidderId, setSelectedBidderId] = useState<string>('ALL');
 
   const [assessment, setAssessment] = useState<IntegrityAssessment | null>(null);
@@ -83,6 +88,13 @@ export const ProcurementIntegrity: React.FC = () => {
   const [statusActionNote, setStatusActionNote] = useState<string>('');
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
+  // Sync selected tender with URL query param if changed
+  useEffect(() => {
+    if (queryTender && queryTender !== selectedTenderId) {
+      setSelectedTenderId(queryTender);
+    }
+  }, [queryTender]);
+
   // 1. Fetch available tenders on mount
   useEffect(() => {
     let mounted = true;
@@ -93,7 +105,7 @@ export const ProcurementIntegrity: React.FC = () => {
           const list = await procurement.getTenders();
           if (mounted && Array.isArray(list) && list.length > 0) {
             setTendersList(list);
-            if (!selectedTenderId && list[0]?.id) {
+            if (!queryTender && !selectedTenderId && list[0]?.id) {
               setSelectedTenderId(list[0].id);
             }
           }
@@ -626,6 +638,32 @@ export const ProcurementIntegrity: React.FC = () => {
                         {' • '}
                         Confidence: <strong>{(selectedFinding.confidence * 100).toFixed(0)}%</strong>
                       </div>
+
+                      {/* Related Bidders / Direct Verification Dossier Links */}
+                      {selectedFinding.related_bidder_ids && selectedFinding.related_bidder_ids.length > 0 && (
+                        <div className="mt-2.5 pt-2 border-t border-[#E2E8F0]">
+                          <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <Building2 className="w-3 h-3 text-[#0B2A4A]" />
+                            Direct Bidder Verification Links:
+                          </div>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {selectedFinding.related_bidder_ids.map((bId: string) => {
+                              const bidderObj = bidders.find((b) => b.id === bId);
+                              return (
+                                <Link
+                                  key={bId}
+                                  to={`/verification/${bId}`}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-white text-[#0B2A4A] border border-[#CBD5E1] hover:border-[#0B2A4A] hover:bg-[#F0F5FA] rounded-[2px] transition-colors shadow-2xs"
+                                  title={`Open verification dossier & statutory documents for ${bidderObj?.name || bId}`}
+                                >
+                                  <span>{bidderObj?.name ? `${bidderObj.name} (${bId})` : `Bidder ${bId}`}</span>
+                                  <ExternalLink className="w-3 h-3 text-[#0B2A4A]" />
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto text-xs">
@@ -662,9 +700,20 @@ export const ProcurementIntegrity: React.FC = () => {
                                     {ev.source_type}
                                   </span>
                                   {ev.source_id && (
-                                    <span className="text-[#64748B] font-mono">
-                                      Ref: {ev.source_id}
-                                    </span>
+                                    ev.source_id.startsWith('BID-') ? (
+                                      <Link
+                                        to={`/verification/${ev.source_id}`}
+                                        className="text-[#0B2A4A] font-mono font-bold hover:underline inline-flex items-center gap-0.5"
+                                        title={`Inspect bidder verification dossier for ${ev.source_id}`}
+                                      >
+                                        <span>Ref: {ev.source_id}</span>
+                                        <ExternalLink className="w-2.5 h-2.5" />
+                                      </Link>
+                                    ) : (
+                                      <span className="text-[#64748B] font-mono">
+                                        Ref: {ev.source_id}
+                                      </span>
+                                    )
                                   )}
                                 </div>
                                 <div className="text-xs text-[#1E293B] font-medium">
@@ -699,46 +748,136 @@ export const ProcurementIntegrity: React.FC = () => {
 
                       {/* Officer Review Actions */}
                       <div className="border-t border-[#E2E8F0] pt-3">
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-2">
-                          Procurement Officer Review
+                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-2 flex items-center justify-between">
+                          <span>Procurement Officer Review Action</span>
+                          <span className="text-[10px] text-[#64748B] font-mono">Status: {selectedFinding.status}</span>
                         </div>
 
-                        {actionSuccess ? (
-                          <div className="p-2.5 bg-[#DEF7EC] border border-[#BCF0DA] text-[#03543F] rounded-[2px] text-xs font-semibold flex items-center gap-1.5">
-                            <CheckCircle2 className="w-4 h-4 text-[#03543F]" />
-                            {actionSuccess}
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <textarea
-                              rows={2}
-                              placeholder="Optional review note / action record..."
-                              value={statusActionNote}
-                              onChange={(e) => setStatusActionNote(e.target.value)}
-                              className="w-full text-xs p-2 border border-[#CBD5E1] rounded-[2px] focus:outline-none focus:ring-1 focus:ring-[#0B2A4A]"
-                            />
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => {
-                                  setActionSuccess(`Finding ${selectedFinding.id} acknowledged in officer review record.`);
-                                  setTimeout(() => setActionSuccess(null), 4000);
-                                }}
-                                className="px-3 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
-                              >
-                                Acknowledge & Record Review
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setActionSuccess(`Finding ${selectedFinding.id} flagged for clarification.`);
-                                  setTimeout(() => setActionSuccess(null), 4000);
-                                }}
-                                className="px-3 py-1.5 bg-white text-[#0B2A4A] border border-[#0B2A4A] hover:bg-[#F0F5FA] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
-                              >
-                                Request Clarification
-                              </button>
+                        {actionSuccess && (
+                          <div className="mb-2 p-2.5 bg-[#DEF7EC] border border-[#BCF0DA] text-[#03543F] rounded-[2px] text-xs font-semibold flex flex-col gap-1">
+                            <div className="flex items-center gap-1.5">
+                              <CheckCircle2 className="w-4 h-4 text-[#03543F] shrink-0" />
+                              <span>{actionSuccess}</span>
+                            </div>
+                            <div className="text-[11px] pl-5.5">
+                              <Link to="/audit-trail" className="underline font-bold text-[#0B2A4A] hover:text-[#123B63]">
+                                Open Official Audit Trail &rarr;
+                              </Link>
                             </div>
                           </div>
                         )}
+
+                        <div className="space-y-2">
+                          <textarea
+                            rows={2}
+                            placeholder="Enter administrative review note / clarification instruction..."
+                            value={statusActionNote}
+                            onChange={(e) => setStatusActionNote(e.target.value)}
+                            className="w-full text-xs p-2 border border-[#CBD5E1] rounded-[2px] focus:outline-none focus:ring-1 focus:ring-[#0B2A4A]"
+                          />
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await recordIntegrityReview(
+                                    selectedFinding.id,
+                                    'ACKNOWLEDGED',
+                                    statusActionNote || 'Finding acknowledged in officer review record.',
+                                    selectedTenderId,
+                                    selectedFinding.bidder_id || undefined,
+                                    'Acknowledge & Record Review'
+                                  );
+                                  setSelectedFinding({ ...selectedFinding, status: 'ACKNOWLEDGED' as any });
+                                  setAssessment((prev) => prev ? {
+                                    ...prev,
+                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'ACKNOWLEDGED' as any } : f)
+                                  } : prev);
+                                  setActionSuccess(`Finding ${selectedFinding.id} acknowledged and logged in official audit register.`);
+                                } catch (err: any) {
+                                  setError('Failed to record review action.');
+                                }
+                              }}
+                              className="px-2.5 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                            >
+                              Acknowledge &amp; Record Review
+                            </button>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await recordIntegrityReview(
+                                    selectedFinding.id,
+                                    'UNDER_REVIEW',
+                                    statusActionNote || 'Flagged for bidder clarification under GFR 144.',
+                                    selectedTenderId,
+                                    selectedFinding.bidder_id || undefined,
+                                    'Request Clarification'
+                                  );
+                                  setSelectedFinding({ ...selectedFinding, status: 'UNDER_REVIEW' as any });
+                                  setAssessment((prev) => prev ? {
+                                    ...prev,
+                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'UNDER_REVIEW' as any } : f)
+                                  } : prev);
+                                  setActionSuccess(`Finding ${selectedFinding.id} set to 'UNDER REVIEW' for clarification.`);
+                                } catch (err: any) {
+                                  setError('Failed to record review action.');
+                                }
+                              }}
+                              className="px-2.5 py-1.5 bg-white text-[#0B2A4A] border border-[#0B2A4A] hover:bg-[#F0F5FA] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                            >
+                              Request Clarification
+                            </button>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await recordIntegrityReview(
+                                    selectedFinding.id,
+                                    'RESOLVED',
+                                    statusActionNote || 'Bidder clarification verified and finding resolved.',
+                                    selectedTenderId,
+                                    selectedFinding.bidder_id || undefined,
+                                    'Mark Resolved'
+                                  );
+                                  setSelectedFinding({ ...selectedFinding, status: 'RESOLVED' as any });
+                                  setAssessment((prev) => prev ? {
+                                    ...prev,
+                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'RESOLVED' as any } : f)
+                                  } : prev);
+                                  setActionSuccess(`Finding ${selectedFinding.id} marked RESOLVED.`);
+                                } catch (err: any) {
+                                  setError('Failed to record review action.');
+                                }
+                              }}
+                              className="px-2.5 py-1.5 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] hover:bg-[#DCFCE7] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                            >
+                              Mark Resolved
+                            </button>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await recordIntegrityReview(
+                                    selectedFinding.id,
+                                    'DISMISSED',
+                                    statusActionNote || 'Evaluated as standard market practice and dismissed.',
+                                    selectedTenderId,
+                                    selectedFinding.bidder_id || undefined,
+                                    'Dismiss Finding'
+                                  );
+                                  setSelectedFinding({ ...selectedFinding, status: 'DISMISSED' as any });
+                                  setAssessment((prev) => prev ? {
+                                    ...prev,
+                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'DISMISSED' as any } : f)
+                                  } : prev);
+                                  setActionSuccess(`Finding ${selectedFinding.id} dismissed.`);
+                                } catch (err: any) {
+                                  setError('Failed to record review action.');
+                                }
+                              }}
+                              className="px-2.5 py-1.5 bg-[#F8FAFC] text-[#64748B] border border-[#CBD5E1] hover:bg-[#F1F5F9] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                            >
+                              Dismiss
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

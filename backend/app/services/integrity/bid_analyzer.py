@@ -9,6 +9,7 @@ Guarantees:
 - Insufficient historical records gracefully yield zero false-positive signals.
 - Transparent, non-punitive explanatory language.
 """
+import hashlib
 import uuid
 import statistics
 from typing import Any, Dict, List, Optional, Tuple
@@ -106,7 +107,8 @@ def analyze_bid_price_similarity(
                 )
             )
 
-        finding_id = f"INT-PRICE-{uuid.uuid4().hex[:8]}"
+        price_hash = hashlib.md5(tender_id.encode()).hexdigest()[:8].upper()
+        finding_id = f"INT-PRICE-{price_hash}"
         names_str = ", ".join([b.legal_name for b in cluster])
 
         finding = IntegrityFinding(
@@ -193,7 +195,8 @@ def analyze_winner_concentration(
                 )
             ]
             
-            finding_id = f"INT-WIN-{uuid.uuid4().hex[:8]}"
+            win_hash = hashlib.md5(f"{tender_id}:{b.bidder_id}".encode()).hexdigest()[:8].upper()
+            finding_id = f"INT-WIN-{win_hash}"
             findings.append(
                 IntegrityFinding(
                     id=finding_id,
@@ -295,7 +298,8 @@ def analyze_repeated_participation(
                         metadata={"co_occurrences": co_occurrences, "bidder_1": b1.legal_name, "bidder_2": b2.legal_name}
                     )
                 ]
-                finding_id = f"INT-COPART-{uuid.uuid4().hex[:8]}"
+                copart_hash = hashlib.md5(f"{tender_id}:{min(b1.bidder_id, b2.bidder_id)}:{max(b1.bidder_id, b2.bidder_id)}".encode()).hexdigest()[:8].upper()
+                finding_id = f"INT-COPART-{copart_hash}"
                 findings.append(
                     IntegrityFinding(
                         id=finding_id,
@@ -367,7 +371,8 @@ def analyze_bid_rotation(
                         metadata={"sequence": winner_sequence, "unique_winners": unique_winners}
                     )
                 ]
-                finding_id = f"INT-ROT-{uuid.uuid4().hex[:8]}"
+                rot_hash = hashlib.md5(tender_id.encode()).hexdigest()[:8].upper()
+                finding_id = f"INT-ROT-{rot_hash}"
                 return [
                     IntegrityFinding(
                         id=finding_id,

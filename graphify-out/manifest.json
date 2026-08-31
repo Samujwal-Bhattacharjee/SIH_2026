@@ -66,9 +66,9 @@
     "semantic_hash": "1dcf32b407de9165603fcafc5bbdc2a3"
   },
   "backend/app/api/routes/procurement.py": {
-    "mtime": 1788113626.4760983,
-    "seen": 1788113700.595981,
-    "ast_hash": "4872fcd74d9f5e8c98180ae772a0d61f",
+    "mtime": 1788178619.5344608,
+    "seen": 1788179447.594444,
+    "ast_hash": "1afd14b4fda3123c7753ad1302993238",
     "semantic_hash": ""
   },
   "backend/app/api/routes/projects.py": {
@@ -108,9 +108,9 @@
     "semantic_hash": "21643e871acfe8afae1088d8fd186ad2"
   },
   "backend/app/core/procurement_store.py": {
-    "mtime": 1788176902.9903917,
-    "seen": 1788177779.5623033,
-    "ast_hash": "4f1acd11f8a75b244d4bce1a770e4502",
+    "mtime": 1788178407.144273,
+    "seen": 1788179447.5969553,
+    "ast_hash": "1a9e7ce63b37dbde9bfb32da660cd4db",
     "semantic_hash": ""
   },
   "backend/app/core/security.py": {
@@ -612,10 +612,10 @@
     "semantic_hash": "2244e297cefddee6d473f152e3d65a8c"
   },
   "src/context/ProcurementContext.tsx": {
-    "mtime": 1787598668.1092215,
-    "seen": 1787863686.63167,
-    "ast_hash": "1b517453db81f4db0a1b87f480f740c3",
-    "semantic_hash": "1b517453db81f4db0a1b87f480f740c3"
+    "mtime": 1788178822.764146,
+    "seen": 1788179447.6213248,
+    "ast_hash": "a5c91f97618486e9f93b557f7e27e5d9",
+    "semantic_hash": ""
   },
   "src/context/SystemContext.tsx": {
     "mtime": 1786984334.4841442,
@@ -672,9 +672,9 @@
     "semantic_hash": "a0f55cce4b416027df4a6fdbd0432bc6"
   },
   "src/pages/BidderVerification.tsx": {
-    "mtime": 1788122363.6786628,
-    "seen": 1788128613.8834689,
-    "ast_hash": "a0918cf6bee9dcc77f7ce1bcfa3eccb6",
+    "mtime": 1788179383.5897052,
+    "seen": 1788179447.6234927,
+    "ast_hash": "d2a07684f907d0529a82dff4d20c516e",
     "semantic_hash": ""
   },
   "src/pages/CaseDetail.tsx": {
@@ -738,15 +738,15 @@
     "semantic_hash": "2d20e057c8b6d360870b7259ef64ca92"
   },
   "src/pages/ProcurementAuditTrail.tsx": {
-    "mtime": 1788128484.668822,
-    "seen": 1788128613.8864691,
-    "ast_hash": "00b00caf64d0375a85095aa3f7099fde",
+    "mtime": 1788178951.9764986,
+    "seen": 1788179447.6260357,
+    "ast_hash": "83c48f5ec3d132f2e8346efc372602be",
     "semantic_hash": ""
   },
   "src/pages/ProcurementDashboard.tsx": {
-    "mtime": 1788128432.7418437,
-    "seen": 1788128613.8864691,
-    "ast_hash": "fbd1771ccf2332f3b452a36bb2c14138",
+    "mtime": 1788178860.798591,
+    "seen": 1788179447.6260357,
+    "ast_hash": "0c2cce1ce37ad3852567dcf8514b867f",
     "semantic_hash": ""
   },
   "src/pages/ProcurementDocuments.tsx": {
@@ -834,15 +834,15 @@
     "semantic_hash": ""
   },
   "src/services/api/mockApi.ts": {
-    "mtime": 1788177731.0069263,
-    "seen": 1788177779.6174264,
-    "ast_hash": "948b709ae9a0b08a5364832eef015440",
+    "mtime": 1788178797.6218534,
+    "seen": 1788179447.629819,
+    "ast_hash": "a22ff0fa473854fb5c4e9b52c3667c93",
     "semantic_hash": ""
   },
   "src/services/api/realApi.ts": {
-    "mtime": 1788113924.9582212,
-    "seen": 1788119907.768442,
-    "ast_hash": "dd406e3bdea6dc9108c49d0a8e4a0675",
+    "mtime": 1788178768.2179053,
+    "seen": 1788179447.629819,
+    "ast_hash": "d1d81124155532591a0bdce2c60049b3",
     "semantic_hash": ""
   },
   "src/types/index.ts": {
@@ -1002,9 +1002,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/bid_analyzer.py": {
-    "mtime": 1788177082.4848847,
-    "seen": 1788177779.5643096,
-    "ast_hash": "fcc3c62c32499e21b0f5d340b559df72",
+    "mtime": 1788178523.281394,
+    "seen": 1788179447.6003888,
+    "ast_hash": "dadeeda531517ed2097db789ac3e8f45",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/feature_extractor.py": {
@@ -1020,21 +1020,21 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/relationship_analyzer.py": {
-    "mtime": 1788095868.112622,
-    "seen": 1788096237.435852,
-    "ast_hash": "128c537e5268fdf6342a555b17dda110",
+    "mtime": 1788178483.6788728,
+    "seen": 1788179447.6003888,
+    "ast_hash": "90240c6eb8bca63427ed4642b76e6be9",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/risk_engine.py": {
-    "mtime": 1788176911.8791425,
-    "seen": 1788177779.5643096,
-    "ast_hash": "1c2e37fe71f4659e771b3f7a124c1a0b",
+    "mtime": 1788178733.8174381,
+    "seen": 1788179447.6003888,
+    "ast_hash": "a2baafcd10fe626ab7df35420f55bbf8",
     "semantic_hash": ""
   },
   "backend/tests/test_integrity_engine.py": {
-    "mtime": 1788177141.0649898,
-    "seen": 1788177779.5813472,
-    "ast_hash": "0dfdab7b3ed3aaf4ca8d34ca41256146",
+    "mtime": 1788178445.2940753,
+    "seen": 1788179447.609113,
+    "ast_hash": "a59b8da9df281fe776a1243e52106ed5",
     "semantic_hash": ""
   },
   "implementation_plan.md": {
@@ -1050,9 +1050,9 @@
     "semantic_hash": ""
   },
   "src/pages/ProcurementIntegrity.tsx": {
-    "mtime": 1788129541.7453759,
-    "seen": 1788129893.4875276,
-    "ast_hash": "410585860fa28ff56c88c1465346c4f5",
+    "mtime": 1788178978.4622686,
+    "seen": 1788179447.6260357,
+    "ast_hash": "ad465a411b64572164ab88cae954eadf",
     "semantic_hash": ""
   },
   ".agents/skills/ux4g-design/SKILL.md": {

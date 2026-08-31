@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   AlertTriangle,
   CheckCircle2,
   FileText,
   ShieldCheck,
+  ShieldAlert,
   XCircle,
   Play,
   RotateCw,
@@ -16,7 +17,8 @@ import {
   Paperclip,
   X,
 } from 'lucide-react';
-import { CheckStatus, useProcurement } from '../context/ProcurementContext';
+import { CheckStatus, Requirement, useProcurement } from '../context/ProcurementContext';
+import { apiClient } from '../services/api/apiClient';
 
 // ─── Decision mapping: UI label → backend/DB enum ────────────────────────────
 const DECISION_LABELS: { label: string; value: string; className: string }[] = [
@@ -56,11 +58,65 @@ interface Banner {
   message: string;
 }
 
+interface BidderView {
+  id: string;
+  name: string;
+  gstin?: string;
+  pan?: string;
+  status: string;
+  score: number;
+  risk: string;
+  documents: number;
+  tender_id?: string;
+  requirements: Requirement[];
+  discrepancies?: any[];
+  recommendations?: string[];
+}
+
 export const BidderVerification: React.FC = () => {
   const { bidderId } = useParams();
   const { bidders, decide, updateRequirement, runVerification, uploadDocument, loading } =
     useProcurement();
-  const bidder = bidders.find((item) => item.id === bidderId) ?? bidders[0];
+  const [liveBidder, setLiveBidder] = useState<BidderView | null>(null);
+
+  useEffect(() => {
+    if (!bidderId) return;
+    const fetchLiveBidder = async () => {
+      try {
+        const res = await (apiClient as any).procurement.getBidder(bidderId);
+        if (res?.bidder) {
+          const b = res.bidder;
+          setLiveBidder({
+            id: b.id,
+            name: b.legal_name || b.name,
+            gstin: b.gstin,
+            pan: b.pan,
+            status: b.status === 'COMPLIANT' || b.status === 'QUALIFIED' ? 'Qualified' : b.status === 'NON_COMPLIANT' || b.status === 'DISQUALIFIED' ? 'Disqualified' : 'Needs Review',
+            score: Math.round(b.score || b.compliance_score || 85),
+            risk: b.risk_level || (b.score < 60 ? 'HIGH' : b.score < 80 ? 'MEDIUM' : 'LOW'),
+            documents: res.documents?.length || 3,
+            tender_id: b.tender_id,
+            requirements: (res.requirements && res.requirements.length > 0) ? res.requirements.map((r: any) => ({
+              id: r.requirement_id || r.id,
+              name: r.name || r.title || r.requirement_name || 'Statutory Requirement',
+              category: r.category || 'Statutory compliance',
+              status: r.status === 'COMPLIANT' ? 'Verified' : r.status === 'NON_COMPLIANT' ? 'Failed' : 'Needs Review',
+              evidence: r.evidence_summary || r.evidence || 'Document extract verified against declaration.',
+              note: r.discrepancy_note || r.note || '',
+            })) : (bidders[0]?.requirements || []),
+            discrepancies: res.discrepancies || [],
+            recommendations: res.recommendations || [],
+          });
+        }
+      } catch (err) {
+        console.warn('Could not fetch live bidder:', err);
+      }
+    };
+    fetchLiveBidder();
+  }, [bidderId]);
+
+  const matchedBidder = bidders.find((item) => item.id === bidderId);
+  const bidder: BidderView = liveBidder || (matchedBidder as any) || bidders[0];
 
   // ── Shared banner (replaces the previous single-tone actionMessage) ─────────
   const [banner, setBanner] = useState<Banner | null>(null);
@@ -222,18 +278,28 @@ export const BidderVerification: React.FC = () => {
           <span className="font-mono font-bold text-[#0B2A4A]">{bidder.id}</span>
         </div>
 
-        <button
-          onClick={handleRunVerification}
-          disabled={verifying || loading}
-          className="ux4g-btn ux4g-btn-primary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {verifying ? (
-            <RotateCw className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Play className="w-3 h-3 fill-current" />
-          )}
-          <span>{verifying ? 'Assessing compliance...' : 'Start compliance verification'}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to={`/integrity?tender=${(bidder as any)?.tender_id || 'TEN-2026-001'}`}
+            className="ux4g-btn ux4g-btn-secondary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer"
+            title="Inspect cross-tender integrity signals and relationship graphs"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-[#0B2A4A]" />
+            <span>Integrity Signals</span>
+          </Link>
+          <button
+            onClick={handleRunVerification}
+            disabled={verifying || loading}
+            className="ux4g-btn ux4g-btn-primary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {verifying ? (
+              <RotateCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Play className="w-3 h-3 fill-current" />
+            )}
+            <span>{verifying ? 'Assessing compliance...' : 'Start compliance verification'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Banner — success or error */}

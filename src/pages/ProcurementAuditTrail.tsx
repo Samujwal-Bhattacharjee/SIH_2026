@@ -77,6 +77,7 @@ export const ProcurementAuditTrail: React.FC = () => {
             className="border border-[#CBD5E1] px-2 py-1 text-xs rounded-[2px] bg-white text-[#0F172A] font-medium"
           >
             <option value="ALL">{t('page.audit.allActions')}</option>
+            <option value="Integrity">Integrity Reviews &amp; Signals</option>
             <option value="Upload">{t('page.audit.uploads')}</option>
             <option value="Verification">{t('page.audit.verifications')}</option>
             <option value="Decision">{t('page.audit.officerDecisions')}</option>

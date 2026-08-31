@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from app.core import procurement_store as ps
 from app.services.integrity.models import (
     BidderFeature,
+    FindingStatus,
     IntegrityAssessment,
     IntegrityFinding,
     RiskLevel,
@@ -212,6 +213,23 @@ def assess_tender_integrity(
     overall_score, risk_level, confidence = aggregate_integrity_findings(all_findings)
     contributing_signals = list(set([f.signal_type.value for f in all_findings]))
     
+    # Merge any persistent officer review status overrides
+    try:
+        reviews = ps.get_integrity_finding_reviews(tender_id=tender_id)
+        if reviews:
+            review_map = {}
+            for r in reviews:
+                if r.get("finding_id") and r["finding_id"] not in review_map:
+                    review_map[r["finding_id"]] = r["status"]
+            for f in all_findings:
+                if f.id in review_map:
+                    try:
+                        f.status = FindingStatus(review_map[f.id])
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+
     summary = generate_executive_summary(all_findings, overall_score, risk_level, tender_title)
 
     return IntegrityAssessment(
