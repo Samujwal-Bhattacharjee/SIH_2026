@@ -66,9 +66,9 @@
     "semantic_hash": "1dcf32b407de9165603fcafc5bbdc2a3"
   },
   "backend/app/api/routes/procurement.py": {
-    "mtime": 1788181291.5958745,
-    "seen": 1788181362.5435402,
-    "ast_hash": "c1e3995c885774b32a54b6c9ddc83208",
+    "mtime": 1788184131.1406734,
+    "seen": 1788184747.0429661,
+    "ast_hash": "a859bde8d9f457cf3be4d8ceacfb0056",
     "semantic_hash": ""
   },
   "backend/app/api/routes/projects.py": {
@@ -372,10 +372,10 @@
     "semantic_hash": "ba01ef75b056be35cff8f7b0ea26f9ec"
   },
   "backend/tests/test_procurement_persistence.py": {
-    "mtime": 1787514013.509605,
-    "seen": 1787863686.6306608,
-    "ast_hash": "fff3bde82f853e5a5060ad1be8302d4e",
-    "semantic_hash": "fff3bde82f853e5a5060ad1be8302d4e"
+    "mtime": 1788184144.7928436,
+    "seen": 1788184747.073671,
+    "ast_hash": "5823336ae1271f99568d2dc3569e2654",
+    "semantic_hash": ""
   },
   "package.json": {
     "mtime": 1788122019.4180813,
