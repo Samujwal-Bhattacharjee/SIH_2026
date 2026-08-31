@@ -16,6 +16,7 @@ Data is backed by persistent database storage (`backend/procurement.db`)
 and Supabase cloud storage. All records survive server restarts and reloads.
 """
 import logging
+import math
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -45,12 +46,17 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
     Never raises — malformed OCR metadata must not crash document upload.
     """
     if isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return default
         return value
     if isinstance(value, int):
         return float(value)
     if isinstance(value, str):
         try:
-            return float(value)
+            val = float(value)
+            if math.isnan(val) or math.isinf(val):
+                return default
+            return val
         except (ValueError, TypeError):
             return default
     return default

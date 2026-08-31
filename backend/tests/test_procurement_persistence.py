@@ -133,3 +133,206 @@ def test_dashboard_metrics_persistence(auth_client):
     assert "verification_exceptions" in metrics
     assert "bidders" in metrics
     assert isinstance(metrics["bidders"], list)
+
+
+# ============================================================
+# OCR CONFIDENCE REGRESSION TESTS (DAY 3 / STEP 3)
+# ============================================================
+
+def test_safe_float_conversion():
+    """Unit tests for _safe_float handling all possible OCR confidence formats."""
+    from app.api.routes.procurement import _safe_float
+
+    # 1. Valid numeric confidence (float and int)
+    assert _safe_float(0.95) == 0.95
+    assert _safe_float(1.0) == 1.0
+    assert _safe_float(0) == 0.0
+    assert _safe_float(1) == 1.0
+
+    # 2. Numeric string confidence
+    assert _safe_float("0.85") == 0.85
+    assert _safe_float("1.0") == 1.0
+    assert _safe_float("95.5") == 95.5
+
+    # 3. None
+    assert _safe_float(None) == 0.0
+    assert _safe_float(None, default=0.5) == 0.5
+
+    # 4. Malformed list / dict / object values
+    assert _safe_float([0.9]) == 0.0
+    assert _safe_float({"score": 90}) == 0.0
+    assert _safe_float((1, 2)) == 0.0
+
+    # 5. Invalid strings, NaN, Infinity
+    assert _safe_float("invalid_confidence") == 0.0
+    assert _safe_float("") == 0.0
+    assert _safe_float("nan") == 0.0
+    assert _safe_float("inf") == 0.0
+    assert _safe_float("-inf") == 0.0
+    assert _safe_float(float("nan")) == 0.0
+    assert _safe_float(float("inf")) == 0.0
+
+
+def test_ocr_upload_with_valid_numeric_confidence(auth_client, monkeypatch):
+    """Prove pipeline handles valid numeric float confidence correctly."""
+    bidders = ps.get_bidders()
+    bidder_id = bidders[0]["id"]
+
+    mock_ocr = {
+        "extractedFields": [{"key": "gstin", "value": "27AABCT4180Q1ZV", "confidence": 0.95, "isExtracted": True, "label": "GSTIN"}],
+        "extractedText": "Government of India GSTIN: 27AABCT4180Q1ZV",
+        "confidenceScore": 0.95,
+        "ocrEngine": "PyMuPDF-digital",
+    }
+    monkeypatch.setattr("app.api.routes.procurement.process_ocr_from_bytes", lambda *args, **kwargs: mock_ocr)
+
+    doc = fitz.open()
+    doc.new_page().insert_text((50, 72), "GST Certificate Content", fontsize=12)
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    res = auth_client.post(
+        f"/api/v1/procurement/bidders/{bidder_id}/documents",
+        files={"file": ("Valid_Float_Conf.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"document_type": "auto"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["confidence"] == 0.95
+    assert body["doc_record"]["ocr_confidence"] == 0.95
+    assert body["doc_record"]["ocr_status"] == "COMPLETED"
+    assert "assessment" in body
+
+
+def test_ocr_upload_with_numeric_string_confidence(auth_client, monkeypatch):
+    """Prove pipeline converts numeric-string confidence to float without crashing."""
+    bidders = ps.get_bidders()
+    bidder_id = bidders[0]["id"]
+
+    mock_ocr = {
+        "extractedFields": [{"key": "pan", "value": "AABCT4180Q", "confidence": 0.88, "isExtracted": True, "label": "PAN"}],
+        "extractedText": "Income Tax PAN Card AABCT4180Q",
+        "confidenceScore": "0.88",
+        "ocrEngine": "Tesseract-OCR",
+    }
+    monkeypatch.setattr("app.api.routes.procurement.process_ocr_from_bytes", lambda *args, **kwargs: mock_ocr)
+
+    doc = fitz.open()
+    doc.new_page().insert_text((50, 72), "PAN Card Content", fontsize=12)
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    res = auth_client.post(
+        f"/api/v1/procurement/bidders/{bidder_id}/documents",
+        files={"file": ("String_Conf.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"document_type": "auto"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["confidence"] == 0.88
+    assert body["doc_record"]["ocr_confidence"] == 0.88
+    assert body["doc_record"]["ocr_status"] == "COMPLETED"
+
+
+def test_ocr_upload_with_none_confidence(auth_client, monkeypatch):
+    """Prove pipeline handles confidenceScore=None safely without raising TypeError."""
+    bidders = ps.get_bidders()
+    bidder_id = bidders[0]["id"]
+
+    mock_ocr = {
+        "extractedFields": [{"key": "udyamNumber", "value": "UDYAM-MH-19-0042186", "confidence": 0.8, "isExtracted": True, "label": "Udyam Number"}],
+        "extractedText": "Udyam Certificate UDYAM-MH-19-0042186",
+        "confidenceScore": None,
+        "ocrEngine": "PyMuPDF-digital",
+    }
+    monkeypatch.setattr("app.api.routes.procurement.process_ocr_from_bytes", lambda *args, **kwargs: mock_ocr)
+
+    doc = fitz.open()
+    doc.new_page().insert_text((50, 72), "Udyam Content", fontsize=12)
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    res = auth_client.post(
+        f"/api/v1/procurement/bidders/{bidder_id}/documents",
+        files={"file": ("None_Conf.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"document_type": "auto"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["confidence"] == 0.0
+    assert body["doc_record"]["ocr_confidence"] == 0.0
+    assert body["doc_record"]["ocr_status"] == "COMPLETED"
+
+
+def test_ocr_upload_with_missing_confidence_score(auth_client, monkeypatch):
+    """Prove pipeline handles ocr_result missing confidenceScore key completely."""
+    bidders = ps.get_bidders()
+    bidder_id = bidders[0]["id"]
+
+    mock_ocr = {
+        "extractedFields": [],
+        "extractedText": "Plain document without confidence field",
+        "ocrEngine": "PyMuPDF-digital",
+    }
+    monkeypatch.setattr("app.api.routes.procurement.process_ocr_from_bytes", lambda *args, **kwargs: mock_ocr)
+
+    doc = fitz.open()
+    doc.new_page().insert_text((50, 72), "Plain Document", fontsize=12)
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    res = auth_client.post(
+        f"/api/v1/procurement/bidders/{bidder_id}/documents",
+        files={"file": ("Missing_Conf.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"document_type": "auto"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["confidence"] == 0.0
+    assert body["doc_record"]["ocr_confidence"] == 0.0
+
+
+def test_ocr_upload_with_malformed_list_and_dict_confidence(auth_client, monkeypatch):
+    """Prove pipeline handles list, dict, and arbitrary malformed objects as confidence."""
+    bidders = ps.get_bidders()
+    bidder_id = bidders[0]["id"]
+
+    # Test list confidence
+    mock_ocr_list = {
+        "extractedFields": [],
+        "extractedText": "List confidence test",
+        "confidenceScore": [0.95, 0.92],
+        "ocrEngine": "PyMuPDF-digital",
+    }
+    monkeypatch.setattr("app.api.routes.procurement.process_ocr_from_bytes", lambda *args, **kwargs: mock_ocr_list)
+
+    doc = fitz.open()
+    doc.new_page().insert_text((50, 72), "List Conf", fontsize=12)
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    res = auth_client.post(
+        f"/api/v1/procurement/bidders/{bidder_id}/documents",
+        files={"file": ("List_Conf.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"document_type": "auto"},
+    )
+    assert res.status_code == 200
+    assert res.json()["confidence"] == 0.0
+
+    # Test dict confidence
+    mock_ocr_dict = {
+        "extractedFields": [],
+        "extractedText": "Dict confidence test",
+        "confidenceScore": {"value": 0.95, "unit": "%"},
+        "ocrEngine": "PyMuPDF-digital",
+    }
+    monkeypatch.setattr("app.api.routes.procurement.process_ocr_from_bytes", lambda *args, **kwargs: mock_ocr_dict)
+
+    res2 = auth_client.post(
+        f"/api/v1/procurement/bidders/{bidder_id}/documents",
+        files={"file": ("Dict_Conf.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        data={"document_type": "auto"},
+    )
+    assert res2.status_code == 200
+    assert res2.json()["confidence"] == 0.0
+
