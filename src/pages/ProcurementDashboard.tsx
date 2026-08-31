@@ -145,25 +145,25 @@ export const ProcurementDashboard: React.FC = () => {
         <div className="flex items-center flex-wrap gap-2.5">
           <button
             onClick={() => navigate('/integrity')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
           >
-            <ShieldAlert className="w-4 h-4 text-[#1F2937]" />
+            <ShieldAlert className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
             <span>Integrity Workspace</span>
           </button>
 
           <button
             onClick={() => navigate('/tenders')}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-colors shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
           >
-            <PlusCircle className="w-4 h-4 text-white" />
+            <PlusCircle className="w-4 h-4 text-white group-hover:rotate-90 transition-transform duration-300" />
             <span>Create Tender</span>
           </button>
 
           <button
             onClick={() => navigate('/audit-trail')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
           >
-            <ScrollText className="w-4 h-4 text-[#1F2937]" />
+            <ScrollText className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
             <span>Audit Register</span>
           </button>
         </div>

@@ -82,19 +82,6 @@
       "source_location": "L137"
     },
     {
-      "id": "src_pages_procurementdocuments_extractedfield",
-      "label": "ExtractedField",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "extractedfield",
-      "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L14"
-    },
-    {
       "id": "src_pages_verificationsources_verificationsource",
       "label": "VerificationSource",
       "_callable": true,
@@ -199,6 +186,19 @@
       "source_location": "L205"
     },
     {
+      "id": "src_assets_emblem_emblemprops",
+      "label": "EmblemProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "emblemprops",
+      "source_file": "src/assets/Emblem.tsx",
+      "source_location": "L3"
+    },
+    {
       "id": "src_components_common_formfield_formfieldprops",
       "label": "FormFieldProps",
       "_callable": true,
@@ -210,6 +210,32 @@
       "norm_label": "formfieldprops",
       "source_file": "src/components/common/FormField.tsx",
       "source_location": "L3"
+    },
+    {
+      "id": "src_components_common_govmodal_govmodalprops",
+      "label": "GovModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "govmodalprops",
+      "source_file": "src/components/common/GovModal.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_documents_documentuploadmodal_documentuploadmodalprops",
+      "label": "DocumentUploadModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "documentuploadmodalprops",
+      "source_file": "src/components/documents/DocumentUploadModal.tsx",
+      "source_location": "L9"
     },
     {
       "id": "src_components_files_fileforwardmodal_fileforwardmodalprops",
@@ -277,6 +303,19 @@
       "source_location": "L111"
     },
     {
+      "id": "src_types_index_casestage",
+      "label": "CaseStage",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "casestage",
+      "source_file": "src/types/index.ts",
+      "source_location": "L35"
+    },
+    {
       "id": "src_types_index_department",
       "label": "Department",
       "_callable": true,
@@ -288,19 +327,6 @@
       "norm_label": "department",
       "source_file": "src/types/index.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "src_types_index_departmentinfo",
-      "label": "DepartmentInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "departmentinfo",
-      "source_file": "src/types/index.ts",
-      "source_location": "L366"
     },
     {
       "id": "src_types_index_documenttype",
@@ -316,30 +342,17 @@
       "source_location": "L339"
     },
     {
-      "id": "src_types_index_ocrresult",
-      "label": "OCRResult",
+      "id": "src_types_index_prioritylevel",
+      "label": "PriorityLevel",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "ocrresult",
+      "norm_label": "prioritylevel",
       "source_file": "src/types/index.ts",
-      "source_location": "L328"
-    },
-    {
-      "id": "src_types_index_officerinfo",
-      "label": "OfficerInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "officerinfo",
-      "source_file": "src/types/index.ts",
-      "source_location": "L379"
+      "source_location": "L45"
     },
     {
       "id": "backend_app_services_integrity_models_findingstatus",
@@ -407,19 +420,6 @@
       "source_location": "L13"
     },
     {
-      "id": "src_types_index_auditlog",
-      "label": "AuditLog",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "mockApi.ts",
-      "file_type": "code",
-      "norm_label": "auditlog",
-      "source_file": "src/types/index.ts",
-      "source_location": "L392"
-    },
-    {
       "id": "src_types_index_bottleneckanalysis",
       "label": "BottleneckAnalysis",
       "_callable": true,
@@ -431,19 +431,6 @@
       "norm_label": "bottleneckanalysis",
       "source_file": "src/types/index.ts",
       "source_location": "L272"
-    },
-    {
-      "id": "src_types_index_dashboardmetrics",
-      "label": "DashboardMetrics",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "mockApi.ts",
-      "file_type": "code",
-      "norm_label": "dashboardmetrics",
-      "source_file": "src/types/index.ts",
-      "source_location": "L460"
     },
     {
       "id": "src_types_index_simulationintervention",
@@ -784,43 +771,43 @@
       "source_location": "L333"
     },
     {
-      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengineprops",
-      "label": "StatutoryDeadlineEngineProps",
+      "id": "src_pages_procurementdocuments_extractedfield",
+      "label": "ExtractedField",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "statutorydeadlineengineprops",
-      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
-      "source_location": "L4"
+      "norm_label": "extractedfield",
+      "source_file": "src/pages/ProcurementDocuments.tsx",
+      "source_location": "L18"
     },
     {
-      "id": "src_components_common_statutorycountdown_statutorycountdownprops",
-      "label": "StatutoryCountdownProps",
+      "id": "src_types_index_integrityevidence",
+      "label": "IntegrityEvidence",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "statutorycountdownprops",
-      "source_file": "src/components/common/StatutoryCountdown.tsx",
-      "source_location": "L4"
+      "norm_label": "integrityevidence",
+      "source_file": "src/types/index.ts",
+      "source_location": "L513"
     },
     {
-      "id": "src_components_common_technicalcard_technicalcardprops",
-      "label": "TechnicalCardProps",
+      "id": "src_types_index_integrityfinding",
+      "label": "IntegrityFinding",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "technicalcardprops",
-      "source_file": "src/components/common/TechnicalCard.tsx",
-      "source_location": "L3"
+      "norm_label": "integrityfinding",
+      "source_file": "src/types/index.ts",
+      "source_location": "L522"
     },
     {
       "id": "backend_tests_test_intelligence_testbottleneckdetection",
@@ -834,6 +821,71 @@
       "norm_label": "testbottleneckdetection",
       "source_file": "backend/tests/test_intelligence.py",
       "source_location": "L128"
+    },
+    {
+      "id": "src_pages_workflow_landworkflowstage",
+      "label": "LandWorkflowStage",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "landworkflowstage",
+      "source_file": "src/pages/Workflow.tsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_types_index_auditlog",
+      "label": "AuditLog",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "auditlog",
+      "source_file": "src/types/index.ts",
+      "source_location": "L392"
+    },
+    {
+      "id": "src_types_index_dashboardmetrics",
+      "label": "DashboardMetrics",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "dashboardmetrics",
+      "source_file": "src/types/index.ts",
+      "source_location": "L460"
+    },
+    {
+      "id": "src_types_index_departmentinfo",
+      "label": "DepartmentInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "departmentinfo",
+      "source_file": "src/types/index.ts",
+      "source_location": "L366"
+    },
+    {
+      "id": "src_types_index_officerinfo",
+      "label": "OfficerInfo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "officerinfo",
+      "source_file": "src/types/index.ts",
+      "source_location": "L379"
     },
     {
       "id": "src_types_index_processmapdata",
@@ -940,30 +992,43 @@
       "source_location": "L292"
     },
     {
-      "id": "src_components_common_govmodal_govmodalprops",
-      "label": "GovModalProps",
+      "id": "src_components_common_emptystate_emptystateprops",
+      "label": "EmptyStateProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "govmodalprops",
-      "source_file": "src/components/common/GovModal.tsx",
+      "norm_label": "emptystateprops",
+      "source_file": "src/components/common/EmptyState.tsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_components_common_govbadge_statusbadgeprops",
+      "label": "StatusBadgeProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "statusbadgeprops",
+      "source_file": "src/components/common/GovBadge.tsx",
       "source_location": "L4"
     },
     {
-      "id": "src_components_documents_documentuploadmodal_documentuploadmodalprops",
-      "label": "DocumentUploadModalProps",
+      "id": "src_components_common_govbutton_govbuttonprops",
+      "label": "GovButtonProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "documentuploadmodalprops",
-      "source_file": "src/components/documents/DocumentUploadModal.tsx",
-      "source_location": "L9"
+      "norm_label": "govbuttonprops",
+      "source_file": "src/components/common/GovButton.tsx",
+      "source_location": "L4"
     },
     {
       "id": "src_components_documents_documentviewermodal_documentviewermodalprops",
@@ -972,7 +1037,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "documentviewermodalprops",
       "source_file": "src/components/documents/DocumentViewerModal.tsx",
@@ -985,37 +1050,37 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "documentrecord",
       "source_file": "src/types/index.ts",
       "source_location": "L350"
     },
     {
-      "id": "src_assets_emblem_emblemprops",
-      "label": "EmblemProps",
+      "id": "src_types_index_govfilestatus",
+      "label": "GovFileStatus",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
+      "community": 27,
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "emblemprops",
-      "source_file": "src/assets/Emblem.tsx",
-      "source_location": "L3"
+      "norm_label": "govfilestatus",
+      "source_file": "src/types/index.ts",
+      "source_location": "L49"
     },
     {
-      "id": "src_components_layout_govhorizontalnav_navitem",
-      "label": "NavItem",
+      "id": "src_types_index_risklevel",
+      "label": "RiskLevel",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
+      "community": 27,
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "navitem",
-      "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L19"
+      "norm_label": "risklevel",
+      "source_file": "src/types/index.ts",
+      "source_location": "L47"
     },
     {
       "id": "src_components_layout_govnotificationticker_noticeitem",
@@ -1024,7 +1089,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "useLanguage",
+      "community_name": "GovNotificationTicker.tsx",
       "file_type": "code",
       "norm_label": "noticeitem",
       "source_file": "src/components/layout/GovNotificationTicker.tsx",
@@ -1187,29 +1252,16 @@
       "source_location": "L93"
     },
     {
-      "id": "src_components_common_emptystate_emptystateprops",
-      "label": "EmptyStateProps",
+      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengineprops",
+      "label": "StatutoryDeadlineEngineProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "emptystateprops",
-      "source_file": "src/components/common/EmptyState.tsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_components_common_govbutton_govbuttonprops",
-      "label": "GovButtonProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "govbuttonprops",
-      "source_file": "src/components/common/GovButton.tsx",
+      "norm_label": "statutorydeadlineengineprops",
+      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
       "source_location": "L4"
     },
     {
@@ -1252,30 +1304,43 @@
       "source_location": "L4"
     },
     {
-      "id": "src_pages_workflow_landworkflowstage",
-      "label": "LandWorkflowStage",
+      "id": "src_components_common_statutorycountdown_statutorycountdownprops",
+      "label": "StatutoryCountdownProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "landworkflowstage",
-      "source_file": "src/pages/Workflow.tsx",
-      "source_location": "L20"
+      "norm_label": "statutorycountdownprops",
+      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "source_location": "L4"
     },
     {
-      "id": "src_components_common_govbadge_statusbadgeprops",
-      "label": "StatusBadgeProps",
+      "id": "src_components_common_technicalcard_technicalcardprops",
+      "label": "TechnicalCardProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "technicalcardprops",
+      "source_file": "src/components/common/TechnicalCard.tsx",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_components_cases_riskattributionpanel_riskattributionpanelprops",
+      "label": "RiskAttributionPanelProps",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "statusbadgeprops",
-      "source_file": "src/components/common/GovBadge.tsx",
-      "source_location": "L4"
+      "norm_label": "riskattributionpanelprops",
+      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
+      "source_location": "L5"
     },
     {
       "id": "src_components_files_filemovementtimeline_filemovementtimelineprops",
@@ -1317,19 +1382,6 @@
       "source_location": "L70"
     },
     {
-      "id": "src_types_index_casestage",
-      "label": "CaseStage",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "types/index.ts",
-      "file_type": "code",
-      "norm_label": "casestage",
-      "source_file": "src/types/index.ts",
-      "source_location": "L35"
-    },
-    {
       "id": "src_types_index_casestatus",
       "label": "CaseStatus",
       "_callable": true,
@@ -1367,19 +1419,6 @@
       "norm_label": "filerecord",
       "source_file": "src/types/index.ts",
       "source_location": "L160"
-    },
-    {
-      "id": "src_types_index_govfilestatus",
-      "label": "GovFileStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "types/index.ts",
-      "file_type": "code",
-      "norm_label": "govfilestatus",
-      "source_file": "src/types/index.ts",
-      "source_location": "L49"
     },
     {
       "id": "src_types_index_landacquisitionstage",
@@ -1421,17 +1460,17 @@
       "source_location": "L320"
     },
     {
-      "id": "src_types_index_prioritylevel",
-      "label": "PriorityLevel",
+      "id": "src_types_index_ocrresult",
+      "label": "OCRResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "prioritylevel",
+      "norm_label": "ocrresult",
       "source_file": "src/types/index.ts",
-      "source_location": "L45"
+      "source_location": "L328"
     },
     {
       "id": "src_types_index_projectbottleneckresponse",
@@ -1525,17 +1564,17 @@
       "source_location": "L89"
     },
     {
-      "id": "src_types_index_risklevel",
-      "label": "RiskLevel",
+      "id": "src_types_index_riskprediction",
+      "label": "RiskPrediction",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "risklevel",
+      "norm_label": "riskprediction",
       "source_file": "src/types/index.ts",
-      "source_location": "L47"
+      "source_location": "L96"
     },
     {
       "id": "src_types_index_workflowedgedata",
@@ -1700,7 +1739,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemalert",
       "source_file": "src/context/SystemContext.tsx",
@@ -1713,7 +1752,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemcontexttype",
       "source_file": "src/context/SystemContext.tsx",
@@ -1980,6 +2019,19 @@
       "source_location": "L19"
     },
     {
+      "id": "src_components_layout_govhorizontalnav_navitem",
+      "label": "NavItem",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "navitem",
+      "source_file": "src/components/layout/GovHorizontalNav.tsx",
+      "source_location": "L21"
+    },
+    {
       "id": "src_context_languagecontext_language",
       "label": "Language",
       "_callable": true,
@@ -2058,19 +2110,6 @@
       "source_location": "L54"
     },
     {
-      "id": "src_components_cases_riskattributionpanel_riskattributionpanelprops",
-      "label": "RiskAttributionPanelProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "realApi.ts",
-      "file_type": "code",
-      "norm_label": "riskattributionpanelprops",
-      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
-      "source_location": "L5"
-    },
-    {
       "id": "src_context_authcontext_authcontexttype",
       "label": "AuthContextType",
       "_callable": true,
@@ -2082,19 +2121,6 @@
       "norm_label": "authcontexttype",
       "source_file": "src/context/AuthContext.tsx",
       "source_location": "L6"
-    },
-    {
-      "id": "src_types_index_riskprediction",
-      "label": "RiskPrediction",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "realApi.ts",
-      "file_type": "code",
-      "norm_label": "riskprediction",
-      "source_file": "src/types/index.ts",
-      "source_location": "L96"
     },
     {
       "id": "src_types_index_user",
@@ -2290,32 +2316,6 @@
       "norm_label": "bidderview",
       "source_file": "src/pages/BidderVerification.tsx",
       "source_location": "L61"
-    },
-    {
-      "id": "src_types_index_integrityevidence",
-      "label": "IntegrityEvidence",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ProcurementContext.tsx",
-      "file_type": "code",
-      "norm_label": "integrityevidence",
-      "source_file": "src/types/index.ts",
-      "source_location": "L513"
-    },
-    {
-      "id": "src_types_index_integrityfinding",
-      "label": "IntegrityFinding",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ProcurementContext.tsx",
-      "file_type": "code",
-      "norm_label": "integrityfinding",
-      "source_file": "src/types/index.ts",
-      "source_location": "L522"
     },
     {
       "id": "backend_app_schemas_init_casestage",
@@ -3491,100 +3491,40 @@
       "source_location": "L60"
     },
     {
-      "id": "src_app_protectedroute",
-      "label": "ProtectedRoute()",
+      "id": "src_pages_login_getrandomcaptcha",
+      "label": "getRandomCaptcha()",
       "_callable": true,
       "_origin": "ast",
       "community": 105,
       "community_name": "App.tsx",
       "file_type": "code",
-      "norm_label": "protectedroute()",
-      "source_file": "src/App.tsx",
-      "source_location": "L24"
+      "norm_label": "getrandomcaptcha()",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L22"
     },
     {
-      "id": "src_app_publicroute",
-      "label": "PublicRoute()",
+      "id": "src_pages_login_login",
+      "label": "Login()",
       "_callable": true,
       "_origin": "ast",
       "community": 105,
       "community_name": "App.tsx",
       "file_type": "code",
-      "norm_label": "publicroute()",
-      "source_file": "src/App.tsx",
-      "source_location": "L46"
+      "norm_label": "login()",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L31"
     },
     {
-      "id": "src_context_authcontext_useauth",
-      "label": "useAuth()",
+      "id": "src_pages_procurementaudittrail_procurementaudittrail",
+      "label": "ProcurementAuditTrail()",
       "_callable": true,
       "_origin": "ast",
       "community": 105,
       "community_name": "App.tsx",
       "file_type": "code",
-      "norm_label": "useauth()",
-      "source_file": "src/context/AuthContext.tsx",
-      "source_location": "L162"
-    },
-    {
-      "id": "src_context_procurementcontext_useprocurement",
-      "label": "useProcurement()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "useprocurement()",
-      "source_file": "src/context/ProcurementContext.tsx",
-      "source_location": "L446"
-    },
-    {
-      "id": "src_pages_bidderverification_bidderverification",
-      "label": "BidderVerification()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "bidderverification()",
-      "source_file": "src/pages/BidderVerification.tsx",
-      "source_location": "L76"
-    },
-    {
-      "id": "src_pages_procurementdashboard_procurementdashboard",
-      "label": "ProcurementDashboard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "procurementdashboard()",
-      "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_pages_procurementdocuments_procurementdocuments",
-      "label": "ProcurementDocuments()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "procurementdocuments()",
-      "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_pages_procurementintegrity_procurementintegrity",
-      "label": "ProcurementIntegrity()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "procurementintegrity()",
-      "source_file": "src/pages/ProcurementIntegrity.tsx",
-      "source_location": "L71"
+      "norm_label": "procurementaudittrail()",
+      "source_file": "src/pages/ProcurementAuditTrail.tsx",
+      "source_location": "L7"
     },
     {
       "id": "src_pages_search_search",
@@ -3599,66 +3539,6 @@
       "source_location": "L17"
     },
     {
-      "id": "src_pages_settings_settings",
-      "label": "Settings()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "settings()",
-      "source_file": "src/pages/Settings.tsx",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_pages_tenders_tenders",
-      "label": "Tenders()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "tenders()",
-      "source_file": "src/pages/Tenders.tsx",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_pages_verificationhub_riskbadge",
-      "label": "riskBadge()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "riskbadge()",
-      "source_file": "src/pages/VerificationHub.tsx",
-      "source_location": "L41"
-    },
-    {
-      "id": "src_pages_verificationhub_statusbadge",
-      "label": "statusBadge()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "statusbadge()",
-      "source_file": "src/pages/VerificationHub.tsx",
-      "source_location": "L32"
-    },
-    {
-      "id": "src_pages_verificationhub_verificationhub",
-      "label": "VerificationHub()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "verificationhub()",
-      "source_file": "src/pages/VerificationHub.tsx",
-      "source_location": "L68"
-    },
-    {
       "id": "src_pages_verificationsources_verificationsources",
       "label": "VerificationSources()",
       "_callable": true,
@@ -3671,12 +3551,36 @@
       "source_location": "L123"
     },
     {
+      "id": "backend_app_api_routes_alerts_list_alerts",
+      "label": "list_alerts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "code",
+      "norm_label": "list_alerts()",
+      "source_file": "backend/app/api/routes/alerts.py",
+      "source_location": "L16"
+    },
+    {
+      "id": "backend_app_api_routes_alerts_mark_alert_read",
+      "label": "mark_alert_read()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "code",
+      "norm_label": "mark_alert_read()",
+      "source_file": "backend/app/api/routes/alerts.py",
+      "source_location": "L33"
+    },
+    {
       "id": "backend_app_api_routes_alerts_trigger_alert_refresh",
       "label": "trigger_alert_refresh()",
       "_callable": true,
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "code",
       "norm_label": "trigger_alert_refresh()",
       "source_file": "backend/app/api/routes/alerts.py",
@@ -3688,7 +3592,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "code",
       "norm_label": "_create_alert()",
       "source_file": "backend/app/services/alert_service.py",
@@ -3700,7 +3604,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "code",
       "norm_label": "refresh_alerts_for_case()",
       "source_file": "backend/app/services/alert_service.py",
@@ -3712,7 +3616,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "code",
       "norm_label": "run_global_alert_refresh()",
       "source_file": "backend/app/services/alert_service.py",
@@ -4343,6 +4247,18 @@
       "source_location": "L206"
     },
     {
+      "id": "src_assets_emblem_emblem",
+      "label": "Emblem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "emblem()",
+      "source_file": "src/assets/Emblem.tsx",
+      "source_location": "L9"
+    },
+    {
       "id": "src_components_common_formfield_formfield",
       "label": "FormField()",
       "_callable": true,
@@ -4355,40 +4271,64 @@
       "source_location": "L13"
     },
     {
-      "id": "src_pages_departments_departments",
-      "label": "Departments()",
+      "id": "src_components_common_govmodal_govmodal",
+      "label": "GovModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "departments()",
-      "source_file": "src/pages/Departments.tsx",
-      "source_location": "L19"
+      "norm_label": "govmodal()",
+      "source_file": "src/components/common/GovModal.tsx",
+      "source_location": "L14"
     },
     {
-      "id": "src_pages_login_getrandomcaptcha",
-      "label": "getRandomCaptcha()",
+      "id": "src_components_documents_documentuploadmodal_documentuploadmodal",
+      "label": "DocumentUploadModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "getrandomcaptcha()",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L22"
+      "norm_label": "documentuploadmodal()",
+      "source_file": "src/components/documents/DocumentUploadModal.tsx",
+      "source_location": "L28"
     },
     {
-      "id": "src_pages_login_login",
-      "label": "Login()",
+      "id": "src_components_files_fileforwardmodal_fileforwardmodal",
+      "label": "FileForwardModal()",
       "_callable": true,
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "login()",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L31"
+      "norm_label": "fileforwardmodal()",
+      "source_file": "src/components/files/FileForwardModal.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_components_files_fileregistermodal_fileregistermodal",
+      "label": "FileRegisterModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "fileregistermodal()",
+      "source_file": "src/components/files/FileRegisterModal.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_pages_files_files",
+      "label": "Files()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "files()",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L44"
     },
     {
       "id": "src_pages_uploaddocument_uploaddocument",
@@ -4703,40 +4643,64 @@
       "source_location": "L380"
     },
     {
-      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengine",
-      "label": "StatutoryDeadlineEngine()",
+      "id": "src_context_procurementcontext_useprocurement",
+      "label": "useProcurement()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "statutorydeadlineengine()",
-      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
-      "source_location": "L10"
+      "norm_label": "useprocurement()",
+      "source_file": "src/context/ProcurementContext.tsx",
+      "source_location": "L446"
     },
     {
-      "id": "src_components_common_statutorycountdown_statutorycountdown",
-      "label": "StatutoryCountdown()",
+      "id": "src_pages_bidderverification_bidderverification",
+      "label": "BidderVerification()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "statutorycountdown()",
-      "source_file": "src/components/common/StatutoryCountdown.tsx",
-      "source_location": "L11"
+      "norm_label": "bidderverification()",
+      "source_file": "src/pages/BidderVerification.tsx",
+      "source_location": "L76"
     },
     {
-      "id": "src_components_common_technicalcard_technicalcard",
-      "label": "TechnicalCard()",
+      "id": "src_pages_procurementdocuments_procurementdocuments",
+      "label": "ProcurementDocuments()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "technicalcard()",
-      "source_file": "src/components/common/TechnicalCard.tsx",
-      "source_location": "L13"
+      "norm_label": "procurementdocuments()",
+      "source_file": "src/pages/ProcurementDocuments.tsx",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_pages_procurementintegrity_procurementintegrity",
+      "label": "ProcurementIntegrity()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "ProcurementIntegrity.tsx",
+      "file_type": "code",
+      "norm_label": "procurementintegrity()",
+      "source_file": "src/pages/ProcurementIntegrity.tsx",
+      "source_location": "L71"
+    },
+    {
+      "id": "src_pages_tenders_tenders",
+      "label": "Tenders()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "ProcurementIntegrity.tsx",
+      "file_type": "code",
+      "norm_label": "tenders()",
+      "source_file": "src/pages/Tenders.tsx",
+      "source_location": "L17"
     },
     {
       "id": "backend_tests_test_intelligence_testbottleneckdetection_test_bottleneck_using_movements_history",
@@ -4799,6 +4763,42 @@
       "source_location": "L203"
     },
     {
+      "id": "src_components_common_loadingskeleton_cardskeleton",
+      "label": "CardSkeleton()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "cardskeleton()",
+      "source_file": "src/components/common/LoadingSkeleton.tsx",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_components_common_loadingskeleton_tableskeleton",
+      "label": "TableSkeleton()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "tableskeleton()",
+      "source_file": "src/components/common/LoadingSkeleton.tsx",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_pages_departments_departments",
+      "label": "Departments()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "departments()",
+      "source_file": "src/pages/Departments.tsx",
+      "source_location": "L19"
+    },
+    {
       "id": "src_pages_intelligence_intelligence",
       "label": "Intelligence()",
       "_callable": true,
@@ -4811,28 +4811,52 @@
       "source_location": "L23"
     },
     {
-      "id": "backend_app_api_routes_documents_run_ocr_on_document",
-      "label": "run_ocr_on_document()",
+      "id": "src_pages_workflow_workflow",
+      "label": "Workflow()",
       "_callable": true,
       "_origin": "ast",
-      "community": 22,
-      "community_name": "upload_document",
+      "community": 21,
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "run_ocr_on_document()",
-      "source_file": "backend/app/api/routes/documents.py",
-      "source_location": "L203"
+      "norm_label": "workflow()",
+      "source_file": "src/pages/Workflow.tsx",
+      "source_location": "L46"
     },
     {
-      "id": "backend_app_api_routes_documents_upload_document",
-      "label": "upload_document()",
+      "id": "src_pages_verificationhub_riskbadge",
+      "label": "riskBadge()",
       "_callable": true,
       "_origin": "ast",
       "community": 22,
-      "community_name": "upload_document",
+      "community_name": "VerificationHub.tsx",
       "file_type": "code",
-      "norm_label": "upload_document()",
-      "source_file": "backend/app/api/routes/documents.py",
-      "source_location": "L31"
+      "norm_label": "riskbadge()",
+      "source_file": "src/pages/VerificationHub.tsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "src_pages_verificationhub_statusbadge",
+      "label": "statusBadge()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "VerificationHub.tsx",
+      "file_type": "code",
+      "norm_label": "statusbadge()",
+      "source_file": "src/pages/VerificationHub.tsx",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_pages_verificationhub_verificationhub",
+      "label": "VerificationHub()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 22,
+      "community_name": "VerificationHub.tsx",
+      "file_type": "code",
+      "norm_label": "verificationhub()",
+      "source_file": "src/pages/VerificationHub.tsx",
+      "source_location": "L68"
     },
     {
       "id": "backend_app_api_routes_cases_create_case",
@@ -4895,28 +4919,40 @@
       "source_location": "L87"
     },
     {
-      "id": "src_components_common_govmodal_govmodal",
-      "label": "GovModal()",
+      "id": "src_components_common_emptystate_emptystate",
+      "label": "EmptyState()",
       "_callable": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "govmodal()",
-      "source_file": "src/components/common/GovModal.tsx",
+      "norm_label": "emptystate()",
+      "source_file": "src/components/common/EmptyState.tsx",
       "source_location": "L14"
     },
     {
-      "id": "src_components_documents_documentuploadmodal_documentuploadmodal",
-      "label": "DocumentUploadModal()",
+      "id": "src_components_common_govbadge_statusbadge",
+      "label": "StatusBadge()",
       "_callable": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "documentuploadmodal()",
-      "source_file": "src/components/documents/DocumentUploadModal.tsx",
-      "source_location": "L28"
+      "norm_label": "statusbadge()",
+      "source_file": "src/components/common/GovBadge.tsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_components_common_govbutton_govbutton",
+      "label": "GovButton()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "govbutton()",
+      "source_file": "src/components/common/GovButton.tsx",
+      "source_location": "L12"
     },
     {
       "id": "src_components_documents_documentviewermodal_documentviewermodal",
@@ -4924,11 +4960,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "documentviewermodal()",
       "source_file": "src/components/documents/DocumentViewerModal.tsx",
       "source_location": "L25"
+    },
+    {
+      "id": "src_pages_documents_documents",
+      "label": "Documents()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "documents()",
+      "source_file": "src/pages/Documents.tsx",
+      "source_location": "L24"
     },
     {
       "id": "src_pages_filedetail_filedetail",
@@ -4936,83 +4984,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "filedetail()",
       "source_file": "src/pages/FileDetail.tsx",
       "source_location": "L31"
-    },
-    {
-      "id": "src_pages_projectdetail_projectdetail",
-      "label": "ProjectDetail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "projectdetail()",
-      "source_file": "src/pages/ProjectDetail.tsx",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_assets_emblem_emblem",
-      "label": "Emblem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "emblem()",
-      "source_file": "src/assets/Emblem.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_components_layout_applayout_applayout",
-      "label": "AppLayout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "applayout()",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_components_layout_govbreadcrumb_govbreadcrumb",
-      "label": "GovBreadcrumb()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govbreadcrumb()",
-      "source_file": "src/components/layout/GovBreadcrumb.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_layout_govfooter_govfooter",
-      "label": "GovFooter()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govfooter()",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_layout_govhorizontalnav_govhorizontalnav",
-      "label": "GovHorizontalNav()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govhorizontalnav()",
-      "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L28"
     },
     {
       "id": "src_components_layout_govnotificationticker_govnotificationticker",
@@ -5020,47 +4996,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "useLanguage",
+      "community_name": "GovNotificationTicker.tsx",
       "file_type": "code",
       "norm_label": "govnotificationticker()",
       "source_file": "src/components/layout/GovNotificationTicker.tsx",
       "source_location": "L37"
-    },
-    {
-      "id": "src_components_layout_govtopstrip_govtopstrip",
-      "label": "GovTopStrip()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govtopstrip()",
-      "source_file": "src/components/layout/GovTopStrip.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_context_languagecontext_uselanguage",
-      "label": "useLanguage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "uselanguage()",
-      "source_file": "src/context/LanguageContext.tsx",
-      "source_location": "L89"
-    },
-    {
-      "id": "src_pages_dashboard_dashboard",
-      "label": "Dashboard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "dashboard()",
-      "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L26"
     },
     {
       "id": "backend_app_api_routes_projects_get_project_bottlenecks",
@@ -5855,18 +5795,6 @@
       "source_location": "L514"
     },
     {
-      "id": "backend_app_services_document_service_process_ocr",
-      "label": "process_ocr()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "test_documents.py",
-      "file_type": "code",
-      "norm_label": "process_ocr()",
-      "source_file": "backend/app/services/document_service.py",
-      "source_location": "L120"
-    },
-    {
       "id": "backend_app_services_document_service_process_ocr_from_bytes",
       "label": "process_ocr_from_bytes()",
       "_callable": true,
@@ -6083,28 +6011,16 @@
       "source_location": "L162"
     },
     {
-      "id": "src_components_common_emptystate_emptystate",
-      "label": "EmptyState()",
+      "id": "src_components_cases_statutorydeadlineengine_statutorydeadlineengine",
+      "label": "StatutoryDeadlineEngine()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "emptystate()",
-      "source_file": "src/components/common/EmptyState.tsx",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_components_common_govbutton_govbutton",
-      "label": "GovButton()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "govbutton()",
-      "source_file": "src/components/common/GovButton.tsx",
-      "source_location": "L12"
+      "norm_label": "statutorydeadlineengine()",
+      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
+      "source_location": "L10"
     },
     {
       "id": "src_components_common_govcard_govcard",
@@ -6131,52 +6047,28 @@
       "source_location": "L27"
     },
     {
-      "id": "src_components_common_loadingskeleton_cardskeleton",
-      "label": "CardSkeleton()",
+      "id": "src_components_common_statutorycountdown_statutorycountdown",
+      "label": "StatutoryCountdown()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "cardskeleton()",
-      "source_file": "src/components/common/LoadingSkeleton.tsx",
-      "source_location": "L27"
+      "norm_label": "statutorycountdown()",
+      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "source_location": "L11"
     },
     {
-      "id": "src_components_common_loadingskeleton_tableskeleton",
-      "label": "TableSkeleton()",
+      "id": "src_components_common_technicalcard_technicalcard",
+      "label": "TechnicalCard()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "tableskeleton()",
-      "source_file": "src/components/common/LoadingSkeleton.tsx",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_components_files_fileforwardmodal_fileforwardmodal",
-      "label": "FileForwardModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "fileforwardmodal()",
-      "source_file": "src/components/files/FileForwardModal.tsx",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_components_files_fileregistermodal_fileregistermodal",
-      "label": "FileRegisterModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "fileregistermodal()",
-      "source_file": "src/components/files/FileRegisterModal.tsx",
-      "source_location": "L15"
+      "norm_label": "technicalcard()",
+      "source_file": "src/components/common/TechnicalCard.tsx",
+      "source_location": "L13"
     },
     {
       "id": "src_pages_auditlogs_auditlogs",
@@ -6189,30 +6081,6 @@
       "norm_label": "auditlogs()",
       "source_file": "src/pages/AuditLogs.tsx",
       "source_location": "L15"
-    },
-    {
-      "id": "src_pages_documents_documents",
-      "label": "Documents()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "documents()",
-      "source_file": "src/pages/Documents.tsx",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_pages_files_files",
-      "label": "Files()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "files()",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L44"
     },
     {
       "id": "src_pages_pendingfiles_pendingfiles",
@@ -6251,18 +6119,6 @@
       "source_location": "L21"
     },
     {
-      "id": "src_pages_workflow_workflow",
-      "label": "Workflow()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "workflow()",
-      "source_file": "src/pages/Workflow.tsx",
-      "source_location": "L46"
-    },
-    {
       "id": "src_components_cases_casetimeline_casetimeline",
       "label": "CaseTimeline()",
       "_callable": true,
@@ -6275,16 +6131,16 @@
       "source_location": "L5"
     },
     {
-      "id": "src_components_common_govbadge_statusbadge",
-      "label": "StatusBadge()",
+      "id": "src_components_cases_riskattributionpanel_riskattributionpanel",
+      "label": "RiskAttributionPanel()",
       "_callable": true,
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "statusbadge()",
-      "source_file": "src/components/common/GovBadge.tsx",
-      "source_location": "L10"
+      "norm_label": "riskattributionpanel()",
+      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
+      "source_location": "L9"
     },
     {
       "id": "src_components_files_filemovementtimeline_filemovementtimeline",
@@ -6309,6 +6165,18 @@
       "norm_label": "workflowdrawer()",
       "source_file": "src/components/workflow/WorkflowDrawer.tsx",
       "source_location": "L11"
+    },
+    {
+      "id": "src_pages_projectdetail_projectdetail",
+      "label": "ProjectDetail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "projectdetail()",
+      "source_file": "src/pages/ProjectDetail.tsx",
+      "source_location": "L30"
     },
     {
       "id": "backend_app_services_integrity_risk_engine_aggregate_integrity_findings",
@@ -6731,16 +6599,52 @@
       "source_location": "L399"
     },
     {
+      "id": "src_app_protectedroute",
+      "label": "ProtectedRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "protectedroute()",
+      "source_file": "src/App.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_app_publicroute",
+      "label": "PublicRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "publicroute()",
+      "source_file": "src/App.tsx",
+      "source_location": "L46"
+    },
+    {
       "id": "src_components_layout_appheader_appheader",
       "label": "AppHeader()",
       "_callable": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "appheader()",
       "source_file": "src/components/layout/AppHeader.tsx",
       "source_location": "L17"
+    },
+    {
+      "id": "src_components_layout_applayout_applayout",
+      "label": "AppLayout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "applayout()",
+      "source_file": "src/components/layout/AppLayout.tsx",
+      "source_location": "L8"
     },
     {
       "id": "src_components_layout_globalsearchmodal_globalsearchmodal",
@@ -6748,11 +6652,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "globalsearchmodal()",
       "source_file": "src/components/layout/GlobalSearchModal.tsx",
       "source_location": "L9"
+    },
+    {
+      "id": "src_components_layout_govfooter_govfooter",
+      "label": "GovFooter()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "govfooter()",
+      "source_file": "src/components/layout/GovFooter.tsx",
+      "source_location": "L4"
     },
     {
       "id": "src_components_layout_govmainheader_govmainheader",
@@ -6760,11 +6676,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "govmainheader()",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L19"
+      "source_location": "L18"
     },
     {
       "id": "src_components_layout_systemstatusdrawer_systemstatusdrawer",
@@ -6772,11 +6688,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemstatusdrawer()",
       "source_file": "src/components/layout/SystemStatusDrawer.tsx",
       "source_location": "L5"
+    },
+    {
+      "id": "src_context_authcontext_useauth",
+      "label": "useAuth()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "useauth()",
+      "source_file": "src/context/AuthContext.tsx",
+      "source_location": "L162"
     },
     {
       "id": "src_context_systemcontext_systemprovider",
@@ -6784,7 +6712,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemprovider()",
       "source_file": "src/context/SystemContext.tsx",
@@ -6796,7 +6724,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "usesystem()",
       "source_file": "src/context/SystemContext.tsx",
@@ -6945,30 +6873,6 @@
       "norm_label": "test_sparse_data_scenarios()",
       "source_file": "backend/tests/test_integrity_engine.py",
       "source_location": "L583"
-    },
-    {
-      "id": "backend_app_api_routes_alerts_list_alerts",
-      "label": "list_alerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "code",
-      "norm_label": "list_alerts()",
-      "source_file": "backend/app/api/routes/alerts.py",
-      "source_location": "L16"
-    },
-    {
-      "id": "backend_app_api_routes_alerts_mark_alert_read",
-      "label": "mark_alert_read()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "code",
-      "norm_label": "mark_alert_read()",
-      "source_file": "backend/app/api/routes/alerts.py",
-      "source_location": "L33"
     },
     {
       "id": "backend_app_api_routes_verification_check_verification",
@@ -7919,6 +7823,30 @@
       "source_location": "L48"
     },
     {
+      "id": "backend_app_api_routes_documents_run_ocr_on_document",
+      "label": "run_ocr_on_document()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "code",
+      "norm_label": "run_ocr_on_document()",
+      "source_file": "backend/app/api/routes/documents.py",
+      "source_location": "L203"
+    },
+    {
+      "id": "backend_app_api_routes_documents_upload_document",
+      "label": "upload_document()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "code",
+      "norm_label": "upload_document()",
+      "source_file": "backend/app/api/routes/documents.py",
+      "source_location": "L31"
+    },
+    {
       "id": "backend_app_api_routes_projects_create_project",
       "label": "create_project()",
       "_callable": true,
@@ -7989,6 +7917,18 @@
       "norm_label": "upload_project_document()",
       "source_file": "backend/app/api/routes/projects.py",
       "source_location": "L555"
+    },
+    {
+      "id": "backend_app_services_document_service_process_ocr",
+      "label": "process_ocr()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "code",
+      "norm_label": "process_ocr()",
+      "source_file": "backend/app/services/document_service.py",
+      "source_location": "L120"
     },
     {
       "id": "backend_app_services_document_service_upload_document",
@@ -8087,6 +8027,42 @@
       "source_location": "L120"
     },
     {
+      "id": "src_components_layout_govbreadcrumb_govbreadcrumb",
+      "label": "GovBreadcrumb()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "govbreadcrumb()",
+      "source_file": "src/components/layout/GovBreadcrumb.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_components_layout_govhorizontalnav_govhorizontalnav",
+      "label": "GovHorizontalNav()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "govhorizontalnav()",
+      "source_file": "src/components/layout/GovHorizontalNav.tsx",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_components_layout_govtopstrip_govtopstrip",
+      "label": "GovTopStrip()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "govtopstrip()",
+      "source_file": "src/components/layout/GovTopStrip.tsx",
+      "source_location": "L5"
+    },
+    {
       "id": "src_context_languagecontext_languageprovider",
       "label": "LanguageProvider()",
       "_callable": true,
@@ -8097,6 +8073,42 @@
       "norm_label": "languageprovider()",
       "source_file": "src/context/LanguageContext.tsx",
       "source_location": "L22"
+    },
+    {
+      "id": "src_context_languagecontext_uselanguage",
+      "label": "useLanguage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "uselanguage()",
+      "source_file": "src/context/LanguageContext.tsx",
+      "source_location": "L89"
+    },
+    {
+      "id": "src_pages_dashboard_dashboard",
+      "label": "Dashboard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "dashboard()",
+      "source_file": "src/pages/Dashboard.tsx",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_pages_procurementdashboard_procurementdashboard",
+      "label": "ProcurementDashboard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "procurementdashboard()",
+      "source_file": "src/pages/ProcurementDashboard.tsx",
+      "source_location": "L17"
     },
     {
       "id": "backend_app_services_intelligence_deadline_engine_calculate_case_age",
@@ -8289,18 +8301,6 @@
       "norm_label": ".test_no_deadline_returns_unknown()",
       "source_file": "backend/tests/test_intelligence.py",
       "source_location": "L57"
-    },
-    {
-      "id": "src_components_cases_riskattributionpanel_riskattributionpanel",
-      "label": "RiskAttributionPanel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "realApi.ts",
-      "file_type": "code",
-      "norm_label": "riskattributionpanel()",
-      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
-      "source_location": "L9"
     },
     {
       "id": "src_context_authcontext_authprovider",
@@ -8759,16 +8759,16 @@
       "source_location": "L134"
     },
     {
-      "id": "src_pages_procurementaudittrail_procurementaudittrail",
-      "label": "ProcurementAuditTrail()",
+      "id": "src_pages_settings_settings",
+      "label": "Settings()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "ProcurementContext.tsx",
       "file_type": "code",
-      "norm_label": "procurementaudittrail()",
-      "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L7"
+      "norm_label": "settings()",
+      "source_file": "src/pages/Settings.tsx",
+      "source_location": "L20"
     },
     {
       "id": "src_services_api_apiclient_isusingmockapi",
@@ -9423,59 +9423,15 @@
       "source_location": "L1"
     },
     {
-      "id": "src_pages_procurementdashboard",
-      "label": "ProcurementDashboard.tsx",
+      "id": "src_pages_procurementaudittrail",
+      "label": "ProcurementAuditTrail.tsx",
       "_origin": "ast",
       "community": 105,
       "community_name": "App.tsx",
       "file_type": "code",
-      "norm_label": "procurementdashboard.tsx",
-      "source_file": "src/pages/ProcurementDashboard.tsx",
+      "norm_label": "procurementaudittrail.tsx",
+      "source_file": "src/pages/ProcurementAuditTrail.tsx",
       "source_location": "L1"
-    },
-    {
-      "id": "src_pages_procurementdocuments",
-      "label": "ProcurementDocuments.tsx",
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "procurementdocuments.tsx",
-      "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_tenders",
-      "label": "Tenders.tsx",
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "tenders.tsx",
-      "source_file": "src/pages/Tenders.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_verificationhub",
-      "label": "VerificationHub.tsx",
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "verificationhub.tsx",
-      "source_file": "src/pages/VerificationHub.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_verificationhub_status_meta",
-      "label": "STATUS_META",
-      "_origin": "ast",
-      "community": 105,
-      "community_name": "App.tsx",
-      "file_type": "code",
-      "norm_label": "status_meta",
-      "source_file": "src/pages/VerificationHub.tsx",
-      "source_location": "L17"
     },
     {
       "id": "src_pages_verificationsources",
@@ -9500,44 +9456,121 @@
       "source_location": "L24"
     },
     {
+      "id": "backend_app_api_routes_alerts",
+      "label": "alerts.py",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "code",
+      "norm_label": "alerts.py",
+      "source_file": "backend/app/api/routes/alerts.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "backend_app_api_routes_alerts_py_get",
+      "label": "get",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "code",
+      "norm_label": "get",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "backend_app_api_routes_alerts_py_post",
       "label": "post",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "code",
       "norm_label": "post",
       "source_file": "",
       "source_location": ""
     },
     {
+      "id": "backend_app_api_routes_alerts_py_put",
+      "label": "put",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "code",
+      "norm_label": "put",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_core_database",
+      "label": "database.py",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "code",
+      "norm_label": "database.py",
+      "source_file": "backend/app/core/database.py",
+      "source_location": "L1"
+    },
+    {
       "id": "backend_app_services_alert_service",
       "label": "alert_service.py",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "code",
       "norm_label": "alert_service.py",
       "source_file": "backend/app/services/alert_service.py",
       "source_location": "L1"
     },
     {
+      "id": "backend_app_api_routes_alerts_rationale_21",
+      "label": "List all alerts. Filter by read status or severity.",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "rationale",
+      "norm_label": "list all alerts. filter by read status or severity.",
+      "source_file": "backend/app/api/routes/alerts.py",
+      "source_location": "L21"
+    },
+    {
+      "id": "backend_app_api_routes_alerts_rationale_37",
+      "label": "Mark a specific alert as read.",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "rationale",
+      "norm_label": "mark a specific alert as read.",
+      "source_file": "backend/app/api/routes/alerts.py",
+      "source_location": "L37"
+    },
+    {
       "id": "backend_app_api_routes_alerts_rationale_47",
       "label": "Re-evaluate all active cases and generate/update alerts accordingly.",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "rationale",
       "norm_label": "re-evaluate all active cases and generate/update alerts accordingly.",
       "source_file": "backend/app/api/routes/alerts.py",
       "source_location": "L47"
     },
     {
+      "id": "backend_app_core_database_rationale_1",
+      "label": "Supabase client initialization. Uses the SERVICE ROLE KEY for backend\u2026",
+      "_origin": "ast",
+      "community": 107,
+      "community_name": "database.py",
+      "file_type": "rationale",
+      "norm_label": "supabase client initialization. uses the service role key for backend...",
+      "source_file": "backend/app/core/database.py",
+      "source_location": "L1"
+    },
+    {
       "id": "backend_app_services_alert_service_rationale_1",
       "label": "Alert Service \u2014 generates real, data-driven alerts from the database. No random\u2026",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "rationale",
       "norm_label": "alert service \u2014 generates real, data-driven alerts from the database. no random...",
       "source_file": "backend/app/services/alert_service.py",
@@ -9548,7 +9581,7 @@
       "label": "Run alert generation across ALL active cases. Call this on a schedule or after\u2026",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "rationale",
       "norm_label": "run alert generation across all active cases. call this on a schedule or after...",
       "source_file": "backend/app/services/alert_service.py",
@@ -9559,7 +9592,7 @@
       "label": "Insert a new alert if one of the same type for this case doesn't already exist.\u2026",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "rationale",
       "norm_label": "insert a new alert if one of the same type for this case doesn't already exist....",
       "source_file": "backend/app/services/alert_service.py",
@@ -9570,7 +9603,7 @@
       "label": "Evaluate a single case and generate/update alerts as appropriate. Called\u2026",
       "_origin": "ast",
       "community": 107,
-      "community_name": "alert_service.py",
+      "community_name": "database.py",
       "file_type": "rationale",
       "norm_label": "evaluate a single case and generate/update alerts as appropriate. called...",
       "source_file": "backend/app/services/alert_service.py",
@@ -11136,6 +11169,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_assets_emblem",
+      "label": "Emblem.tsx",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "emblem.tsx",
+      "source_file": "src/assets/Emblem.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_common_formfield",
       "label": "FormField.tsx",
       "_origin": "ast",
@@ -11191,6 +11235,39 @@
       "source_location": "L52"
     },
     {
+      "id": "src_components_common_govmodal",
+      "label": "GovModal.tsx",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "govmodal.tsx",
+      "source_file": "src/components/common/GovModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_documents_documentuploadmodal",
+      "label": "DocumentUploadModal.tsx",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "documentuploadmodal.tsx",
+      "source_file": "src/components/documents/DocumentUploadModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_documents_documentuploadmodal_document_types",
+      "label": "DOCUMENT_TYPES",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "document_types",
+      "source_file": "src/components/documents/DocumentUploadModal.tsx",
+      "source_location": "L16"
+    },
+    {
       "id": "src_components_files_fileforwardmodal",
       "label": "FileForwardModal.tsx",
       "_origin": "ast",
@@ -11213,6 +11290,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_mock_data_mock_departments",
+      "label": "MOCK_DEPARTMENTS",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "mock_departments",
+      "source_file": "src/mock/data.ts",
+      "source_location": "L29"
+    },
+    {
       "id": "src_mock_data_mock_officers",
       "label": "MOCK_OFFICERS",
       "_origin": "ast",
@@ -11224,15 +11312,48 @@
       "source_location": "L128"
     },
     {
-      "id": "src_pages_departments",
-      "label": "Departments.tsx",
+      "id": "src_pages_cases",
+      "label": "Cases.tsx",
       "_origin": "ast",
       "community": 14,
       "community_name": "UploadDocument.tsx",
       "file_type": "code",
-      "norm_label": "departments.tsx",
-      "source_file": "src/pages/Departments.tsx",
+      "norm_label": "cases.tsx",
+      "source_file": "src/pages/Cases.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_pages_files",
+      "label": "Files.tsx",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "files.tsx",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_files_stages",
+      "label": "STAGES",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "stages",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_pages_files_statuses",
+      "label": "STATUSES",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "UploadDocument.tsx",
+      "file_type": "code",
+      "norm_label": "statuses",
+      "source_file": "src/pages/Files.tsx",
+      "source_location": "L31"
     },
     {
       "id": "src_pages_login",
@@ -11243,17 +11364,6 @@
       "file_type": "code",
       "norm_label": "login.tsx",
       "source_file": "src/pages/Login.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_search",
-      "label": "Search.tsx",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "search.tsx",
-      "source_file": "src/pages/Search.tsx",
       "source_location": "L1"
     },
     {
@@ -11277,17 +11387,6 @@
       "norm_label": "ocr_steps",
       "source_file": "src/pages/UploadDocument.tsx",
       "source_location": "L25"
-    },
-    {
-      "id": "src_services_api_index_casesservice",
-      "label": "casesService",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "UploadDocument.tsx",
-      "file_type": "code",
-      "norm_label": "casesservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L43"
     },
     {
       "id": "src_services_api_index_departmentservice",
@@ -11662,17 +11761,6 @@
       "norm_label": "mock_dashboard_metrics",
       "source_file": "src/mock/data.ts",
       "source_location": "L1221"
-    },
-    {
-      "id": "src_mock_data_mock_departments",
-      "label": "MOCK_DEPARTMENTS",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "mockApi.ts",
-      "file_type": "code",
-      "norm_label": "mock_departments",
-      "source_file": "src/mock/data.ts",
-      "source_location": "L29"
     },
     {
       "id": "src_mock_data_mock_documents",
@@ -12207,36 +12295,47 @@
       "source_location": "L381"
     },
     {
-      "id": "src_components_cases_statutorydeadlineengine",
-      "label": "StatutoryDeadlineEngine.tsx",
+      "id": "src_pages_procurementdocuments",
+      "label": "ProcurementDocuments.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "statutorydeadlineengine.tsx",
-      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
+      "norm_label": "procurementdocuments.tsx",
+      "source_file": "src/pages/ProcurementDocuments.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_common_statutorycountdown",
-      "label": "StatutoryCountdown.tsx",
+      "id": "src_pages_procurementintegrity",
+      "label": "ProcurementIntegrity.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "statutorycountdown.tsx",
-      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "norm_label": "procurementintegrity.tsx",
+      "source_file": "src/pages/ProcurementIntegrity.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_common_technicalcard",
-      "label": "TechnicalCard.tsx",
+      "id": "src_pages_procurementintegrity_signal_labels",
+      "label": "SIGNAL_LABELS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "StatutoryDeadlineEngine.tsx",
+      "community_name": "ProcurementIntegrity.tsx",
       "file_type": "code",
-      "norm_label": "technicalcard.tsx",
-      "source_file": "src/components/common/TechnicalCard.tsx",
+      "norm_label": "signal_labels",
+      "source_file": "src/pages/ProcurementIntegrity.tsx",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_pages_tenders",
+      "label": "Tenders.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "ProcurementIntegrity.tsx",
+      "file_type": "code",
+      "norm_label": "tenders.tsx",
+      "source_file": "src/pages/Tenders.tsx",
       "source_location": "L1"
     },
     {
@@ -12306,6 +12405,17 @@
       "source_location": "L204"
     },
     {
+      "id": "src_components_common_loadingskeleton",
+      "label": "LoadingSkeleton.tsx",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "loadingskeleton.tsx",
+      "source_file": "src/components/common/LoadingSkeleton.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_pages_analytics",
       "label": "Analytics.tsx",
       "_origin": "ast",
@@ -12314,6 +12424,28 @@
       "file_type": "code",
       "norm_label": "analytics.tsx",
       "source_file": "src/pages/Analytics.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_dashboard",
+      "label": "Dashboard.tsx",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "dashboard.tsx",
+      "source_file": "src/pages/Dashboard.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_departments",
+      "label": "Departments.tsx",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "departments.tsx",
+      "source_file": "src/pages/Departments.tsx",
       "source_location": "L1"
     },
     {
@@ -12326,6 +12458,28 @@
       "norm_label": "intelligence.tsx",
       "source_file": "src/pages/Intelligence.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_pages_workflow",
+      "label": "Workflow.tsx",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "workflow.tsx",
+      "source_file": "src/pages/Workflow.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_workflow_la_workflow_stages",
+      "label": "LA_WORKFLOW_STAGES",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "la_workflow_stages",
+      "source_file": "src/pages/Workflow.tsx",
+      "source_location": "L32"
     },
     {
       "id": "src_services_api_index",
@@ -12359,6 +12513,17 @@
       "norm_label": "auditservice",
       "source_file": "src/services/api/index.ts",
       "source_location": "L149"
+    },
+    {
+      "id": "src_services_api_index_authservice",
+      "label": "authService",
+      "_origin": "ast",
+      "community": 21,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "authservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L19"
     },
     {
       "id": "src_services_api_index_dashboardservice",
@@ -12416,17 +12581,6 @@
       "source_location": "L167"
     },
     {
-      "id": "src_services_api_index_projectservice",
-      "label": "projectService",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "projectservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L78"
-    },
-    {
       "id": "src_services_api_index_projectsservice",
       "label": "projectsService",
       "_origin": "ast",
@@ -12460,48 +12614,26 @@
       "source_location": "L111"
     },
     {
-      "id": "backend_app_api_routes_documents_py_post",
-      "label": "post",
+      "id": "src_pages_verificationhub",
+      "label": "VerificationHub.tsx",
       "_origin": "ast",
       "community": 22,
-      "community_name": "upload_document",
+      "community_name": "VerificationHub.tsx",
       "file_type": "code",
-      "norm_label": "post",
-      "source_file": "",
-      "source_location": ""
+      "norm_label": "verificationhub.tsx",
+      "source_file": "src/pages/VerificationHub.tsx",
+      "source_location": "L1"
     },
     {
-      "id": "backend_app_api_routes_documents_py_uploadfile",
-      "label": "UploadFile",
+      "id": "src_pages_verificationhub_status_meta",
+      "label": "STATUS_META",
       "_origin": "ast",
       "community": 22,
-      "community_name": "upload_document",
+      "community_name": "VerificationHub.tsx",
       "file_type": "code",
-      "norm_label": "uploadfile",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_api_routes_documents_rationale_207",
-      "label": "Trigger OCR processing on an already-uploaded document. Pipeline: 1. Retrieve\u2026",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "upload_document",
-      "file_type": "rationale",
-      "norm_label": "trigger ocr processing on an already-uploaded document. pipeline: 1. retrieve...",
-      "source_file": "backend/app/api/routes/documents.py",
-      "source_location": "L207"
-    },
-    {
-      "id": "backend_app_api_routes_documents_rationale_37",
-      "label": "Upload a document and attach it to a case. - Validates file type (PDF, PNG,\u2026",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "upload_document",
-      "file_type": "rationale",
-      "norm_label": "upload a document and attach it to a case. - validates file type (pdf, png,...",
-      "source_file": "backend/app/api/routes/documents.py",
-      "source_location": "L37"
+      "norm_label": "status_meta",
+      "source_file": "src/pages/VerificationHub.tsx",
+      "source_location": "L17"
     },
     {
       "id": "backend_app_api_routes_cases",
@@ -13297,58 +13429,80 @@
       "source_location": "L22"
     },
     {
+      "id": "src_components_common_emptystate",
+      "label": "EmptyState.tsx",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "emptystate.tsx",
+      "source_file": "src/components/common/EmptyState.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_common_govbadge",
+      "label": "GovBadge.tsx",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "govbadge.tsx",
+      "source_file": "src/components/common/GovBadge.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_common_govbadge_govbadge",
       "label": "GovBadge",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "govbadge",
       "source_file": "src/components/common/GovBadge.tsx",
       "source_location": "L142"
     },
     {
-      "id": "src_components_common_govmodal",
-      "label": "GovModal.tsx",
+      "id": "src_components_common_govbutton",
+      "label": "GovButton.tsx",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "govmodal.tsx",
-      "source_file": "src/components/common/GovModal.tsx",
+      "norm_label": "govbutton.tsx",
+      "source_file": "src/components/common/GovButton.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_documents_documentuploadmodal",
-      "label": "DocumentUploadModal.tsx",
+      "id": "src_components_common_statusbadge",
+      "label": "StatusBadge.tsx",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "documentuploadmodal.tsx",
-      "source_file": "src/components/documents/DocumentUploadModal.tsx",
+      "norm_label": "statusbadge.tsx",
+      "source_file": "src/components/common/StatusBadge.tsx",
       "source_location": "L1"
-    },
-    {
-      "id": "src_components_documents_documentuploadmodal_document_types",
-      "label": "DOCUMENT_TYPES",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "FileDetail.tsx",
-      "file_type": "code",
-      "norm_label": "document_types",
-      "source_file": "src/components/documents/DocumentUploadModal.tsx",
-      "source_location": "L16"
     },
     {
       "id": "src_components_documents_documentviewermodal",
       "label": "DocumentViewerModal.tsx",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "documentviewermodal.tsx",
       "source_file": "src/components/documents/DocumentViewerModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_globalsearchmodal",
+      "label": "GlobalSearchModal.tsx",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "globalsearchmodal.tsx",
+      "source_file": "src/components/layout/GlobalSearchModal.tsx",
       "source_location": "L1"
     },
     {
@@ -13356,10 +13510,21 @@
       "label": "CaseDetail.tsx",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "casedetail.tsx",
       "source_file": "src/pages/CaseDetail.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_documents",
+      "label": "Documents.tsx",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "documents.tsx",
+      "source_file": "src/pages/Documents.tsx",
       "source_location": "L1"
     },
     {
@@ -13367,29 +13532,40 @@
       "label": "FileDetail.tsx",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "filedetail.tsx",
       "source_file": "src/pages/FileDetail.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_pages_projectdetail",
-      "label": "ProjectDetail.tsx",
+      "id": "src_pages_search",
+      "label": "Search.tsx",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
-      "norm_label": "projectdetail.tsx",
-      "source_file": "src/pages/ProjectDetail.tsx",
+      "norm_label": "search.tsx",
+      "source_file": "src/pages/Search.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_services_api_index_casesservice",
+      "label": "casesService",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "GovButton.tsx",
+      "file_type": "code",
+      "norm_label": "casesservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L43"
     },
     {
       "id": "src_services_api_index_documentsservice",
       "label": "documentsService",
       "_origin": "ast",
       "community": 27,
-      "community_name": "FileDetail.tsx",
+      "community_name": "GovButton.tsx",
       "file_type": "code",
       "norm_label": "documentsservice",
       "source_file": "src/services/api/index.ts",
@@ -13440,15 +13616,15 @@
       "source_location": "L34"
     },
     {
-      "id": "package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
+      "id": "package_devdependencies_types_node",
+      "label": "@types/node",
       "_origin": "ast",
       "community": 28,
       "community_name": "devDependencies",
       "file_type": "code",
-      "norm_label": "tailwindcss",
+      "norm_label": "@types/node",
       "source_file": "package.json",
-      "source_location": "L35"
+      "source_location": "L28"
     },
     {
       "id": "package_devdependencies_types_react",
@@ -13528,17 +13704,6 @@
       "source_location": "L33"
     },
     {
-      "id": "package_json_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 28,
-      "community_name": "devDependencies",
-      "file_type": "concept",
-      "norm_label": "tailwindcss",
-      "source_file": "package.json",
-      "source_location": "L35"
-    },
-    {
       "id": "postcss",
       "label": "postcss",
       "_origin": "ast",
@@ -13548,6 +13713,17 @@
       "norm_label": "postcss",
       "source_file": "package.json",
       "source_location": "L34"
+    },
+    {
+      "id": "types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "devDependencies",
+      "file_type": "concept",
+      "norm_label": "@types/node",
+      "source_file": "package.json",
+      "source_location": "L28"
     },
     {
       "id": "types_react",
@@ -13881,77 +14057,11 @@
       "source_location": "L162"
     },
     {
-      "id": "src_assets_emblem",
-      "label": "Emblem.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "emblem.tsx",
-      "source_file": "src/assets/Emblem.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_layout_applayout",
-      "label": "AppLayout.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "applayout.tsx",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_layout_govbreadcrumb",
-      "label": "GovBreadcrumb.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govbreadcrumb.tsx",
-      "source_file": "src/components/layout/GovBreadcrumb.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_layout_govfooter",
-      "label": "GovFooter.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govfooter.tsx",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_layout_govhorizontalnav",
-      "label": "GovHorizontalNav.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govhorizontalnav.tsx",
-      "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_layout_govmainheader",
-      "label": "GovMainHeader.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govmainheader.tsx",
-      "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_layout_govnotificationticker",
       "label": "GovNotificationTicker.tsx",
       "_origin": "ast",
       "community": 3,
-      "community_name": "useLanguage",
+      "community_name": "GovNotificationTicker.tsx",
       "file_type": "code",
       "norm_label": "govnotificationticker.tsx",
       "source_file": "src/components/layout/GovNotificationTicker.tsx",
@@ -13962,22 +14072,11 @@
       "label": "NOTICES",
       "_origin": "ast",
       "community": 3,
-      "community_name": "useLanguage",
+      "community_name": "GovNotificationTicker.tsx",
       "file_type": "code",
       "norm_label": "notices",
       "source_file": "src/components/layout/GovNotificationTicker.tsx",
       "source_location": "L12"
-    },
-    {
-      "id": "src_components_layout_govtopstrip",
-      "label": "GovTopStrip.tsx",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "useLanguage",
-      "file_type": "code",
-      "norm_label": "govtopstrip.tsx",
-      "source_file": "src/components/layout/GovTopStrip.tsx",
-      "source_location": "L1"
     },
     {
       "id": "backend_app_api_routes_projects_py_get",
@@ -14981,17 +15080,6 @@
       "source_location": "L515"
     },
     {
-      "id": "backend_app_services_document_service",
-      "label": "document_service.py",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "test_documents.py",
-      "file_type": "code",
-      "norm_label": "document_service.py",
-      "source_file": "backend/app/services/document_service.py",
-      "source_location": "L1"
-    },
-    {
       "id": "backend_app_services_ocr_service",
       "label": "ocr_service.py",
       "_origin": "ast",
@@ -15012,28 +15100,6 @@
       "norm_label": "test_documents.py",
       "source_file": "backend/tests/test_documents.py",
       "source_location": "L1"
-    },
-    {
-      "id": "backend_app_services_document_service_rationale_1",
-      "label": "Document Service \u2014 file upload to Supabase Storage and OCR pipeline. Note:\u2026",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "test_documents.py",
-      "file_type": "rationale",
-      "norm_label": "document service \u2014 file upload to supabase storage and ocr pipeline. note:...",
-      "source_file": "backend/app/services/document_service.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_services_document_service_rationale_121",
-      "label": "Run OCR on a stored document and update the database record. Returns the OCR\u2026",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "test_documents.py",
-      "file_type": "rationale",
-      "norm_label": "run ocr on a stored document and update the database record. returns the ocr...",
-      "source_file": "backend/app/services/document_service.py",
-      "source_location": "L121"
     },
     {
       "id": "backend_app_services_document_service_rationale_197",
@@ -15190,25 +15256,14 @@
       "source_location": "L97"
     },
     {
-      "id": "src_components_common_emptystate",
-      "label": "EmptyState.tsx",
+      "id": "src_components_cases_statutorydeadlineengine",
+      "label": "StatutoryDeadlineEngine.tsx",
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "emptystate.tsx",
-      "source_file": "src/components/common/EmptyState.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_common_govbutton",
-      "label": "GovButton.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "govbutton.tsx",
-      "source_file": "src/components/common/GovButton.tsx",
+      "norm_label": "statutorydeadlineengine.tsx",
+      "source_file": "src/components/cases/StatutoryDeadlineEngine.tsx",
       "source_location": "L1"
     },
     {
@@ -15234,14 +15289,25 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_common_loadingskeleton",
-      "label": "LoadingSkeleton.tsx",
+      "id": "src_components_common_statutorycountdown",
+      "label": "StatutoryCountdown.tsx",
       "_origin": "ast",
       "community": 39,
       "community_name": "react",
       "file_type": "code",
-      "norm_label": "loadingskeleton.tsx",
-      "source_file": "src/components/common/LoadingSkeleton.tsx",
+      "norm_label": "statutorycountdown.tsx",
+      "source_file": "src/components/common/StatutoryCountdown.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_common_technicalcard",
+      "label": "TechnicalCard.tsx",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "react",
+      "file_type": "code",
+      "norm_label": "technicalcard.tsx",
+      "source_file": "src/components/common/TechnicalCard.tsx",
       "source_location": "L1"
     },
     {
@@ -15254,72 +15320,6 @@
       "norm_label": "auditlogs.tsx",
       "source_file": "src/pages/AuditLogs.tsx",
       "source_location": "L1"
-    },
-    {
-      "id": "src_pages_cases",
-      "label": "Cases.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "cases.tsx",
-      "source_file": "src/pages/Cases.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_dashboard",
-      "label": "Dashboard.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "dashboard.tsx",
-      "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_documents",
-      "label": "Documents.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "documents.tsx",
-      "source_file": "src/pages/Documents.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_files",
-      "label": "Files.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "files.tsx",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_files_stages",
-      "label": "STAGES",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "stages",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_pages_files_statuses",
-      "label": "STATUSES",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "statuses",
-      "source_file": "src/pages/Files.tsx",
-      "source_location": "L31"
     },
     {
       "id": "src_pages_pendingfiles",
@@ -15399,28 +15399,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_pages_workflow",
-      "label": "Workflow.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "workflow.tsx",
-      "source_file": "src/pages/Workflow.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_workflow_la_workflow_stages",
-      "label": "LA_WORKFLOW_STAGES",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "la_workflow_stages",
-      "source_file": "src/pages/Workflow.tsx",
-      "source_location": "L32"
-    },
-    {
       "id": "ref_react",
       "label": "react",
       "_origin": "ast",
@@ -15443,25 +15421,14 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_common_govbadge",
-      "label": "GovBadge.tsx",
+      "id": "src_components_cases_riskattributionpanel",
+      "label": "RiskAttributionPanel.tsx",
       "_origin": "ast",
       "community": 4,
       "community_name": "types/index.ts",
       "file_type": "code",
-      "norm_label": "govbadge.tsx",
-      "source_file": "src/components/common/GovBadge.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_common_statusbadge",
-      "label": "StatusBadge.tsx",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "types/index.ts",
-      "file_type": "code",
-      "norm_label": "statusbadge.tsx",
-      "source_file": "src/components/common/StatusBadge.tsx",
+      "norm_label": "riskattributionpanel.tsx",
+      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
       "source_location": "L1"
     },
     {
@@ -15473,17 +15440,6 @@
       "file_type": "code",
       "norm_label": "filemovementtimeline.tsx",
       "source_file": "src/components/files/FileMovementTimeline.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_layout_globalsearchmodal",
-      "label": "GlobalSearchModal.tsx",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "types/index.ts",
-      "file_type": "code",
-      "norm_label": "globalsearchmodal.tsx",
-      "source_file": "src/components/layout/GlobalSearchModal.tsx",
       "source_location": "L1"
     },
     {
@@ -15518,6 +15474,28 @@
       "norm_label": "workflowdrawer.tsx",
       "source_file": "src/components/workflow/WorkflowDrawer.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_pages_projectdetail",
+      "label": "ProjectDetail.tsx",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "projectdetail.tsx",
+      "source_file": "src/pages/ProjectDetail.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_api_index_projectservice",
+      "label": "projectService",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types/index.ts",
+      "file_type": "code",
+      "norm_label": "projectservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L78"
     },
     {
       "id": "src_types_index",
@@ -15997,10 +15975,43 @@
       "label": "AppHeader.tsx",
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "appheader.tsx",
       "source_file": "src/components/layout/AppHeader.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_applayout",
+      "label": "AppLayout.tsx",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "applayout.tsx",
+      "source_file": "src/components/layout/AppLayout.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_govfooter",
+      "label": "GovFooter.tsx",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "govfooter.tsx",
+      "source_file": "src/components/layout/GovFooter.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_govmainheader",
+      "label": "GovMainHeader.tsx",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "useAuth",
+      "file_type": "code",
+      "norm_label": "govmainheader.tsx",
+      "source_file": "src/components/layout/GovMainHeader.tsx",
       "source_location": "L1"
     },
     {
@@ -16008,7 +16019,7 @@
       "label": "SystemStatusDrawer.tsx",
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemstatusdrawer.tsx",
       "source_file": "src/components/layout/SystemStatusDrawer.tsx",
@@ -16019,7 +16030,7 @@
       "label": "SystemContext.tsx",
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemcontext.tsx",
       "source_file": "src/context/SystemContext.tsx",
@@ -16030,7 +16041,7 @@
       "label": "INITIAL_ALERTS",
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "initial_alerts",
       "source_file": "src/context/SystemContext.tsx",
@@ -16041,7 +16052,7 @@
       "label": "SystemContext",
       "_origin": "ast",
       "community": 44,
-      "community_name": "SystemContext.tsx",
+      "community_name": "useAuth",
       "file_type": "code",
       "norm_label": "systemcontext",
       "source_file": "src/context/SystemContext.tsx",
@@ -16652,39 +16663,6 @@
       "source_location": "L73"
     },
     {
-      "id": "backend_app_api_routes_alerts",
-      "label": "alerts.py",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "code",
-      "norm_label": "alerts.py",
-      "source_file": "backend/app/api/routes/alerts.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_api_routes_alerts_py_get",
-      "label": "get",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "code",
-      "norm_label": "get",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "backend_app_api_routes_alerts_py_put",
-      "label": "put",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "code",
-      "norm_label": "put",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "backend_app_api_routes_documents",
       "label": "documents.py",
       "_origin": "ast",
@@ -16762,17 +16740,6 @@
       "source_location": "L1"
     },
     {
-      "id": "backend_app_core_database",
-      "label": "database.py",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "code",
-      "norm_label": "database.py",
-      "source_file": "backend/app/core/database.py",
-      "source_location": "L1"
-    },
-    {
       "id": "backend_app_core_security",
       "label": "security.py",
       "_origin": "ast",
@@ -16804,6 +16771,17 @@
       "norm_label": "get",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "backend_app_services_document_service",
+      "label": "document_service.py",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "security.py",
+      "file_type": "code",
+      "norm_label": "document_service.py",
+      "source_file": "backend/app/services/document_service.py",
+      "source_location": "L1"
     },
     {
       "id": "backend_app_services_init",
@@ -16861,28 +16839,6 @@
       "source_location": ""
     },
     {
-      "id": "backend_app_api_routes_alerts_rationale_21",
-      "label": "List all alerts. Filter by read status or severity.",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "rationale",
-      "norm_label": "list all alerts. filter by read status or severity.",
-      "source_file": "backend/app/api/routes/alerts.py",
-      "source_location": "L21"
-    },
-    {
-      "id": "backend_app_api_routes_alerts_rationale_37",
-      "label": "Mark a specific alert as read.",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "rationale",
-      "norm_label": "mark a specific alert as read.",
-      "source_file": "backend/app/api/routes/alerts.py",
-      "source_location": "L37"
-    },
-    {
       "id": "backend_app_api_routes_documents_rationale_1",
       "label": "Document routes \u2014 upload, OCR, retrieval, and download endpoints. Route prefix:\u2026",
       "_origin": "ast",
@@ -16913,17 +16869,6 @@
       "file_type": "rationale",
       "norm_label": "core application configuration. all settings are loaded from environment...",
       "source_file": "backend/app/core/config.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "backend_app_core_database_rationale_1",
-      "label": "Supabase client initialization. Uses the SERVICE ROLE KEY for backend\u2026",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "security.py",
-      "file_type": "rationale",
-      "norm_label": "supabase client initialization. uses the service role key for backend...",
-      "source_file": "backend/app/core/database.py",
       "source_location": "L1"
     },
     {
@@ -17013,6 +16958,17 @@
       "norm_label": "application lifespan \u2014 startup and shutdown hooks.",
       "source_file": "backend/app/main.py",
       "source_location": "L27"
+    },
+    {
+      "id": "backend_app_services_document_service_rationale_1",
+      "label": "Document Service \u2014 file upload to Supabase Storage and OCR pipeline. Note:\u2026",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "security.py",
+      "file_type": "rationale",
+      "norm_label": "document service \u2014 file upload to supabase storage and ocr pipeline. note:...",
+      "source_file": "backend/app/services/document_service.py",
+      "source_location": "L1"
     },
     {
       "id": "backend_app_services_prediction_model_loader_rationale_29",
@@ -18336,6 +18292,28 @@
       "source_location": "L49"
     },
     {
+      "id": "backend_app_api_routes_documents_py_post",
+      "label": "post",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "code",
+      "norm_label": "post",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "backend_app_api_routes_documents_py_uploadfile",
+      "label": "UploadFile",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "code",
+      "norm_label": "uploadfile",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "backend_app_api_routes_projects",
       "label": "projects.py",
       "_origin": "ast",
@@ -18402,6 +18380,28 @@
       "source_location": "L1"
     },
     {
+      "id": "backend_app_api_routes_documents_rationale_207",
+      "label": "Trigger OCR processing on an already-uploaded document. Pipeline: 1. Retrieve\u2026",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "rationale",
+      "norm_label": "trigger ocr processing on an already-uploaded document. pipeline: 1. retrieve...",
+      "source_file": "backend/app/api/routes/documents.py",
+      "source_location": "L207"
+    },
+    {
+      "id": "backend_app_api_routes_documents_rationale_37",
+      "label": "Upload a document and attach it to a case. - Validates file type (PDF, PNG,\u2026",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "rationale",
+      "norm_label": "upload a document and attach it to a case. - validates file type (pdf, png,...",
+      "source_file": "backend/app/api/routes/documents.py",
+      "source_location": "L37"
+    },
+    {
       "id": "backend_app_api_routes_projects_rationale_1",
       "label": "Projects Routes \u2014 Land Acquisition Delay Intelligence API\u2026",
       "_origin": "ast",
@@ -18422,6 +18422,17 @@
       "norm_label": "enrich a project db row with real ml prediction and computed fields.",
       "source_file": "backend/app/api/routes/projects.py",
       "source_location": "L89"
+    },
+    {
+      "id": "backend_app_services_document_service_rationale_121",
+      "label": "Run OCR on a stored document and update the database record. Returns the OCR\u2026",
+      "_origin": "ast",
+      "community": 63,
+      "community_name": "projects.py",
+      "file_type": "rationale",
+      "norm_label": "run ocr on a stored document and update the database record. returns the ocr...",
+      "source_file": "backend/app/services/document_service.py",
+      "source_location": "L121"
     },
     {
       "id": "backend_app_services_document_service_rationale_57",
@@ -19117,6 +19128,39 @@
       "source_location": "L721"
     },
     {
+      "id": "src_components_layout_govbreadcrumb",
+      "label": "GovBreadcrumb.tsx",
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "govbreadcrumb.tsx",
+      "source_file": "src/components/layout/GovBreadcrumb.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_govhorizontalnav",
+      "label": "GovHorizontalNav.tsx",
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "govhorizontalnav.tsx",
+      "source_file": "src/components/layout/GovHorizontalNav.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_layout_govtopstrip",
+      "label": "GovTopStrip.tsx",
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "govtopstrip.tsx",
+      "source_file": "src/components/layout/GovTopStrip.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_context_languagecontext",
       "label": "LanguageContext.tsx",
       "_origin": "ast",
@@ -19202,6 +19246,17 @@
       "file_type": "code",
       "norm_label": "i18n/index.ts",
       "source_file": "src/i18n/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_procurementdashboard",
+      "label": "ProcurementDashboard.tsx",
+      "_origin": "ast",
+      "community": 68,
+      "community_name": "LanguageContext.tsx",
+      "file_type": "code",
+      "norm_label": "procurementdashboard.tsx",
+      "source_file": "src/pages/ProcurementDashboard.tsx",
       "source_location": "L1"
     },
     {
@@ -19535,17 +19590,6 @@
       "source_location": "L2"
     },
     {
-      "id": "src_components_cases_riskattributionpanel",
-      "label": "RiskAttributionPanel.tsx",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "realApi.ts",
-      "file_type": "code",
-      "norm_label": "riskattributionpanel.tsx",
-      "source_file": "src/components/cases/RiskAttributionPanel.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_context_authcontext",
       "label": "AuthContext.tsx",
       "_origin": "ast",
@@ -19588,17 +19632,6 @@
       "norm_label": "supabase",
       "source_file": "src/lib/supabaseClient.ts",
       "source_location": "L21"
-    },
-    {
-      "id": "src_services_api_index_authservice",
-      "label": "authService",
-      "_origin": "ast",
-      "community": 72,
-      "community_name": "realApi.ts",
-      "file_type": "code",
-      "norm_label": "authservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L19"
     },
     {
       "id": "src_services_api_realapi",
@@ -20187,26 +20220,26 @@
       "source_location": "L1"
     },
     {
-      "id": "package_devdependencies_types_node",
-      "label": "@types/node",
+      "id": "package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 88,
-      "community_name": "@types/node",
+      "community_name": "tailwindcss",
       "file_type": "code",
-      "norm_label": "@types/node",
+      "norm_label": "tailwindcss",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L35"
     },
     {
-      "id": "types_node",
-      "label": "@types/node",
+      "id": "package_json_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 88,
-      "community_name": "@types/node",
+      "community_name": "tailwindcss",
       "file_type": "concept",
-      "norm_label": "@types/node",
+      "norm_label": "tailwindcss",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L35"
     },
     {
       "id": "env_setup",
@@ -20389,39 +20422,6 @@
       "norm_label": "decision_labels",
       "source_file": "src/pages/BidderVerification.tsx",
       "source_location": "L24"
-    },
-    {
-      "id": "src_pages_procurementaudittrail",
-      "label": "ProcurementAuditTrail.tsx",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ProcurementContext.tsx",
-      "file_type": "code",
-      "norm_label": "procurementaudittrail.tsx",
-      "source_file": "src/pages/ProcurementAuditTrail.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_procurementintegrity",
-      "label": "ProcurementIntegrity.tsx",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ProcurementContext.tsx",
-      "file_type": "code",
-      "norm_label": "procurementintegrity.tsx",
-      "source_file": "src/pages/ProcurementIntegrity.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_procurementintegrity_signal_labels",
-      "label": "SIGNAL_LABELS",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ProcurementContext.tsx",
-      "file_type": "code",
-      "norm_label": "signal_labels",
-      "source_file": "src/pages/ProcurementIntegrity.tsx",
-      "source_location": "L36"
     },
     {
       "id": "src_services_api_apiclient",
@@ -28610,18 +28610,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_components_layout_govfooter_govfooter",
-      "target": "src_context_languagecontext_uselanguage",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
       "source": "src_components_layout_govhorizontalnav_govhorizontalnav",
       "target": "src_context_languagecontext_uselanguage",
       "relation": "calls",
@@ -28630,7 +28618,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L29",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -28642,7 +28630,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -28654,7 +28642,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -28666,7 +28654,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -28678,7 +28666,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/GovTopStrip.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -28810,7 +28798,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -28822,7 +28810,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -28834,7 +28822,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L22",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -28894,7 +28882,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/Tenders.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -35331,7 +35319,7 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govtopstrip_govtopstrip",
+      "target": "src_components_layout_govmainheader_govmainheader",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -35343,7 +35331,7 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govmainheader_govmainheader",
+      "target": "src_components_layout_govbreadcrumb_govbreadcrumb",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -35355,7 +35343,7 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govhorizontalnav_govhorizontalnav",
+      "target": "src_components_layout_govfooter_govfooter",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -35367,42 +35355,6 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govnotificationticker_govnotificationticker",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L6",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govbreadcrumb_govbreadcrumb",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govfooter_govfooter",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_applayout",
       "target": "src_components_layout_globalsearchmodal_globalsearchmodal",
       "relation": "imports",
       "_origin": "ast",
@@ -35410,7 +35362,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L9",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -35510,30 +35462,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_components_layout_govfooter",
-      "target": "src_assets_emblem_emblem",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L4",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_govfooter",
-      "target": "src_context_languagecontext_uselanguage",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L5",
-      "weight": 1.0
-    },
-    {
       "source": "src_components_layout_govhorizontalnav",
       "target": "src_context_languagecontext_uselanguage",
       "relation": "imports",
@@ -35542,19 +35470,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_govmainheader",
-      "target": "src_assets_emblem_emblem",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L14",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -35566,7 +35482,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -35578,7 +35494,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -35590,7 +35506,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -35602,7 +35518,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovTopStrip.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -37054,7 +36970,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -37066,7 +36982,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -37078,7 +36994,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -37090,7 +37006,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L12",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -37798,7 +37714,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/Tenders.tsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -41235,7 +41151,7 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govtopstrip",
+      "target": "src_components_layout_govmainheader",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41247,7 +41163,7 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govmainheader",
+      "target": "src_components_layout_govbreadcrumb",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41259,7 +41175,7 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govhorizontalnav",
+      "target": "src_components_layout_govfooter",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41271,42 +41187,6 @@
     },
     {
       "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govnotificationticker",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L6",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govbreadcrumb",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L7",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_applayout",
-      "target": "src_components_layout_govfooter",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_applayout",
       "target": "src_components_layout_globalsearchmodal",
       "relation": "imports_from",
       "_origin": "ast",
@@ -41314,7 +41194,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L9",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -41450,30 +41330,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_components_layout_govfooter",
-      "target": "src_assets_emblem",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L4",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_govfooter",
-      "target": "src_context_languagecontext",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L5",
-      "weight": 1.0
-    },
-    {
       "source": "src_components_layout_govhorizontalnav",
       "target": "ref_react",
       "relation": "imports_from",
@@ -41494,7 +41350,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -41507,18 +41363,6 @@
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
       "source_location": "L1",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_layout_govmainheader",
-      "target": "src_assets_emblem",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -41530,7 +41374,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -41542,7 +41386,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -41554,7 +41398,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -41590,7 +41434,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/layout/GovTopStrip.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -42766,7 +42610,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -42778,7 +42622,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -42790,7 +42634,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -42814,7 +42658,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L12",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -43438,7 +43282,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/Tenders.tsx",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -52465,7 +52309,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -52520,7 +52364,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/GovFooter.tsx",
-      "source_location": "L7",
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -52531,7 +52375,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L19",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -52542,7 +52386,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/GovHorizontalNav.tsx",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -52553,7 +52397,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/GovMainHeader.tsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -52597,7 +52441,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/GovTopStrip.tsx",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -53389,7 +53233,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/ProcurementDashboard.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -53400,7 +53244,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L14",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -53411,7 +53255,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/ProcurementDocuments.tsx",
-      "source_location": "L21",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -53675,7 +53519,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/Tenders.tsx",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -62491,5 +62335,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a0f93e44b9b5f05cd74e845aacf1bfbb48ba9639"
+  "built_at_commit": "184a0551acd835deb4dd9a6a77f9bbbd5ec22581"
 }

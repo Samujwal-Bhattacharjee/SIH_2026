@@ -1,7 +1,7 @@
 # Graph Report - SIH  (2026-08-31)
 
 ## Corpus Check
-- 175 files · ~145,338 words
+- 175 files · ~145,585 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a0f93e44`
+- Built from commit: `d4617fce`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -91,7 +91,7 @@
 - 21. Development Principles
 - 3. Key Capabilities
 - auth.py
-- @types/node
+- tailwindcss
 - GOIP — Environment Variables & Configuration Guide
 - 8. Typical Data Flow
 - 10. Environment Configuration
@@ -256,7 +256,7 @@ Nodes (11): GovBadge, GovModal(), GovModalProps, DOCUMENT_TYPES, DocumentUploadM
 
 ### Community 28 - "devDependencies"
 Cohesion: 0.11
-Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, tailwindcss, @types/react (+11 more)
+Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, @types/node, @types/react (+11 more)
 
 ### Community 29 - "SIH 2026 — Complete Codebase Audit, Remaining Work & Team Task Allocation"
 Cohesion: 0.09
