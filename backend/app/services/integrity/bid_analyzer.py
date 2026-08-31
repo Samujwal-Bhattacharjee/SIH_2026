@@ -12,7 +12,7 @@ Guarantees:
 import hashlib
 import uuid
 import statistics
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 from app.services.integrity.models import (
     BidderFeature,
     FindingStatus,
@@ -42,6 +42,17 @@ MIN_CO_PARTICIPATIONS = 3
 MIN_TENDERS_FOR_ROTATION = 4
 
 
+def _get_valid_quote(bidder: BidderFeature) -> Optional[float]:
+    """
+    Return the bidder's quote_amount as a float only if it is a valid positive numeric value.
+    Returns None for missing or non-positive quotes.
+    """
+    q = bidder.quote_amount
+    if q is not None and q > 0:
+        return float(q)
+    return None
+
+
 def analyze_bid_price_similarity(
     bidders: List[BidderFeature],
     tender_id: str,
@@ -52,36 +63,43 @@ def analyze_bid_price_similarity(
     
     Trigger: When two or more bidders submit quotes within a narrow price threshold (<= 1.0% delta),
     warranting verification of independent costing methodology.
+
+    Invariant: Only bidders with valid numeric quote_amount participate in price arithmetic.
+    Bidders with None quotes are excluded from price analysis only; they remain available
+    to all other analyzers (relationship, participation, winner, rotation).
     """
-    # Filter bidders with valid numeric quote amounts
-    quoted_bidders = [b for b in bidders if b.quote_amount is not None and b.quote_amount > 0]
-    if len(quoted_bidders) < 2:
+    # Partition: extract only bidders with a valid positive numeric quote.
+    # Each entry is a (BidderFeature, float) pair, ensuring the price is narrowed to float.
+    quoted_pairs: List[Tuple[BidderFeature, float]] = []
+    for b in bidders:
+        price = _get_valid_quote(b)
+        if price is not None:
+            quoted_pairs.append((b, price))
+
+    if len(quoted_pairs) < 2:
         return []
 
-    # Sort bidders by price ascending
-    quoted_bidders.sort(key=lambda b: b.quote_amount)  # type: ignore
+    # Sort bidders by price ascending (operating on narrowed float values only)
+    quoted_pairs.sort(key=lambda pair: pair[1])
 
     # Group into connected clusters of close prices
-    clusters: List[List[BidderFeature]] = []
-    current_cluster: List[BidderFeature] = [quoted_bidders[0]]
+    clusters: List[List[Tuple[BidderFeature, float]]] = []
+    current_cluster: List[Tuple[BidderFeature, float]] = [quoted_pairs[0]]
 
-    for i in range(len(quoted_bidders) - 1):
-        b1 = quoted_bidders[i]
-        b2 = quoted_bidders[i + 1]
-        
-        p1 = b1.quote_amount  # type: ignore
-        p2 = b2.quote_amount  # type: ignore
-        
+    for i in range(len(quoted_pairs) - 1):
+        _, p1 = quoted_pairs[i]
+        _, p2 = quoted_pairs[i + 1]
+
         delta = abs(p2 - p1)
         base = min(p1, p2)
         pct_diff = (delta / base) * 100.0 if base > 0 else 0.0
 
         if pct_diff <= PRICE_SIMILARITY_THRESHOLD_PCT:
-            current_cluster.append(b2)
+            current_cluster.append(quoted_pairs[i + 1])
         else:
             if len(current_cluster) >= 2:
                 clusters.append(current_cluster)
-            current_cluster = [b2]
+            current_cluster = [quoted_pairs[i + 1]]
 
     if len(current_cluster) >= 2:
         clusters.append(current_cluster)
@@ -89,32 +107,34 @@ def analyze_bid_price_similarity(
     findings: List[IntegrityFinding] = []
     for cluster in clusters:
         evidences: List[IntegrityEvidence] = []
-        cluster_prices = [b.quote_amount for b in cluster]  # type: ignore
-        min_p = min(cluster_prices)
-        max_p = max(cluster_prices)
-        spread_pct = ((max_p - min_p) / min_p) * 100.0 if min_p > 0 else 0.0
+        # cluster_prices is now strictly List[float] — no None possible
+        cluster_prices: List[float] = [price for (_, price) in cluster]
+        min_p: float = min(cluster_prices)
+        max_p: float = max(cluster_prices)
+        spread_pct: float = ((max_p - min_p) / min_p) * 100.0 if min_p > 0 else 0.0
 
-        for b in cluster:
-            formatted_price = f"₹{b.quote_amount:,.2f}"  # type: ignore
+        for (b, price) in cluster:
+            formatted_price = f"₹{price:,.2f}"
             evidences.append(
                 IntegrityEvidence(
                     source_type="BID_SUBMISSION",
                     source_id=b.bidder_id,
                     field="quote_amount",
-                    value=b.quote_amount,
+                    value=price,
                     description=f"Submitted financial quote: {formatted_price} by '{b.legal_name}'.",
-                    metadata={"bidder_id": b.bidder_id, "amount": b.quote_amount}
+                    metadata={"bidder_id": b.bidder_id, "amount": price}
                 )
             )
 
         price_hash = hashlib.md5(tender_id.encode()).hexdigest()[:8].upper()
         finding_id = f"INT-PRICE-{price_hash}"
-        names_str = ", ".join([b.legal_name for b in cluster])
+        names_str = ", ".join([b.legal_name for (b, _) in cluster])
 
         finding = IntegrityFinding(
             id=finding_id,
             tender_id=tender_id,
-            related_bidder_ids=[b.bidder_id for b in cluster],
+            bidder_id=None,
+            related_bidder_ids=[b.bidder_id for (b, _) in cluster],
             signal_type=SignalType.BID_PRICE_ANOMALY,
             severity=RiskLevel.MEDIUM,
             score_impact=20.0,
@@ -240,7 +260,7 @@ def analyze_repeated_participation(
     # Map tender -> participating bidder names/IDs
     tender_participants: List[Set[str]] = []
     for t in historical_tenders:
-        parts = set()
+        parts: Set[str] = set()
         raw_parts = t.get("participants") or t.get("bidders") or t.get("bidder_ids") or []
         for p in raw_parts:
             if isinstance(p, dict):
@@ -304,6 +324,7 @@ def analyze_repeated_participation(
                     IntegrityFinding(
                         id=finding_id,
                         tender_id=tender_id,
+                        bidder_id=None,
                         related_bidder_ids=[b1.bidder_id, b2.bidder_id],
                         signal_type=SignalType.REPEATED_PARTICIPATION_PATTERN,
                         severity=RiskLevel.LOW,
@@ -377,6 +398,7 @@ def analyze_bid_rotation(
                     IntegrityFinding(
                         id=finding_id,
                         tender_id=tender_id,
+                        bidder_id=None,
                         related_bidder_ids=[],
                         signal_type=SignalType.BID_ROTATION_PATTERN,
                         severity=RiskLevel.MEDIUM,

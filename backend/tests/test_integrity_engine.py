@@ -853,4 +853,158 @@ def test_dashboard_summary_includes_real_integrity_metrics(auth_client):
     assert top_review["risk_score"] >= 30.0
 
 
+# ============================================================
+# NULLABLE QUOTE AMOUNT TESTS (9 required scenarios)
+# ============================================================
+
+def _make_bidder(bidder_id: str, name: str, quote_amount=None, gstin=None, pan=None) -> BidderFeature:
+    """Helper to create a BidderFeature for nullable quote tests."""
+    return BidderFeature(
+        bidder_id=bidder_id,
+        tender_id="TEN-NULL-TEST",
+        legal_name=name,
+        normalized_name=name.lower().replace(" ", "_"),
+        gstin=gstin,
+        pan=pan,
+        quote_amount=quote_amount,
+    )
+
+
+def test_nullable_scenario_1_all_bidders_have_valid_quotes():
+    """Scenario 1: All bidders have valid quotes — price similarity runs normally."""
+    bidders = [
+        _make_bidder("BID-N1", "Alpha Corp", quote_amount=1_000_000.0),
+        _make_bidder("BID-N2", "Beta Corp", quote_amount=1_005_000.0),
+        _make_bidder("BID-N3", "Gamma Corp", quote_amount=2_000_000.0),
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    # Alpha and Beta are within 0.5% — should trigger
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.BID_PRICE_ANOMALY
+    assert len(findings[0].evidence) == 2
+
+
+def test_nullable_scenario_2_one_bidder_has_none_quote():
+    """Scenario 2: One bidder has None — excluded from price analysis, others still analyzed."""
+    bidders = [
+        _make_bidder("BID-N1", "Alpha Corp", quote_amount=1_000_000.0),
+        _make_bidder("BID-N2", "Beta Corp", quote_amount=1_001_000.0),
+        _make_bidder("BID-N3", "Gamma Corp", quote_amount=None),  # excluded from price
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    # Alpha and Beta within 0.1% — triggers; Gamma excluded from price arithmetic
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.BID_PRICE_ANOMALY
+    bidder_ids_in_finding = findings[0].related_bidder_ids
+    assert "BID-N3" not in bidder_ids_in_finding
+    assert "BID-N1" in bidder_ids_in_finding
+    assert "BID-N2" in bidder_ids_in_finding
+
+
+def test_nullable_scenario_3_two_bidders_have_none_quotes():
+    """Scenario 3: Two bidders have None — only one valid, insufficient for price clustering."""
+    bidders = [
+        _make_bidder("BID-N1", "Alpha Corp", quote_amount=1_000_000.0),
+        _make_bidder("BID-N2", "Beta Corp", quote_amount=None),
+        _make_bidder("BID-N3", "Gamma Corp", quote_amount=None),
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    # Only 1 valid quote — must return empty (no false signal)
+    assert findings == []
+
+
+def test_nullable_scenario_4_all_quotes_missing():
+    """Scenario 4: All bidders have None quote — must return empty (no fabricated signal)."""
+    bidders = [
+        _make_bidder("BID-N1", "Alpha Corp", quote_amount=None),
+        _make_bidder("BID-N2", "Beta Corp", quote_amount=None),
+        _make_bidder("BID-N3", "Gamma Corp", quote_amount=None),
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    assert findings == []
+
+
+def test_nullable_scenario_5_close_bids_still_trigger_anomaly():
+    """Scenario 5: Close valid bids trigger BID_PRICE_ANOMALY with correct score impact."""
+    bidders = [
+        _make_bidder("BID-A", "Alpha Ltd", quote_amount=5_000_000.0),
+        _make_bidder("BID-B", "Beta Ltd", quote_amount=5_004_000.0),  # 0.08% delta
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.BID_PRICE_ANOMALY
+    assert findings[0].severity == RiskLevel.MEDIUM
+    assert findings[0].score_impact == 20.0
+    assert len(findings[0].evidence) == 2
+
+
+def test_nullable_scenario_6_separated_bids_produce_no_anomaly():
+    """Scenario 6: Bids more than 1% apart produce no price anomaly finding."""
+    bidders = [
+        _make_bidder("BID-A", "Alpha Ltd", quote_amount=5_000_000.0),
+        _make_bidder("BID-B", "Beta Ltd", quote_amount=5_100_000.0),  # 2.0% apart
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    assert findings == []
+
+
+def test_nullable_scenario_7_missing_quote_not_treated_as_zero():
+    """Scenario 7: A bidder with None quote must NOT be treated as quoting 0.
+
+    If None were treated as 0, it would always appear as the lowest bid and cluster
+    with any other low bid. This test verifies that None is excluded, not coerced.
+    """
+    bidders = [
+        _make_bidder("BID-A", "Alpha Ltd", quote_amount=None),
+        _make_bidder("BID-B", "Beta Ltd", quote_amount=5_000_000.0),
+        _make_bidder("BID-C", "Gamma Ltd", quote_amount=6_000_000.0),
+    ]
+    findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    # Only B and C, which are 20% apart — no anomaly
+    assert findings == []
+    # Critically, no finding should reference BID-A
+    for f in findings:
+        assert "BID-A" not in f.related_bidder_ids
+
+
+def test_nullable_scenario_8_other_integrity_signals_still_work_with_none_quotes():
+    """Scenario 8: Bidders with None quotes remain available to relationship/cohort/winner analyzers."""
+    # Bidders share the same GSTIN — related bidder signal should still fire
+    # even if both have None quote_amount
+    bidders = [
+        _make_bidder("BID-X1", "Zenith Networks Pvt Ltd", quote_amount=None,
+                     gstin="27AAACZ1234Z1ZV", pan="AAACZ1234Z"),
+        _make_bidder("BID-X2", "Zenith Communications Ltd", quote_amount=None,
+                     gstin="27AAACZ1234Z1ZV", pan="AAACZ1234Z"),
+    ]
+    from app.services.integrity.relationship_analyzer import analyze_related_bidders
+    rel_findings = analyze_related_bidders(bidders, tender_id="TEN-NULL-TEST")
+    assert len(rel_findings) == 1
+    assert rel_findings[0].signal_type == SignalType.RELATED_BIDDER
+
+    # Price analysis with None quotes must be empty — no fabricated price signal
+    price_findings = analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+    assert price_findings == []
+
+
+def test_nullable_scenario_9_repeated_execution_is_deterministic_with_none_quotes():
+    """Scenario 9: Repeated execution with mixed None/float quotes yields identical results."""
+    bidders = [
+        _make_bidder("BID-D1", "Delta Corp", quote_amount=2_000_000.0),
+        _make_bidder("BID-D2", "Echo Corp", quote_amount=2_001_000.0),  # 0.05%
+        _make_bidder("BID-D3", "Foxtrot Corp", quote_amount=None),
+    ]
+    runs = [
+        analyze_bid_price_similarity(bidders, tender_id="TEN-NULL-TEST")
+        for _ in range(5)
+    ]
+    first = runs[0]
+    for r in runs[1:]:
+        assert len(r) == len(first)
+        if first:
+            assert r[0].signal_type == first[0].signal_type
+            assert r[0].score_impact == first[0].score_impact
+            assert r[0].related_bidder_ids == first[0].related_bidder_ids
+
+
 
