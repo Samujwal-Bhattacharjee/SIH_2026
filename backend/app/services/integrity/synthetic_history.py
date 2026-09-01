@@ -200,6 +200,200 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
 
 
 # ============================================================
+# PER-BIDDER ACTIVE-TENDER DOCUMENT OVERRIDES
+# Controls which documents (and their OCR quality) are seeded
+# for each bidder in ACTIVE tenders. Used to create realistic
+# test scenarios covering all 7 compliance requirements.
+# Keys match bidder_key values. Bidders not listed here get the
+# default minimal set (GST + Financial + Udyam-if-applicable).
+# ============================================================
+
+ACTIVE_BIDDER_DOC_SCENARIOS: Dict[str, Dict[str, Any]] = {
+    # TEN-2026-001 SCENARIO 1 (Clean Baseline)
+    # NILGIRI — Full compliant set → all requirements COMPLIANT
+    "TEN-2026-001:NILGIRI": {
+        "pan": {
+            "include": True,
+            "fields": [
+                {"key": "pan", "value": "AABCN1010N", "confidence": 0.98, "isExtracted": True},
+                {"key": "legalName", "value": "Nilgiri Hardware & Telecom Pvt. Ltd.", "confidence": 0.95, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "INCOME TAX DEPARTMENT — PERMANENT ACCOUNT NUMBER CARD\nName: NILGIRI HARDWARE AND TELECOM PVT LTD\nPAN: AABCN1010N\nDate of Birth/Incorporation: 14/09/2016\nFather's Name: N/A (Corporate)\nSignature verified.",
+        },
+        "oem": {
+            "include": True,
+            "fields": [
+                {"key": "oemReference", "value": "OEM-CISCO-2026-NLT-001", "confidence": 0.91, "isExtracted": True},
+                {"key": "expiryDate", "value": "31/12/2027", "confidence": 0.89, "isExtracted": True},
+                {"key": "authorizedProduct", "value": "Cisco Catalyst 9300 Series Switches", "confidence": 0.88, "isExtracted": True},
+                {"key": "oemName", "value": "Cisco Systems India Pvt. Ltd.", "confidence": 0.93, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "OEM MANUFACTURER AUTHORIZATION FORM\nRef No.: OEM-CISCO-2026-NLT-001\nDate: 12-Jan-2026\nThis is to certify that Nilgiri Hardware & Telecom Pvt. Ltd. (CIN: U32200TN2016PTC109876) is an authorized partner for supply and installation of Cisco Catalyst 9300 Series enterprise switching products under tender GEM/2026/B/418207.\nValidity: 31/12/2027\nAuthorized Signatory: Regional Sales Director, Cisco Systems India\nSeal: [CISCO OFFICIAL SEAL]",
+        },
+        "turnover": {
+            "include": True,
+            "fields": [
+                {"key": "annualTurnover", "value": "84200000", "confidence": 0.89, "isExtracted": True},
+                {"key": "fiscalYear", "value": "FY 2024-25", "confidence": 0.96, "isExtracted": True},
+                {"key": "caFirmName", "value": "Ramaswamy & Associates, Chartered Accountants", "confidence": 0.87, "isExtracted": True},
+                {"key": "turnoverCertificate", "value": "Certified gross revenue INR 8,42,00,000", "confidence": 0.89, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "TURNOVER CERTIFICATE\nCertified by: Ramaswamy & Associates, Chartered Accountants (Reg. No. 006217S)\nDate: 30-June-2025\nThis is to certify that Nilgiri Hardware & Telecom Pvt. Ltd. has achieved a gross annual turnover of INR 8,42,00,000 (Rupees Eight Crore Forty-Two Lakhs only) for the financial year 2024-25 as per audited financial statements.\nPAN of entity: AABCN1010N\nGSTIN: 33AABCN1010N1Z0\nPlace: Chennai",
+        },
+        "blacklisting": {
+            "include": True,
+            "fields": [
+                {"key": "blacklistingDeclaration", "value": "Certified not blacklisted or debarred", "confidence": 0.94, "isExtracted": True},
+                {"key": "declarantName", "value": "S. Kalyanasundaram, Director", "confidence": 0.91, "isExtracted": True},
+                {"key": "declarationDate", "value": "25/07/2026", "confidence": 0.96, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "DECLARATION OF NON-BLACKLISTING / NON-DEBARMENT\nTo, The Procurement Officer, Department of Administrative Reforms\nI, S. Kalyanasundaram, Director, Nilgiri Hardware & Telecom Pvt. Ltd. (GSTIN: 33AABCN1010N1Z0) hereby solemnly declare that our firm has not been blacklisted, debarred, or placed on any negative list by any Central Government, State Government, or PSU as on the date of this declaration.\nDate: 25/07/2026  Place: Chennai\nSignature & Seal of Authorized Signatory",
+        },
+        "local_content": {
+            "include": True,
+            "fields": [
+                {"key": "localContentPercentage", "value": "52", "confidence": 0.88, "isExtracted": True},
+                {"key": "localContentClass", "value": "Class I", "confidence": 0.92, "isExtracted": True},
+                {"key": "selfCertification", "value": "Minimum 52% local content in the supplied goods", "confidence": 0.88, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "LOCAL CONTENT DECLARATION — Make in India Order (PPO 2017 amended 2020)\nTender No.: GEM/2026/B/418207\nBidder: Nilgiri Hardware & Telecom Pvt. Ltd.\nWe hereby declare that the goods/services offered under this tender have a minimum local content of 52% (Fifty-Two percent), qualifying this offer as a Class I Local Supplier as per the Public Procurement (Preference to Make in India) Order.\nDate: 28/07/2026",
+        },
+    },
+    # MAHANADI — Partial set, missing OEM → NON_COMPLIANT (blocking), NEEDS_REVIEW on blacklisting
+    "TEN-2026-001:MAHANADI": {
+        "pan": {
+            "include": True,
+            "fields": [
+                {"key": "pan", "value": "AABCM8008M", "confidence": 0.96, "isExtracted": True},
+                {"key": "legalName", "value": "Mahanadi Security & Surveillance Pvt. Ltd.", "confidence": 0.92, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "INCOME TAX DEPARTMENT — PAN CARD\nName: MAHANADI SECURITY AND SURVEILLANCE PVT LTD\nPAN: AABCM8008M\nDate of Incorporation: 22/03/2017",
+        },
+        "oem": {"include": False},  # Missing → NON_COMPLIANT (mandatory blocking)
+        "turnover": {"include": False},  # Missing → PENDING
+        "blacklisting": {
+            "include": True,
+            "ocr_status": "COMPLETED",
+            # Blacklisting doc uploaded but declaration field NOT extractable (partial OCR)
+            "fields": [
+                {"key": "documentTitle", "value": "Declaration of Non-Blacklisting", "confidence": 0.72, "isExtracted": True},
+            ],
+            "extracted_text": "DECLARATION [partial/degraded scan]\nBidder: Mahanadi Security... [text obscured]\nDeclaration clause: [unable to extract - scan quality insufficient]",
+        },
+        "local_content": {"include": False},  # Missing → PENDING
+    },
+    # SAHYADRI — GST OCR failed, PAN ok, no OEM → EXCEPTION_FOUND
+    "TEN-2026-001:SAHYADRI": {
+        "gst_ocr_status": "FAILED",  # Override GST OCR to FAILED
+        "pan": {
+            "include": True,
+            "fields": [
+                {"key": "pan", "value": "AABCS9009S", "confidence": 0.94, "isExtracted": True},
+                {"key": "legalName", "value": "Sahyadri Geo-Informatics LLP", "confidence": 0.90, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "PAN CARD — INCOME TAX DEPARTMENT OF INDIA\nName: SAHYADRI GEO-INFORMATICS LLP\nPAN: AABCS9009S\nDate: 08/04/2019",
+        },
+        "oem": {"include": False},  # Missing → NON_COMPLIANT
+        "turnover": {"include": False},
+        "blacklisting": {"include": False},
+        "local_content": {"include": False},
+    },
+    # TEN-2026-011 SCENARIO 11 (Bidder-Officer Administrative Association)
+    # KAVERI (BID-173) — Full compliant set (but officer association risk)
+    "TEN-2026-011:KAVERI": {
+        "pan": {
+            "include": True,
+            "fields": [
+                {"key": "pan", "value": "AABCK2002K", "confidence": 0.98, "isExtracted": True},
+                {"key": "legalName", "value": "Kaveri Digital Solutions Ltd.", "confidence": 0.96, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "INCOME TAX DEPARTMENT — PERMANENT ACCOUNT NUMBER\nName: KAVERI DIGITAL SOLUTIONS LTD\nPAN: AABCK2002K\nDate of Incorporation: 17/03/2015\nStatus: ACTIVE",
+        },
+        "oem": {
+            "include": True,
+            "fields": [
+                {"key": "oemReference", "value": "OEM-DELL-2026-KVD-011", "confidence": 0.93, "isExtracted": True},
+                {"key": "expiryDate", "value": "30/06/2028", "confidence": 0.90, "isExtracted": True},
+                {"key": "oemName", "value": "Dell Technologies India Pvt. Ltd.", "confidence": 0.95, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "OEM MANUFACTURER AUTHORIZATION FORM\nRef: OEM-DELL-2026-KVD-011\nDate: 15-Feb-2026\nDell Technologies India Pvt. Ltd. hereby authorizes Kaveri Digital Solutions Ltd. as its authorized reseller and system integrator for document digitization solutions under Government procurement.\nValidity: 30/06/2028",
+        },
+        "turnover": {
+            "include": True,
+            "fields": [
+                {"key": "annualTurnover", "value": "312000000", "confidence": 0.91, "isExtracted": True},
+                {"key": "fiscalYear", "value": "FY 2024-25", "confidence": 0.97, "isExtracted": True},
+                {"key": "turnoverCertificate", "value": "Certified gross revenue INR 31,20,00,000", "confidence": 0.91, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "TURNOVER CERTIFICATE\nThis certifies that Kaveri Digital Solutions Ltd. (PAN: AABCK2002K) achieved audited gross annual turnover of INR 31,20,00,000 for FY 2024-25.\nCA Firm: Rao & Partners, Bangalore (ICAI Reg. 009214S)",
+        },
+        "blacklisting": {
+            "include": True,
+            "fields": [
+                {"key": "blacklistingDeclaration", "value": "Entity not blacklisted or debarred by any government authority", "confidence": 0.95, "isExtracted": True},
+                {"key": "declarantName", "value": "Vikramaditya Rao, Managing Director", "confidence": 0.93, "isExtracted": True},
+                {"key": "declarationDate", "value": "20/08/2026", "confidence": 0.97, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "NON-BLACKLISTING DECLARATION\nI, Vikramaditya Rao, Managing Director, Kaveri Digital Solutions Ltd. hereby declare that the company has not been blacklisted or debarred by any government entity as on 20/08/2026.",
+        },
+        "local_content": {
+            "include": True,
+            "fields": [
+                {"key": "localContentPercentage", "value": "61", "confidence": 0.87, "isExtracted": True},
+                {"key": "localContentClass", "value": "Class I", "confidence": 0.93, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "LOCAL CONTENT DECLARATION — Make in India\nBidder: Kaveri Digital Solutions Ltd.\nLocal Content: 61% (Class I Local Supplier)\nDate: 22/08/2026",
+        },
+    },
+    # TAPTI (BID-174) — Missing OEM → EXCEPTION_FOUND (mandatory NON_COMPLIANT)
+    "TEN-2026-011:TAPTI": {
+        "pan": {
+            "include": True,
+            "fields": [
+                {"key": "pan", "value": "AABCT6006T", "confidence": 0.97, "isExtracted": True},
+                {"key": "legalName", "value": "Tapti Solutions & Analytics Pvt. Ltd.", "confidence": 0.94, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "PAN CARD — INCOME TAX DEPARTMENT\nName: TAPTI SOLUTIONS AND ANALYTICS PVT LTD\nPAN: AABCT6006T\nDate of Incorporation: 04/06/2020",
+        },
+        "oem": {"include": False},  # Missing → NON_COMPLIANT (mandatory blocking)
+        "turnover": {
+            "include": True,
+            "fields": [
+                {"key": "annualTurnover", "value": "52000000", "confidence": 0.86, "isExtracted": True},
+                {"key": "fiscalYear", "value": "FY 2024-25", "confidence": 0.94, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "TURNOVER CERTIFICATE\nTapti Solutions & Analytics Pvt. Ltd. — FY 2024-25 gross turnover: INR 5,20,00,000.\nCA: Shah & Associates, Gandhinagar.",
+        },
+        "blacklisting": {
+            "include": True,
+            "fields": [
+                {"key": "blacklistingDeclaration", "value": "Not blacklisted or debarred", "confidence": 0.92, "isExtracted": True},
+                {"key": "declarantName", "value": "Harish Patel, Director", "confidence": 0.90, "isExtracted": True},
+            ],
+            "ocr_status": "COMPLETED",
+            "extracted_text": "NON-BLACKLISTING DECLARATION\nTapti Solutions & Analytics Pvt. Ltd. is not blacklisted or debarred as on 22/08/2026.\nSignatory: Harish Patel, Director.",
+        },
+        "local_content": {"include": False},  # Missing → PENDING
+    },
+}
+
+
+
+# ============================================================
 # SYNTHETIC TENDERS DATASET (23 TENDERS TOTAL)
 # ============================================================
 
@@ -858,6 +1052,11 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             directors_to_embed = bid_info.get("directors_override") or b_profile.get("directors") or []
             pan_to_embed = bid_info.get("inconsistent_pan") or b_profile.get("pan")
 
+            # Look up per-bidder scenario overrides for active tenders
+            scenario_key = f"{t_id}:{b_key}"
+            bidder_scenario = ACTIVE_BIDDER_DOC_SCENARIOS.get(scenario_key, {})
+            gst_ocr_override = bidder_scenario.get("gst_ocr_status", "COMPLETED")
+
             gst_fields = [
                 {"key": "gstin", "value": b_profile.get("gstin"), "confidence": 0.98, "isExtracted": True},
                 {"key": "legalName", "value": b_profile["legal_name"], "confidence": 0.95, "isExtracted": True},
@@ -872,12 +1071,24 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
                     "isExtracted": True
                 })
 
+            # If GST OCR failed, clear fields
+            gst_extracted_fields = [] if gst_ocr_override == "FAILED" else gst_fields
+            gst_text = (
+                f"GST REGISTRATION CERTIFICATE\nGSTIN: {b_profile.get('gstin')}\nLegal Name: {b_profile['legal_name']}\n"
+                f"PAN: {pan_to_embed}\nRegistered Address: {b_profile.get('registered_address')}\n"
+                f"Registration Date: 01/07/2017\nStatus: ACTIVE\nReturn Filing Status: Regular"
+                if gst_ocr_override != "FAILED" else None
+            )
+
+            # Tuple format: (doc_id, filename, doc_type, fields, ocr_status, extracted_text)
             doc_specs = [
                 (
                     f"DOC-{b_id}-GST",
                     f"{b_key}_GST_Certificate.pdf",
                     "GST Certificate",
-                    gst_fields
+                    gst_extracted_fields,
+                    gst_ocr_override,
+                    gst_text,
                 ),
                 (
                     f"DOC-{b_id}-FIN",
@@ -885,14 +1096,21 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
                     "Financial Bid Submission",
                     [
                         {"key": "quoteAmount", "value": str(quote), "confidence": 0.99, "isExtracted": True},
-                        {"key": "financialBid", "value": f"₹ {quote:,.2f}", "confidence": 0.99, "isExtracted": True},
+                        {"key": "financialBid", "value": f"\u20b9 {quote:,.2f}", "confidence": 0.99, "isExtracted": True},
                         {"key": "legalName", "value": b_profile["legal_name"], "confidence": 0.95, "isExtracted": True},
                         {"key": "gstin", "value": b_profile.get("gstin"), "confidence": 0.98, "isExtracted": True},
-                    ]
+                    ],
+                    "COMPLETED",
+                    f"COMMERCIAL BID SUBMISSION\nBidder: {b_profile['legal_name']}\nTender: {t_num}\nQuoted Amount: \u20b9 {quote:,.2f}\nDate: {t_close[:10] if t_close else 'N/A'}",
                 ),
             ]
 
             if b_profile.get("udyam_number"):
+                udyam_text = (
+                    f"UDYAM REGISTRATION CERTIFICATE\nUdyam No.: {b_profile.get('udyam_number')}\n"
+                    f"Name: {b_profile['legal_name']}\nCategory: {b_profile.get('enterprise_category', 'Small Enterprise')}\n"
+                    f"NIC Code: 62011\nDate of Commencement: 01/07/2020\nStatus: ACTIVE"
+                )
                 doc_specs.append((
                     f"DOC-{b_id}-UDYAM",
                     f"{b_key}_Udyam_Registration.pdf",
@@ -900,20 +1118,93 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
                     [
                         {"key": "udyamNumber", "value": b_profile.get("udyam_number"), "confidence": 0.96, "isExtracted": True},
                         {"key": "legalName", "value": b_profile["legal_name"], "confidence": 0.93, "isExtracted": True},
-                    ]
+                        {"key": "enterpriseCategory", "value": b_profile.get("enterprise_category", "Small Enterprise"), "confidence": 0.95, "isExtracted": True},
+                    ],
+                    "COMPLETED",
+                    udyam_text,
                 ))
 
-            for d_id, fname, dtype, fields in doc_specs:
+            # Add scenario-specific additional documents for active tenders
+            if scenario_key in ACTIVE_BIDDER_DOC_SCENARIOS:
+                sc = ACTIVE_BIDDER_DOC_SCENARIOS[scenario_key]
+
+                # PAN Card document
+                pan_sc = sc.get("pan", {})
+                if pan_sc.get("include"):
+                    doc_specs.append((
+                        f"DOC-{b_id}-PAN",
+                        f"{b_key}_PAN_Card.pdf",
+                        "PAN Card",
+                        pan_sc.get("fields", []),
+                        pan_sc.get("ocr_status", "COMPLETED"),
+                        pan_sc.get("extracted_text"),
+                    ))
+
+                # OEM Authorization
+                oem_sc = sc.get("oem", {})
+                if oem_sc.get("include"):
+                    doc_specs.append((
+                        f"DOC-{b_id}-OEM",
+                        f"{b_key}_OEM_Authorization.pdf",
+                        "OEM Authorization",
+                        oem_sc.get("fields", []),
+                        oem_sc.get("ocr_status", "COMPLETED"),
+                        oem_sc.get("extracted_text"),
+                    ))
+
+                # Turnover Certificate
+                turn_sc = sc.get("turnover", {})
+                if turn_sc.get("include"):
+                    doc_specs.append((
+                        f"DOC-{b_id}-TURN",
+                        f"{b_key}_Turnover_Certificate.pdf",
+                        "Turnover Certificate",
+                        turn_sc.get("fields", []),
+                        turn_sc.get("ocr_status", "COMPLETED"),
+                        turn_sc.get("extracted_text"),
+                    ))
+
+                # Non-Blacklisting Declaration
+                bl_sc = sc.get("blacklisting", {})
+                if bl_sc.get("include"):
+                    doc_specs.append((
+                        f"DOC-{b_id}-BL",
+                        f"{b_key}_Blacklisting_Declaration.pdf",
+                        "Non-Blacklisting Declaration",
+                        bl_sc.get("fields", []),
+                        bl_sc.get("ocr_status", "COMPLETED"),
+                        bl_sc.get("extracted_text"),
+                    ))
+
+                # Local Content Declaration
+                lc_sc = sc.get("local_content", {})
+                if lc_sc.get("include"):
+                    doc_specs.append((
+                        f"DOC-{b_id}-LC",
+                        f"{b_key}_Local_Content_Declaration.pdf",
+                        "Local Content Declaration",
+                        lc_sc.get("fields", []),
+                        lc_sc.get("ocr_status", "COMPLETED"),
+                        lc_sc.get("extracted_text"),
+                    ))
+
+            for doc_tuple in doc_specs:
+                d_id, fname, dtype = doc_tuple[0], doc_tuple[1], doc_tuple[2]
+                fields = doc_tuple[3] if len(doc_tuple) > 3 else []
+                doc_ocr_status = doc_tuple[4] if len(doc_tuple) > 4 else "COMPLETED"
+                doc_text = doc_tuple[5] if len(doc_tuple) > 5 else None
+
                 conn.execute("""
-                    INSERT INTO documents (id, file_name, file_type, file_size, document_type, ocr_status, extracted_fields, ocr_engine, ocr_confidence, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO documents (id, file_name, file_type, file_size, document_type, ocr_status, extracted_text, extracted_fields, ocr_engine, ocr_confidence, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     d_id,
                     fname,
                     "application/pdf",
                     145000,
                     dtype,
-                    "COMPLETED",
+                    doc_ocr_status,
+                    doc_text,
                     json.dumps(fields),
                     "PyMuPDF + Regex Parser",
                     0.96,
@@ -948,4 +1239,147 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             ))
             counts["audit_events"] += 1
 
+    # Pre-seed compliance results for ALL active tender bidders
+    # so the UI shows correct statuses on first load without officer action.
+    _preseed_compliance_results(conn, now)
+
     return counts
+
+
+def _preseed_compliance_results(conn, now: str) -> None:
+    """
+    Pre-compute and persist compliance results for all ACTIVE tender bidders.
+    This ensures the UI shows correct requirement statuses on first load.
+    Uses the existing run_full_verification pipeline — no separate logic.
+    """
+    try:
+        from app.services.procurement_service import run_full_verification, DEFAULT_TENDER_REQUIREMENTS
+        import uuid as _uuid
+
+        # Fetch all active tenders
+        active_tenders = conn.execute(
+            "SELECT id FROM tenders WHERE status = 'ACTIVE'"
+        ).fetchall()
+
+        for t_row in active_tenders:
+            t_id = t_row[0]
+            bidder_rows = conn.execute(
+                "SELECT id FROM bidders WHERE tender_id = ?", (t_id,)
+            ).fetchall()
+
+            for b_row in bidder_rows:
+                b_id = b_row[0]
+
+                # Fetch bidder data
+                bidder_row = conn.execute(
+                    "SELECT * FROM bidders WHERE id = ?", (b_id,)
+                ).fetchone()
+                if not bidder_row:
+                    continue
+                bidder = dict(bidder_row)
+
+                # Fetch documents for this bidder
+                doc_rows = conn.execute("""
+                    SELECT d.* FROM documents d
+                    JOIN bidder_documents bd ON d.id = bd.document_id
+                    WHERE bd.bidder_id = ?
+                """, (b_id,)).fetchall()
+
+                documents = []
+                for dr in doc_rows:
+                    d = dict(dr)
+                    # Deserialise extracted_fields JSON
+                    if isinstance(d.get("extracted_fields"), str):
+                        try:
+                            d["extracted_fields"] = __import__("json").loads(d["extracted_fields"])
+                        except Exception:
+                            d["extracted_fields"] = []
+                    documents.append(d)
+
+                # Fetch tender requirements
+                req_rows = conn.execute(
+                    "SELECT * FROM tender_requirements WHERE tender_id = ?", (t_id,)
+                ).fetchall()
+                requirements = [dict(r) for r in req_rows] if req_rows else DEFAULT_TENDER_REQUIREMENTS
+
+                # Run verification pipeline
+                assessment = run_full_verification(bidder, requirements, documents)
+
+                # Delete old results and persist new ones
+                conn.execute("DELETE FROM compliance_results WHERE bidder_id = ?", (b_id,))
+                conn.execute("DELETE FROM discrepancies WHERE bidder_id = ?", (b_id,))
+
+                for check in assessment.get("checks", []):
+                    conn.execute("""
+                        INSERT INTO compliance_results (
+                            id, bidder_id, tender_id, requirement_id, requirement_name, category,
+                            status, severity, score, evidence_doc_id, evidence_field_key,
+                            evidence_value, evidence_source, confidence, reason, verified_at, updated_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        str(_uuid.uuid4()),
+                        b_id,
+                        t_id,
+                        check.get("requirement_id", "UNKNOWN"),
+                        check.get("name") or check.get("requirement_name", "Requirement"),
+                        check.get("category", "STATUTORY"),
+                        check.get("status", "PENDING"),
+                        check.get("severity", "MEDIUM"),
+                        check.get("score", 0),
+                        check.get("evidence_doc_id"),
+                        check.get("evidence_field_key"),
+                        str(check.get("evidence_value") or ""),
+                        check.get("evidence_source"),
+                        float(check.get("confidence", 0.0) or 0.0),
+                        check.get("reason") or check.get("description", ""),
+                        now,
+                        now,
+                    ))
+
+                for disc in assessment.get("discrepancies", []):
+                    conn.execute("""
+                        INSERT INTO discrepancies (
+                            id, bidder_id, discrepancy_type, severity, field_name,
+                            expected_value, found_value, source_doc_1_id, source_doc_2_id,
+                            description, recommendation, created_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        str(_uuid.uuid4()),
+                        b_id,
+                        disc.get("discrepancy_type", "INCONSISTENCY"),
+                        disc.get("severity", "MEDIUM"),
+                        disc.get("field_name", "Field"),
+                        disc.get("expected_value"),
+                        disc.get("found_value"),
+                        disc.get("source_doc_1_id"),
+                        disc.get("source_doc_2_id"),
+                        disc.get("description", "Discrepancy identified."),
+                        disc.get("recommendation", ""),
+                        now,
+                    ))
+
+                # Update bidder compliance score and status
+                from app.services.procurement_service import determine_compliance_status
+                comp_summary = determine_compliance_status(
+                    assessment.get("checks", []),
+                    assessment.get("discrepancies", [])
+                )
+                compliance_status_val = assessment.get("compliance_status") or comp_summary["status"]
+                risk = assessment.get("risk_level", "MEDIUM")
+
+                conn.execute("""
+                    UPDATE bidders SET compliance_score = ?, risk_level = ?,
+                    compliance_status = ?, status = ?, updated_at = ?
+                    WHERE id = ? AND (officer_decision IS NULL OR officer_decision = '')
+                """, (
+                    assessment.get("compliance_score", 0.0),
+                    risk,
+                    compliance_status_val,
+                    compliance_status_val,
+                    now,
+                    b_id,
+                ))
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Pre-seeding compliance results failed: {e}", exc_info=True)

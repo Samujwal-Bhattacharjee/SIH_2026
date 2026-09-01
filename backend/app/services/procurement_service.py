@@ -639,7 +639,11 @@ def check_turnover_threshold(all_fields: list[dict], documents: list[dict],
 def check_local_content(all_fields: list[dict], documents: list[dict]) -> dict:
     """Check: Local content declaration present."""
     for doc in documents:
-        ev = _extract_field_with_evidence(doc, "localContentPct")
+        ev = (
+            _extract_field_with_evidence(doc, "localContentPct") or
+            _extract_field_with_evidence(doc, "localContentPercentage") or
+            _extract_field_with_evidence(doc, "local_content_percentage")
+        )
         if ev:
             lc_pct = ev["value"]
             conf = ev["confidence"]

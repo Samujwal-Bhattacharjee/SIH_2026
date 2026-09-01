@@ -338,3 +338,54 @@ def test_confidence_unrelated_document_does_not_raise_confidence():
     assert res_turnover["evidence_available"] is False
     assert res_blacklist["evidence_available"] is False
 
+
+def test_seeded_bid_173_has_full_evidence():
+    """BID-173 (Kaveri / TEN-2026-011) has all statutory requirements backed by real evidence."""
+    ps.reset_and_seed_procurement_data()
+    bidder = ps.get_bidder_by_id("BID-173")
+    assert bidder is not None
+    assert bidder["legal_name"] == "Kaveri Digital Solutions Ltd."
+
+    comp_results = ps.get_compliance_results("BID-173")
+    assert len(comp_results) >= 6
+
+    # Verify each statutory requirement has real evidence
+    for res in comp_results:
+        req_id = res["requirement_id"]
+        if req_id in ("GST_REQUIRED", "PAN_REQUIRED", "OEM_AUTHORIZATION", "NON_BLACKLISTING", "LOCAL_CONTENT", "TURNOVER_THRESHOLD"):
+            assert res["evidence_source"] is not None
+            assert res["confidence"] > 0.80
+
+
+def test_seeded_bid_174_has_missing_oem_exception():
+    """BID-174 (Tapti / TEN-2026-011) has missing OEM Authorization -> EXCEPTION_FOUND & blocking exception."""
+    ps.reset_and_seed_procurement_data()
+    bidder = ps.get_bidder_by_id("BID-174")
+    assert bidder is not None
+    assert bidder["compliance_status"] == "EXCEPTION_FOUND"
+    assert bidder["blocking_exceptions_count"] >= 1
+
+    comp_results = ps.get_compliance_results("BID-174")
+    oem_check = next((r for r in comp_results if r["requirement_id"] == "OEM_AUTHORIZATION"), None)
+    assert oem_check is not None
+    assert oem_check["status"] == "NON_COMPLIANT"
+    assert oem_check["confidence"] == 0.0
+    assert oem_check["evidence_source"] is None
+
+
+def test_re_evaluation_persists_fresh_results():
+    """Re-running verification pipeline updates and persists compliance results in database."""
+    ps.reset_and_seed_procurement_data()
+    bidder = ps.get_bidder_by_id("BID-173")
+    docs = ps.get_bidder_documents("BID-173")
+    reqs = ps.get_tender_requirements(bidder["tender_id"])
+
+    assessment = run_full_verification(bidder, reqs, docs)
+    save_res = ps.save_compliance_assessment("BID-173", bidder["tender_id"], assessment)
+    assert save_res["checks_saved"] >= 6
+
+    # Fetch fresh results
+    fresh_results = ps.get_compliance_results("BID-173")
+    assert len(fresh_results) >= 6
+
+

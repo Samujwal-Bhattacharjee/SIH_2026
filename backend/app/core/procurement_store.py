@@ -731,6 +731,14 @@ def save_compliance_assessment(bidder_id: str, tender_id: str, assessment: Dict[
                 bidder_id
             ))
 
+    return {
+        "status": "SAVED",
+        "checks_saved": len(assessment.get("checks", [])),
+        "discrepancies_saved": len(assessment.get("discrepancies", [])),
+        "compliance_status": compliance_status_val,
+        "compliance_score": assessment.get("compliance_score", 0.0),
+    }
+
 
 def get_compliance_results(bidder_id: str) -> List[Dict[str, Any]]:
     init_db()
