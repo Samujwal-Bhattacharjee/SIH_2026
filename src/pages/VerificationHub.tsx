@@ -185,25 +185,25 @@ export const VerificationHub: React.FC = () => {
       >
         <div className="flex flex-wrap items-center divide-x divide-[#E2E8F0] text-xs">
           <div className="pr-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">Total bidders</span>
+            <span className="text-[#64748B] block text-[11px] font-medium">{t('page.hub.totalBidders', 'Total bidders')}</span>
             <strong className="text-base font-bold text-[#0B2A4A] font-mono">
               {String(total).padStart(2, '0')}
             </strong>
           </div>
           <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">Compliance exceptions</span>
+            <span className="text-[#64748B] block text-[11px] font-medium">{t('page.hub.complianceExceptions', 'Compliance exceptions')}</span>
             <strong className="text-base font-bold text-[#B72025] font-mono">
               {String(withExceptions).padStart(2, '0')}
             </strong>
           </div>
           <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">High compliance risk</span>
+            <span className="text-[#64748B] block text-[11px] font-medium">{t('page.hub.highComplianceRisk', 'High compliance risk')}</span>
             <strong className="text-base font-bold text-[#B72025] font-mono">
               {String(highRisk).padStart(2, '0')}
             </strong>
           </div>
           <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">Pending documents</span>
+            <span className="text-[#64748B] block text-[11px] font-medium">{t('page.hub.pendingDocuments', 'Pending documents')}</span>
             <strong className="text-base font-bold text-[#D97706] font-mono">
               {String(pendingDocs).padStart(2, '0')}
             </strong>
@@ -219,7 +219,7 @@ export const VerificationHub: React.FC = () => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by bidder ID or legal entity name…"
+          placeholder={t('page.hub.searchPlaceholder', 'Search by bidder ID or legal entity name…')}
           className="flex-1 text-xs text-[#0F172A] placeholder-[#94A3B8] bg-transparent border-none outline-none"
           aria-label="Search bidders"
         />
@@ -294,13 +294,13 @@ export const VerificationHub: React.FC = () => {
             <table className="ux4g-table">
               <thead>
                 <tr>
-                  <th>Bidder ID</th>
-                  <th>Legal entity</th>
-                  <th>Compliance Evaluation</th>
-                  <th>Compliance Risk</th>
-                  <th>Integrity Risk</th>
-                  <th>Officer Decision</th>
-                  <th className="text-right">Action</th>
+                  <th>{t('page.tenders.thBidderId', 'Bidder ID')}</th>
+                  <th>{t('page.hub.thBidderEntity', 'Legal entity')}</th>
+                  <th>{t('page.hub.thComplianceStatus', 'Compliance Evaluation')}</th>
+                  <th>{t('page.bidderVerification.complianceRisk', 'Compliance Risk')}</th>
+                  <th>{t('page.hub.thIntegrityRisk', 'Integrity Risk')}</th>
+                  <th>{t('page.bidderVerification.officerDecision', 'Officer Decision')}</th>
+                  <th className="text-right">{t('page.tenders.thAction', 'Action')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -361,12 +361,12 @@ export const VerificationHub: React.FC = () => {
                             : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
                         }`}>
                           {b.complianceStatus === 'COMPLIANT'
-                            ? 'Compliant'
+                            ? t('status.qualified', 'Compliant')
                             : b.complianceStatus === 'EXCEPTION_FOUND'
-                            ? 'Exception Found'
+                            ? t('status.exceptionFound', 'Exception Found')
                             : b.complianceStatus === 'PENDING_DOCUMENTS'
-                            ? 'Pending Docs'
-                            : 'Under Review'}
+                            ? t('status.pendingDocs', 'Pending Docs')
+                            : t('status.underReview', 'Under Review')}
                         </span>
                       </div>
                     </td>
@@ -386,7 +386,11 @@ export const VerificationHub: React.FC = () => {
                           ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
                           : 'bg-white text-[#475569] border-[#CBD5E1]'
                       }`}>
-                        {b.officerDecision || 'Pending Decision'}
+                        {b.officerDecision === 'QUALIFIED'
+                          ? t('status.qualified', 'Qualified')
+                          : b.officerDecision === 'DISQUALIFIED'
+                          ? t('status.disqualified', 'Disqualified')
+                          : b.officerDecision || t('status.underReview', 'Pending Decision')}
                       </span>
                     </td>
 
@@ -398,7 +402,7 @@ export const VerificationHub: React.FC = () => {
                         className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B2A4A] hover:underline whitespace-nowrap"
                         aria-label={`Review ${b.name}`}
                       >
-                        Review <ChevronRight className="w-3.5 h-3.5" />
+                        {t('page.hub.verifyBidder', 'Review')} <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                     </td>
                   </tr>
@@ -413,10 +417,8 @@ export const VerificationHub: React.FC = () => {
       <section className="ux4g-alert ux4g-alert-info rounded-[2px] text-xs text-[#1E3A8A] shadow-xs">
         <ShieldCheck className="w-4 h-4 shrink-0 text-[#1D4ED8] mt-0.5" />
         <div className="leading-relaxed">
-          <strong>Decision-support notice:</strong> Compliance assessment is
-          evidence-backed and generated from submitted bidder documents. Final
-          qualification or disqualification rests strictly with the designated
-          Procurement Officer. SIH26100 — Procurement Integrity Engine prototype.
+          <strong>{t('page.dashboard.decisionNotice', 'Decision-support notice:')}</strong>{' '}
+          {t('page.dashboard.decisionNoticeText', 'Compliance assessment is evidence-backed and generated from submitted bidder documents. Final qualification or disqualification rests strictly with the designated Procurement Officer.')}
         </div>
       </section>
     </div>

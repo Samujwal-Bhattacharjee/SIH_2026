@@ -26,7 +26,7 @@ interface ExtractedField {
 
 export const ProcurementDocuments: React.FC = () => {
   const { bidders, uploadDocument, documents, error } = useProcurement();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   // bidderId is null until real bidders arrive from backend — never assume 'BID-001'
   const [bidderId, setBidderId] = useState<string | null>(null);
 
@@ -129,22 +129,22 @@ export const ProcurementDocuments: React.FC = () => {
           <div className="flex items-center flex-wrap gap-2 text-xs">
             <span className="px-3 py-1 bg-white/80 text-[#6D28D9] border border-[#E9D5FF] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#6D28D9]" />
-              Active tenders (04)
+              {t('status.activeTenders', 'Active tenders')} (04)
             </span>
 
             <span className="px-3 py-1 bg-white/80 text-[#B45309] border border-[#FDE68A] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B45309]" />
-              Under review ({String(underReviewCount).padStart(2, '0')})
+              {t('status.underReview', 'Under review')} ({String(underReviewCount).padStart(2, '0')})
             </span>
 
             <span className="px-3 py-1 bg-white/80 text-[#DC2626] border border-[#FECACA] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />
-              High risk ({String(highRiskCount).padStart(2, '0')})
+              {t('status.highRisk', 'High risk')} ({String(highRiskCount).padStart(2, '0')})
             </span>
 
             <span className="px-3 py-1 bg-white/80 text-[#64748B] border border-[#E2E8F0] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#64748B]" />
-              Pending (01)
+              {t('status.pending', 'Pending')} (01)
             </span>
           </div>
         }
@@ -187,7 +187,7 @@ export const ProcurementDocuments: React.FC = () => {
                   activeStep === 1 ? 'text-[#2E0854]' : 'text-[#64748B]'
                 }`}
               >
-                Document Upload
+                {language === 'hi' ? 'दस्तावेज़ अपलोड' : 'Document Upload'}
               </span>
             </div>
 
@@ -207,7 +207,7 @@ export const ProcurementDocuments: React.FC = () => {
                   activeStep === 2 ? 'text-[#2E0854]' : 'text-[#64748B]'
                 }`}
               >
-                OCR Text Extraction
+                {language === 'hi' ? 'OCR पाठ निष्कर्षण' : 'OCR Text Extraction'}
               </span>
             </div>
 
@@ -227,7 +227,7 @@ export const ProcurementDocuments: React.FC = () => {
                   activeStep === 3 ? 'text-[#2E0854]' : 'text-[#64748B]'
                 }`}
               >
-                Field Identification
+                {language === 'hi' ? 'फ़ील्ड पहचान' : 'Field Identification'}
               </span>
             </div>
 
@@ -247,7 +247,7 @@ export const ProcurementDocuments: React.FC = () => {
                   activeStep === 4 ? 'text-[#2E0854]' : 'text-[#64748B]'
                 }`}
               >
-                Evidence Verified
+                {language === 'hi' ? 'साक्ष्य सत्यापन' : 'Evidence Verified'}
               </span>
             </div>
           </div>
@@ -318,7 +318,7 @@ export const ProcurementDocuments: React.FC = () => {
             {/* Choose PDF / Scanned Document Dropzone */}
             <div>
               <label className="block font-semibold text-[#0F172A] mb-1.5">
-                Choose PDF / scanned document
+                {language === 'hi' ? 'PDF या स्कैन किया गया दस्तावेज़ चुनें' : 'Choose PDF / scanned document'}
               </label>
 
               <div
@@ -343,8 +343,8 @@ export const ProcurementDocuments: React.FC = () => {
               >
                 <UploadCloud className="w-8 h-8 text-[#4318FF] mx-auto" />
                 <div className="mt-3 text-xs">
-                  <span className="font-bold text-[#2E0854]">Click to upload</span>{' '}
-                  <span className="text-[#64748B]">or drag and drop</span>
+                  <span className="font-bold text-[#2E0854]">{language === 'hi' ? 'अपलोड करने हेतु क्लिक करें' : 'Click to upload'}</span>{' '}
+                  <span className="text-[#64748B]">{language === 'hi' ? 'या खींचकर छोड़ें' : 'or drag and drop'}</span>
                 </div>
                 <p className="text-[11px] text-[#64748B] mt-1">
                   PDF, JPG, PNG (Max 50MB)
@@ -368,7 +368,7 @@ export const ProcurementDocuments: React.FC = () => {
                 onClick={handleCancel}
                 className="px-4 py-2 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#0F172A] transition-colors cursor-pointer"
               >
-                Cancel
+                {language === 'hi' ? 'रद्द करें' : 'Cancel'}
               </button>
 
               <button
@@ -545,12 +545,12 @@ export const ProcurementDocuments: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#FAF8FD] border-b border-[#E5E7EB] text-[#475569]">
-                <th className="py-3 px-4 font-semibold w-[220px]">DOCUMENT TYPE / FILE</th>
-                <th className="py-3 px-4 font-semibold w-[200px]">PARTICIPATING BIDDER</th>
-                <th className="py-3 px-4 font-semibold">EXTRACTED FIELDS &amp; VALUE</th>
-                <th className="py-3 px-4 font-semibold w-[160px]">EXTRACTION METHOD</th>
-                <th className="py-3 px-4 font-semibold w-[140px]">CONFIDENCE</th>
-                <th className="py-3 px-4 font-semibold text-right w-[140px]">STATUS</th>
+                <th className="py-3 px-4 font-semibold w-[220px]">{language === 'hi' ? 'दस्तावेज़ प्रकार / फ़ाइल' : 'DOCUMENT TYPE / FILE'}</th>
+                <th className="py-3 px-4 font-semibold w-[200px]">{t('page.hub.thBidderEntity', 'PARTICIPATING BIDDER')}</th>
+                <th className="py-3 px-4 font-semibold">{language === 'hi' ? 'निकाले गए फ़ील्ड एवं मूल्य' : 'EXTRACTED FIELDS & VALUE'}</th>
+                <th className="py-3 px-4 font-semibold w-[160px]">{t('page.bidderVerification.extractionMethod', 'EXTRACTION METHOD')}</th>
+                <th className="py-3 px-4 font-semibold w-[140px]">{t('page.bidderVerification.confidenceLevel', 'CONFIDENCE')}</th>
+                <th className="py-3 px-4 font-semibold text-right w-[140px]">{t('page.bidderVerification.thStatus', 'STATUS')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E7EB]">

@@ -72,19 +72,19 @@ export const GovBreadcrumb: React.FC = () => {
           <div className="flex items-center space-x-3">
             <div className="hidden lg:flex items-center space-x-3 text-[11px] text-[#475569] border-r border-[#CBD5E1] pr-3 font-sans">
               <span>
-                Active tenders: <strong className="text-[#0B2A4A] font-mono">04</strong>
+                {t('status.activeTenders', 'Active tenders')}: <strong className="text-[#0B2A4A] font-mono">04</strong>
               </span>
               <span>•</span>
               <span className="text-[#1D4ED8]">
-                Under review: <strong className="font-mono">02</strong>
+                {t('status.underReview', 'Under review')}: <strong className="font-mono">02</strong>
               </span>
               <span>•</span>
               <span className="text-[#B72025]">
-                High risk: <strong className="font-mono">01</strong>
+                {t('status.highRisk', 'High risk')}: <strong className="font-mono">01</strong>
               </span>
               <span>•</span>
               <span className="text-[#D97706]">
-                Pending: <strong className="font-mono">01</strong>
+                {t('status.pending', 'Pending')}: <strong className="font-mono">01</strong>
               </span>
             </div>
 
@@ -94,7 +94,7 @@ export const GovBreadcrumb: React.FC = () => {
               className="inline-flex items-center space-x-1.5 px-3 py-1 bg-[#4A154B] hover:bg-[#3B1A42] text-white text-xs font-semibold rounded-[4px] shadow-xs gov-btn-glossy transition-all cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5 text-[#FF9933]" />
-              <span>Create Tender</span>
+              <span>{t('header.createTender', 'Create Tender')}</span>
             </button>
           </div>
         </div>

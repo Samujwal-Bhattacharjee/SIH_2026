@@ -158,9 +158,11 @@ export const GovMainHeader: React.FC = () => {
                 <div className="px-3.5 py-2.5 bg-[#2E0854]/95 text-white flex items-center justify-between">
                   <span className="font-bold text-xs flex items-center gap-1.5">
                     <Bell className="w-3.5 h-3.5 text-purple-200" />
-                    Notifications ({alerts.length})
+                    {t('header.notifications', 'Notifications')} ({alerts.length})
                   </span>
-                  <span className="text-[10px] text-purple-200 bg-purple-900/60 px-2 py-0.5 rounded-full font-medium">Pending Actions</span>
+                  <span className="text-[10px] text-purple-200 bg-purple-900/60 px-2 py-0.5 rounded-full font-medium">
+                    {t('header.pendingActionsTag', 'Pending Actions')}
+                  </span>
                 </div>
                 <div className="max-h-72 overflow-y-auto divide-y divide-gray-100">
                   {alerts.length > 0 ? (
@@ -195,7 +197,7 @@ export const GovMainHeader: React.FC = () => {
                   ) : (
                     <div className="p-6 text-center text-xs text-[#64748B]">
                       <CheckCircle2 className="w-6 h-6 text-emerald-600 mx-auto mb-1.5" />
-                      <span>All notifications clear</span>
+                      <span>{t('header.allNotificationsClear', 'All notifications clear')}</span>
                     </div>
                   )}
                 </div>
@@ -331,7 +333,7 @@ export const GovMainHeader: React.FC = () => {
             className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white gov-btn-glossy transition-all duration-200 shadow-sm cursor-pointer group"
           >
             <PlusCircle className="w-3.5 h-3.5 text-[#FF9933] group-hover:rotate-90 transition-transform duration-300" />
-            <span>Create Tender</span>
+            <span>{t('header.createTender', 'Create Tender')}</span>
           </button>
 
           {/* User Profile Avatar */}
@@ -349,8 +351,8 @@ export const GovMainHeader: React.FC = () => {
               <div className="absolute right-0 mt-2 w-56 gov-glass-card rounded-lg shadow-2xl z-50 divide-y divide-gray-100 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden border border-white/60">
                 <div className="p-3 bg-white/70 backdrop-blur-md">
                   <p className="font-bold text-xs text-[#0F172A]">{user?.name || 'Officer Rajeshwar Verma'}</p>
-                  <p className="text-[11px] text-[#64748B]">{user?.designation || 'Joint Secretary'}</p>
-                  <p className="text-[10px] text-gray-400 font-mono mt-0.5">{user?.department || 'Procurement & Contracts'}</p>
+                  <p className="text-[11px] text-[#64748B]">{user?.designation || (language === 'hi' ? 'संयुक्त सचिव' : 'Joint Secretary')}</p>
+                  <p className="text-[10px] text-gray-400 font-mono mt-0.5">{user?.department || (language === 'hi' ? 'खरीद एवं अनुबंध' : 'Procurement & Contracts')}</p>
                 </div>
                 <div className="p-1 text-xs space-y-0.5">
                   <button
@@ -361,14 +363,14 @@ export const GovMainHeader: React.FC = () => {
                     className="w-full text-left px-3 py-1.5 text-[#0F172A] hover:bg-white/80 rounded-[2px] flex items-center space-x-2 transition-colors cursor-pointer group"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-[#2E0854] group-hover:scale-110 transition-transform" />
-                    <span>System Credentials</span>
+                    <span>{t('header.systemCredentials', 'System Credentials')}</span>
                   </button>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-3 py-1.5 text-[#DC2626] hover:bg-[#FEF2F2] rounded-[2px] flex items-center space-x-2 font-medium transition-colors cursor-pointer group"
                   >
                     <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-                    <span>Logout</span>
+                    <span>{t('header.logout', 'Logout')}</span>
                   </button>
                 </div>
               </div>

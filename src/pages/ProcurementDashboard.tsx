@@ -267,11 +267,11 @@ export const ProcurementDashboard: React.FC = () => {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-[#FAF8FD]/80 backdrop-blur-xs border-b border-gray-200 text-[#475569]">
-                  <th className="py-3 px-4 font-semibold w-[220px]">Tender Identifier</th>
-                  <th className="py-3 px-4 font-semibold w-[280px]">Bidder / Participating Entities</th>
-                  <th className="py-3 px-4 font-semibold w-[160px]">Risk Tier</th>
-                  <th className="py-3 px-4 font-semibold">Identified Issue / Signal</th>
-                  <th className="py-3 px-4 font-semibold text-right w-[150px]">Officer Action</th>
+                  <th className="py-3 px-4 font-semibold w-[220px]">{t('page.hub.thTenderFile', 'Tender Identifier')}</th>
+                  <th className="py-3 px-4 font-semibold w-[280px]">{t('page.hub.thBidderEntity', 'Bidder / Participating Entities')}</th>
+                  <th className="py-3 px-4 font-semibold w-[160px]">{t('page.bidderVerification.complianceRisk', 'Risk Tier')}</th>
+                  <th className="py-3 px-4 font-semibold">{t('page.bidderVerification.detailedFinding', 'Identified Issue / Signal')}</th>
+                  <th className="py-3 px-4 font-semibold text-right w-[150px]">{t('page.tenders.thAction', 'Officer Action')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200/50 bg-white/50 backdrop-blur-xs">
@@ -305,11 +305,11 @@ export const ProcurementDashboard: React.FC = () => {
                         <div className="flex items-center gap-2">
                           {item.risk_level === 'HIGH' || item.risk_level === 'CRITICAL' ? (
                             <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#FEF2F2] text-[#B72025] border border-[#FCA5A5] inline-flex items-center gap-1">
-                              <span>▲</span> HIGH RISK
+                              <span>▲</span> {t('status.highRisk', 'HIGH RISK')}
                             </span>
                           ) : (
                             <span className="px-2 py-0.5 text-[10px] font-bold rounded-[2px] bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] inline-flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> MEDIUM
+                              <Clock className="w-3 h-3" /> {t('status.mediumRisk', 'MEDIUM')}
                             </span>
                           )}
                           <span className="font-bold text-sm text-[#0F172A] font-mono">
@@ -331,7 +331,7 @@ export const ProcurementDashboard: React.FC = () => {
                           to={item.action_url}
                           className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-semibold bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] gov-btn-glossy transition-all shadow-xs"
                         >
-                          <span>Review Integrity</span>
+                          <span>{t('page.hub.verifyBidder', 'Review Integrity')}</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                       </td>
@@ -355,17 +355,17 @@ export const ProcurementDashboard: React.FC = () => {
         <div className="px-4 py-3.5 border-b border-gray-200/60 bg-white/60 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="font-bold text-base text-[#0F172A]">
-              Recent tender assessments
+              {t('page.dashboard.recentAssessments', 'Recent tender assessments')}
             </h2>
             <p className="text-xs text-[#64748B] mt-0.5">
-              Consolidated evaluation register of active bids, compliance scores, and statutory document status.
+              {t('page.dashboard.recentAssessmentsDesc', 'Consolidated evaluation register of active bids, compliance scores, and statutory document status.')}
             </p>
           </div>
           <Link
             to="/tenders"
             className="text-xs font-semibold text-[#2E0854] hover:underline inline-flex items-center gap-1 shrink-0"
           >
-            <span>View Tender Register</span>
+            <span>{t('page.bidderVerification.backToTender', 'View Tender Register')}</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -374,12 +374,12 @@ export const ProcurementDashboard: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-gray-200 bg-[#FAF8FD]/80 backdrop-blur-xs text-[#475569]">
-                <th className="py-3 px-4 font-semibold w-[160px]">Tender ID</th>
-                <th className="py-3 px-4 font-semibold">Tender Title / Bidder</th>
-                <th className="py-3 px-4 font-semibold w-[180px]">Compliance Evaluation</th>
-                <th className="py-3 px-4 font-semibold w-[130px]">Compliance Risk</th>
-                <th className="py-3 px-4 font-semibold w-[130px]">Officer Decision</th>
-                <th className="py-3 px-4 font-semibold text-right w-[140px]">Officer Action</th>
+                <th className="py-3 px-4 font-semibold w-[160px]">{t('page.hub.thTenderFile', 'Tender ID')}</th>
+                <th className="py-3 px-4 font-semibold">{t('page.hub.thBidderEntity', 'Tender Title / Bidder')}</th>
+                <th className="py-3 px-4 font-semibold w-[180px]">{t('page.hub.thComplianceStatus', 'Compliance Evaluation')}</th>
+                <th className="py-3 px-4 font-semibold w-[130px]">{t('page.bidderVerification.complianceRisk', 'Compliance Risk')}</th>
+                <th className="py-3 px-4 font-semibold w-[130px]">{t('page.bidderVerification.officerDecision', 'Officer Decision')}</th>
+                <th className="py-3 px-4 font-semibold text-right w-[140px]">{t('page.tenders.thAction', 'Officer Action')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200/50 bg-white/50 backdrop-blur-xs">
@@ -399,11 +399,11 @@ export const ProcurementDashboard: React.FC = () => {
                       {b.blocking_exceptions > 0 ? (
                         <span className="text-[10px] font-semibold text-[#B72025] inline-flex items-center gap-1 mt-0.5">
                           <AlertTriangle className="w-2.5 h-2.5" />
-                          {b.blocking_exceptions} blocking exception{b.blocking_exceptions !== 1 ? 's' : ''}
+                          {b.blocking_exceptions} {t('page.bidderVerification.exceptions', 'blocking exception(s)')}
                         </span>
                       ) : (
                         <span className="text-xs text-[#64748B] block mt-0.5">
-                          {b.category} • {b.documents} documents
+                          {b.category} • {b.documents} {t('page.bidderVerification.documents', 'documents')}
                         </span>
                       )}
                     </td>
@@ -422,12 +422,12 @@ export const ProcurementDashboard: React.FC = () => {
                             : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
                         }`}>
                           {b.compliance_status === 'COMPLIANT'
-                            ? 'Compliant'
+                            ? t('status.qualified', 'Compliant')
                             : b.compliance_status === 'EXCEPTION_FOUND'
-                            ? 'Exception Found'
+                            ? t('status.exceptionFound', 'Exception Found')
                             : b.compliance_status === 'PENDING_DOCUMENTS'
-                            ? 'Pending Docs'
-                            : 'Under Review'}
+                            ? t('status.pendingDocs', 'Pending Docs')
+                            : t('status.underReview', 'Under Review')}
                         </span>
                       </div>
                     </td>
@@ -446,7 +446,11 @@ export const ProcurementDashboard: React.FC = () => {
                         ) : (
                           <Check className="w-3 h-3" />
                         )}
-                        {b.compliance_risk}
+                        {b.compliance_risk === 'HIGH' || b.compliance_risk === 'CRITICAL'
+                          ? t('status.highRisk', 'HIGH')
+                          : b.compliance_risk === 'MEDIUM'
+                          ? t('status.mediumRisk', 'MEDIUM')
+                          : t('status.lowRisk', 'LOW')}
                       </span>
                     </td>
 
@@ -459,7 +463,11 @@ export const ProcurementDashboard: React.FC = () => {
                           ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
                           : 'bg-white text-[#475569] border-[#CBD5E1]'
                       }`}>
-                        {b.officer_decision || 'Pending'}
+                        {b.officer_decision === 'QUALIFIED'
+                          ? t('status.qualified', 'Qualified')
+                          : b.officer_decision === 'DISQUALIFIED'
+                          ? t('status.disqualified', 'Disqualified')
+                          : b.officer_decision || t('status.pending', 'Pending')}
                       </span>
                     </td>
 
@@ -469,7 +477,7 @@ export const ProcurementDashboard: React.FC = () => {
                         to={b.action_url}
                         className="inline-flex items-center gap-1 text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] transition-colors"
                       >
-                        <span>Review Evidence</span>
+                        <span>{t('page.bidderVerification.viewEvidence', 'Review Evidence')}</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                     </td>
@@ -491,8 +499,8 @@ export const ProcurementDashboard: React.FC = () => {
       <section className="bg-white/70 backdrop-blur-md border-l-4 border-[#4318FF] p-3.5 rounded-r-lg flex items-start gap-2.5 text-xs text-[#334155] shadow-xs">
         <Info className="w-4 h-4 text-[#4318FF] shrink-0 mt-0.5" />
         <div className="leading-relaxed">
-          <strong className="text-[#0F172A] font-semibold">Decision-support notice:</strong>{' '}
-          System-generated compliance assessment based on submitted bidder documents and Sandbox verification adapters. Final qualification or disqualification decision rests strictly with the designated Procurement Officer.
+          <strong className="text-[#0F172A] font-semibold">{t('page.dashboard.decisionNotice', 'Decision-support notice:')}</strong>{' '}
+          {t('page.dashboard.decisionNoticeText', 'System-generated compliance assessment based on submitted bidder documents and Sandbox verification adapters. Final qualification or disqualification decision rests strictly with the designated Procurement Officer.')}
         </div>
       </section>
     </div>

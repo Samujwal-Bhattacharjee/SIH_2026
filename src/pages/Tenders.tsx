@@ -51,13 +51,13 @@ export const Tenders: React.FC = () => {
   };
 
   const statutoryRequirements = [
-    { id: '1', category: 'STATUTORY COMPLIANCE', name: 'Valid GST registration', mandatory: true },
-    { id: '2', category: 'STATUTORY COMPLIANCE', name: 'PAN and Income Tax declaration', mandatory: true },
-    { id: '3', category: 'GOVERNMENT RECOGNITION', name: 'Udyam / MSME registration', mandatory: false },
-    { id: '4', category: 'TECHNICAL ELIGIBILITY', name: 'OEM authorization (MAF)', mandatory: true },
-    { id: '5', category: 'FINANCIAL ELIGIBILITY', name: 'Minimum annual turnover', mandatory: true },
-    { id: '6', category: 'MANDATORY DECLARATION', name: 'No blacklisting / debarment', mandatory: true },
-    { id: '7', category: 'PREFERENCE ORDER', name: 'Local content declaration (Make in India)', mandatory: false },
+    { id: '1', category: t('page.tenders.catStatutory', 'STATUTORY COMPLIANCE'), name: t('page.tenders.reqGst', 'Valid GST registration'), mandatory: true },
+    { id: '2', category: t('page.tenders.catStatutory', 'STATUTORY COMPLIANCE'), name: t('page.tenders.reqPan', 'PAN and Income Tax declaration'), mandatory: true },
+    { id: '3', category: t('page.tenders.catGovRec', 'GOVERNMENT RECOGNITION'), name: t('page.tenders.reqUdyam', 'Udyam / MSME registration'), mandatory: false },
+    { id: '4', category: t('page.tenders.catTech', 'TECHNICAL ELIGIBILITY'), name: t('page.tenders.reqOem', 'OEM authorization (MAF)'), mandatory: true },
+    { id: '5', category: t('page.tenders.catFin', 'FINANCIAL ELIGIBILITY'), name: t('page.tenders.reqTurnover', 'Minimum annual turnover'), mandatory: true },
+    { id: '6', category: t('page.tenders.catMandatoryDecl', 'MANDATORY DECLARATION'), name: t('page.tenders.reqDebarment', 'No blacklisting / debarment'), mandatory: true },
+    { id: '7', category: t('page.tenders.catPref', 'PREFERENCE ORDER'), name: t('page.tenders.reqLocalContent', 'Local content declaration (Make in India)'), mandatory: false },
   ];
 
   const filteredBidders = bidders.filter(
@@ -71,7 +71,7 @@ export const Tenders: React.FC = () => {
       {/* ── Page Header Strip ────────────────────────────────────────────── */}
       <GovPageHeader
         title={t('page.tenders.title', 'Procurement Tenders')}
-        tag="TENDER SPECIFICATION & ENROLLMENT"
+        tag={t('page.tenders.tag', 'TENDER SPECIFICATION & ENROLLMENT')}
         subtitle={t('page.tenders.subtitle', 'Active government procurement files, statutory compliance status, and registered bidders.')}
         actions={
           <Link
@@ -79,7 +79,7 @@ export const Tenders: React.FC = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all"
           >
             <Upload className="w-4 h-4 text-white" />
-            <span>{t('action.uploadDoc', 'Upload Bidder Documents')}</span>
+            <span>{t('page.tenders.uploadBidderDocs', 'Upload Bidder Documents')}</span>
           </Link>
         }
       />
@@ -115,7 +115,7 @@ export const Tenders: React.FC = () => {
                 GEM/2026/B/418207
               </span>
               <span className="px-2.5 py-0.5 bg-[#EDE9FE] text-[#6D28D9] rounded-full text-[11px] font-semibold">
-                Active tender
+                {t('page.tenders.activeTenderBadge', 'Active tender')}
               </span>
             </div>
 
@@ -133,7 +133,7 @@ export const Tenders: React.FC = () => {
             className="inline-flex items-center gap-2 text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] shrink-0 transition-colors"
           >
             <Upload className="w-4 h-4 text-[#0F172A]" />
-            <span>Upload bidder documents</span>
+            <span>{t('page.tenders.uploadBidderDocs', 'Upload bidder documents')}</span>
           </Link>
         </div>
       </section>
@@ -141,7 +141,7 @@ export const Tenders: React.FC = () => {
       {/* ── Structured Eligibility Criteria (7 Requirements) ───────────────── */}
       <section className="space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
-          STRUCTURED ELIGIBILITY CRITERIA (7 REQUIREMENTS):
+          {t('page.tenders.structuredCriteria', 'STRUCTURED ELIGIBILITY CRITERIA (7 REQUIREMENTS):')}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -161,7 +161,7 @@ export const Tenders: React.FC = () => {
                   req.mandatory ? 'text-[#DC2626]' : 'text-[#4F46E5]'
                 }`}
               >
-                {req.mandatory ? 'Mandatory' : 'Optional / Preference'}
+                {req.mandatory ? t('page.tenders.reqMandatory', 'Mandatory') : t('page.tenders.reqOptional', 'Optional / Preference')}
               </span>
             </div>
           ))}
@@ -176,10 +176,10 @@ export const Tenders: React.FC = () => {
             <FileText className="w-4 h-4 text-[#0F172A]" />
             <div>
               <h2 className="font-bold text-sm text-[#0F172A]">
-                Create tender record
+                {t('page.tenders.createTenderRecord', 'Create tender record')}
               </h2>
               <p className="text-[11px] text-[#64748B] mt-0.5">
-                Official GeM or CPPP procurement description.
+                {t('page.tenders.createTenderDesc', 'Official GeM or CPPP procurement description.')}
               </p>
             </div>
           </div>
@@ -187,12 +187,12 @@ export const Tenders: React.FC = () => {
           <form onSubmit={submitTender} className="mt-4 space-y-4 text-xs">
             <div>
               <label className="block font-semibold text-[#0F172A] mb-1">
-                Tender title *
+                {t('page.tenders.tenderTitleLabel', 'Tender title *')}
               </label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter procurement tender title"
+                placeholder={t('page.tenders.tenderTitlePlaceholder', 'Enter procurement tender title')}
                 className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
               />
             </div>
@@ -200,7 +200,7 @@ export const Tenders: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#0F172A] mb-1">
-                  Department *
+                  {t('page.tenders.departmentLabel', 'Department *')}
                 </label>
                 <input
                   value={department}
@@ -211,7 +211,7 @@ export const Tenders: React.FC = () => {
 
               <div>
                 <label className="block font-semibold text-[#0F172A] mb-1">
-                  Bid closing date *
+                  {t('page.tenders.closingDateLabel', 'Bid closing date *')}
                 </label>
                 <div className="relative">
                   <input
@@ -229,7 +229,7 @@ export const Tenders: React.FC = () => {
                 type="submit"
                 className="text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] cursor-pointer"
               >
-                Create tender record
+                {t('page.tenders.createRecordBtn', 'Create tender record')}
               </button>
             </div>
           </form>
@@ -241,10 +241,10 @@ export const Tenders: React.FC = () => {
             <Plus className="w-4 h-4 text-[#0F172A]" />
             <div>
               <h2 className="font-bold text-sm text-[#0F172A]">
-                Add participating bidder
+                {t('page.tenders.addBidderTitle', 'Add participating bidder')}
               </h2>
               <p className="text-[11px] text-[#64748B] mt-0.5">
-                Name must match statutory registration certificates.
+                {t('page.tenders.addBidderDesc', 'Name must match statutory registration certificates.')}
               </p>
             </div>
           </div>
@@ -252,12 +252,12 @@ export const Tenders: React.FC = () => {
           <form onSubmit={submitBidder} className="mt-4 space-y-4 text-xs">
             <div>
               <label className="block font-semibold text-[#0F172A] mb-1">
-                Bidder legal name *
+                {t('page.tenders.bidderNameLabel', 'Bidder legal name *')}
               </label>
               <input
                 value={bidderName}
                 onChange={(e) => setBidderName(e.target.value)}
-                placeholder="Enter bidder registered legal entity name"
+                placeholder={t('page.tenders.bidderNamePlaceholder', 'Enter legal business entity name')}
                 className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
               />
             </div>
@@ -265,7 +265,7 @@ export const Tenders: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#0F172A] mb-1">
-                  GSTIN (Optional)
+                  {t('page.tenders.gstinLabel', 'GSTIN (15 characters)')}
                 </label>
                 <input
                   value={bidderGstin}
@@ -277,7 +277,7 @@ export const Tenders: React.FC = () => {
 
               <div>
                 <label className="block font-semibold text-[#0F172A] mb-1">
-                  PAN (Optional)
+                  {t('page.tenders.panLabel', 'PAN (10 characters)')}
                 </label>
                 <input
                   value={bidderPan}
@@ -293,7 +293,7 @@ export const Tenders: React.FC = () => {
                 type="submit"
                 className="px-4 py-2 bg-[#0B1536] hover:bg-[#1E053A] text-white rounded-[2px] text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
               >
-                Enroll bidder in tender
+                {t('page.tenders.enrollBidderBtn', 'Enroll participating bidder')}
               </button>
             </div>
           </form>
@@ -306,10 +306,10 @@ export const Tenders: React.FC = () => {
         <div className="bg-[#FAF8FD] p-4 border-b border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="font-bold text-base text-[#0F172A]">
-              Participating bidders register
+              {t('page.tenders.enrolledBiddersTitle', 'Participating bidders register')}
             </h2>
             <p className="text-xs text-[#64748B] mt-0.5">
-              Enrolled bidders, document submission status, compliance scores, and evidence links.
+              {t('page.tenders.subtitle', 'Enrolled bidders, document submission status, compliance scores, and evidence links.')}
             </p>
           </div>
 
@@ -318,7 +318,7 @@ export const Tenders: React.FC = () => {
             <input
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
-              placeholder="Search bidder ID or name..."
+              placeholder={t('page.tenders.searchBidderPlaceholder', 'Search enrolled bidder by name or ID...')}
               className="w-full bg-white border border-[#CBD5E1] rounded-[4px] pl-8 pr-3 py-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
             />
           </div>
@@ -328,13 +328,13 @@ export const Tenders: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-[#E5E7EB] text-[#475569]">
-                <th className="py-3 px-4 font-semibold w-[120px]">Bidder ID</th>
-                <th className="py-3 px-4 font-semibold">Legal entity name</th>
-                <th className="py-3 px-4 font-semibold w-[180px]">Submitted documents</th>
-                <th className="py-3 px-4 font-semibold w-[140px]">Compliance score</th>
-                <th className="py-3 px-4 font-semibold w-[120px]">Risk level</th>
-                <th className="py-3 px-4 font-semibold w-[140px]">Status</th>
-                <th className="py-3 px-4 font-semibold text-right w-[160px]">Action</th>
+                <th className="py-3 px-4 font-semibold w-[120px]">{t('page.tenders.thBidderId', 'BIDDER ID & LEGAL ENTITY')}</th>
+                <th className="py-3 px-4 font-semibold">{t('page.tenders.thIdentifiers', 'STATUTORY IDENTIFIERS')}</th>
+                <th className="py-3 px-4 font-semibold w-[180px]">{t('page.tenders.thEvidence', 'SUBMITTED EVIDENCE')}</th>
+                <th className="py-3 px-4 font-semibold w-[140px]">{t('page.bidderVerification.complianceScore', 'COMPLIANCE SCORE')}</th>
+                <th className="py-3 px-4 font-semibold w-[120px]">{t('page.bidderVerification.complianceRisk', 'RISK LEVEL')}</th>
+                <th className="py-3 px-4 font-semibold w-[140px]">{t('page.bidderVerification.complianceStatus', 'STATUS')}</th>
+                <th className="py-3 px-4 font-semibold text-right w-[160px]">{t('page.tenders.thAction', 'OFFICER ACTION')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E7EB]">
@@ -354,11 +354,11 @@ export const Tenders: React.FC = () => {
                       <span className="text-[11px] block mt-0.5">
                         {b.exceptions > 0 ? (
                           <span className="text-[#DC2626] font-medium">
-                            {b.exceptions} exception(s) detected
+                            {b.exceptions} {t('page.bidderVerification.exceptions', 'exception(s) detected')}
                           </span>
                         ) : (
                           <span className="text-[#64748B]">
-                            All statutory requirements verified
+                            {t('page.bidderVerification.verified', 'All statutory requirements verified')}
                           </span>
                         )}
                       </span>
@@ -366,7 +366,7 @@ export const Tenders: React.FC = () => {
 
                     {/* Submitted Documents */}
                     <td className="py-3.5 px-4 text-xs text-[#0F172A]">
-                      {b.documents || 0} files attached
+                      {b.documents || 0} {t('page.bidderVerification.documents', 'files attached')}
                     </td>
 
                     {/* Compliance Score */}
@@ -378,14 +378,20 @@ export const Tenders: React.FC = () => {
                     <td className="py-3.5 px-4">
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#15803D]">
                         <Check className="w-3.5 h-3.5 text-[#15803D]" />
-                        <span>Low</span>
+                        <span>{t('status.lowRisk', 'Low')}</span>
                       </span>
                     </td>
 
                     {/* Status */}
                     <td className="py-3.5 px-4">
                       <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-[2px] bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                        {b.status || 'Under Review'}
+                        {b.status === 'UNDER_REVIEW' || b.status === 'Under Review'
+                          ? t('status.underReview', 'Under Review')
+                          : b.status === 'QUALIFIED' || b.status === 'Qualified'
+                          ? t('status.qualified', 'Qualified')
+                          : b.status === 'DISQUALIFIED' || b.status === 'Disqualified'
+                          ? t('status.disqualified', 'Disqualified')
+                          : b.status || t('status.underReview', 'Under Review')}
                       </span>
                     </td>
 
@@ -395,7 +401,7 @@ export const Tenders: React.FC = () => {
                         to={`/verification/${b.id}`}
                         className="text-xs font-semibold text-[#2E0854] hover:underline inline-flex items-center gap-0.5"
                       >
-                        <span>Open assessment</span>
+                        <span>{t('page.hub.verifyBidder', 'Open assessment')}</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                     </td>
