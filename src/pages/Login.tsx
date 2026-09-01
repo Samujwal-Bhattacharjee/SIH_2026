@@ -17,6 +17,8 @@ import { Emblem } from '../assets/Emblem';
 import { useAuth } from '../context/AuthContext';
 import { GovButton } from '../components/common/GovButton';
 import { FormField, inputBaseClasses, inputErrorClasses } from '../components/common/FormField';
+import { PetroleumBackground } from '../components/background/PetroleumBackground';
+import { usePetroleumBackground } from '../context/BackgroundContext';
 
 // Helper to generate a randomized 5-character alphanumeric captcha
 const getRandomCaptcha = (): string => {
@@ -43,6 +45,7 @@ export const Login: React.FC = () => {
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
   
   const { signIn, signUp, signInWithGoogle, isSupabaseActive } = useAuth();
+  const { isPeekMode, glassIntensity } = usePetroleumBackground();
   const navigate = useNavigate();
 
   const generateCaptcha = useCallback(() => {
@@ -130,45 +133,17 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex flex-col justify-between selection:bg-[#0B2A4A] selection:text-white overflow-hidden bg-gradient-to-b from-[#FFF5EB] via-[#FFFFFF] to-[#F0FDF4]">
-      {/* Subtle Ambient India Tricolour Atmospheric Wash */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage: `
-            radial-gradient(ellipse 80% 45% at 50% -10%, rgba(255, 140, 0, 0.12) 0%, rgba(255, 255, 255, 0) 70%),
-            radial-gradient(ellipse 80% 45% at 50% 110%, rgba(21, 128, 61, 0.10) 0%, rgba(255, 255, 255, 0) 70%),
-            linear-gradient(180deg, rgba(255, 153, 51, 0.04) 0%, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0) 65%, rgba(19, 136, 8, 0.04) 100%)
-          `,
-        }}
-      />
+    <div
+      data-glass={glassIntensity}
+      className={`min-h-screen relative flex flex-col justify-between selection:bg-[#0B2A4A] selection:text-white overflow-hidden font-sans ${
+        isPeekMode ? 'peek-active' : ''
+      }`}
+    >
+      {/* Dynamic Petroleum Industrial Canvas Background */}
+      <PetroleumBackground />
 
-      {/* Ultra-faint Watermark Ashoka Chakra in Center Background */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.035] z-0 select-none">
-        <svg
-          viewBox="0 0 200 200"
-          className="w-[580px] h-[580px] text-[#0B2A4A]"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        >
-          <circle cx="100" cy="100" r="92" strokeWidth="3" />
-          <circle cx="100" cy="100" r="22" strokeWidth="2.5" fill="currentColor" fillOpacity="0.1" />
-          <circle cx="100" cy="100" r="6" fill="currentColor" />
-          {Array.from({ length: 24 }).map((_, i) => {
-            const angle = (i * 360) / 24;
-            return (
-              <g key={i} transform={`rotate(${angle} 100 100)`}>
-                <line x1="100" y1="100" x2="100" y2="8" strokeWidth="1.6" />
-                <circle cx="100" cy="18" r="1.5" fill="currentColor" />
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-
-      {/* Top Ministry Header Strip */}
-      <div className="w-full bg-[#040E1A] text-white py-1.5 px-4 text-center text-xs select-none z-10 shadow-sm font-sans">
+      {/* Top Ministry Header Strip (Frosted Glass) */}
+      <div className={`w-full bg-[#040E1A]/85 backdrop-blur-md text-white py-1.5 px-4 text-center text-xs select-none z-10 shadow-md border-b border-white/10 transition-opacity duration-300 ${isPeekMode ? 'opacity-15 pointer-events-none' : 'opacity-100'}`}>
         <div className="gov-tricolour-bar mb-1.5" />
         <div className="flex items-center justify-center space-x-2 text-[11px] sm:text-xs">
           <span className="font-serif font-bold tracking-wide">भारत सरकार • Government of India</span>
@@ -178,9 +153,9 @@ export const Login: React.FC = () => {
       </div>
 
       {/* Main Container */}
-      <div className="max-w-5xl mx-auto w-full my-auto px-4 py-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch relative z-10 font-sans">
-        {/* Left Column: Institutional Branding */}
-        <div className="md:col-span-6 bg-white/95 backdrop-blur-sm border border-[#D9DDE3] rounded-[4px] p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+      <div className={`max-w-5xl mx-auto w-full my-auto px-4 py-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch relative z-10 font-sans transition-all duration-300 ${isPeekMode ? 'opacity-10 pointer-events-none' : 'opacity-100'}`}>
+        {/* Left Column: Institutional Branding (Frosted Translucent Glass Card) */}
+        <div className="md:col-span-6 gov-glass-card rounded-xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
           {/* Subtle Top Tricolour Accent Line on Left Card */}
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#FF9933] via-[#FFFFFF] to-[#138808]" />
 
@@ -243,8 +218,8 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Government Official Login / Register Form */}
-        <div className="md:col-span-6 bg-white/95 backdrop-blur-sm border-2 border-[#0B2A4A] rounded-[4px] p-6 sm:p-8 flex flex-col justify-between shadow-md relative overflow-hidden">
+        {/* Right Column: Government Official Login / Register Form (Frosted Translucent Glass Card) */}
+        <div className="md:col-span-6 gov-glass-card rounded-xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
           {/* Top Tricolour Header Band on Form Card */}
           <div className="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-[#FF9933] via-[#FFFFFF] to-[#138808]" />
 

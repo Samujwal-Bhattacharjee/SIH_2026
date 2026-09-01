@@ -520,6 +520,190 @@ body {
   }
 }
 
+/* ── Cinematic Petroleum Glassmorphism & Translucent System ─────────────────── */
+.gov-glass-card, .ux4g-card, .gov-card, main section.bg-white {
+  background-color: rgba(255, 255, 255, 0.84) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow: 0 10px 30px -5px rgba(4, 14, 26, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6) inset !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease !important;
+}
+
+.gov-glass-card:hover, .ux4g-card:hover, .gov-card:hover, main section.bg-white:hover {
+  border-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 16px 40px -10px rgba(4, 14, 26, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+}
+
+/* Translucent secondary background fills inside main content */
+main .bg-\[\#F8FAFC\],
+main .bg-\[\#F1F5F9\],
+main .bg-\[\#FAF8FD\],
+main .bg-\[\#F5F6F8\] {
+  background-color: rgba(241, 245, 249, 0.72) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Header translucent frosted glass */
+.gov-glass-header {
+  background: rgba(255, 255, 255, 0.84) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 4px 24px -2px rgba(4, 14, 26, 0.1) !important;
+}
+
+/* Footer translucent frosted glass */
+.gov-glass-footer {
+  background: rgba(4, 14, 26, 0.88) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Translucent Glossy Buttons with Specular Light Sweep */
+.gov-glass-btn, .ux4g-btn, .gov-btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gov-glass-btn::after, .ux4g-btn::after, .gov-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  transition: left 0.75s ease;
+  pointer-events: none;
+}
+
+.gov-glass-btn:hover::after, .ux4g-btn:hover::after, .gov-btn:hover::after {
+  left: 150%;
+}
+
+.gov-glass-btn:hover:not(:disabled), .ux4g-btn:hover:not(:disabled), .gov-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Translucent Glass Tables */
+.ux4g-table, .gov-table {
+  background-color: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.ux4g-table th, .gov-table th {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.ux4g-table tbody tr:nth-child(even), .gov-table tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.6) !important;
+}
+
+.ux4g-table tbody tr:hover, .gov-table tbody tr:hover {
+  background-color: rgba(226, 238, 250, 0.75) !important;
+}
+
+/* Glass Inputs */
+.ux4g-input, .ux4g-select {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(203, 213, 225, 0.8) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset !important;
+}
+.ux4g-input:focus, .ux4g-select:focus {
+  background-color: #FFFFFF !important;
+  border-color: #4A154B !important;
+  box-shadow: 0 0 0 3px rgba(74, 21, 75, 0.18) !important;
+}
+
+/* Page Transition / Atmosphere Sweep Keyframe */
+@keyframes routeSweep {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.animate-route-sweep {
+  animation: routeSweep 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Page Content Glide Entrance */
+@keyframes glassGlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.995);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-glass-glide {
+  animation: glassGlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Intensity Overrides (Controlled by HUD) */
+[data-glass="crystal"] .gov-glass-card,
+[data-glass="crystal"] .ux4g-card,
+[data-glass="crystal"] .gov-card {
+  background-color: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: blur(8px) saturate(180%) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-glass="frosted"] .gov-glass-card,
+[data-glass="frosted"] .ux4g-card,
+[data-glass="frosted"] .gov-card {
+  background-color: rgba(255, 255, 255, 0.93) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  border-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-glass="deep"] .gov-glass-card,
+[data-glass="deep"] .ux4g-card,
+[data-glass="deep"] .gov-card {
+  background-color: rgba(15, 23, 42, 0.86) !important;
+  color: #F8FAFC !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  backdrop-filter: blur(16px) !important;
+}
+[data-glass="deep"] .gov-card h3,
+[data-glass="deep"] .gov-glass-card h3,
+[data-glass="deep"] .gov-glass-card h1,
+[data-glass="deep"] .gov-glass-card h2 {
+  color: #F8FAFC !important;
+}
+[data-glass="deep"] .ux4g-table,
+[data-glass="deep"] .gov-table {
+  background-color: rgba(15, 23, 42, 0.86) !important;
+  color: #F8FAFC !important;
+}
+
 /* ── Print ─────────────────────────────────────────────────────────────────── */
 @media print {
   body { background: #FFFFFF !important; color: #000000 !important; font-size: 11pt; }
@@ -528,3 +712,4 @@ body {
   .gov-table th { background-color: #EEEEEE !important; color: #000000 !important; border: 1px solid #000000 !important; }
   .gov-table td { border: 1px solid #CCCCCC !important; }
 }
+

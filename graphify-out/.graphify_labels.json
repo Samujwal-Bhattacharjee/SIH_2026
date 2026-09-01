@@ -116,6 +116,6 @@
   "114": "EmptyState.tsx",
   "115": ".test_validate_file_returns_none_on_success",
   "116": ".test_validate_file_returns_string_on_error",
-  "117": "@types/node",
+  "117": "tailwindcss",
   "118": "lucide-react"
 }

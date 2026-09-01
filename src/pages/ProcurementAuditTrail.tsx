@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { ShieldCheck, Search, Filter, Lock, Printer, RefreshCw } from 'lucide-react';
 import { apiClient } from '../services/api/apiClient';
 import { useLanguage } from '../context/LanguageContext';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 export const ProcurementAuditTrail: React.FC = () => {
   const { t } = useLanguage();
@@ -105,42 +106,35 @@ export const ProcurementAuditTrail: React.FC = () => {
 
   return (
     <div className="space-y-4 font-sans pb-8">
-      {/* Header */}
-      <div className="border-b border-[#CBD5E1] pb-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div>
-          <span className="text-[11px] uppercase font-bold text-[#64748B] tracking-wider block">
-            {t('page.audit.workspace')}
-          </span>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] mt-0.5">
-            {t('page.audit.title')}
-          </h1>
-          <p className="text-xs text-[#475569] mt-0.5">
-            {t('page.audit.subtitle')}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={fetchAuditData}
-            disabled={loading}
-            className="ux4g-btn ux4g-btn-secondary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer"
-            title="Refresh Audit Trail"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="ux4g-btn ux4g-btn-secondary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>{t('page.audit.printRegister')}</span>
-          </button>
-          <span className="px-2.5 py-1 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px] font-mono text-[11px] font-bold flex items-center gap-1">
-            <Lock className="w-3 h-3" /> SHA-256 Validated
-          </span>
-        </div>
-      </div>
+      {/* Header (Glossy Frosted Card Banner) */}
+      <GovPageHeader
+        title={t('page.audit.title') || 'Procurement Audit Trail'}
+        tag="TAMPER-EVIDENT ACTIVITY REGISTER"
+        subtitle={t('page.audit.subtitle') || 'Chronological log of document uploads, automated OCR extractions, compliance findings, and officer decisions.'}
+        actions={
+          <>
+            <button
+              onClick={fetchAuditData}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-150 cursor-pointer gov-btn-glossy"
+              title="Refresh Audit Trail"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-150 cursor-pointer gov-btn-glossy"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>{t('page.audit.printRegister') || 'Print Register'}</span>
+            </button>
+            <span className="px-2.5 py-1 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[4px] font-mono text-[11px] font-bold flex items-center gap-1 shadow-xs">
+              <Lock className="w-3 h-3" /> SHA-256 Validated
+            </span>
+          </>
+        }
+      />
 
       {/* Tender Selection & Filter Strip */}
       <section className="bg-white border border-[#CBD5E1] rounded-[2px] p-3 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">

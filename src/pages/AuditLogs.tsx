@@ -10,6 +10,7 @@ import { AuditLog } from '../types';
 import { GovTable, TableColumn } from '../components/common/GovTable';
 import { GovButton } from '../components/common/GovButton';
 import { GovCard } from '../components/common/GovCard';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 import { inputBaseClasses } from '../components/common/FormField';
 
 export const AuditLogs: React.FC = () => {
@@ -148,36 +149,32 @@ export const AuditLogs: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
-        <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
-            Procurement Activity &amp; Audit Trail Register
-          </h1>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Tamper-evident legal ledger recording all tender evaluations, document OCR extractions, and officer decisions.
-          </p>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <GovButton
-            variant="secondary"
-            size="sm"
-            onClick={fetchAuditLogs}
-            icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B2A4A]" />}
-          >
-            Refresh Logs
-          </GovButton>
-          <GovButton
-            variant="primary"
-            size="sm"
-            onClick={handleExportCsv}
-            icon={<Download className="w-3.5 h-3.5" />}
-          >
-            Export Audit CSV
-          </GovButton>
-        </div>
-      </div>
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Procurement Activity & Audit Trail Register"
+        tag="TAMPER-EVIDENT LEGAL LEDGER"
+        subtitle="Tamper-evident legal ledger recording all tender evaluations, document OCR extractions, and officer decisions."
+        actions={
+          <div className="flex items-center space-x-2">
+            <GovButton
+              variant="secondary"
+              size="sm"
+              onClick={fetchAuditLogs}
+              icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B2A4A]" />}
+            >
+              Refresh Logs
+            </GovButton>
+            <GovButton
+              variant="primary"
+              size="sm"
+              onClick={handleExportCsv}
+              icon={<Download className="w-3.5 h-3.5" />}
+            >
+              Export Audit CSV
+            </GovButton>
+          </div>
+        }
+      />
 
       {/* Filter and Audit Table */}
       <GovCard noPadding highlightBorder="navy">

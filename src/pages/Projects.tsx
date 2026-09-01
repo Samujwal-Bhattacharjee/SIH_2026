@@ -15,6 +15,7 @@ import { Case } from '../types';
 import { GovTable, TableColumn } from '../components/common/GovTable';
 import { GovButton } from '../components/common/GovButton';
 import { GovCard } from '../components/common/GovCard';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 import { inputBaseClasses, selectBaseClasses } from '../components/common/FormField';
 import { FileRegisterModal } from '../components/files/FileRegisterModal';
 
@@ -202,18 +203,12 @@ export const Projects: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
-        <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
-            Tender &amp; Procurement Register
-          </h1>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Procurement dockets and bidder evaluations with real-time compliance assessment.
-          </p>
-        </div>
-
-        <div className="flex items-center space-x-2">
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Tender & Procurement Register"
+        tag="PROCUREMENT DOCKETS"
+        subtitle="Procurement dockets and bidder evaluations with real-time compliance assessment."
+        actions={
           <GovButton
             variant="primary"
             size="sm"
@@ -222,8 +217,8 @@ export const Projects: React.FC = () => {
           >
             New Project
           </GovButton>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filters Card */}
       <GovCard title="Search &amp; Filter Criteria" noPadding>

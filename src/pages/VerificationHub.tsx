@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
 import { useLanguage } from '../context/LanguageContext';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 // ─── Human-readable status label & badge style ───────────────────────────────
 const STATUS_META: Record<string, { label: string; badgeClass: string }> = {
@@ -99,37 +100,35 @@ export const VerificationHub: React.FC = () => {
   ).length;
 
   const headerBlock = (
-    <div className="border-b border-[#CBD5E1] pb-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
-      <div>
-        <span className="text-[11px] uppercase font-bold text-[#64748B] tracking-wider block">
-          {t('page.verification.workspace')}
-        </span>
-        <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] mt-0.5 flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-[#0B2A4A]" />
-          {t('page.verification.title')}
-        </h1>
-        <p className="text-xs text-[#475569] mt-0.5">
-          {t('page.verification.subtitle')}
-        </p>
-      </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => navigate('/tenders')}
-          className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center gap-1.5 cursor-pointer"
-        >
-          <FilePlus2 className="w-3.5 h-3.5" />
-          <span>{t('action.addBidder')}</span>
-        </button>
-        <button
-          onClick={() => refreshData()}
-          disabled={loading}
-          className="ux4g-btn ux4g-btn-secondary ux4g-btn-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-          aria-label="Refresh verification queue"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-        </button>
-      </div>
-    </div>
+    <GovPageHeader
+      title={
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-6 h-6 text-[#0B2A4A]" />
+          <span>{t('page.verification.title') || 'Bidder Verification Hub'}</span>
+        </div>
+      }
+      tag="STATUTORY VERIFICATION & ADAPTERS"
+      subtitle={t('page.verification.subtitle') || 'Verify statutory documents against official government registries and evaluate compliance status.'}
+      actions={
+        <>
+          <button
+            onClick={() => navigate('/tenders')}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all cursor-pointer"
+          >
+            <FilePlus2 className="w-3.5 h-3.5 text-[#FF9933]" />
+            <span>{t('action.addBidder') || 'Add Bidder'}</span>
+          </button>
+          <button
+            onClick={() => refreshData()}
+            disabled={loading}
+            className="inline-flex items-center justify-center p-2 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs text-[#0B2A4A] shadow-xs gov-btn-glossy transition-all cursor-pointer disabled:opacity-50"
+            aria-label="Refresh verification queue"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </>
+      }
+    />
   );
 
   // ── Loading (first load, no cached data) ────────────────────────────────────

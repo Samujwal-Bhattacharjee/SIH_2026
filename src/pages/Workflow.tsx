@@ -15,6 +15,7 @@ import { workflowService } from '../services/api';
 import { ProcessMapData } from '../types';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 import { TableSkeleton } from '../components/common/LoadingSkeleton';
 
 interface LandWorkflowStage {
@@ -75,26 +76,22 @@ export const Workflow: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
-        <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
-            Procurement Bid Compliance Verification Workflow Map
-          </h1>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Sequential stage verification tracking, statutory validation benchmarks, and exception diagnostics.
-          </p>
-        </div>
-
-        <GovButton
-          variant="secondary"
-          size="sm"
-          onClick={fetchWorkflow}
-          icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B3558]" />}
-        >
-          Refresh Workflow
-        </GovButton>
-      </div>
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Procurement Bid Compliance Verification Workflow Map"
+        tag="SEQUENTIAL VERIFICATION TRACKING"
+        subtitle="Sequential stage verification tracking, statutory validation benchmarks, and exception diagnostics."
+        actions={
+          <GovButton
+            variant="secondary"
+            size="sm"
+            onClick={fetchWorkflow}
+            icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B3558]" />}
+          >
+            Refresh Workflow
+          </GovButton>
+        }
+      />
 
       {/* KPI Overview Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

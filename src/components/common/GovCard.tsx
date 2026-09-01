@@ -26,21 +26,21 @@ export const GovCard: React.FC<GovCardProps> = ({
   noPadding = false,
 }) => {
   const borderHighlightClass = {
-    none: 'border-[#CBD5E1]',
-    purple: 'border-[#CBD5E1] border-t-2 border-t-[#4A154B]',
-    navy: 'border-[#CBD5E1] border-t-2 border-t-[#0B2A4A]',
-    red: 'border-[#CBD5E1] border-l-4 border-l-[#B72025]',
-    saffron: 'border-[#CBD5E1] border-l-4 border-l-[#D97706]',
-    green: 'border-[#CBD5E1] border-l-4 border-l-[#15803D]',
+    none: 'border-white/60',
+    purple: 'border-white/60 border-t-3 border-t-[#4A154B]',
+    navy: 'border-white/60 border-t-3 border-t-[#0B2A4A]',
+    red: 'border-white/60 border-l-4 border-l-[#B72025]',
+    saffron: 'border-white/60 border-l-4 border-l-[#D97706]',
+    green: 'border-white/60 border-l-4 border-l-[#15803D]',
   }[highlightBorder];
 
   return (
     <section
-      className={`bg-white border rounded-[2px] shadow-xs hover:shadow-sm transition-all duration-150 ${borderHighlightClass} ${className} font-sans`}
+      className={`gov-glass-card rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ${borderHighlightClass} ${className} font-sans overflow-hidden`}
     >
       {(title || headerAction) && (
         <div
-          className={`px-4 py-2.5 bg-[#F8FAFC] border-b border-[#CBD5E1] flex flex-wrap items-center justify-between gap-2 ${headerClassName}`}
+          className={`px-4 py-3 bg-white/65 backdrop-blur-sm border-b border-white/40 flex flex-wrap items-center justify-between gap-2 ${headerClassName}`}
         >
           <div>
             {typeof title === 'string' ? (
@@ -63,7 +63,7 @@ export const GovCard: React.FC<GovCardProps> = ({
       </div>
 
       {footer && (
-        <div className="px-4 py-2 bg-[#F8F9FA] border-t border-[#D9DDE3] text-[11px] text-[#5F6368]">
+        <div className="px-4 py-2.5 bg-white/50 backdrop-blur-xs border-t border-white/40 text-[11px] text-[#5F6368]">
           {footer}
         </div>
       )}

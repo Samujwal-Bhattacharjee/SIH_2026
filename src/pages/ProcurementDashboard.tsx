@@ -13,6 +13,7 @@ import {
 import { useProcurement } from '../context/ProcurementContext';
 import { apiClient } from '../services/api/apiClient';
 import { useLanguage } from '../context/LanguageContext';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 export const ProcurementDashboard: React.FC = () => {
   const { bidders, refreshData, error } = useProcurement();
@@ -131,43 +132,39 @@ export const ProcurementDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
-      {/* ── Page Header Strip ────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
-        <div>
-          <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#230B5C] tracking-tight">
-            Procurement Compliance Dashboard
-          </h1>
-          <p className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider mt-1">
-            PROCUREMENT OFFICER WORKSPACE
-          </p>
-        </div>
+      {/* ── Page Header Strip (Glossy Frosted Card Banner) ────────────────── */}
+      <GovPageHeader
+        title="Procurement Compliance Dashboard"
+        tag="PROCUREMENT OFFICER WORKSPACE"
+        subtitle="Consolidated evaluation register of active bids, compliance scores, and statutory document status."
+        actions={
+          <>
+            <button
+              onClick={() => navigate('/integrity')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
+            >
+              <ShieldAlert className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
+              <span>Integrity Workspace</span>
+            </button>
 
-        <div className="flex items-center flex-wrap gap-2.5">
-          <button
-            onClick={() => navigate('/integrity')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
-          >
-            <ShieldAlert className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
-            <span>Integrity Workspace</span>
-          </button>
+            <button
+              onClick={() => navigate('/tenders')}
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
+            >
+              <PlusCircle className="w-4 h-4 text-[#FF9933] group-hover:rotate-90 transition-transform duration-300" />
+              <span>Create Tender</span>
+            </button>
 
-          <button
-            onClick={() => navigate('/tenders')}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
-          >
-            <PlusCircle className="w-4 h-4 text-white group-hover:rotate-90 transition-transform duration-300" />
-            <span>Create Tender</span>
-          </button>
-
-          <button
-            onClick={() => navigate('/audit-trail')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
-          >
-            <ScrollText className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
-            <span>Audit Register</span>
-          </button>
-        </div>
-      </div>
+            <button
+              onClick={() => navigate('/audit-trail')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
+            >
+              <ScrollText className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
+              <span>Audit Register</span>
+            </button>
+          </>
+        }
+      />
 
       {error && (
         <div className="ux4g-alert ux4g-alert-error text-xs">
@@ -179,7 +176,7 @@ export const ProcurementDashboard: React.FC = () => {
       {/* ── 1. Four KPI Metric Cards ───────────────────────────────────────── */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" aria-label="KPI Overview">
         {/* Card 1: Active Procurements */}
-        <div className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
+        <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block">
             ACTIVE PROCUREMENTS
           </span>
@@ -194,7 +191,7 @@ export const ProcurementDashboard: React.FC = () => {
         </div>
 
         {/* Card 2: Pending Verification */}
-        <div className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
+        <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block">
             PENDING VERIFICATION
           </span>
@@ -209,8 +206,8 @@ export const ProcurementDashboard: React.FC = () => {
         </div>
 
         {/* Card 3: Integrity Reviews */}
-        <div className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
-          <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block">
+        <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
+          <span className="text-[11px] font-bold text-[#8A2C0E] uppercase tracking-wider block">
             INTEGRITY REVIEWS
           </span>
           <div className="flex items-baseline gap-2.5 mt-3">
@@ -224,7 +221,7 @@ export const ProcurementDashboard: React.FC = () => {
         </div>
 
         {/* Card 4: High-Risk Cases */}
-        <div className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
+        <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#DC2626] uppercase tracking-wider block">
             HIGH-RISK CASES
           </span>
@@ -242,7 +239,7 @@ export const ProcurementDashboard: React.FC = () => {
       {/* ── 2. ATTENTION REQUIRED: Actionable Procurement Queue ─────────────── */}
       <section className="space-y-3">
         {/* Banner */}
-        <div className="bg-[#FEE2E2]/60 border border-[#FCA5A5] rounded-[4px] p-4 flex items-start gap-3">
+        <div className="bg-[#FEE2E2]/75 backdrop-blur-md border border-[#FCA5A5] rounded-lg p-4 flex items-start gap-3 shadow-xs">
           <AlertTriangle className="w-5 h-5 text-[#B91C1C] shrink-0 mt-0.5" />
           <div className="flex-1">
             <div className="flex items-center flex-wrap gap-2">
@@ -260,11 +257,11 @@ export const ProcurementDashboard: React.FC = () => {
         </div>
 
         {/* Table 1: Actionable Items */}
-        <div className="bg-white border border-[#E5E7EB] rounded-[4px] shadow-2xs overflow-hidden">
+        <div className="gov-glass-card rounded-lg shadow-sm overflow-hidden border border-white/60">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-[#FAF8FD] border-b border-[#E5E7EB] text-[#475569]">
+                <tr className="bg-[#FAF8FD]/80 backdrop-blur-xs border-b border-gray-200 text-[#475569]">
                   <th className="py-3 px-4 font-semibold w-[220px]">Tender Identifier</th>
                   <th className="py-3 px-4 font-semibold w-[280px]">Bidder / Participating Entities</th>
                   <th className="py-3 px-4 font-semibold w-[160px]">Risk Tier</th>
@@ -272,10 +269,10 @@ export const ProcurementDashboard: React.FC = () => {
                   <th className="py-3 px-4 font-semibold text-right w-[150px]">Officer Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5E7EB]">
+              <tbody className="divide-y divide-gray-200/50 bg-white/50 backdrop-blur-xs">
                 {actionableItems.length > 0 ? (
                   actionableItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-[#F9FAFB] transition-colors">
+                    <tr key={item.id} className="hover:bg-sky-50/60 transition-colors">
                       {/* Tender Identifier */}
                       <td className="py-3.5 px-4 align-top">
                         <div className="font-bold text-sm text-[#0F172A] font-mono">
@@ -327,7 +324,7 @@ export const ProcurementDashboard: React.FC = () => {
                       <td className="py-3.5 px-4 align-top text-right whitespace-nowrap">
                         <Link
                           to={item.action_url}
-                          className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-semibold bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] transition-colors shadow-2xs"
+                          className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-semibold bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] gov-btn-glossy transition-all shadow-xs"
                         >
                           <span>Review Integrity</span>
                           <ChevronRight className="w-3.5 h-3.5" />
@@ -349,8 +346,8 @@ export const ProcurementDashboard: React.FC = () => {
       </section>
 
       {/* ── 3. RECENT PROCUREMENT: Assessments Register ────────────────────── */}
-      <section className="bg-white border border-[#E5E7EB] rounded-[4px] shadow-2xs overflow-hidden">
-        <div className="px-4 py-3.5 border-b border-[#E5E7EB] bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <section className="gov-glass-card rounded-lg shadow-sm overflow-hidden border border-white/60">
+        <div className="px-4 py-3.5 border-b border-gray-200/60 bg-white/60 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="font-bold text-base text-[#0F172A]">
               Recent tender assessments
@@ -371,7 +368,7 @@ export const ProcurementDashboard: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-[#E5E7EB] text-[#475569]">
+              <tr className="border-b border-gray-200 bg-[#FAF8FD]/80 backdrop-blur-xs text-[#475569]">
                 <th className="py-3 px-4 font-semibold w-[200px]">Tender ID</th>
                 <th className="py-3 px-4 font-semibold">Tender Title / Bidder</th>
                 <th className="py-3 px-4 font-semibold w-[140px]">Status</th>
@@ -380,10 +377,10 @@ export const ProcurementDashboard: React.FC = () => {
                 <th className="py-3 px-4 font-semibold text-right w-[160px]">Officer Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E5E7EB]">
+            <tbody className="divide-y divide-gray-200/50 bg-white/50 backdrop-blur-xs">
               {recentAssessments.length > 0 ? (
                 recentAssessments.map((b) => (
-                  <tr key={b.id} className="hover:bg-[#F9FAFB] transition-colors">
+                  <tr key={b.id} className="hover:bg-sky-50/60 transition-colors">
                     {/* Tender ID */}
                     <td className="py-3.5 px-4 font-bold text-sm text-[#0F172A] font-mono">
                       {b.tender_id}
@@ -443,7 +440,7 @@ export const ProcurementDashboard: React.FC = () => {
       </section>
 
       {/* ── 4. Decision Support Notice Callout ──────────────────────────────── */}
-      <section className="bg-[#F5F3FF]/70 border-l-4 border-[#4318FF] p-3.5 rounded-r-[4px] flex items-start gap-2.5 text-xs text-[#334155] shadow-2xs">
+      <section className="bg-white/70 backdrop-blur-md border-l-4 border-[#4318FF] p-3.5 rounded-r-lg flex items-start gap-2.5 text-xs text-[#334155] shadow-xs">
         <Info className="w-4 h-4 text-[#4318FF] shrink-0 mt-0.5" />
         <div className="leading-relaxed">
           <strong className="text-[#0F172A] font-semibold">Decision-support notice:</strong>{' '}

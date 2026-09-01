@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 type ReportType =
   | 'COMPLIANCE_SUMMARY'
@@ -428,39 +429,32 @@ export const Reports: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-3">
-        <div>
-          <p className="text-[11px] uppercase font-bold tracking-wider text-[#5F6368]">
-            Government Procurement Analytics
-          </p>
-          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
-            Procurement Compliance Reports
-          </h1>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Bid verification, compliance trends, exception analysis and procurement assessment statistics.
-          </p>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <GovButton
-            variant="secondary"
-            size="sm"
-            onClick={() => window.print()}
-            icon={<Printer className="w-3.5 h-3.5 text-[#0B2A4A]" />}
-          >
-            Print Summary
-          </GovButton>
-          <GovButton
-            variant="primary"
-            size="sm"
-            onClick={handleExportCsv}
-            icon={<Download className="w-3.5 h-3.5" />}
-          >
-            Export CSV
-          </GovButton>
-        </div>
-      </div>
+      {/* Page Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Procurement Compliance Reports"
+        tag="GOVERNMENT PROCUREMENT ANALYTICS"
+        subtitle="Bid verification, compliance trends, exception analysis and procurement assessment statistics."
+        actions={
+          <div className="flex items-center space-x-2">
+            <GovButton
+              variant="secondary"
+              size="sm"
+              onClick={() => window.print()}
+              icon={<Printer className="w-3.5 h-3.5 text-[#0B2A4A]" />}
+            >
+              Print Summary
+            </GovButton>
+            <GovButton
+              variant="primary"
+              size="sm"
+              onClick={handleExportCsv}
+              icon={<Download className="w-3.5 h-3.5" />}
+            >
+              Export CSV
+            </GovButton>
+          </div>
+        }
+      />
 
       {/* Report Selector Tabs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 select-none">

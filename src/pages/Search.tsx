@@ -11,6 +11,7 @@ import { Case, DocumentRecord, DepartmentInfo } from '../types';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
 import { StatusBadge } from '../components/common/GovBadge';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 import { inputBaseClasses, inputErrorClasses, selectBaseClasses } from '../components/common/FormField';
 import { DocumentViewerModal } from '../components/documents/DocumentViewerModal';
 
@@ -72,15 +73,12 @@ export const Search: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="border-b border-[#D9DDE3] pb-3">
-        <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-          Tender, Bidder &amp; Document Retrieval Engine
-        </h1>
-        <p className="text-xs text-[#5F6368] mt-0.5">
-          Execute multi-criteria searches across active tender records, bidder submissions, and OCR-extracted document archives.
-        </p>
-      </div>
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Tender, Bidder & Document Retrieval Engine"
+        tag="INTELLIGENCE RETRIEVAL"
+        subtitle="Execute multi-criteria searches across active tender records, bidder submissions, and OCR-extracted document archives."
+      />
 
       {/* Main Search Panel */}
       <GovCard highlightBorder="navy">

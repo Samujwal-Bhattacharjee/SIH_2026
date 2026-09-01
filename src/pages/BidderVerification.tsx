@@ -265,23 +265,23 @@ export const BidderVerification: React.FC = () => {
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-4 font-sans pb-8">
-      {/* Navigation Breadcrumb */}
-      <div className="flex items-center justify-between text-xs text-[#475569] border-b border-[#CBD5E1] pb-2.5">
-        <div className="flex items-center gap-1.5">
+      {/* Navigation Breadcrumb & Actions Banner */}
+      <div className="gov-glass-card rounded-lg px-4 py-3 flex flex-wrap items-center justify-between text-xs text-[#475569] shadow-sm border border-white/60">
+        <div className="flex items-center gap-2">
           <Link
             to="/tenders"
-            className="hover:underline text-[#0B2A4A] flex items-center gap-1 font-semibold"
+            className="hover:underline text-[#0B2A4A] flex items-center gap-1.5 font-bold"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to tender register
+            <ArrowLeft className="w-4 h-4 text-[#0B2A4A]" /> Back to Tender Register
           </Link>
           <span>/</span>
-          <span className="font-mono font-bold text-[#0B2A4A]">{bidder.id}</span>
+          <span className="font-mono font-bold px-2 py-0.5 rounded bg-white/70 text-[#0B2A4A] border border-white/80">{bidder.id}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Link
             to={(bidder as any)?.tender_id ? `/integrity?tender=${(bidder as any).tender_id}` : '/integrity'}
-            className="ux4g-btn ux4g-btn-secondary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#0B2A4A] shadow-xs gov-btn-glossy transition-all cursor-pointer"
             title="Inspect cross-tender integrity signals and relationship graphs"
           >
             <ShieldAlert className="w-3.5 h-3.5 text-[#0B2A4A]" />
@@ -290,14 +290,14 @@ export const BidderVerification: React.FC = () => {
           <button
             onClick={handleRunVerification}
             disabled={verifying || loading}
-            className="ux4g-btn ux4g-btn-primary ux4g-btn-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {verifying ? (
               <RotateCw className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <Play className="w-3 h-3 fill-current" />
             )}
-            <span>{verifying ? 'Assessing compliance...' : 'Start compliance verification'}</span>
+            <span>{verifying ? 'Assessing Compliance...' : 'Start Compliance Verification'}</span>
           </button>
         </div>
       </div>
@@ -329,17 +329,18 @@ export const BidderVerification: React.FC = () => {
       )}
 
       {/* Bidder Identification & Compliance Header */}
-      <section className="bg-white border border-[#CBD5E1] rounded-[2px] p-4 shadow-xs">
+      <section className="gov-glass-card rounded-xl p-5 shadow-md border border-white/70 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#FF9933] via-[#FFFFFF] to-[#138808]" />
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-[#F1F5F9] px-2 py-0.5 border border-[#CBD5E1] rounded-[2px]">
+              <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-white/70 px-2 py-0.5 border border-[#CBD5E1] rounded-[4px]">
                 TENDER: GEM/2026/B/418207
               </span>
-              <span className="text-xs text-[#64748B]">• Bidder verification workspace</span>
+              <span className="text-xs text-[#64748B] font-medium">• Bidder Verification Dossier</span>
             </div>
-            <h1 className="font-serif font-bold text-xl text-[#0B2A4A] mt-1">{bidder.name}</h1>
-            <p className="text-xs text-[#64748B] mt-0.5">
+            <h1 className="font-serif font-extrabold text-xl sm:text-2xl text-[#0B2A4A] mt-1">{bidder.name}</h1>
+            <p className="text-xs text-[#475569] font-medium mt-0.5">
               Supply and Installation of Network Infrastructure for Government Administrative Offices
             </p>
           </div>

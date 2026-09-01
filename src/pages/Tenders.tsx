@@ -13,6 +13,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 export const Tenders: React.FC = () => {
   const { bidders, addTender, addBidder, error } = useProcurement();
@@ -66,14 +67,20 @@ export const Tenders: React.FC = () => {
   return (
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
       {/* ── Page Header Strip ────────────────────────────────────────────── */}
-      <div className="pt-1">
-        <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#0F172A] tracking-tight">
-          Tender Compliance Workspace
-        </h1>
-        <p className="text-xs text-[#64748B] mt-1">
-          Define tender criteria, enroll participating bidders, and initiate document verification workflows.
-        </p>
-      </div>
+      <GovPageHeader
+        title="Tender Compliance Workspace"
+        tag="TENDER SPECIFICATION & ENROLLMENT"
+        subtitle="Define tender criteria, enroll participating bidders, and initiate document verification workflows."
+        actions={
+          <Link
+            to="/documents"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all"
+          >
+            <Upload className="w-4 h-4 text-white" />
+            <span>Upload Bidder Documents</span>
+          </Link>
+        }
+      />
 
       {statusMessage && (
         <div className="bg-[#F0FDF4] border border-[#BBF7D0] p-3 rounded-[4px] text-xs text-[#15803D] flex items-center justify-between">

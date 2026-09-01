@@ -18,6 +18,7 @@ import { workflowService, analyticsService, projectService } from '../services/a
 import { ProcessMapData, ProcessPerformanceMetrics, Case } from '../types';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 import { TableSkeleton } from '../components/common/LoadingSkeleton';
 
 export const Intelligence: React.FC = () => {
@@ -71,31 +72,22 @@ export const Intelligence: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
-        <div>
-          <div className="flex items-center space-x-2">
-            <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
-              Procurement Compliance Intelligence &amp; Exception Analysis
-            </h1>
-            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase rounded-[2px] border border-emerald-300">
-              Rule Evaluator (v2.1)
-            </span>
-          </div>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Government Procurement • AI-assisted bid compliance attribution and exception detection across tender records.
-          </p>
-        </div>
-
-        <GovButton
-          variant="secondary"
-          size="sm"
-          onClick={fetchIntelligenceData}
-          icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B3558]" />}
-        >
-          Refresh Analysis
-        </GovButton>
-      </div>
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Procurement Compliance Intelligence & Exception Analysis"
+        tag="RULE EVALUATOR (V2.1)"
+        subtitle="Government Procurement • AI-assisted bid compliance attribution and exception detection across tender records."
+        actions={
+          <GovButton
+            variant="secondary"
+            size="sm"
+            onClick={fetchIntelligenceData}
+            icon={<RefreshCw className="w-3.5 h-3.5 text-[#0B3558]" />}
+          >
+            Refresh Analysis
+          </GovButton>
+        }
+      />
 
       {/* Continuous Government Metric Strip */}
       <div className="bg-white border border-[#CBD2DE] border-t-2 border-t-[#0B3558] rounded-[2px] grid grid-cols-2 md:grid-cols-4 divide-x divide-[#CBD2DE] select-none">

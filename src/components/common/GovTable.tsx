@@ -73,11 +73,11 @@ export function GovTable<T>({
   const cellPadding = compact ? 'px-2.5 py-1.5' : 'px-3 py-2.5';
 
   return (
-    <div className={`border border-[#D9DDE3] rounded-[4px] bg-white overflow-hidden ${className}`}>
+    <div className={`border border-white/60 rounded-lg gov-glass-card overflow-hidden shadow-sm ${className}`}>
       <div className="overflow-x-auto max-h-[600px]">
         <table className="w-full border-collapse text-left text-sm">
           <thead className={stickyHeader ? 'sticky top-0 z-10' : ''}>
-            <tr className="bg-[#0B2A4A] text-white border-b-2 border-[#071A2E]">
+            <tr className="bg-[#0B2A4A]/95 backdrop-blur-md text-white border-b-2 border-[#071A2E]">
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -121,20 +121,19 @@ export function GovTable<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#D9DDE3]">
+          <tbody className="divide-y divide-gray-200/50 bg-white/60 backdrop-blur-xs font-sans">
             {loading ? (
-              Array.from({ length: pageSize > 5 ? 5 : pageSize }).map((_, rIdx) => (
-                <tr key={rIdx} className="animate-pulse">
-                  {columns.map((col, cIdx) => (
-                    <td key={cIdx} className={cellPadding}>
-                      <div className="h-4 bg-gray-200 rounded w-4/5" />
-                    </td>
-                  ))}
-                </tr>
-              ))
+              <tr>
+                <td colSpan={columns.length} className="py-12 text-center text-xs text-[#5F6368]">
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-[#0B2A4A] border-t-transparent rounded-full animate-spin" />
+                    <span>Loading data records...</span>
+                  </div>
+                </td>
+              </tr>
             ) : paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-[#5F6368] text-sm">
+                <td colSpan={columns.length} className="py-12 text-center text-xs text-[#5F6368]">
                   {emptyMessage}
                 </td>
               </tr>
@@ -143,11 +142,11 @@ export function GovTable<T>({
                 <tr
                   key={keyExtractor(item)}
                   onClick={() => onRowClick && onRowClick(item)}
-                  className={`transition-colors ${
+                  className={`transition-colors duration-150 ${
                     onRowClick ? 'cursor-pointer' : ''
                   } ${
-                    striped && rowIdx % 2 === 1 ? 'bg-[#F9FAFB]' : 'bg-white'
-                  } hover:bg-[#EEF2F7]`}
+                    striped && rowIdx % 2 === 1 ? 'bg-slate-50/40' : 'bg-transparent'
+                  } hover:bg-sky-50/60`}
                 >
                   {columns.map((col) => (
                     <td
@@ -172,7 +171,7 @@ export function GovTable<T>({
 
       {/* Pagination Footer */}
       {sortedData.length > pageSize && (
-        <div className="px-4 py-2.5 bg-[#F8F9FA] border-t border-[#D9DDE3] flex flex-wrap items-center justify-between gap-2 text-xs text-[#5F6368]">
+        <div className="px-4 py-2.5 bg-white/70 backdrop-blur-xs border-t border-white/50 flex flex-wrap items-center justify-between gap-2 text-xs text-[#5F6368]">
           <div>
             Showing {(currentPage - 1) * pageSize + 1} to{' '}
             {Math.min(currentPage * pageSize, sortedData.length)} of {sortedData.length} entries
@@ -182,7 +181,7 @@ export function GovTable<T>({
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-1 border border-[#D9DDE3] bg-white rounded-[2px] disabled:opacity-40 hover:bg-gray-100 cursor-pointer disabled:cursor-not-allowed"
+              className="p-1 border border-gray-300 bg-white/90 rounded-[3px] disabled:opacity-40 hover:bg-gray-100 cursor-pointer disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -192,7 +191,7 @@ export function GovTable<T>({
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-1 border border-[#D9DDE3] bg-white rounded-[2px] disabled:opacity-40 hover:bg-gray-100 cursor-pointer disabled:cursor-not-allowed"
+              className="p-1 border border-gray-300 bg-white/90 rounded-[3px] disabled:opacity-40 hover:bg-gray-100 cursor-pointer disabled:cursor-not-allowed"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

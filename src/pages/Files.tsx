@@ -13,6 +13,7 @@ import { GovTable, TableColumn } from '../components/common/GovTable';
 import { StatusBadge } from '../components/common/GovBadge';
 import { GovButton } from '../components/common/GovButton';
 import { GovCard } from '../components/common/GovCard';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 import { inputBaseClasses, selectBaseClasses } from '../components/common/FormField';
 import { FileForwardModal } from '../components/files/FileForwardModal';
 import { FileRegisterModal } from '../components/files/FileRegisterModal';
@@ -271,36 +272,32 @@ export const Files: React.FC = () => {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-3">
-        <div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] tracking-tight">
-            Official File Register &amp; Movement Ledger
-          </h1>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Search, filter, inspect dockets, and forward government files across state departments.
-          </p>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <GovButton
-            variant="secondary"
-            size="sm"
-            onClick={handleExportCsv}
-            icon={<Download className="w-3.5 h-3.5 text-[#0B2A4A]" />}
-          >
-            Export Register CSV
-          </GovButton>
-          <GovButton
-            variant="primary"
-            size="sm"
-            onClick={() => setIsRegisterOpen(true)}
-            icon={<PlusCircle className="w-3.5 h-3.5" />}
-          >
-            Register Inward File
-          </GovButton>
-        </div>
-      </div>
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Official File Register & Movement Ledger"
+        tag="DEPARTMENTAL FILE LEDGER"
+        subtitle="Search, filter, inspect dockets, and forward government files across state departments."
+        actions={
+          <div className="flex items-center space-x-2">
+            <GovButton
+              variant="secondary"
+              size="sm"
+              onClick={handleExportCsv}
+              icon={<Download className="w-3.5 h-3.5 text-[#0B2A4A]" />}
+            >
+              Export Register CSV
+            </GovButton>
+            <GovButton
+              variant="primary"
+              size="sm"
+              onClick={() => setIsRegisterOpen(true)}
+              icon={<PlusCircle className="w-3.5 h-3.5" />}
+            >
+              Register Inward File
+            </GovButton>
+          </div>
+        }
+      />
 
       {/* Filter Toolbar Panel */}
       <GovCard noPadding>

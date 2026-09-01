@@ -21,7 +21,7 @@ export const GovButton: React.FC<GovButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    'inline-flex items-center justify-center font-sans font-semibold transition-all duration-150 border rounded-[2px] select-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#4A154B] active:translate-y-[0.5px]';
+    'inline-flex items-center justify-center font-sans font-semibold transition-all duration-150 border rounded-[4px] select-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#4A154B] active:translate-y-[0.5px] gov-btn-glossy';
 
   const sizeClasses = {
     sm: 'px-2.5 py-1 text-xs gap-1.5 h-7',

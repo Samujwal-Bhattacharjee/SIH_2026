@@ -19,6 +19,7 @@ import { ProcurementDocuments } from './pages/ProcurementDocuments';
 import { ProcurementAuditTrail } from './pages/ProcurementAuditTrail';
 import { VerificationSources } from './pages/VerificationSources';
 import { ProcurementIntegrity } from './pages/ProcurementIntegrity';
+import { BackgroundProvider } from './context/BackgroundContext';
 
 // Route guard for authenticated session
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -64,68 +65,70 @@ export function App() {
         <SystemProvider>
           <ProcurementProvider>
           <Router>
-            <Routes>
-              {/* Public Login Route */}
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <Login />
-                  </PublicRoute>
-                }
-              />
+            <BackgroundProvider>
+              <Routes>
+                {/* Public Login Route */}
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <Login />
+                    </PublicRoute>
+                  }
+                />
 
-              {/* Protected Operations Layout */}
-              <Route
-                element={
-                  <ProtectedRoute>
-                    <AppLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<ProcurementDashboard />} />
-                <Route path="/tenders" element={<Tenders />} />
-                <Route path="/verification" element={<VerificationHub />} />
-                <Route path="/verification/:bidderId" element={<BidderVerification />} />
-                <Route path="/integrity" element={<ProcurementIntegrity />} />
-                <Route path="/verification-sources" element={<VerificationSources />} />
-                <Route path="/sources" element={<VerificationSources />} />
-                <Route path="/audit-trail" element={<ProcurementAuditTrail />} />
+                {/* Protected Operations Layout */}
+                <Route
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<ProcurementDashboard />} />
+                  <Route path="/tenders" element={<Tenders />} />
+                  <Route path="/verification" element={<VerificationHub />} />
+                  <Route path="/verification/:bidderId" element={<BidderVerification />} />
+                  <Route path="/integrity" element={<ProcurementIntegrity />} />
+                  <Route path="/verification-sources" element={<VerificationSources />} />
+                  <Route path="/sources" element={<VerificationSources />} />
+                  <Route path="/audit-trail" element={<ProcurementAuditTrail />} />
 
-                {/* Legacy Route Aliases (Redirect to Procurement Counterparts) */}
-                <Route path="/projects" element={<Navigate to="/tenders" replace />} />
-                <Route path="/projects/:caseId" element={<Navigate to="/tenders" replace />} />
-                <Route path="/files" element={<Navigate to="/tenders" replace />} />
-                <Route path="/files/:caseId" element={<Navigate to="/tenders" replace />} />
-                <Route path="/cases" element={<Navigate to="/tenders" replace />} />
-                <Route path="/cases/:caseId" element={<Navigate to="/tenders" replace />} />
-                <Route path="/pending" element={<Navigate to="/verification" replace />} />
-                <Route path="/intelligence" element={<Navigate to="/verification" replace />} />
-                <Route path="/analytics" element={<Navigate to="/reports" replace />} />
-                <Route path="/workflow" element={<Navigate to="/integrity" replace />} />
-                <Route path="/risk" element={<Navigate to="/verification" replace />} />
-                <Route path="/simulation" element={<Navigate to="/integrity" replace />} />
-                <Route path="/audit-logs" element={<Navigate to="/audit-trail" replace />} />
+                  {/* Legacy Route Aliases (Redirect to Procurement Counterparts) */}
+                  <Route path="/projects" element={<Navigate to="/tenders" replace />} />
+                  <Route path="/projects/:caseId" element={<Navigate to="/tenders" replace />} />
+                  <Route path="/files" element={<Navigate to="/tenders" replace />} />
+                  <Route path="/files/:caseId" element={<Navigate to="/tenders" replace />} />
+                  <Route path="/cases" element={<Navigate to="/tenders" replace />} />
+                  <Route path="/cases/:caseId" element={<Navigate to="/tenders" replace />} />
+                  <Route path="/pending" element={<Navigate to="/verification" replace />} />
+                  <Route path="/intelligence" element={<Navigate to="/verification" replace />} />
+                  <Route path="/analytics" element={<Navigate to="/reports" replace />} />
+                  <Route path="/workflow" element={<Navigate to="/integrity" replace />} />
+                  <Route path="/risk" element={<Navigate to="/verification" replace />} />
+                  <Route path="/simulation" element={<Navigate to="/integrity" replace />} />
+                  <Route path="/audit-logs" element={<Navigate to="/audit-trail" replace />} />
 
-                {/* Document Repository & OCR Scan */}
-                <Route path="/documents" element={<ProcurementDocuments />} />
-                <Route path="/documents/upload" element={<ProcurementDocuments />} />
-                <Route path="/upload" element={<ProcurementDocuments />} />
+                  {/* Document Repository & OCR Scan */}
+                  <Route path="/documents" element={<ProcurementDocuments />} />
+                  <Route path="/documents/upload" element={<ProcurementDocuments />} />
+                  <Route path="/upload" element={<ProcurementDocuments />} />
 
-                {/* Advanced Search Engine */}
-                <Route path="/search" element={<Search />} />
+                  {/* Advanced Search Engine */}
+                  <Route path="/search" element={<Search />} />
 
-                {/* Procurement Compliance Reports */}
-                <Route path="/reports" element={<Reports />} />
+                  {/* Procurement Compliance Reports */}
+                  <Route path="/reports" element={<Reports />} />
 
-                {/* System Settings */}
-                <Route path="/settings" element={<Settings />} />
-              </Route>
+                  {/* System Settings */}
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
 
-              {/* Fallback */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
+                {/* Fallback */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              </Routes>
+            </BackgroundProvider>
           </Router>
           </ProcurementProvider>
         </SystemProvider>

@@ -29,8 +29,8 @@ export const GovBreadcrumb: React.FC = () => {
 
   return (
     <>
-      <div className="bg-transparent px-4 sm:px-6 lg:px-8 py-2.5 select-none font-sans">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div className="px-4 sm:px-6 lg:px-8 py-2 select-none font-sans">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs bg-white/75 backdrop-blur-md border border-white/60 shadow-sm rounded-lg px-4 py-2">
           {/* Breadcrumb Trail */}
           <nav className="flex items-center space-x-1.5 text-[#64748B] text-xs font-medium" aria-label="Breadcrumb">
             <Link to="/dashboard" className="hover:text-[#0F172A] flex items-center space-x-1 transition-colors">
@@ -91,7 +91,7 @@ export const GovBreadcrumb: React.FC = () => {
             {/* Create Tender Action */}
             <button
               onClick={() => navigate('/tenders')}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-[#4A154B] hover:bg-[#3B1A42] text-white text-xs font-semibold rounded-[2px] shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center space-x-1.5 px-3 py-1 bg-[#4A154B] hover:bg-[#3B1A42] text-white text-xs font-semibold rounded-[4px] shadow-xs gov-btn-glossy transition-all cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5 text-[#FF9933]" />
               <span>Create Tender</span>

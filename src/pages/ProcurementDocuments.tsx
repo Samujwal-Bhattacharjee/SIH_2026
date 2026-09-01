@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 interface ExtractedField {
   key: string;
@@ -117,40 +118,35 @@ export const ProcurementDocuments: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
-      {/* ── Page Header & Status Pills Strip ─────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
-        <div>
-          <h1 className="font-serif font-bold text-2xl sm:text-3xl text-[#0F172A] tracking-tight">
-            Document Verification
-          </h1>
-          <p className="text-xs text-[#64748B] mt-1">
-            Upload bidder documents and review extracted evidence before compliance assessment.
-          </p>
-        </div>
+      {/* ── Page Header & Status Pills Strip (Glossy Frosted Banner) ─── */}
+      <GovPageHeader
+        title="Document Verification & OCR Intelligence"
+        tag="EVIDENCE EXTRACTION & OCR"
+        subtitle="Upload bidder documents and review extracted evidence before compliance assessment."
+        actions={
+          <div className="flex items-center flex-wrap gap-2 text-xs">
+            <span className="px-3 py-1 bg-white/80 text-[#6D28D9] border border-[#E9D5FF] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#6D28D9]" />
+              Active tenders (04)
+            </span>
 
-        {/* Status Pills */}
-        <div className="flex items-center flex-wrap gap-2 text-xs">
-          <span className="px-3 py-1 bg-[#FAF5FF] text-[#6D28D9] border border-[#E9D5FF] rounded-full font-medium inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#6D28D9]" />
-            Active tenders (04)
-          </span>
+            <span className="px-3 py-1 bg-white/80 text-[#B45309] border border-[#FDE68A] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#B45309]" />
+              Under review ({String(underReviewCount).padStart(2, '0')})
+            </span>
 
-          <span className="px-3 py-1 bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] rounded-full font-medium inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B45309]" />
-            Under review ({String(underReviewCount).padStart(2, '0')})
-          </span>
+            <span className="px-3 py-1 bg-white/80 text-[#DC2626] border border-[#FECACA] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />
+              High risk ({String(highRiskCount).padStart(2, '0')})
+            </span>
 
-          <span className="px-3 py-1 bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] rounded-full font-medium inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />
-            High risk ({String(highRiskCount).padStart(2, '0')})
-          </span>
-
-          <span className="px-3 py-1 bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0] rounded-full font-medium inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#64748B]" />
-            Pending (01)
-          </span>
-        </div>
-      </div>
+            <span className="px-3 py-1 bg-white/80 text-[#64748B] border border-[#E2E8F0] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#64748B]" />
+              Pending (01)
+            </span>
+          </div>
+        }
+      />
 
       {error && (
         <div className="bg-[#FEF2F2] border border-[#FCA5A5] p-3 rounded-[4px] text-xs text-[#B72025] flex items-center gap-2">

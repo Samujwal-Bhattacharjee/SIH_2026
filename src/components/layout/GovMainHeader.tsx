@@ -74,12 +74,12 @@ export const GovMainHeader: React.FC = () => {
   ];
 
   return (
-    <header className="bg-white border-b border-[#E5E7EB] sticky top-0 z-40 select-none shadow-2xs font-sans">
+    <header className="gov-glass-header sticky top-0 z-40 select-none font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Left: Landmark Icon + Platform Title (3-lines) */}
         <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group transition-transform duration-200 hover:scale-[1.01]">
-          <div className="text-[#230B5C] transition-transform duration-300 group-hover:rotate-[-4deg] group-hover:scale-110">
-            <Landmark className="w-6 h-6 stroke-[2.2]" />
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#2E0854] to-[#0B2A4A] flex items-center justify-center text-white shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:rotate-[-2deg]">
+            <Landmark className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div className="font-bold text-xs leading-[1.15] text-[#0F172A] tracking-tight">
             <div className="group-hover:text-[#2E0854] transition-colors">Procurement</div>
@@ -114,7 +114,7 @@ export const GovMainHeader: React.FC = () => {
           <div className="relative hidden sm:block">
             <button
               onClick={openSearch}
-              className="flex items-center gap-2 pl-3 pr-4 py-1.5 bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-[#E2E8F0] hover:border-[#CBD5E1] rounded-full text-xs text-[#94A3B8] transition-all duration-200 hover:shadow-xs active:scale-[0.98] cursor-pointer w-44 lg:w-52 group"
+              className="flex items-center gap-2 pl-3 pr-4 py-1.5 bg-white/70 hover:bg-white/90 border border-white/60 hover:border-white/90 backdrop-blur-md rounded-full text-xs text-[#94A3B8] transition-all duration-200 hover:shadow-xs active:scale-[0.98] cursor-pointer w-44 lg:w-52 group"
               title="Global Search (Ctrl+K)"
             >
               <Search className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#2E0854] transition-colors duration-200 shrink-0" />
@@ -126,7 +126,7 @@ export const GovMainHeader: React.FC = () => {
           <div className="relative" ref={alertRef}>
             <button
               onClick={() => setIsAlertOpen((prev) => !prev)}
-              className="p-2 text-[#64748B] hover:text-[#2E0854] hover:bg-purple-50 rounded-full relative transition-all duration-200 cursor-pointer active:scale-90 group"
+              className="p-2 text-[#64748B] hover:text-[#2E0854] hover:bg-white/60 rounded-full relative transition-all duration-200 cursor-pointer active:scale-90 group"
               title="Operational Alerts"
               aria-label="Alerts"
               aria-expanded={isAlertOpen}
@@ -141,22 +141,22 @@ export const GovMainHeader: React.FC = () => {
             </button>
 
             {isAlertOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E5E7EB] rounded-[4px] shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden">
-                <div className="px-3.5 py-2.5 bg-[#2E0854] text-white flex items-center justify-between">
+              <div className="absolute right-0 mt-2 w-80 gov-glass-card rounded-lg shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden border border-white/60">
+                <div className="px-3.5 py-2.5 bg-[#2E0854]/95 text-white flex items-center justify-between">
                   <span className="font-bold text-xs flex items-center gap-1.5">
                     <Bell className="w-3.5 h-3.5 text-purple-200" />
                     Notifications ({alerts.length})
                   </span>
                   <span className="text-[10px] text-purple-200 bg-purple-900/60 px-2 py-0.5 rounded-full font-medium">Pending Actions</span>
                 </div>
-                <div className="max-h-72 overflow-y-auto divide-y divide-[#E5E7EB]">
+                <div className="max-h-72 overflow-y-auto divide-y divide-gray-100">
                   {alerts.length > 0 ? (
                     alerts.map((alert) => (
                       <div
                         key={alert.id}
                         onClick={() => handleAlertClick(alert.id, alert.link)}
-                        className={`p-3 text-xs cursor-pointer hover:bg-[#F9FAFB] transition-all duration-150 ${
-                          !alert.read ? 'bg-[#FFFBEB]/70 font-medium border-l-3 border-[#D97706]' : 'bg-white'
+                        className={`p-3 text-xs cursor-pointer hover:bg-white/80 transition-all duration-150 ${
+                          !alert.read ? 'bg-[#FFFBEB]/80 font-medium border-l-3 border-[#D97706]' : 'bg-transparent'
                         }`}
                       >
                         <div className="flex items-center justify-between text-[10px] text-gray-500 mb-1">
@@ -193,19 +193,19 @@ export const GovMainHeader: React.FC = () => {
           {/* Settings Icon */}
           <button
             onClick={() => navigate('/settings')}
-            className="p-2 text-[#64748B] hover:text-[#2E0854] hover:bg-purple-50 rounded-full transition-all duration-200 cursor-pointer active:scale-90 group"
+            className="p-2 text-[#64748B] hover:text-[#2E0854] hover:bg-white/60 rounded-full transition-all duration-200 cursor-pointer active:scale-90 group"
             title="Portal Settings"
             aria-label="Settings"
           >
             <Settings className="w-4 h-4 transition-transform duration-500 ease-out group-hover:rotate-90 group-hover:scale-110" />
           </button>
 
-          {/* Create Tender Button */}
+          {/* Create Tender Button (Glossy button) */}
           <button
             onClick={() => navigate('/tenders')}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white gov-btn-glossy transition-all duration-200 shadow-sm cursor-pointer group"
           >
-            <PlusCircle className="w-3.5 h-3.5 text-purple-200 group-hover:rotate-90 transition-transform duration-300" />
+            <PlusCircle className="w-3.5 h-3.5 text-[#FF9933] group-hover:rotate-90 transition-transform duration-300" />
             <span>Create Tender</span>
           </button>
 
@@ -221,8 +221,8 @@ export const GovMainHeader: React.FC = () => {
             </button>
 
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white border border-[#E5E7EB] rounded-[4px] shadow-2xl z-50 divide-y divide-[#E5E7EB] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden">
-                <div className="p-3 bg-[#F8FAFC]">
+              <div className="absolute right-0 mt-2 w-56 gov-glass-card rounded-lg shadow-2xl z-50 divide-y divide-gray-100 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden border border-white/60">
+                <div className="p-3 bg-white/70 backdrop-blur-md">
                   <p className="font-bold text-xs text-[#0F172A]">{user?.name || 'Officer Rajeshwar Verma'}</p>
                   <p className="text-[11px] text-[#64748B]">{user?.designation || 'Joint Secretary'}</p>
                   <p className="text-[10px] text-gray-400 font-mono mt-0.5">{user?.department || 'Procurement & Contracts'}</p>
@@ -233,7 +233,7 @@ export const GovMainHeader: React.FC = () => {
                       setIsUserMenuOpen(false);
                       navigate('/settings');
                     }}
-                    className="w-full text-left px-3 py-1.5 text-[#0F172A] hover:bg-[#F1F5F9] rounded-[2px] flex items-center space-x-2 transition-colors cursor-pointer group"
+                    className="w-full text-left px-3 py-1.5 text-[#0F172A] hover:bg-white/80 rounded-[2px] flex items-center space-x-2 transition-colors cursor-pointer group"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-[#2E0854] group-hover:scale-110 transition-transform" />
                     <span>System Credentials</span>

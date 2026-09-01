@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { isUsingMockApi } from '../services/api/apiClient';
 import { GovCard } from '../components/common/GovCard';
 import { GovButton } from '../components/common/GovButton';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 export const Settings: React.FC = () => {
   const { user } = useAuth();
@@ -34,24 +35,17 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-5xl font-sans">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#D9DDE3] pb-3 gap-2">
-        <div>
-          <p className="text-[11px] uppercase font-bold tracking-wider text-[#5F6368]">
-            System Preferences &amp; Officer Profile
-          </p>
-          <h1 className="font-serif font-bold text-2xl text-[#0B3558] tracking-tight">
-            Procurement Configuration &amp; Settings
-          </h1>
-          <p className="text-xs text-[#5F6368] mt-0.5">
-            Officer jurisdiction, automated verification engines, and procurement notification routing.
-          </p>
-        </div>
-
-        <span className="font-mono text-xs text-[#5F6368]">
-          ENVIRONMENT: <strong className="text-[#0B2A4A]">SIH26100-PROTOTYPE</strong>
-        </span>
-      </div>
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Procurement Configuration & Settings"
+        tag="SYSTEM PREFERENCES & JURISDICTION"
+        subtitle="Officer jurisdiction, automated verification engines, and procurement notification routing."
+        actions={
+          <span className="font-mono text-xs text-[#0B2A4A] bg-white/80 px-3 py-1.5 rounded-[4px] border border-[#CBD5E1] font-bold shadow-xs">
+            ENVIRONMENT: SIH26100-PROTOTYPE
+          </span>
+        }
+      />
 
       {/* 1. Officer Profile & Jurisdiction Card */}
       <GovCard title="Officer Profile & Jurisdiction" highlightBorder="navy">

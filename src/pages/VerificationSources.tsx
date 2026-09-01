@@ -7,6 +7,7 @@ import {
   Building2,
   FileCheck,
 } from 'lucide-react';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 interface VerificationSource {
   id: string;
@@ -141,26 +142,17 @@ export const VerificationSources: React.FC = () => {
 
   return (
     <div className="space-y-4 font-sans pb-8">
-      {/* Header */}
-      <div className="border-b border-[#D9DDE3] pb-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div>
-          <span className="text-[11px] uppercase font-semibold text-[#475569] tracking-wider block">
-            Government Verification Adapters
-          </span>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] mt-0.5">
-            Verification Sources Registry
-          </h1>
-          <p className="text-xs text-[#475569] mt-0.5">
-            Configured statutory databases, registries, and mock/sandbox verification adapters for tender compliance assessment.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A] rounded-[2px] font-mono text-[11px] font-semibold">
+      {/* Header (Glossy Frosted Banner) */}
+      <GovPageHeader
+        title="Verification Sources Registry"
+        tag="GOVERNMENT VERIFICATION ADAPTERS"
+        subtitle="Configured statutory databases, registries, and mock/sandbox verification adapters for tender compliance assessment."
+        actions={
+          <span className="px-3 py-1.5 bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A] rounded-[4px] font-mono text-xs font-bold shadow-xs">
             ENVIRONMENT: DEMO / SANDBOX
           </span>
-        </div>
-      </div>
+        }
+      />
 
       <section className="gov-alert gov-alert-info rounded-[2px]">
         <ShieldCheck className="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5" />
