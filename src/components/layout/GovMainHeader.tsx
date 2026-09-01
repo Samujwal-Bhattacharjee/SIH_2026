@@ -84,6 +84,7 @@ export const GovMainHeader: React.FC = () => {
 
   return (
     <header className="gov-glass-header sticky top-0 z-40 select-none font-sans">
+      <div className="gov-tricolour-bar" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
         {/* Left: Landmark Icon + Platform Title (3-lines) */}
         <Link to="/dashboard" className="flex items-center gap-3 shrink-0 group transition-transform duration-200 hover:scale-[1.01]">

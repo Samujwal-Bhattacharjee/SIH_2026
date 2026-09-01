@@ -1,6 +1,5 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { GovTopStrip } from './GovTopStrip';
 import { GovMainHeader } from './GovMainHeader';
 import { GovBreadcrumb } from './GovBreadcrumb';
 import { GovFooter } from './GovFooter';
@@ -22,9 +21,8 @@ export const AppLayout: React.FC = () => {
       {/* 0. Multi-layer Petroleum Industrial Backdrop */}
       <PetroleumBackground />
 
-      {/* 1. Main Navigation Header (Translucent Frosted Glass) with Gov Top Strip */}
+      {/* 1. Main Navigation Header (Translucent Frosted Glass) */}
       <div className={`transition-all duration-300 z-30 sticky top-0 ${isPeekMode ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
-        <GovTopStrip />
         <GovMainHeader />
       </div>
 
