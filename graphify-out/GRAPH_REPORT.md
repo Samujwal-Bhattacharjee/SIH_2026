@@ -1,23 +1,23 @@
 # Graph Report - SIH  (2026-09-01)
 
 ## Corpus Check
-- 180 files · ~239,608 words
+- 180 files · ~239,599 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1921 nodes · 4057 edges · 115 communities (102 shown, 13 thin omitted)
+- 1921 nodes · 4055 edges · 117 communities (102 shown, 15 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 128 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7eb6ca81`
+- Built from commit: `9f5714a1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - test_compliance_qualification_logic.py
 - TestFieldExtraction
-- useLanguage
+- App.tsx
 - GovNotificationTicker.tsx
 - types/index.ts
 - security.py
@@ -45,7 +45,7 @@
 - GovButton.tsx
 - devDependencies
 - SIH 2026 — Complete Codebase Audit, Remaining Work & Team Task Allocation
-- App.tsx
+- realApi.ts
 - procurement.py
 - test_documents.py
 - calculate_case_risk
@@ -59,7 +59,7 @@
 - RelationshipGraph.tsx
 - case_service.py
 - TestDocumentStatus
-- SystemContext.tsx
+- useAuth
 - GOIP — Government Operations Intelligence Platform
 - generate_land_projects.py
 - plugins
@@ -115,9 +115,11 @@
 - get_bidders
 - .test_validate_file_returns_none_on_success
 - .test_validate_file_returns_string_on_error
-- @types/node
+- StatutoryCountdown.tsx
 - ocr_service.py
 - lucide-react
+- TechnicalCard.tsx
+- tailwindcss
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 70 edges
@@ -146,7 +148,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (115 total, 13 thin omitted)
+## Communities (117 total, 15 thin omitted)
 
 ### Community 0 - "test_compliance_qualification_logic.py"
 Cohesion: 0.06
@@ -156,13 +158,13 @@ Nodes (49): check_blacklisting_declaration(), check_gst_present(), check_local_c
 Cohesion: 0.18
 Nodes (4): Tests for regex-based structured field extraction., Helper: run extraction and return {key: value} dict., Smoke test: realistic court order text extracts at least case number and court., TestFieldExtraction
 
-### Community 2 - "useLanguage"
-Cohesion: 0.18
-Nodes (13): GovHorizontalNav(), NavItem, GovTopStrip(), useLanguage(), useProcurement(), Dashboard(), ProcurementDashboard(), ExtractedField (+5 more)
+### Community 2 - "App.tsx"
+Cohesion: 0.22
+Nodes (10): App(), useProcurement(), ProcurementDashboard(), ExtractedField, ProcurementDocuments(), Search(), Tenders(), riskBadge() (+2 more)
 
 ### Community 4 - "types/index.ts"
-Cohesion: 0.07
-Nodes (27): RiskAttributionPanelProps, FileMovementTimeline(), FileMovementTimelineProps, CustomWorkflowNode, WorkflowDrawerProps, BottleneckAnalysis, CaseEvent, CaseStage (+19 more)
+Cohesion: 0.08
+Nodes (25): RiskAttributionPanelProps, FileMovementTimeline(), FileMovementTimelineProps, CustomWorkflowNode, WorkflowDrawerProps, CaseEvent, CaseStatus, DocumentMetadata (+17 more)
 
 ### Community 5 - "security.py"
 Cohesion: 0.07
@@ -202,15 +204,15 @@ Nodes (24): calculate_compliance_score(), calculate_risk_level(), _field_value()
 
 ### Community 14 - "UploadDocument.tsx"
 Cohesion: 0.13
-Nodes (21): FormField(), FormFieldProps, inputBaseClasses, inputErrorClasses, selectBaseClasses, textareaBaseClasses, GovModal(), GovModalProps (+13 more)
+Nodes (19): textareaBaseClasses, GovModal(), GovModalProps, FileForwardModal(), FileForwardModalProps, FileRegisterModalProps, MOCK_DEPARTMENTS, MOCK_OFFICERS (+11 more)
 
 ### Community 15 - "integrity/__init__.py"
 Cohesion: 0.13
 Nodes (50): analyze_bid_rotation(), analyze_bid_to_estimate_anomaly(), analyze_commercial_boq_patterns(), analyze_losing_bid_pattern(), analyze_narrow_competition(), analyze_non_competition_pattern(), analyze_officer_vendor_association(), analyze_repeated_participation() (+42 more)
 
 ### Community 16 - "mockApi.ts"
-Cohesion: 0.09
-Nodes (35): AuthContext, AuthContextType, AuthProvider(), isSupabaseConfigured(), mapSupabaseUserToAppUser(), supabase, MOCK_AUDIT_LOGS, MOCK_BOTTLENECKS (+27 more)
+Cohesion: 0.12
+Nodes (21): MOCK_AUDIT_LOGS, MOCK_BOTTLENECKS, MOCK_CASE_EVENTS, MOCK_CASES, MOCK_DASHBOARD_METRICS, MOCK_DOCUMENTS, MOCK_PERFORMANCE_METRICS, MOCK_PROCESS_MAP (+13 more)
 
 ### Community 17 - "schemas/__init__.py"
 Cohesion: 0.14
@@ -230,7 +232,7 @@ Nodes (16): get_project_bottlenecks(), calculate_stage_dwell_days(), detect_case
 
 ### Community 21 - "api/index.ts"
 Cohesion: 0.12
-Nodes (16): TableSkeleton(), Intelligence(), LA_WORKFLOW_STAGES, LandWorkflowStage, analyticsService, auditService, dashboardService, departmentService (+8 more)
+Nodes (20): TableSkeleton(), Intelligence(), LA_WORKFLOW_STAGES, LandWorkflowStage, analyticsService, auditService, authService, dashboardService (+12 more)
 
 ### Community 22 - "SignalType"
 Cohesion: 0.09
@@ -254,19 +256,19 @@ Nodes (19): ES2023, node, vite.config.ts, compilerOptions, allowImportingTsExten
 
 ### Community 27 - "GovButton.tsx"
 Cohesion: 0.13
-Nodes (17): EmptyStateProps, GovBadge, StatusBadge(), StatusBadgeProps, GovButton(), GovButtonProps, DocumentViewerModal(), DocumentViewerModalProps (+9 more)
+Nodes (19): EmptyStateProps, FormField(), GovBadge, StatusBadge(), StatusBadgeProps, GovButton(), GovButtonProps, DOCUMENT_TYPES (+11 more)
 
 ### Community 28 - "devDependencies"
 Cohesion: 0.11
-Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, tailwindcss, @types/react (+11 more)
+Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, @types/node, @types/react (+11 more)
 
 ### Community 29 - "SIH 2026 — Complete Codebase Audit, Remaining Work & Team Task Allocation"
 Cohesion: 0.09
 Nodes (22): 10. Team Task Allocation & Responsibilities, 11. Exact File Ownership Matrix, 12. Task Priority Framework (P0 – P3), 13. Practical 7-Day Execution Timeline, 14. 5-Minute SIH Winning Demo Script, 15. Remaining Risks & Mitigations, 1. Project Architecture, 2. Current Implementation Status Matrix (+14 more)
 
-### Community 30 - "App.tsx"
-Cohesion: 0.39
-Nodes (6): App(), ProtectedRoute(), PublicRoute(), useAuth(), Search(), Settings()
+### Community 30 - "realApi.ts"
+Cohesion: 0.33
+Nodes (8): AuthContext, AuthContextType, AuthProvider(), isSupabaseConfigured(), mapSupabaseUserToAppUser(), supabase, realApi, User
 
 ### Community 31 - "procurement.py"
 Cohesion: 0.07
@@ -320,9 +322,9 @@ Nodes (25): get_dashboard_metrics(), get, Dashboard route — returns real aggre
 Cohesion: 0.22
 Nodes (7): Tests for OCR status transitions and persistence logic., Document ocr_status values should be a known set., When process_ocr() succeeds, the DB record should be updated to COMPLETED. We…, When storage download fails, ocr_status must be set to FAILED., process_ocr() should raise ValueError when document_id is not found., TestDocumentStatus, patch
 
-### Community 44 - "SystemContext.tsx"
-Cohesion: 0.21
-Nodes (10): AppHeader(), GlobalSearchModal(), GovMainHeader(), SystemStatusDrawer(), INITIAL_ALERTS, SystemAlert, SystemContext, SystemContextType (+2 more)
+### Community 44 - "useAuth"
+Cohesion: 0.18
+Nodes (13): ProtectedRoute(), PublicRoute(), AppHeader(), GlobalSearchModal(), GovMainHeader(), SystemStatusDrawer(), useAuth(), INITIAL_ALERTS (+5 more)
 
 ### Community 45 - "GOIP — Government Operations Intelligence Platform"
 Cohesion: 0.10
@@ -365,8 +367,8 @@ Cohesion: 0.25
 Nodes (5): Tests for actionable operational recommendations and full intelligence pipeline., Overdue case recommends Section 5 condonation and emergency escalation., Approaching deadline + bottleneck recommends fast-tracking file., compute_case_intelligence produces a complete CaseIntelligenceResult model., TestRecommendationsAndIntelligence
 
 ### Community 56 - "react"
-Cohesion: 0.10
-Nodes (17): react, StatutoryDeadlineEngineProps, GovCard(), GovCardProps, GovTable(), GovTableProps, TableColumn, StatutoryCountdownProps (+9 more)
+Cohesion: 0.12
+Nodes (19): react, StatutoryDeadlineEngineProps, FormFieldProps, inputBaseClasses, inputErrorClasses, selectBaseClasses, GovCard(), GovCardProps (+11 more)
 
 ### Community 57 - "Verification Results"
 Cohesion: 0.22
@@ -377,8 +379,8 @@ Cohesion: 0.17
 Nodes (11): 1. Overview & Architecture, 2. Core Capabilities, 3. Risk Scoring Breakdown, 4. How Person 1 Integrates This Module, 5. Changing Thresholds and Configuration, 6. Running Automated Tests, A. Single Case Intelligence, B. Priority Ranking for Cases List (+3 more)
 
 ### Community 59 - "ProcurementIntegrity.tsx"
-Cohesion: 0.15
-Nodes (14): GovPageHeader(), GovPageHeaderProps, AppSidebar(), NAV_ITEMS, ProcurementAuditTrail(), ProcurementIntegrity(), SIGNAL_LABELS, VERIFICATION_SOURCES (+6 more)
+Cohesion: 0.16
+Nodes (14): GovPageHeader(), GovPageHeaderProps, AppSidebar(), NAV_ITEMS, ProcurementIntegrity(), SIGNAL_LABELS, Settings(), VERIFICATION_SOURCES (+6 more)
 
 ### Community 60 - "analyze_bid_price_similarity"
 Cohesion: 0.06
@@ -413,8 +415,8 @@ Cohesion: 0.25
 Nodes (8): 17. Demonstration Flow, 1. Sign In, 2. Dashboard, 3. Workflow, 4. Case Intelligence, 5. Document Intelligence, 6. Simulation, 7. Decision Support
 
 ### Community 68 - "LanguageContext.tsx"
-Cohesion: 0.21
-Nodes (9): FontSize, Language, LanguageContext, LanguageContextType, LanguageProvider(), TranslationKey, translations, en (+1 more)
+Cohesion: 0.13
+Nodes (16): GovBreadcrumb(), GovHorizontalNav(), NavItem, GovTopStrip(), FontSize, Language, LanguageContext, LanguageContextType (+8 more)
 
 ### Community 72 - "extract_fields_from_text"
 Cohesion: 0.15
@@ -433,8 +435,8 @@ Cohesion: 0.14
 Nodes (22): _create_default_profile(), get_me(), login(), logout(), get, post, Authentication routes. Delegates to Supabase Auth for actual credential…, Authenticate using Supabase Auth or local officer credentials. Returns a valid… (+14 more)
 
 ### Community 88 - "Login.tsx"
-Cohesion: 0.15
-Nodes (16): Emblem(), EmblemProps, PetroleumBackground(), PetroleumLensHUD(), AppLayout(), GovBreadcrumb(), GovFooter(), BackgroundContext (+8 more)
+Cohesion: 0.17
+Nodes (15): Emblem(), EmblemProps, PetroleumBackground(), PetroleumLensHUD(), AppLayout(), GovFooter(), BackgroundContext, BackgroundContextType (+7 more)
 
 ### Community 89 - "GOIP — Environment Variables & Configuration Guide"
 Cohesion: 0.33
@@ -511,7 +513,7 @@ Nodes (7): classify_document_type(), extract_procurement_fields(), OCR Service �
 ## Knowledge Gaps
 - **405 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+400 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

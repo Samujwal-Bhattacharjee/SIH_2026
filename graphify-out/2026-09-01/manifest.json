@@ -108,9 +108,9 @@
     "semantic_hash": "21643e871acfe8afae1088d8fd186ad2"
   },
   "backend/app/core/procurement_store.py": {
-    "mtime": 1788277812.923564,
-    "seen": 1788279411.8257048,
-    "ast_hash": "6a59d89785961dfe93b7a3f67840a0e3",
+    "mtime": 1788281626.482343,
+    "seen": 1788283025.7602868,
+    "ast_hash": "033ec0e81dcea50be997ab7066be8b11",
     "semantic_hash": ""
   },
   "backend/app/core/security.py": {
@@ -276,9 +276,9 @@
     "semantic_hash": "8ced012d496e59be07048175253c7302"
   },
   "backend/app/services/procurement_service.py": {
-    "mtime": 1788277781.2399075,
-    "seen": 1788279411.8441105,
-    "ast_hash": "a52be5a02537679a5796efa0e3f33bc0",
+    "mtime": 1788281620.866773,
+    "seen": 1788283025.7702713,
+    "ast_hash": "c6188804d6256f02fbf455f56a9ace65",
     "semantic_hash": ""
   },
   "backend/app/services/risk_service.py": {
@@ -528,9 +528,9 @@
     "semantic_hash": "cf3aada071fb7543b74f653c8eed1e2a"
   },
   "src/components/layout/AppLayout.tsx": {
-    "mtime": 1788240732.144292,
-    "seen": 1788257715.1264603,
-    "ast_hash": "06671de52b6e7af9bbb5b45f42c0bbef",
+    "mtime": 1788282901.4780674,
+    "seen": 1788283025.7835126,
+    "ast_hash": "bbef09de2e57b6a11244e94d3c1698ec",
     "semantic_hash": ""
   },
   "src/components/layout/AppSidebar.tsx": {
@@ -564,9 +564,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/GovMainHeader.tsx": {
-    "mtime": 1788240834.898872,
-    "seen": 1788257715.1274612,
-    "ast_hash": "78f87c5cc3643dfcc2d11c505c797134",
+    "mtime": 1788282888.9365034,
+    "seen": 1788283025.7845073,
+    "ast_hash": "350ecd48a95f165cd4e6f64fa5504036",
     "semantic_hash": ""
   },
   "src/components/layout/GovNotificationTicker.tsx": {
@@ -576,9 +576,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/GovTopStrip.tsx": {
-    "mtime": 1788191574.3865798,
-    "seen": 1788191983.282533,
-    "ast_hash": "05ab8ae5f518a7bad5bf432b23110688",
+    "mtime": 1788281333.530064,
+    "seen": 1788283025.7845073,
+    "ast_hash": "91b3d0ad76be608cfb70701c666d0636",
     "semantic_hash": ""
   },
   "src/components/layout/SystemStatusDrawer.tsx": {
@@ -606,10 +606,10 @@
     "semantic_hash": "1a92d84244a0ca879d6707c24aacf542"
   },
   "src/context/LanguageContext.tsx": {
-    "mtime": 1786993256.8417096,
-    "seen": 1787863686.63167,
-    "ast_hash": "2244e297cefddee6d473f152e3d65a8c",
-    "semantic_hash": "2244e297cefddee6d473f152e3d65a8c"
+    "mtime": 1788282850.2434692,
+    "seen": 1788283025.7855098,
+    "ast_hash": "e7d349838e8ccf154dfc20d1fe00a791",
+    "semantic_hash": ""
   },
   "src/context/ProcurementContext.tsx": {
     "mtime": 1788277841.304723,
@@ -624,15 +624,15 @@
     "semantic_hash": "88a6b9a20b7ff8d922e32b30da3bf4e5"
   },
   "src/i18n/en.ts": {
-    "mtime": 1788128220.0794926,
-    "seen": 1788128613.881579,
-    "ast_hash": "02a3116b3e33ae617b1c180ae1e8085e",
+    "mtime": 1788282965.2463658,
+    "seen": 1788283025.7865095,
+    "ast_hash": "822ea93f729397622b719e7be4959c1f",
     "semantic_hash": ""
   },
   "src/i18n/hi.ts": {
-    "mtime": 1788128299.094738,
-    "seen": 1788128613.881579,
-    "ast_hash": "4a2e7d0a0b6861d7549c0da3c7f7c2bc",
+    "mtime": 1788282976.6936889,
+    "seen": 1788283025.7865095,
+    "ast_hash": "b192ab6f5ea1a1d134732f6db9852a8e",
     "semantic_hash": ""
   },
   "src/i18n/index.ts": {
@@ -672,9 +672,9 @@
     "semantic_hash": ""
   },
   "src/pages/BidderVerification.tsx": {
-    "mtime": 1788277872.6725912,
-    "seen": 1788279411.8794491,
-    "ast_hash": "432ae8bf1b184464ad507aeb3e0d2c54",
+    "mtime": 1788281466.1440125,
+    "seen": 1788283025.7875078,
+    "ast_hash": "4d779de3923377ecab1b1d6e754c167c",
     "semantic_hash": ""
   },
   "src/pages/CaseDetail.tsx": {
@@ -744,15 +744,15 @@
     "semantic_hash": ""
   },
   "src/pages/ProcurementDashboard.tsx": {
-    "mtime": 1788276581.600746,
-    "seen": 1788276759.7257767,
-    "ast_hash": "9598c5dbf0abe495282a507e253581e0",
+    "mtime": 1788282924.2933073,
+    "seen": 1788283025.7905102,
+    "ast_hash": "4f9048a02d023f494aea48a27ccc1473",
     "semantic_hash": ""
   },
   "src/pages/ProcurementDocuments.tsx": {
-    "mtime": 1788241954.6548846,
-    "seen": 1788257715.1385052,
-    "ast_hash": "8000317f731ea66104854b32254cd373",
+    "mtime": 1788281517.1207814,
+    "seen": 1788283025.7905102,
+    "ast_hash": "591983925624dc629eaed7c29b22f1dd",
     "semantic_hash": ""
   },
   "src/pages/ProjectDetail.tsx": {
@@ -798,9 +798,9 @@
     "semantic_hash": "0e09a887ccc65e19c1e439215ca15b5e"
   },
   "src/pages/Tenders.tsx": {
-    "mtime": 1788241454.9404917,
-    "seen": 1788257715.140564,
-    "ast_hash": "cb0dbf614b6034aad48844dff132474a",
+    "mtime": 1788281489.389186,
+    "seen": 1788283025.7929316,
+    "ast_hash": "3acf99a482af97d6eb66bacf1d4859d4",
     "semantic_hash": ""
   },
   "src/pages/UploadDocument.tsx": {
@@ -1068,9 +1068,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/synthetic_history.py": {
-    "mtime": 1788276320.4377606,
-    "seen": 1788276759.698813,
-    "ast_hash": "4ad926808be99d4e53fcab9a3e01da73",
+    "mtime": 1788281290.1637206,
+    "seen": 1788283025.7660115,
+    "ast_hash": "a85259aed06ee5a07af1fa92d2e361bc",
     "semantic_hash": ""
   },
   "src/components/background/PetroleumBackground.tsx": {
@@ -1122,9 +1122,9 @@
     "semantic_hash": ""
   },
   "backend/tests/test_compliance_qualification_logic.py": {
-    "mtime": 1788277904.0255563,
-    "seen": 1788279411.8486633,
-    "ast_hash": "23e8d75e8bec2a3550d9bf42638599f5",
+    "mtime": 1788281534.2872436,
+    "seen": 1788283025.7736595,
+    "ast_hash": "7ca1956f43b6c1f48730776b0b317153",
     "semantic_hash": ""
   }
 }

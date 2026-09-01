@@ -528,9 +528,9 @@
     "semantic_hash": "cf3aada071fb7543b74f653c8eed1e2a"
   },
   "src/components/layout/AppLayout.tsx": {
-    "mtime": 1788282901.4780674,
-    "seen": 1788283025.7835126,
-    "ast_hash": "bbef09de2e57b6a11244e94d3c1698ec",
+    "mtime": 1788283180.852417,
+    "seen": 1788283240.7160122,
+    "ast_hash": "06671de52b6e7af9bbb5b45f42c0bbef",
     "semantic_hash": ""
   },
   "src/components/layout/AppSidebar.tsx": {
@@ -564,9 +564,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/GovMainHeader.tsx": {
-    "mtime": 1788282888.9365034,
-    "seen": 1788283025.7845073,
-    "ast_hash": "350ecd48a95f165cd4e6f64fa5504036",
+    "mtime": 1788283189.7857716,
+    "seen": 1788283240.7190192,
+    "ast_hash": "e22bf643ede19591937ce4fc22f6dc7f",
     "semantic_hash": ""
   },
   "src/components/layout/GovNotificationTicker.tsx": {
