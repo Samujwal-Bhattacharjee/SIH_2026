@@ -396,9 +396,9 @@
     "semantic_hash": ""
   },
   "src/App.tsx": {
-    "mtime": 1788113985.4341486,
-    "seen": 1788119907.745502,
-    "ast_hash": "9078953877e566e27f00b68722e440d0",
+    "mtime": 1788240750.7297122,
+    "seen": 1788257715.116942,
+    "ast_hash": "6fe091eb869355e4201867b95202d99e",
     "semantic_hash": ""
   },
   "src/assets/Emblem.tsx": {
@@ -444,15 +444,15 @@
     "semantic_hash": ""
   },
   "src/components/common/GovButton.tsx": {
-    "mtime": 1788191685.219036,
-    "seen": 1788191983.2770662,
-    "ast_hash": "489203048e03c21a3883e2dee6da498f",
+    "mtime": 1788240892.7791004,
+    "seen": 1788257715.1204631,
+    "ast_hash": "8c47053c427a87c3a06abe7f597e25ec",
     "semantic_hash": ""
   },
   "src/components/common/GovCard.tsx": {
-    "mtime": 1788191701.993217,
-    "seen": 1788191983.2770662,
-    "ast_hash": "e5d1e6c2af6cca0c7b645766d472fdc1",
+    "mtime": 1788240878.2880266,
+    "seen": 1788257715.1204631,
+    "ast_hash": "ba0e9fff61d22607eed8ea7c5a863d3a",
     "semantic_hash": ""
   },
   "src/components/common/GovModal.tsx": {
@@ -462,10 +462,10 @@
     "semantic_hash": "44cdc17896a049b67c7d1d02184d27f0"
   },
   "src/components/common/GovTable.tsx": {
-    "mtime": 1786993369.221649,
-    "seen": 1787863686.6306608,
-    "ast_hash": "4112f7a5d8d433d919e411b954fab3bc",
-    "semantic_hash": "4112f7a5d8d433d919e411b954fab3bc"
+    "mtime": 1788240933.3366725,
+    "seen": 1788257715.1214623,
+    "ast_hash": "fd97693a9158d546306263d3dd7dfa62",
+    "semantic_hash": ""
   },
   "src/components/common/LoadingSkeleton.tsx": {
     "mtime": 1786993392.8795345,
@@ -528,9 +528,9 @@
     "semantic_hash": "cf3aada071fb7543b74f653c8eed1e2a"
   },
   "src/components/layout/AppLayout.tsx": {
-    "mtime": 1788216440.8886101,
-    "seen": 1788219191.0719035,
-    "ast_hash": "71852401e37d1d6a39d63f02ff73bde9",
+    "mtime": 1788240732.144292,
+    "seen": 1788257715.1264603,
+    "ast_hash": "06671de52b6e7af9bbb5b45f42c0bbef",
     "semantic_hash": ""
   },
   "src/components/layout/AppSidebar.tsx": {
@@ -546,15 +546,15 @@
     "semantic_hash": "a59a4a500c4f5263b4cc222559787cc7"
   },
   "src/components/layout/GovBreadcrumb.tsx": {
-    "mtime": 1788216361.3010888,
-    "seen": 1788219191.0719035,
-    "ast_hash": "76250af71b7313cbb4b7170abaf396bc",
+    "mtime": 1788240849.2404716,
+    "seen": 1788257715.1274612,
+    "ast_hash": "6e37006ee9c629f938e93f770fde73e5",
     "semantic_hash": ""
   },
   "src/components/layout/GovFooter.tsx": {
-    "mtime": 1788216381.7352839,
-    "seen": 1788219191.0719035,
-    "ast_hash": "1ddfbf382c7de8c79b7e92607f098d3b",
+    "mtime": 1788240865.297209,
+    "seen": 1788257715.1274612,
+    "ast_hash": "de0f98364949bce94a64ad19a3b00c90",
     "semantic_hash": ""
   },
   "src/components/layout/GovHorizontalNav.tsx": {
@@ -564,9 +564,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/GovMainHeader.tsx": {
-    "mtime": 1788216422.025983,
-    "seen": 1788219191.072899,
-    "ast_hash": "78c5dfe4bc5347bd6ba80530c6091cc6",
+    "mtime": 1788240834.898872,
+    "seen": 1788257715.1274612,
+    "ast_hash": "78f87c5cc3643dfcc2d11c505c797134",
     "semantic_hash": ""
   },
   "src/components/layout/GovNotificationTicker.tsx": {
@@ -666,15 +666,15 @@
     "semantic_hash": "fa1edf48c9e2441e7e734604b2276408"
   },
   "src/pages/AuditLogs.tsx": {
-    "mtime": 1787514013.5373497,
-    "seen": 1787863686.63167,
-    "ast_hash": "a0f55cce4b416027df4a6fdbd0432bc6",
-    "semantic_hash": "a0f55cce4b416027df4a6fdbd0432bc6"
+    "mtime": 1788242246.1977594,
+    "seen": 1788257715.1355066,
+    "ast_hash": "6978a88ef91c375de2830196d29e1103",
+    "semantic_hash": ""
   },
   "src/pages/BidderVerification.tsx": {
-    "mtime": 1788219025.5857916,
-    "seen": 1788219191.0790267,
-    "ast_hash": "c3a60815c3798217209711737508d3a3",
+    "mtime": 1788241577.3733656,
+    "seen": 1788257715.1355066,
+    "ast_hash": "6abdde0095af882d0b6acdb375c71a1c",
     "semantic_hash": ""
   },
   "src/pages/CaseDetail.tsx": {
@@ -714,21 +714,21 @@
     "semantic_hash": "5ac6d6a81334f4bd01b37be087dfcfd4"
   },
   "src/pages/Files.tsx": {
-    "mtime": 1787514001.080593,
-    "seen": 1787863686.63167,
-    "ast_hash": "b0124043e558fe090e66052ff3e63355",
-    "semantic_hash": "b0124043e558fe090e66052ff3e63355"
+    "mtime": 1788242297.7606792,
+    "seen": 1788257715.1385052,
+    "ast_hash": "251005d800323c79006deb6c76f4105d",
+    "semantic_hash": ""
   },
   "src/pages/Intelligence.tsx": {
-    "mtime": 1787514013.5428226,
-    "seen": 1787863686.63167,
-    "ast_hash": "d90618094c5e4d2a238982f7e08eda56",
-    "semantic_hash": "d90618094c5e4d2a238982f7e08eda56"
+    "mtime": 1788242385.4337616,
+    "seen": 1788257715.1385052,
+    "ast_hash": "8bc0961f58f5cd667f6e8219c4582856",
+    "semantic_hash": ""
   },
   "src/pages/Login.tsx": {
-    "mtime": 1788166724.2718387,
-    "seen": 1788166952.1256583,
-    "ast_hash": "f53a0ff9287e188995eddc2a6ffcaec3",
+    "mtime": 1788240807.6075675,
+    "seen": 1788257715.1385052,
+    "ast_hash": "6bacddacc91a3f6bd667adc90ae24260",
     "semantic_hash": ""
   },
   "src/pages/PendingFiles.tsx": {
@@ -738,21 +738,21 @@
     "semantic_hash": "2d20e057c8b6d360870b7259ef64ca92"
   },
   "src/pages/ProcurementAuditTrail.tsx": {
-    "mtime": 1788186112.5856943,
-    "seen": 1788186163.393999,
-    "ast_hash": "c6ba9a2a4a324c088afc9b39358ebc04",
+    "mtime": 1788241487.5421305,
+    "seen": 1788257715.1385052,
+    "ast_hash": "ffafdc9b72ba5e8548bd54fafc009346",
     "semantic_hash": ""
   },
   "src/pages/ProcurementDashboard.tsx": {
-    "mtime": 1788219010.0356975,
-    "seen": 1788219191.0840268,
-    "ast_hash": "e918e5a28a3ba321ce1ed37314fdc163",
+    "mtime": 1788241436.3146055,
+    "seen": 1788257715.1385052,
+    "ast_hash": "0e310597ba5ee8e5cc024017ebaeafe9",
     "semantic_hash": ""
   },
   "src/pages/ProcurementDocuments.tsx": {
-    "mtime": 1788218948.5735736,
-    "seen": 1788219191.0840268,
-    "ast_hash": "94ffbadd008f45a4423dffb35b1bc39e",
+    "mtime": 1788241954.6548846,
+    "seen": 1788257715.1385052,
+    "ast_hash": "8000317f731ea66104854b32254cd373",
     "semantic_hash": ""
   },
   "src/pages/ProjectDetail.tsx": {
@@ -762,16 +762,16 @@
     "semantic_hash": "96fcc467db9e1bd83bb13515dceb2141"
   },
   "src/pages/Projects.tsx": {
-    "mtime": 1787514013.552621,
-    "seen": 1787863686.63167,
-    "ast_hash": "8357db5f264bb71a5babfcfd4cc3ba1d",
-    "semantic_hash": "8357db5f264bb71a5babfcfd4cc3ba1d"
+    "mtime": 1788242339.7319512,
+    "seen": 1788257715.1395094,
+    "ast_hash": "a16e90ad98700761cb6975d241665327",
+    "semantic_hash": ""
   },
   "src/pages/Reports.tsx": {
-    "mtime": 1787514013.5548258,
-    "seen": 1787863686.63167,
-    "ast_hash": "83533e961e69c02855451031542688ee",
-    "semantic_hash": "83533e961e69c02855451031542688ee"
+    "mtime": 1788242135.374406,
+    "seen": 1788257715.1395094,
+    "ast_hash": "aa4eeb986fbe6672b88d74ae48d25b80",
+    "semantic_hash": ""
   },
   "src/pages/Risk.tsx": {
     "mtime": 1787514013.556337,
@@ -780,16 +780,16 @@
     "semantic_hash": "106bd4707f1f437a217fe5a403d04a13"
   },
   "src/pages/Search.tsx": {
-    "mtime": 1787514013.556337,
-    "seen": 1787863686.63167,
-    "ast_hash": "be726c3aeb4a46cd0dc10bf9c87edef7",
-    "semantic_hash": "be726c3aeb4a46cd0dc10bf9c87edef7"
+    "mtime": 1788242180.461501,
+    "seen": 1788257715.140564,
+    "ast_hash": "908ea7a0f168064235a91137c6bbe7e8",
+    "semantic_hash": ""
   },
   "src/pages/Settings.tsx": {
-    "mtime": 1787514013.556337,
-    "seen": 1787863686.63167,
-    "ast_hash": "f3580681da5af368db52a4a98146add3",
-    "semantic_hash": "f3580681da5af368db52a4a98146add3"
+    "mtime": 1788242209.128305,
+    "seen": 1788257715.140564,
+    "ast_hash": "44b6be170791643e025e63255f76eb89",
+    "semantic_hash": ""
   },
   "src/pages/Simulation.tsx": {
     "mtime": 1787514013.561314,
@@ -798,9 +798,9 @@
     "semantic_hash": "0e09a887ccc65e19c1e439215ca15b5e"
   },
   "src/pages/Tenders.tsx": {
-    "mtime": 1788218167.3509963,
-    "seen": 1788219191.0870268,
-    "ast_hash": "a9ea735ee2161f2204592e5bb0d8e8ae",
+    "mtime": 1788241454.9404917,
+    "seen": 1788257715.140564,
+    "ast_hash": "cb0dbf614b6034aad48844dff132474a",
     "semantic_hash": ""
   },
   "src/pages/UploadDocument.tsx": {
@@ -810,16 +810,16 @@
     "semantic_hash": "2eb5bd62127ff2e8f0a8f3828643e308"
   },
   "src/pages/VerificationSources.tsx": {
-    "mtime": 1788112814.0948484,
-    "seen": 1788113025.7068734,
-    "ast_hash": "cd28243210507d3fc82dc504625f9bc4",
+    "mtime": 1788242078.7857285,
+    "seen": 1788257715.1415646,
+    "ast_hash": "79749362be2a1c6af849200c49ad2f8f",
     "semantic_hash": ""
   },
   "src/pages/Workflow.tsx": {
-    "mtime": 1787514013.565542,
-    "seen": 1787863686.63167,
-    "ast_hash": "6775acdd0186f77187a82e0e1f09028d",
-    "semantic_hash": "6775acdd0186f77187a82e0e1f09028d"
+    "mtime": 1788242426.6452699,
+    "seen": 1788257715.1415646,
+    "ast_hash": "89d9cac8ef463350bad0e43c4135d445",
+    "semantic_hash": ""
   },
   "src/services/api/apiClient.ts": {
     "mtime": 1787598668.116872,
@@ -846,9 +846,9 @@
     "semantic_hash": ""
   },
   "src/types/index.ts": {
-    "mtime": 1788113917.172983,
-    "seen": 1788119907.768442,
-    "ast_hash": "a4f9fc76b6b46d574c30cd8b66971747",
+    "mtime": 1788256706.2967572,
+    "seen": 1788257715.143563,
+    "ast_hash": "f8cf8bc3a01f07c3d4e5fe0ec62940b4",
     "semantic_hash": ""
   },
   "src/vite-env.d.ts": {
@@ -996,45 +996,45 @@
     "semantic_hash": ""
   },
   "backend/app/services/integrity/__init__.py": {
-    "mtime": 1788095904.9171462,
-    "seen": 1788096237.435852,
-    "ast_hash": "1aef237644b920d91ba65bcb6a91044f",
+    "mtime": 1788255726.695408,
+    "seen": 1788257715.0954251,
+    "ast_hash": "f961c67e187abfa05039c2d430adc22a",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/bid_analyzer.py": {
-    "mtime": 1788181003.6511824,
-    "seen": 1788181111.3525167,
-    "ast_hash": "dca187442ec52080b22102c5830acc45",
+    "mtime": 1788256575.1245027,
+    "seen": 1788257715.0954251,
+    "ast_hash": "0239e618f6c426f0296aec64adc5580e",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/feature_extractor.py": {
-    "mtime": 1788096112.692366,
-    "seen": 1788096237.435852,
-    "ast_hash": "ec83cbcfe747642aeeb9a9a659d707e3",
+    "mtime": 1788255861.2727113,
+    "seen": 1788257715.0954251,
+    "ast_hash": "9d73f9a4e0120d78e7ff7e0f78fa0928",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/models.py": {
-    "mtime": 1788095844.7252212,
-    "seen": 1788096237.435852,
-    "ast_hash": "f6d370bb0fb47a8a3d2cf42bc766b36b",
+    "mtime": 1788255645.5605078,
+    "seen": 1788257715.0954251,
+    "ast_hash": "7aea7a32ec23fcf2b1ae87792dd3b254",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/relationship_analyzer.py": {
-    "mtime": 1788178483.6788728,
-    "seen": 1788179447.6003888,
-    "ast_hash": "90240c6eb8bca63427ed4642b76e6be9",
+    "mtime": 1788255704.6791308,
+    "seen": 1788257715.0954251,
+    "ast_hash": "8bba64beb3d071775c4c48b628e27e7a",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/risk_engine.py": {
-    "mtime": 1788178733.8174381,
-    "seen": 1788179447.6003888,
-    "ast_hash": "a2baafcd10fe626ab7df35420f55bbf8",
+    "mtime": 1788256553.7146804,
+    "seen": 1788257715.0954251,
+    "ast_hash": "84558f4dd6aea7dce973cbfa2d9a9da6",
     "semantic_hash": ""
   },
   "backend/tests/test_integrity_engine.py": {
-    "mtime": 1788181059.570199,
-    "seen": 1788181111.3587153,
-    "ast_hash": "41551c0f3e5c1a43ba0b5b249c2aa212",
+    "mtime": 1788256669.6762455,
+    "seen": 1788257715.1134229,
+    "ast_hash": "f43d805547bd2a46110e64289dac4f9f",
     "semantic_hash": ""
   },
   "implementation_plan.md": {
@@ -1044,15 +1044,15 @@
     "semantic_hash": ""
   },
   "src/pages/VerificationHub.tsx": {
-    "mtime": 1788128456.7000747,
-    "seen": 1788128613.890469,
-    "ast_hash": "c8e55d60594f3e043737220bc5a1c1ee",
+    "mtime": 1788241527.9865825,
+    "seen": 1788257715.1415646,
+    "ast_hash": "ba96b74aec93cfa340bf320e39f29a98",
     "semantic_hash": ""
   },
   "src/pages/ProcurementIntegrity.tsx": {
-    "mtime": 1788218989.1279018,
-    "seen": 1788219191.0840268,
-    "ast_hash": "66371f5bb91f53181518828880844dc8",
+    "mtime": 1788256861.241716,
+    "seen": 1788257715.1385052,
+    "ast_hash": "909cd25af34c0ecf97378c6ffcf1f2a8",
     "semantic_hash": ""
   },
   ".agents/skills/ux4g-design/SKILL.md": {
@@ -1062,15 +1062,63 @@
     "semantic_hash": ""
   },
   "src/components/integrity/RelationshipGraph.tsx": {
-    "mtime": 1788129595.5545282,
-    "seen": 1788129893.4763,
-    "ast_hash": "8b59c43eb39b696b5e866752d2b33a5a",
+    "mtime": 1788256745.4206913,
+    "seen": 1788257715.125462,
+    "ast_hash": "bffeb314ae2c759415aabff43874fb04",
     "semantic_hash": ""
   },
   "backend/app/services/integrity/synthetic_history.py": {
-    "mtime": 1788176876.2402523,
-    "seen": 1788177779.5643096,
-    "ast_hash": "dd5d12a293271b59072ce8a78b3487af",
+    "mtime": 1788255779.6873896,
+    "seen": 1788257715.0954251,
+    "ast_hash": "b0bb0a549fdbdf26401d3a815b6f9b9a",
+    "semantic_hash": ""
+  },
+  "src/components/background/PetroleumBackground.tsx": {
+    "mtime": 1788240661.6433299,
+    "seen": 1788257715.116942,
+    "ast_hash": "bce0dbc36b90bc46c0d33531a01f6255",
+    "semantic_hash": ""
+  },
+  "src/components/background/PetroleumLensHUD.tsx": {
+    "mtime": 1788240650.4927688,
+    "seen": 1788257715.116942,
+    "ast_hash": "751459b44cd8342637e7ca965ae16068",
+    "semantic_hash": ""
+  },
+  "src/components/common/GovPageHeader.tsx": {
+    "mtime": 1788241405.0145166,
+    "seen": 1788257715.1214623,
+    "ast_hash": "75b9804a65620dd5e5b0aa21be204abd",
+    "semantic_hash": ""
+  },
+  "src/context/BackgroundContext.tsx": {
+    "mtime": 1788240632.9174073,
+    "seen": 1788257715.1309865,
+    "ast_hash": "978500e2137f19ca0fe2dd1422b2b811",
+    "semantic_hash": ""
+  },
+  "public/backgrounds/offshore-rig.png": {
+    "mtime": 1788240372.1665561,
+    "seen": 1788257715.1530766,
+    "ast_hash": "ec49bdff0a256971b6c8be6be2a7a78a",
+    "semantic_hash": ""
+  },
+  "public/backgrounds/refinery-sunset.jpg": {
+    "mtime": 1788240372.1681705,
+    "seen": 1788257715.1530766,
+    "ast_hash": "68da2f1c45301cc88946774e1fd6a34a",
+    "semantic_hash": ""
+  },
+  "public/backgrounds/refinery-twilight.png": {
+    "mtime": 1788240372.1644313,
+    "seen": 1788257715.1530766,
+    "ast_hash": "f7f365e172255416d1dd3d140f7e26cc",
+    "semantic_hash": ""
+  },
+  "public/backgrounds/storage-tanks.png": {
+    "mtime": 1788240372.1703405,
+    "seen": 1788257715.1530766,
+    "ast_hash": "60283461ef30d94fe2362ace8800a1e9",
     "semantic_hash": ""
   }
 }

@@ -779,9 +779,9 @@ def test_synthetic_procurement_history_idempotency():
     """Verify that reseeding synthetic history produces identical record counts and deterministic integrity outputs."""
     from app.core.procurement_store import reset_and_seed_procurement_data
     counts = reset_and_seed_procurement_data()
-    assert counts["tenders"] == 17
-    assert counts["bidders"] == 55
-    assert counts["documents"] >= 100
+    assert counts["tenders"] == 26
+    assert counts["bidders"] == 74
+    assert counts["documents"] >= 200
 
     # Repeat assessment on TEN-2026-007 twice to ensure identical output
     run1 = assess_tender_integrity("TEN-2026-007")
@@ -858,12 +858,13 @@ def test_dashboard_summary_includes_real_integrity_metrics(auth_client):
 # ============================================================
 
 def _make_bidder(bidder_id: str, name: str, quote_amount=None, gstin=None, pan=None) -> BidderFeature:
-    """Helper to create a BidderFeature for nullable quote tests."""
+    """Helper to create a BidderFeature for tests."""
+    from app.services.integrity.feature_extractor import normalize_entity_name
     return BidderFeature(
         bidder_id=bidder_id,
         tender_id="TEN-NULL-TEST",
         legal_name=name,
-        normalized_name=name.lower().replace(" ", "_"),
+        normalized_name=normalize_entity_name(name),
         gstin=gstin,
         pan=pan,
         quote_amount=quote_amount,
@@ -1005,6 +1006,263 @@ def test_nullable_scenario_9_repeated_execution_is_deterministic_with_none_quote
             assert r[0].signal_type == first[0].signal_type
             assert r[0].score_impact == first[0].score_impact
             assert r[0].related_bidder_ids == first[0].related_bidder_ids
+
+
+# ============================================================
+# V2 TESTS — NEW DETECTORS, DECOMPOSITION & FALSE POSITIVES
+# ============================================================
+
+from app.services.integrity.bid_analyzer import (
+    analyze_bid_to_estimate_anomaly,
+    analyze_losing_bid_pattern,
+    analyze_non_competition_pattern,
+    analyze_narrow_competition,
+    analyze_officer_vendor_association,
+    analyze_commercial_boq_patterns,
+    analyze_submission_timing,
+)
+from app.services.integrity.relationship_analyzer import (
+    analyze_common_directors,
+    analyze_document_identity_inconsistencies,
+)
+
+
+def test_v2_bid_to_estimate_anomaly():
+    """Detect bids clustered abnormally close to the official estimated tender value."""
+    bidders = [
+        _make_bidder("BID-1", "Vendor A", quote_amount=9_995_000.0),  # 0.05% from 10M
+        _make_bidder("BID-2", "Vendor B", quote_amount=9_990_000.0),  # 0.10% from 10M
+        _make_bidder("BID-3", "Vendor C", quote_amount=10_800_000.0), # 8% above
+    ]
+    findings = analyze_bid_to_estimate_anomaly(bidders, tender_id="TEN-EST-01", estimated_value=10_000_000.0)
+    assert len(findings) == 1
+    f = findings[0]
+    assert f.signal_type == SignalType.BID_TO_ESTIMATE_ANOMALY
+    assert f.rule_reference is not None
+    assert f.rule_reference.clause_id == "GFR-2017-R174"
+    assert len(f.evidence) == 2
+
+    # Verify a normal single low bid does not trigger estimate anomaly
+    normal_bidders = [
+        _make_bidder("BID-X", "Normal Low", quote_amount=8_500_000.0),
+        _make_bidder("BID-Y", "Normal Mid", quote_amount=9_200_000.0),
+    ]
+    clean_findings = analyze_bid_to_estimate_anomaly(normal_bidders, tender_id="TEN-EST-02", estimated_value=10_000_000.0)
+    assert clean_findings == []
+
+
+def test_v2_losing_bid_cover_pattern():
+    """Detect cover bidding where a bidder repeatedly finishes 2nd behind the winner with similar margin."""
+    historical_tenders = [
+        {
+            "id": f"HT-COV-{i}",
+            "title": f"Tender {i}",
+            "participants": [
+                {"legal_name": "Incumbent Winner Ltd", "quote": 10_000_000.0},
+                {"legal_name": "Shadow Runner-Up LLP", "quote": 10_250_000.0},  # +2.5%
+                {"legal_name": "Third Bidder", "quote": 11_000_000.0},
+            ]
+        }
+        for i in range(1, 5)
+    ]
+    bidders = [
+        _make_bidder("BID-RUNNER", "Shadow Runner-Up LLP", quote_amount=10_300_000.0),
+        _make_bidder("BID-OTHER", "Third Bidder", quote_amount=11_200_000.0),
+    ]
+    findings = analyze_losing_bid_pattern(bidders, historical_tenders, tender_id="TEN-COVER-01")
+    assert len(findings) == 1
+    f = findings[0]
+    assert f.signal_type == SignalType.LOSING_BID_PATTERN
+    assert f.bidder_id == "BID-RUNNER"
+    assert "runner-up" in f.title.lower()
+    assert f.rule_reference.clause_id == "GEM-GTC-CL19"
+
+
+def test_v2_non_competition_pattern():
+    """Detect persistent non-competitive participation in category (>= 4 tenders with 0 wins)."""
+    bidders = [
+        BidderFeature(
+            bidder_id="BID-TOKEN",
+            tender_id="TEN-NC-01",
+            legal_name="Token Quorum Bidder Ltd",
+            normalized_name="token quorum bidder ltd",
+            tender_category="Security Services",
+            category_participation_count=5,
+            category_wins=0,
+            participation_count=5,
+            wins=0,
+            quote_amount=5_000_000.0,
+        )
+    ]
+    findings = analyze_non_competition_pattern(bidders, [{"id": f"HT-{i}"} for i in range(5)], tender_id="TEN-NC-01")
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.NON_COMPETITION_PATTERN
+    assert findings[0].rule_reference.clause_id == "GFR-2017-R173-XX"
+
+
+def test_v2_common_directors_link():
+    """Detect common corporate directors across competing entities when director data exists."""
+    b1 = _make_bidder("BID-DIR-1", "Alpha Cloud Pvt Ltd")
+    b1.directors = ["Vikramaditya Rao", "Suresh Shenoy"]
+    b2 = _make_bidder("BID-DIR-2", "Beta Systems Ltd")
+    b2.directors = ["Vikramaditya Rao", "Deepak Sharma"]  # Shared Vikramaditya Rao
+
+    findings = analyze_common_directors([b1, b2], tender_id="TEN-DIR-01")
+    assert len(findings) == 1
+    f = findings[0]
+    assert f.signal_type == SignalType.COMMON_DIRECTOR_LINK
+    assert f.severity == RiskLevel.HIGH
+    assert "Vikramaditya Rao" in f.evidence[0].value
+    assert f.rule_reference.clause_id == "MCA-COMP-2013"
+
+
+def test_v2_officer_vendor_association_present_and_absent():
+    """
+    Test officer association:
+    1. When real officer attribution exists and concentration exceeds threshold -> trigger.
+    2. When NO officer attribution exists -> gracefully return empty without fabricating guilt.
+    """
+    # 1. Present with concentration (S. K. Verma awarded 4/4 tenders to Kaveri)
+    officer_tenders = [
+        {"id": f"HT-OFF-{i}", "decided_by": "S. K. Verma, Jt. Director", "winner_name": "Kaveri Digital Solutions Ltd"}
+        for i in range(1, 5)
+    ]
+    bidders = [_make_bidder("BID-KAV", "Kaveri Digital Solutions Ltd")]
+    findings = analyze_officer_vendor_association(bidders, officer_tenders, tender_id="TEN-OFF-01")
+    assert len(findings) == 1
+    f = findings[0]
+    assert f.signal_type == SignalType.OFFICER_VENDOR_ASSOCIATION
+    assert "S. K. Verma" in f.title
+    assert "Conflict-of-Interest" in f.title or "Administrative Association" in f.title
+    assert "corrupt" not in f.reason.lower()
+    assert f.rule_reference.clause_id == "GFR-2017-R175"
+
+    # 2. Absent (no decided_by / created_by fields) -> gracefully empty
+    no_officer_tenders = [
+        {"id": f"HT-PLAIN-{i}", "winner_name": "Kaveri Digital Solutions Ltd"}
+        for i in range(1, 5)
+    ]
+    clean_findings = analyze_officer_vendor_association(bidders, no_officer_tenders, tender_id="TEN-OFF-02")
+    assert clean_findings == []
+
+
+def test_v2_narrow_competition_pattern():
+    """Detect category tenders repeatedly attracting <= 2 qualified bidders."""
+    lab_tenders = [
+        {"id": f"HT-LAB-{i}", "category": "Specialized Lab", "participants": ["A", "B"]}
+        for i in range(1, 4)
+    ]
+    bidders = [
+        _make_bidder("BID-L1", "Lab Vendor 1"),
+        _make_bidder("BID-L2", "Lab Vendor 2"),
+    ]
+    findings = analyze_narrow_competition(bidders, lab_tenders, tender_id="TEN-LAB-CURR", category="Specialized Lab")
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.NARROW_COMPETITION
+    assert findings[0].rule_reference.clause_id == "GFR-2017-R173-XVIII"
+
+
+def test_v2_commercial_boq_anomaly():
+    """Detect identical line-item unit rates across competing BOQs."""
+    b1 = _make_bidder("BID-BOQ-1", "Electrical Works 1")
+    b1.line_items = [
+        {"description": "Copper Busbar 400A", "rate": 4500.0},
+        {"description": "SF6 Circuit Breaker", "rate": 185000.0},
+    ]
+    b2 = _make_bidder("BID-BOQ-2", "Electrical Works 2")
+    b2.line_items = [
+        {"description": "Copper Busbar 400A", "rate": 4500.0},
+        {"description": "SF6 Circuit Breaker", "rate": 185000.0},
+    ]
+    findings = analyze_commercial_boq_patterns([b1, b2], tender_id="TEN-BOQ-01")
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.COMMERCIAL_BOQ_ANOMALY
+    assert findings[0].rule_reference.clause_id == "GFR-2017-R173-BOQ"
+
+
+def test_v2_submission_timing_anomaly():
+    """Detect explicit submission timestamps within a narrow 15-minute window."""
+    b1 = _make_bidder("BID-T1", "Vendor One")
+    b1.submission_timestamp = "2026-08-30T10:14:00Z"
+    b2 = _make_bidder("BID-T2", "Vendor Two")
+    b2.submission_timestamp = "2026-08-30T10:18:30Z"  # 4.5 minutes later
+
+    findings = analyze_submission_timing([b1, b2], tender_id="TEN-TIME-01")
+    assert len(findings) == 1
+    assert findings[0].signal_type == SignalType.SUBMISSION_TIMING_ANOMALY
+    assert findings[0].rule_reference.clause_id == "GEM-GTC-SUB"
+
+
+def test_v2_document_identity_cross_contamination():
+    """Detect Bidder A's submitted document containing Bidder B's statutory PAN."""
+    b1 = _make_bidder("BID-DOC-A", "Company A Ltd", pan="AAAAA1111A")
+    # Company A's document contains Company B's PAN
+    b1.extracted_fields = {"pan": "BBBBB2222B", "legalName": "Company A Ltd"}
+    b2 = _make_bidder("BID-DOC-B", "Company B Ltd", pan="BBBBB2222B")
+
+    findings = analyze_document_identity_inconsistencies([b1, b2], tender_id="TEN-DOC-01")
+    assert len(findings) == 1
+    f = findings[0]
+    assert f.signal_type == SignalType.DOCUMENT_IDENTITY_INCONSISTENCY
+    assert f.severity == RiskLevel.HIGH
+    assert f.rule_reference.clause_id == "GEM-GTC-DOC"
+
+
+def test_v2_score_decomposition_and_risk_basis():
+    """Verify that every assessment provides decomposable score contributions and RiskBasis parameters."""
+    assessment = assess_tender_integrity("TEN-2026-007")
+    assert assessment.overall_risk_score >= 50.0
+
+    # 1. Score breakdown must be non-empty and decomposable
+    assert len(assessment.score_breakdown) > 0
+    total_decomposed_points = sum(c.points_added for c in assessment.score_breakdown)
+    # The sum of decomposed contributor points must match overall score within rounding (0.2)
+    assert abs(total_decomposed_points - assessment.overall_risk_score) < 0.2
+
+    # 2. RiskBasis parameters must be populated from configuration
+    basis = assessment.risk_basis
+    assert basis is not None
+    assert basis.price_similarity_threshold_pct == 1.0
+    assert basis.winner_concentration_ratio == 0.75
+    assert basis.min_co_participations == 3
+    assert basis.min_rotation_tenders == 4
+    assert "PAN" in basis.statutory_identity_keys
+    assert "Address" in basis.operational_identity_keys
+
+    # 3. Evidence counts by source type
+    assert len(assessment.evidence_counts) > 0
+    assert any("BID_SUBMISSION" in k or "CORPORATE_REGISTRY" in k or "HISTORICAL" in k for k in assessment.evidence_counts)
+
+
+def test_v2_false_positive_single_bid_tender():
+    """A specialized tender receiving a single bid is NOT automatically flagged as suspicious."""
+    bidders = [_make_bidder("BID-SOLO", "Specialized Heavy Crane Manufacturer Ltd", quote_amount=50_000_000.0)]
+    assessment = assess_tender_integrity("TEN-SOLO-TEST", custom_bidders=bidders, custom_historical_tenders=[])
+    assert assessment.risk_level == RiskLevel.LOW
+    assert assessment.overall_risk_score < 25.0
+    assert assessment.findings_count == 0
+
+
+def test_v2_live_scenarios_9_10_11():
+    """Verify detection quality across new live seeded scenarios 9, 10, and 11."""
+    # Scenario 9: Narrow competition + bid-to-estimate
+    a9 = assess_tender_integrity("TEN-2026-009")
+    signals_9 = [f.signal_type for f in a9.findings]
+    assert SignalType.BID_TO_ESTIMATE_ANOMALY in signals_9 or SignalType.NARROW_COMPETITION in signals_9
+    assert a9.risk_basis is not None
+
+    # Scenario 10: Document OCR statutory inconsistency & shared director
+    a10 = assess_tender_integrity("TEN-2026-010")
+    signals_10 = [f.signal_type for f in a10.findings]
+    assert SignalType.DOCUMENT_IDENTITY_INCONSISTENCY in signals_10 or SignalType.COMMON_DIRECTOR_LINK in signals_10
+
+    # Scenario 11: Dedicated officer association fixture
+    a11 = assess_tender_integrity("TEN-2026-011")
+    signals_11 = [f.signal_type for f in a11.findings]
+    assert SignalType.OFFICER_VENDOR_ASSOCIATION in signals_11
+    off_finding = [f for f in a11.findings if f.signal_type == SignalType.OFFICER_VENDOR_ASSOCIATION][0]
+    assert "S. K. Verma" in off_finding.title
+
 
 
 

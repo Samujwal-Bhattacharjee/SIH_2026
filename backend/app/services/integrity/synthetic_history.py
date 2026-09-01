@@ -1,6 +1,6 @@
 """
-Synthetic Procurement History & Integrity Dataset Generator — SIH26100
-=======================================================================
+Synthetic Procurement History & Integrity Dataset Generator — SIH26100 V2
+==========================================================================
 Deterministic, reproducible procurement dataset generator designed for validating
 cross-tender pattern detection in the Procurement Integrity Engine.
 
@@ -9,15 +9,18 @@ Guarantees:
 - 100% fictional Indian-style business entities, PANs, GSTINs, CINs, Udyam numbers.
 - No real companies, real persons, or real procurement data.
 - No artificial 'corruption=true' flags; all signals emerge from observable patterns.
-- Covers 8 required procurement scenarios:
-    1. CLEAN (Independent bids, LOW risk)
+- Covers 11 procurement scenarios:
+    1. CLEAN BASELINE (Independent bids, LOW risk)
     2. BID PRICE CLUSTERING (Tight quotes <= 1.0% delta)
     3. REPEATED PARTICIPATION (Cohort appearing in >= 3 tenders)
     4. WINNER CONCENTRATION (Single vendor winning >= 75% in category)
-    5. BID ROTATION (Systematic A -> B -> C -> A -> B winner cycle)
+    5. BID ROTATION (Systematic alternating winner cycle)
     6. RELATED BIDDERS (Shared PAN, GSTIN, address, email domain)
     7. MULTI-SIGNAL CASE (Combined signals evaluating to HIGH/CRITICAL)
     8. FALSE-POSITIVE CONTROL (Legitimate competitive tender yielding LOW risk)
+    9. NARROW COMPETITION & BID-TO-ESTIMATE (Specialized equipment, bids near estimate)
+    10. DOCUMENT IDENTITY INCONSISTENCY & DIRECTORS (Document OCR cross-entity mismatch)
+    11. BIDDER-OFFICER ADMINISTRATIVE ASSOCIATION (Dedicated fixture for administrative linkage)
 """
 import random
 import uuid
@@ -46,6 +49,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "tenders@brahmaputraeng.in",
         "contact_phone": "9435011001",
         "enterprise_category": "Medium Enterprise",
+        "directors": ["Prabhat Baruah", "Sunita Sarma"],
     },
     "KAVERI": {
         "legal_name": "Kaveri Digital Solutions Ltd.",
@@ -58,6 +62,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "gov-bids@kaveridigital.com",
         "contact_phone": "9845022002",
         "enterprise_category": "Large Enterprise",
+        "directors": ["Vikramaditya Rao", "Meera Hegde"],
     },
     "GODAVARI": {
         "legal_name": "Godavari Network Systems Pvt. Ltd.",
@@ -70,6 +75,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "procurement@godavarinetworks.in",
         "contact_phone": "9866033003",
         "enterprise_category": "Small Enterprise",
+        "directors": ["Chandra Sekhar Reddy", "Padma Rao"],
     },
     "YAMUNA": {
         "legal_name": "Yamuna Smart Technologies LLP",
@@ -82,6 +88,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "sales@yamunasmart.org",
         "contact_phone": "9811044004",
         "enterprise_category": "Micro Enterprise",
+        "directors": ["Anand Swaminathan", "Neha Mathur"],
     },
     "VINDHYACHAL": {
         "legal_name": "Vindhyachal Power & Infra Ltd.",
@@ -94,6 +101,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "tenders@vindhyachalinfra.com",
         "contact_phone": "9752055005",
         "enterprise_category": "Large Enterprise",
+        "directors": ["Rajendra Verma", "Kavita Tiwari"],
     },
     "TAPTI": {
         "legal_name": "Tapti Solutions & Analytics Pvt. Ltd.",
@@ -106,9 +114,10 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "bid-cell@taptianalytics.in",
         "contact_phone": "9898066006",
         "enterprise_category": "Small Enterprise",
+        "directors": ["Harish Patel", "Bhavna Shah"],
     },
     "SHIVALIK_CLOUD": {
-        # Related entity 1 (shares statutory identifiers with SHIVALIK_ENTERPRISE)
+        # Related entity 1 (shares statutory identifiers and director with SHIVALIK_ENTERPRISE)
         "legal_name": "Shivalik Cloud Matrix Pvt. Ltd.",
         "trade_name": "Shivalik Cloud Matrix",
         "gstin": "05AABCS7007S1Z5",
@@ -119,9 +128,10 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "contact@shivalikmatrix.com",
         "contact_phone": "9837077007",
         "enterprise_category": "Small Enterprise",
+        "directors": ["Rohan Joshi", "Alok Deshmukh"],
     },
     "SHIVALIK_ENTERPRISE": {
-        # Related entity 2 (shares PAN, GSTIN, Address, and Email Domain with SHIVALIK_CLOUD)
+        # Related entity 2 (shares PAN, GSTIN, Address, Email Domain, and Director Rohan Joshi with SHIVALIK_CLOUD)
         "legal_name": "Shivalik Enterprise Systems LLP",
         "trade_name": "Shivalik Enterprise Systems",
         "gstin": "05AABCS7007S1Z5",  # Shared GSTIN
@@ -132,6 +142,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "admin@shivalikmatrix.com",  # Shared Domain (@shivalikmatrix.com)
         "contact_phone": "9837077007",  # Shared Phone
         "enterprise_category": "Small Enterprise",
+        "directors": ["Rohan Joshi", "Suresh Pant"],  # Shared Director Rohan Joshi
     },
     "MAHANADI": {
         "legal_name": "Mahanadi Security & Surveillance Pvt. Ltd.",
@@ -144,6 +155,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "tenders@mahanadisecurity.in",
         "contact_phone": "9437088008",
         "enterprise_category": "Small Enterprise",
+        "directors": ["Debabrata Jena", "Minati Mohanty"],
     },
     "SAHYADRI": {
         "legal_name": "Sahyadri Geo-Informatics LLP",
@@ -156,6 +168,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "sales@sahyadrigeo.com",
         "contact_phone": "9823099009",
         "enterprise_category": "Micro Enterprise",
+        "directors": ["Abhijit Kulkarni", "Swati Joshi"],
     },
     "NILGIRI": {
         "legal_name": "Nilgiri Hardware & Telecom Pvt. Ltd.",
@@ -168,6 +181,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "tenders@nilgiritel.com",
         "contact_phone": "9840011010",
         "enterprise_category": "Medium Enterprise",
+        "directors": ["S. Kalyanasundaram", "Lalitha Sundaram"],
     },
     "ARAVALI": {
         "legal_name": "Aravali Civil & Project Works Ltd.",
@@ -180,17 +194,17 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
         "contact_email": "contracts@aravaliprojects.com",
         "contact_phone": "9414022020",
         "enterprise_category": "Large Enterprise",
+        "directors": ["Mahaveer Singh", "Geeta Rathore"],
     },
 }
 
 
 # ============================================================
-# SYNTHETIC TENDERS DATASET (17 TENDERS)
+# SYNTHETIC TENDERS DATASET (23 TENDERS TOTAL)
 # ============================================================
 
 SYNTHETIC_TENDERS_SPEC = [
-    # ── 1. HISTORICAL TENDERS (Tenders 1 to 9) ──────────────────────────────────
-    # Historical IT Tenders 1-5: Structured A -> B -> C -> A -> B winner rotation & repeated cohort
+    # ── 1. HISTORICAL IT TENDERS (Tenders 1 to 5): Rotation & Cohort ───────────
     {
         "id": "TEN-HIST-01",
         "tender_number": "GEM/2024/B/110291",
@@ -201,6 +215,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 35000000.00,
         "category": "IT & Telecommunications",
         "status": "COMPLETED",
+        "created_by": "Director IT Procurements",
         "created_at": "2024-03-01T10:00:00Z",
         "bids": [
             {"bidder_key": "KAVERI", "quote": 33900000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -219,6 +234,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 38000000.00,
         "category": "IT & Telecommunications",
         "status": "COMPLETED",
+        "created_by": "Director IT Procurements",
         "created_at": "2024-06-01T10:00:00Z",
         "bids": [
             {"bidder_key": "BRAHMAPUTRA", "quote": 36900000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -237,6 +253,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 42000000.00,
         "category": "IT & Telecommunications",
         "status": "COMPLETED",
+        "created_by": "Director IT Procurements",
         "created_at": "2024-09-01T10:00:00Z",
         "bids": [
             {"bidder_key": "GODAVARI", "quote": 40500000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -255,6 +272,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 45000000.00,
         "category": "IT & Telecommunications",
         "status": "COMPLETED",
+        "created_by": "Director IT Procurements",
         "created_at": "2024-12-01T10:00:00Z",
         "bids": [
             {"bidder_key": "KAVERI", "quote": 43500000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -273,6 +291,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 48000000.00,
         "category": "IT & Telecommunications",
         "status": "COMPLETED",
+        "created_by": "Director IT Procurements",
         "created_at": "2025-03-01T10:00:00Z",
         "bids": [
             {"bidder_key": "BRAHMAPUTRA", "quote": 46800000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -282,7 +301,7 @@ SYNTHETIC_TENDERS_SPEC = [
         ],
     },
 
-    # Historical Renewable Energy Tenders 6-9: Dominant incumbent (Vindhyachal won 4/4 = 100%)
+    # ── 2. HISTORICAL RENEWABLE ENERGY TENDERS (6 to 9): Incumbent Concentration ─
     {
         "id": "TEN-HIST-06",
         "tender_number": "GEM/2024/B/660144",
@@ -293,6 +312,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 180000000.00,
         "category": "Renewable Energy",
         "status": "COMPLETED",
+        "created_by": "Chief Engineer Energy",
         "created_at": "2024-05-01T10:00:00Z",
         "bids": [
             {"bidder_key": "VINDHYACHAL", "quote": 174000000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -310,6 +330,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 220000000.00,
         "category": "Renewable Energy",
         "status": "COMPLETED",
+        "created_by": "Chief Engineer Energy",
         "created_at": "2024-10-01T10:00:00Z",
         "bids": [
             {"bidder_key": "VINDHYACHAL", "quote": 212000000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -327,6 +348,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 150000000.00,
         "category": "Renewable Energy",
         "status": "COMPLETED",
+        "created_by": "Chief Engineer Energy",
         "created_at": "2025-02-01T10:00:00Z",
         "bids": [
             {"bidder_key": "VINDHYACHAL", "quote": 145000000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -344,6 +366,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 195000000.00,
         "category": "Renewable Energy",
         "status": "COMPLETED",
+        "created_by": "Chief Engineer Energy",
         "created_at": "2025-07-01T10:00:00Z",
         "bids": [
             {"bidder_key": "VINDHYACHAL", "quote": 189000000.00, "status": "AWARDED", "decision": "QUALIFIED"},
@@ -352,7 +375,113 @@ SYNTHETIC_TENDERS_SPEC = [
         ],
     },
 
-    # ── 2. ACTIVE SCENARIO TENDERS (Tenders 10 to 17) ──────────────────────────
+    # ── 3. HISTORICAL SPECIALIZED LAB TENDERS (10 to 12): Narrow Market History ─
+    {
+        "id": "TEN-HIST-10",
+        "tender_number": "GEM/2024/B/100101",
+        "title": "Procurement of High-Resolution Spectrometry Equipment",
+        "department": "Department of Science and Technology",
+        "description": "Inductively coupled plasma mass spectrometry units for state testing lab.",
+        "bid_closing_date": "2024-05-20",
+        "estimated_value": 22000000.00,
+        "category": "Specialized Laboratory Equipment",
+        "status": "COMPLETED",
+        "created_by": "Procurement Division",
+        "created_at": "2024-04-10T10:00:00Z",
+        "bids": [
+            {"bidder_key": "ARAVALI", "quote": 21850000.00, "status": "AWARDED", "decision": "QUALIFIED"},
+            {"bidder_key": "MAHANADI", "quote": 21980000.00, "status": "EVALUATED", "decision": "QUALIFIED"},
+        ],
+    },
+    {
+        "id": "TEN-HIST-11",
+        "tender_number": "GEM/2024/B/100202",
+        "title": "Cryogenic Storage and Automated Sample Retrieval System",
+        "department": "Department of Science and Technology",
+        "description": "Ultra-low temperature freezers and liquid nitrogen manifold backup system.",
+        "bid_closing_date": "2024-09-15",
+        "estimated_value": 25000000.00,
+        "category": "Specialized Laboratory Equipment",
+        "status": "COMPLETED",
+        "created_by": "Procurement Division",
+        "created_at": "2024-08-01T10:00:00Z",
+        "bids": [
+            {"bidder_key": "MAHANADI", "quote": 24820000.00, "status": "AWARDED", "decision": "QUALIFIED"},
+            {"bidder_key": "ARAVALI", "quote": 24960000.00, "status": "EVALUATED", "decision": "QUALIFIED"},
+        ],
+    },
+    {
+        "id": "TEN-HIST-12",
+        "tender_number": "GEM/2025/B/100303",
+        "title": "Cleanroom Filtration & Environmental Sensor Instrumentation",
+        "department": "Department of Science and Technology",
+        "description": "ISO Class 5 cleanroom HEPA filters and particle counting sensor array.",
+        "bid_closing_date": "2025-02-18",
+        "estimated_value": 28000000.00,
+        "category": "Specialized Laboratory Equipment",
+        "status": "COMPLETED",
+        "created_by": "Procurement Division",
+        "created_at": "2025-01-10T10:00:00Z",
+        "bids": [
+            {"bidder_key": "ARAVALI", "quote": 27880000.00, "status": "AWARDED", "decision": "QUALIFIED"},
+            {"bidder_key": "MAHANADI", "quote": 27950000.00, "status": "EVALUATED", "decision": "QUALIFIED"},
+        ],
+    },
+
+    # ── 4. HISTORICAL OFFICER ADMINISTRATIVE ASSOCIATION TENDERS (13 to 15) ────
+    {
+        "id": "TEN-HIST-13",
+        "tender_number": "GEM/2024/B/100404",
+        "title": "Digital Records Archival & Microfilming Services (Phase 1)",
+        "department": "Department of Administrative Reforms",
+        "description": "Scanning, indexing, metadata cataloging, and archival microfilming.",
+        "bid_closing_date": "2024-04-30",
+        "estimated_value": 15000000.00,
+        "category": "Administrative Services",
+        "status": "COMPLETED",
+        "created_by": "S. K. Verma, Jt. Director",
+        "created_at": "2024-03-20T10:00:00Z",
+        "bids": [
+            {"bidder_key": "KAVERI", "quote": 14200000.00, "status": "AWARDED", "decision": "QUALIFIED"},
+            {"bidder_key": "TAPTI", "quote": 15400000.00, "status": "EVALUATED", "decision": "QUALIFIED"},
+        ],
+    },
+    {
+        "id": "TEN-HIST-14",
+        "tender_number": "GEM/2024/B/100505",
+        "title": "Digital Records Archival & Microfilming Services (Phase 2)",
+        "department": "Department of Administrative Reforms",
+        "description": "District-level administrative records digitization and OCR indexing.",
+        "bid_closing_date": "2024-10-15",
+        "estimated_value": 16000000.00,
+        "category": "Administrative Services",
+        "status": "COMPLETED",
+        "created_by": "S. K. Verma, Jt. Director",
+        "created_at": "2024-09-05T10:00:00Z",
+        "bids": [
+            {"bidder_key": "KAVERI", "quote": 15100000.00, "status": "AWARDED", "decision": "QUALIFIED"},
+            {"bidder_key": "TAPTI", "quote": 16200000.00, "status": "EVALUATED", "decision": "QUALIFIED"},
+        ],
+    },
+    {
+        "id": "TEN-HIST-15",
+        "tender_number": "GEM/2025/B/100606",
+        "title": "State Secretariat File Movement System Maintenance",
+        "department": "Department of Administrative Reforms",
+        "description": "SLA-based application support and database administration for secretariat files.",
+        "bid_closing_date": "2025-05-10",
+        "estimated_value": 18000000.00,
+        "category": "Administrative Services",
+        "status": "COMPLETED",
+        "created_by": "S. K. Verma, Jt. Director",
+        "created_at": "2025-04-01T10:00:00Z",
+        "bids": [
+            {"bidder_key": "KAVERI", "quote": 17200000.00, "status": "AWARDED", "decision": "QUALIFIED"},
+            {"bidder_key": "TAPTI", "quote": 18500000.00, "status": "EVALUATED", "decision": "QUALIFIED"},
+        ],
+    },
+
+    # ── 5. ACTIVE SCENARIO TENDERS (Tenders 16 to 23) ──────────────────────────
 
     # SCENARIO 1 — CLEAN BASELINE
     {
@@ -365,6 +494,7 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 45000000.00,
         "category": "Network Infrastructure",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-01T09:00:00Z",
         "bids": [
             {"bidder_key": "NILGIRI", "quote": 43500000.00, "status": "UNDER_REVIEW", "decision": None},
@@ -384,9 +514,9 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 25000000.00,
         "category": "Cloud Infrastructure",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-05T11:00:00Z",
         "bids": [
-            # 3 Bids clustered within 0.28% total delta (<= 1.0% threshold)
             {"bidder_key": "BRAHMAPUTRA", "quote": 24850000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "KAVERI", "quote": 24890000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "GODAVARI", "quote": 24920000.00, "status": "UNDER_REVIEW", "decision": None},
@@ -404,9 +534,9 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 32000000.00,
         "category": "IT & Telecommunications",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-10T09:30:00Z",
         "bids": [
-            # Brahmaputra, Kaveri, and Yamuna have jointly co-participated across 5 historical IT tenders
             {"bidder_key": "BRAHMAPUTRA", "quote": 31500000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "KAVERI", "quote": 33500000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "YAMUNA", "quote": 35500000.00, "status": "UNDER_REVIEW", "decision": None},
@@ -424,9 +554,9 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 350000000.00,
         "category": "Renewable Energy",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-12T14:00:00Z",
         "bids": [
-            # Vindhyachal has won 4 of 4 historical tenders in Renewable Energy (100% win rate)
             {"bidder_key": "VINDHYACHAL", "quote": 342000000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "ARAVALI", "quote": 368000000.00, "status": "UNDER_REVIEW", "decision": None},
         ],
@@ -443,9 +573,9 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 50000000.00,
         "category": "IT & Telecommunications",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-15T10:00:00Z",
         "bids": [
-            # Historical IT tenders show rotation: Kaveri (A) -> Brahmaputra (B) -> Godavari (C) -> Kaveri (A) -> Brahmaputra (B)
             {"bidder_key": "GODAVARI", "quote": 48500000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "KAVERI", "quote": 51000000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "BRAHMAPUTRA", "quote": 52500000.00, "status": "UNDER_REVIEW", "decision": None},
@@ -463,9 +593,9 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 60000000.00,
         "category": "Software Solutions",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-18T11:30:00Z",
         "bids": [
-            # Shivalik Cloud Matrix and Shivalik Enterprise Systems share PAN, GSTIN, Address, and Email Domain
             {"bidder_key": "SHIVALIK_CLOUD", "quote": 58000000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "SHIVALIK_ENTERPRISE", "quote": 61500000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "TAPTI", "quote": 64000000.00, "status": "UNDER_REVIEW", "decision": None},
@@ -483,9 +613,9 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 80000000.00,
         "category": "IT & Telecommunications",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-20T15:00:00Z",
         "bids": [
-            # Combines: Shared PAN/GSTIN (Shivalik entities) + Price Clustering (0.38% spread) + Historical Cohort
             {"bidder_key": "SHIVALIK_CLOUD", "quote": 78500000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "SHIVALIK_ENTERPRISE", "quote": 78650000.00, "status": "UNDER_REVIEW", "decision": None},
             {"bidder_key": "KAVERI", "quote": 78800000.00, "status": "UNDER_REVIEW", "decision": None},
@@ -503,12 +633,85 @@ SYNTHETIC_TENDERS_SPEC = [
         "estimated_value": 18000000.00,
         "category": "Geospatial & Survey",
         "status": "ACTIVE",
+        "created_by": "Procurement Division",
         "created_at": "2026-08-22T09:00:00Z",
         "bids": [
-            # Legitimate competitive bids with healthy > 3.5% margins and distinct corporate entities
             {"bidder_key": "SAHYADRI", "quote": 17200000.00, "status": "UNDER_REVIEW", "decision": None},
-            {"bidder_key": "TAPTI", "quote": 17800000.00, "status": "UNDER_REVIEW", "decision": None},  # 3.48% delta
-            {"bidder_key": "MAHANADI", "quote": 18500000.00, "status": "UNDER_REVIEW", "decision": None}, # 3.93% delta
+            {"bidder_key": "TAPTI", "quote": 17800000.00, "status": "UNDER_REVIEW", "decision": None},
+            {"bidder_key": "MAHANADI", "quote": 18500000.00, "status": "UNDER_REVIEW", "decision": None},
+        ],
+    },
+
+    # SCENARIO 9 — NARROW COMPETITION & BID-TO-ESTIMATE ANOMALY
+    {
+        "id": "TEN-2026-009",
+        "tender_number": "GEM/2026/B/988074",
+        "title": "Supply of Specialized Laboratory Testing Sensors & Thermal Calibrators",
+        "department": "Department of Science and Technology",
+        "description": "High-temperature thermogravimetric analyzer and micro-balance testing bench.",
+        "bid_closing_date": "2026-10-02",
+        "estimated_value": 20000000.00,
+        "category": "Specialized Laboratory Equipment",
+        "status": "ACTIVE",
+        "created_by": "Procurement Division",
+        "created_at": "2026-08-24T10:00:00Z",
+        "bids": [
+            # Both bids tightly placed right at 99.8% and 99.9% of the official estimate (20,000,000)
+            {"bidder_key": "ARAVALI", "quote": 19960000.00, "status": "UNDER_REVIEW", "decision": None},
+            {"bidder_key": "MAHANADI", "quote": 19980000.00, "status": "UNDER_REVIEW", "decision": None},
+        ],
+    },
+
+    # SCENARIO 10 — DOCUMENT IDENTITY INCONSISTENCY & SHARED DIRECTORS
+    {
+        "id": "TEN-2026-010",
+        "tender_number": "GEM/2026/B/999185",
+        "title": "Digital Portal User Telemetry & Governance Performance Dashboard",
+        "department": "Department of Information Technology",
+        "description": "Cloud telemetry ingestion, real-time query optimization, and citizen feedback pipelines.",
+        "bid_closing_date": "2026-10-05",
+        "estimated_value": 30000000.00,
+        "category": "Software Solutions",
+        "status": "ACTIVE",
+        "created_by": "Procurement Division",
+        "created_at": "2026-08-25T11:00:00Z",
+        "bids": [
+            {
+                "bidder_key": "YAMUNA",
+                "quote": 28500000.00,
+                "status": "UNDER_REVIEW",
+                "decision": None,
+                # Yamuna document embedding Kaveri's PAN and sharing Director Vikramaditya Rao
+                "inconsistent_pan": "AABCK2002K",
+                "directors_override": ["Vikramaditya Rao", "Anand Swaminathan"],
+            },
+            {
+                "bidder_key": "KAVERI",
+                "quote": 29200000.00,
+                "status": "UNDER_REVIEW",
+                "decision": None,
+                "directors_override": ["Vikramaditya Rao", "Meera Hegde"],
+            },
+            {"bidder_key": "TAPTI", "quote": 31000000.00, "status": "UNDER_REVIEW", "decision": None},
+        ],
+    },
+
+    # SCENARIO 11 — BIDDER-OFFICER ADMINISTRATIVE ASSOCIATION FIXTURE
+    {
+        "id": "TEN-2026-011",
+        "tender_number": "GEM/2026/B/101296",
+        "title": "Secretariat High-Volume Document Digitization & Audit Trail Integration",
+        "department": "Department of Administrative Reforms",
+        "description": "High-speed document capture, metadata validation, and state archive synchronization.",
+        "bid_closing_date": "2026-10-10",
+        "estimated_value": 22000000.00,
+        "category": "Administrative Services",
+        "status": "ACTIVE",
+        "created_by": "S. K. Verma, Jt. Director",
+        "created_at": "2026-08-28T09:00:00Z",
+        "bids": [
+            {"bidder_key": "KAVERI", "quote": 20800000.00, "status": "UNDER_REVIEW", "decision": None},
+            {"bidder_key": "TAPTI", "quote": 22500000.00, "status": "UNDER_REVIEW", "decision": None},
         ],
     },
 ]
@@ -559,6 +762,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
         t_cat = tender_spec.get("category", "General Procurement")
         t_status = tender_spec.get("status", "ACTIVE")
         t_created = tender_spec.get("created_at", now)
+        t_officer = tender_spec.get("created_by", "Procurement Division")
 
         # 1. Insert Tender
         conn.execute("""
@@ -575,7 +779,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             t_cat,
             t_status,
             "CLASS_I",
-            "Procurement Division",
+            t_officer,
             t_created,
             now
         ))
@@ -605,7 +809,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             bidder_id_counter += 1
             b_id = f"BID-{bidder_id_counter}"
             b_key = bid_info["bidder_key"]
-            b_profile = FICTIONAL_BIDDERS_CATALOG[b_key]
+            b_profile = dict(FICTIONAL_BIDDERS_CATALOG[b_key])
             
             quote = bid_info["quote"]
             b_status = bid_info.get("status", "UNDER_REVIEW")
@@ -614,15 +818,16 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             # Risk & Compliance defaults
             compliance_score = 88.0 if b_status in ("AWARDED", "QUALIFIED") else 75.0
             risk_level = "LOW" if b_status in ("AWARDED", "QUALIFIED") else "MEDIUM"
+            decided_by = t_officer if b_status == "AWARDED" else None
 
             conn.execute("""
                 INSERT INTO bidders (
                     id, tender_id, legal_name, trade_name, gstin, pan, udyam_number, cin,
                     registered_address, contact_email, contact_phone, enterprise_category,
                     status, compliance_score, risk_level, officer_decision, quote_amount,
-                    created_at, updated_at
+                    decided_by, created_at, updated_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 b_id,
                 t_id,
@@ -641,23 +846,36 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
                 risk_level,
                 b_decision,
                 quote,
+                decided_by,
                 t_created,
                 now
             ))
             counts["bidders"] += 1
 
             # 4. Insert Financial & Statutory Verification Documents for Bidder
+            directors_to_embed = bid_info.get("directors_override") or b_profile.get("directors") or []
+            pan_to_embed = bid_info.get("inconsistent_pan") or b_profile.get("pan")
+
+            gst_fields = [
+                {"key": "gstin", "value": b_profile.get("gstin"), "confidence": 0.98, "isExtracted": True},
+                {"key": "legalName", "value": b_profile["legal_name"], "confidence": 0.95, "isExtracted": True},
+                {"key": "pan", "value": pan_to_embed, "confidence": 0.98, "isExtracted": True},
+                {"key": "registeredAddress", "value": b_profile.get("registered_address"), "confidence": 0.92, "isExtracted": True},
+            ]
+            if directors_to_embed:
+                gst_fields.append({
+                    "key": "directors",
+                    "value": ", ".join(directors_to_embed),
+                    "confidence": 0.94,
+                    "isExtracted": True
+                })
+
             doc_specs = [
                 (
                     f"DOC-{b_id}-GST",
                     f"{b_key}_GST_Certificate.pdf",
                     "GST Certificate",
-                    [
-                        {"key": "gstin", "value": b_profile.get("gstin"), "confidence": 0.98, "isExtracted": True},
-                        {"key": "legalName", "value": b_profile["legal_name"], "confidence": 0.95, "isExtracted": True},
-                        {"key": "pan", "value": b_profile.get("pan"), "confidence": 0.98, "isExtracted": True},
-                        {"key": "registeredAddress", "value": b_profile.get("registered_address"), "confidence": 0.92, "isExtracted": True},
-                    ]
+                    gst_fields
                 ),
                 (
                     f"DOC-{b_id}-FIN",

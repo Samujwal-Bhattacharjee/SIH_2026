@@ -25,12 +25,17 @@ import {
   SlidersHorizontal,
   Network,
   UserCheck,
+  Scale,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { apiClient, isUsingMockApi } from '../services/api/apiClient';
 import { IntegrityAssessment, IntegrityFinding, IntegrityEvidence } from '../types';
 import { useProcurement } from '../context/ProcurementContext';
 import { useLanguage } from '../context/LanguageContext';
 import { RelationshipGraph } from '../components/integrity/RelationshipGraph';
+import { GovPageHeader } from '../components/common/GovPageHeader';
 
 // ─── Human-readable Signal Types & Badges ─────────────────────────────────────
 const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
@@ -38,25 +43,61 @@ const SIGNAL_LABELS: Record<string, { label: string; description: string }> = {
     label: 'Related-Bidder Signal',
     description: 'Shared statutory identity attributes (PAN, GSTIN, CIN) between bidders.',
   },
-  SHARED_ENTITY: {
-    label: 'Shared Entity Linkage',
-    description: 'Common registered address, email domain, or telephone number between bidders.',
+  COMMON_DIRECTOR_LINK: {
+    label: 'Common Director Link',
+    description: 'Shared corporate directors or designated partners identified across competing entities.',
+  },
+  DOCUMENT_IDENTITY_INCONSISTENCY: {
+    label: 'Document Identity Inconsistency',
+    description: 'Cross-bidder statutory credentials identified in submitted tender documents.',
   },
   BID_PRICE_ANOMALY: {
-    label: 'Anomalous Bid Pattern',
-    description: 'Financial quotes clustered within a narrow margin (<= 1.0% delta).',
+    label: 'Anomalous Bid Pricing Pattern',
+    description: 'Financial quotes clustered within an unusually narrow margin (<= 1.0% delta).',
+  },
+  BID_TO_ESTIMATE_ANOMALY: {
+    label: 'Bid-to-Estimate Anomaly',
+    description: 'Submitted financial quotes clustered abnormally close to the confidential departmental estimate.',
+  },
+  COMMERCIAL_BOQ_ANOMALY: {
+    label: 'Commercial BOQ Rate Uniformity',
+    description: 'Identical itemized bill-of-quantities unit rates detected across competing bidders.',
   },
   REPEATED_WINNER_PATTERN: {
-    label: 'Winner Concentration',
-    description: 'Historical award concentration exceeding statistical thresholds.',
+    label: 'Supplier Concentration Signal',
+    description: 'Historical award concentration exceeding statistical thresholds in category.',
   },
   REPEATED_PARTICIPATION_PATTERN: {
     label: 'Repeated Cohort Signal',
     description: 'Frequent joint bidding of identical vendor cohorts across historical tenders.',
   },
   BID_ROTATION_PATTERN: {
-    label: 'Potential Bid Rotation',
-    description: 'Sequential alternating awards among recurring participants.',
+    label: 'Possible Bid Rotation Pattern',
+    description: 'Sequential alternating awards among recurring participants over time.',
+  },
+  LOSING_BID_PATTERN: {
+    label: 'Losing-Bid Cover Pattern',
+    description: 'Recurring runner-up submissions with consistent marginal price differentials.',
+  },
+  NON_COMPETITION_PATTERN: {
+    label: 'Non-Competition Pattern Signal',
+    description: 'Persistent participation without award in recurring small cohort competitions.',
+  },
+  NARROW_COMPETITION: {
+    label: 'Narrow Competition Signal',
+    description: 'Tenders repeatedly attracting <= 2 qualified bidders despite open procurement notices.',
+  },
+  OFFICER_VENDOR_ASSOCIATION: {
+    label: 'Administrative Association Signal',
+    description: 'High concentration of tender awards to a specific supplier by the same deciding officer.',
+  },
+  SUBMISSION_TIMING_ANOMALY: {
+    label: 'Submission Timing Anomaly',
+    description: 'Bids submitted within an unusually narrow clustered time window.',
+  },
+  SHARED_ENTITY: {
+    label: 'Shared Entity Linkage',
+    description: 'Common registered address, email domain, or telephone number between bidders.',
   },
   TENDER_CHANGE_PATTERN: {
     label: 'Tender Modification Signal',
@@ -87,6 +128,8 @@ export const ProcurementIntegrity: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusActionNote, setStatusActionNote] = useState<string>('');
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [showRiskBasis, setShowRiskBasis] = useState<boolean>(true);
+  const [showDecomposition, setShowDecomposition] = useState<boolean>(true);
 
   // Sync selected tender with URL query param if changed
   useEffect(() => {
@@ -225,40 +268,34 @@ export const ProcurementIntegrity: React.FC = () => {
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans">
-      {/* ─── Breadcrumb & Title Bar ────────────────────────────────────────── */}
-      <div className="border-b border-[#CBD5E1] pb-3 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-[2px] shadow-xs border">
-        <div>
-          <div className="flex items-center gap-1 text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
-            <span>{t('page.integrity.workspace')}</span>
-            <ChevronRight className="w-3 h-3 text-[#94A3B8]" />
-            <span className="text-[#0B2A4A]">{t('page.integrity.findings')}</span>
-          </div>
-          <h1 className="font-serif font-bold text-2xl text-[#0B2A4A] mt-1 flex items-center gap-2">
+      {/* ─── Institutional Title & Engine Status Strip (Glossy Frosted Banner) ─── */}
+      <GovPageHeader
+        title={
+          <div className="flex items-center gap-2">
             <ShieldAlert className="w-6 h-6 text-[#0B2A4A]" />
-            {t('page.integrity.title')}
-          </h1>
-          <p className="text-xs text-[#475569] mt-0.5">
-            {t('page.integrity.subtitle')}
-          </p>
-        </div>
-
-        {/* Live Engine Indicator & Refresh */}
-        <div className="flex items-center gap-2 self-start md:self-center">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[2px]">
-            <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
-            Real-Time Integrity Engine
-          </span>
-          <button
-            onClick={loadIntegrityData}
-            disabled={loading}
-            className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-            title="Refresh assessment from backend database"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Re-evaluate</span>
-          </button>
-        </div>
-      </div>
+            <span>{t('page.integrity.title') || 'Procurement Integrity Workspace'}</span>
+          </div>
+        }
+        tag="INTEGRITY ENGINE & CORRUPTION RISK"
+        subtitle={t('page.integrity.subtitle') || 'Detect explainable collusion, cohort bidding patterns, and cross-tender vendor relationships.'}
+        actions={
+          <>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] rounded-[4px] shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+              Real-Time Integrity Engine
+            </span>
+            <button
+              onClick={loadIntegrityData}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all cursor-pointer disabled:opacity-50"
+              title="Refresh assessment from backend database"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span>Re-evaluate</span>
+            </button>
+          </>
+        }
+      />
 
       {/* ─── Context Selector Control Bar ──────────────────────────────────── */}
       <div className="bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] p-3 shadow-xs">
@@ -448,6 +485,214 @@ export const ProcurementIntegrity: React.FC = () => {
               {assessment.summary}
             </div>
           </div>
+
+          {/* ── 2b. Score Decomposition Waterfall ── */}
+          {assessment.score_breakdown && assessment.score_breakdown.length > 0 && (
+            <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
+              <div
+                className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between cursor-pointer select-none"
+                onClick={() => setShowDecomposition(!showDecomposition)}
+              >
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4 text-[#0B2A4A]" />
+                  <h3 className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wider">
+                    Score Decomposition Waterfall ({assessment.score_breakdown.length} Signal{assessment.score_breakdown.length !== 1 ? 's' : ''})
+                  </h3>
+                  <span className="text-[10px] text-[#64748B] font-mono hidden md:inline">
+                    Transparent mathematical aggregation with diminishing returns & statutory anchors
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-[#0B2A4A]">
+                    Total: {Number(assessment.overall_risk_score).toFixed(1)} pts
+                  </span>
+                  {showDecomposition ? <ChevronUp className="w-4 h-4 text-[#64748B]" /> : <ChevronDown className="w-4 h-4 text-[#64748B]" />}
+                </div>
+              </div>
+
+              {showDecomposition && (
+                <div className="p-3 space-y-3">
+                  {/* Proportional Waterfall Bar */}
+                  <div className="w-full bg-[#E2E8F0] h-3 rounded-[2px] overflow-hidden flex shadow-inner">
+                    {assessment.score_breakdown.map((c, idx) => {
+                      const widthPct = assessment.overall_risk_score > 0
+                        ? (c.points_added / assessment.overall_risk_score) * 100
+                        : 0;
+                      const colors = [
+                        'bg-[#DC2626]',
+                        'bg-[#EA580C]',
+                        'bg-[#D97706]',
+                        'bg-[#2563EB]',
+                        'bg-[#7C3AED]',
+                        'bg-[#0D9488]',
+                        'bg-[#4B5563]',
+                      ];
+                      const color = colors[idx % colors.length];
+                      return (
+                        <div
+                          key={idx}
+                          className={`${color} h-full transition-all`}
+                          style={{ width: `${widthPct}%` }}
+                          title={`${c.title}: +${Number(c.points_added).toFixed(1)} pts (${widthPct.toFixed(1)}%)`}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  {/* Decomposed Breakdown Table */}
+                  <div className="overflow-x-auto border border-[#E2E8F0] rounded-[2px]">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-[#F1F5F9] border-b border-[#CBD5E1] text-[#475569] font-bold text-[10px] uppercase">
+                          <th className="py-2 px-3">Signal Type & Indicator Title</th>
+                          <th className="py-2 px-2">Rule Reference</th>
+                          <th className="py-2 px-2 text-right">Base Impact</th>
+                          <th className="py-2 px-2 text-right">Multiplier</th>
+                          <th className="py-2 px-2 text-right font-bold text-[#0B2A4A]">Points Added</th>
+                          <th className="py-2 px-3 text-right">Audit Evidence</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#E2E8F0]">
+                        {assessment.score_breakdown.map((c, idx) => (
+                          <tr key={idx} className="hover:bg-[#F8FAFC]">
+                            <td className="py-2 px-3">
+                              <div className="font-bold text-[#0B2A4A] text-xs">{c.title}</div>
+                              <div className="text-[10px] text-[#64748B] font-mono">{c.signal_type}</div>
+                            </td>
+                            <td className="py-2 px-2 font-mono text-[11px] text-[#2563EB]">
+                              {c.rule_clause ? (
+                                <span className="px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] rounded-[2px]">
+                                  {c.rule_clause}
+                                </span>
+                              ) : (
+                                <span className="text-[#94A3B8]">—</span>
+                              )}
+                            </td>
+                            <td className="py-2 px-2 text-right font-mono text-[#475569]">
+                              {Number(c.base_impact).toFixed(1)}
+                            </td>
+                            <td className="py-2 px-2 text-right font-mono text-[#64748B]">
+                              {Number(c.multiplier).toFixed(2)}x
+                            </td>
+                            <td className="py-2 px-2 text-right font-mono font-bold text-[#0B2A4A]">
+                              +{Number(c.points_added).toFixed(1)}
+                            </td>
+                            <td className="py-2 px-3 text-right">
+                              <span className="px-1.5 py-0.5 text-[10px] font-mono bg-[#EDF2F7] text-[#4A5568] rounded-[2px]">
+                                {c.evidence_count} item{c.evidence_count !== 1 ? 's' : ''}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="bg-[#F8FAFC] border-t-2 border-[#CBD5E1] font-bold text-xs">
+                          <td colSpan={4} className="py-2 px-3 text-right text-[#0B2A4A] uppercase">
+                            Aggregated Composite Risk Score:
+                          </td>
+                          <td className="py-2 px-2 text-right font-mono text-sm text-[#0B2A4A]">
+                            {Number(assessment.overall_risk_score).toFixed(1)} / 100
+                          </td>
+                          <td className="py-2 px-3 text-right text-[10px] text-[#64748B]">
+                            {getRiskBadge(assessment.risk_level)}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── 2c. Statutory Evaluation Risk Basis ── */}
+          {assessment.risk_basis && (
+            <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
+              <div
+                className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between cursor-pointer select-none"
+                onClick={() => setShowRiskBasis(!showRiskBasis)}
+              >
+                <div className="flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-[#0B2A4A]" />
+                  <h3 className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wider">
+                    Risk Basis & Evaluation Parameters
+                  </h3>
+                  <span className="text-[10px] text-[#64748B] hidden md:inline">
+                    Active statutory and statistical criteria used to evaluate this procurement
+                  </span>
+                </div>
+                {showRiskBasis ? <ChevronUp className="w-4 h-4 text-[#64748B]" /> : <ChevronDown className="w-4 h-4 text-[#64748B]" />}
+              </div>
+
+              {showRiskBasis && (
+                <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Price Delta Margin</div>
+                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                      ≤ {assessment.risk_basis.price_similarity_threshold_pct}%
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">Quotes within 1% trigger verification</div>
+                  </div>
+
+                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Supplier Concentration</div>
+                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                      ≥ {(Number(assessment.risk_basis.winner_concentration_ratio) * 100).toFixed(0)}%
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">Min {assessment.risk_basis.min_historical_tenders_concentration} historical awards</div>
+                  </div>
+
+                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Cohort / Rotation Quorum</div>
+                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                      ≥ {assessment.risk_basis.min_co_participations} Joint Tenders
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">Rotation horizon: ≥ {assessment.risk_basis.min_rotation_tenders} tenders</div>
+                  </div>
+
+                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Bid-to-Estimate Anomaly</div>
+                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                      ≤ {assessment.risk_basis.bid_to_estimate_threshold_pct}%
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">Proximity to confidential estimate</div>
+                  </div>
+
+                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Narrow Market Quorum</div>
+                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                      ≤ {assessment.risk_basis.narrow_competition_max_bidders} Qualified Bidders
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">Repeated in category competitions</div>
+                  </div>
+
+                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Officer-Bidder Linkage</div>
+                    <div className="text-sm font-bold text-[#0B2A4A] mt-0.5">
+                      Audited Decisions Only
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">Zero speculative officer links</div>
+                  </div>
+
+                  <div className="sm:col-span-2 p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Cross-Bidder Identity Keys</div>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {assessment.risk_basis.statutory_identity_keys?.map((k) => (
+                        <span key={k} className="px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-mono font-bold text-[10px] rounded-[2px]">
+                          {k} (Statutory)
+                        </span>
+                      ))}
+                      {assessment.risk_basis.operational_identity_keys?.map((k) => (
+                        <span key={k} className="px-1.5 py-0.5 bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] font-mono text-[10px] rounded-[2px]">
+                          {k} (Operational)
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ── 3. Relationship Network ── */}
           <div className="bg-white border border-[#D9DDE3] rounded-[3px] shadow-sm">
@@ -670,6 +915,30 @@ export const ProcurementIntegrity: React.FC = () => {
                     </div>
 
                     <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto text-xs">
+                      {/* Statutory Rule Reference */}
+                      {selectedFinding.rule_reference && (
+                        <div className="bg-[#F8FAFC] border border-[#CBD5E1] p-3 rounded-[2px]">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1 flex items-center justify-between">
+                            <span className="flex items-center gap-1">
+                              <Scale className="w-3.5 h-3.5 text-[#0B2A4A]" />
+                              Statutory & Regulatory Basis
+                            </span>
+                            <span className="font-mono px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-bold text-[10px] rounded-[2px]">
+                              {selectedFinding.rule_reference.clause_id}
+                            </span>
+                          </div>
+                          <div className="font-bold text-xs text-[#0B2A4A]">
+                            {selectedFinding.rule_reference.title}
+                          </div>
+                          <div className="text-[11px] text-[#475569] mt-0.5 leading-relaxed">
+                            {selectedFinding.rule_reference.description}
+                          </div>
+                          <div className="text-[10px] text-[#64748B] font-mono mt-1">
+                            Applicability: {selectedFinding.rule_reference.applicability}
+                          </div>
+                        </div>
+                      )}
+
                       {/* What was detected / Reason */}
                       <div>
                         <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1 flex items-center gap-1">
@@ -778,6 +1047,32 @@ export const ProcurementIntegrity: React.FC = () => {
                             onChange={(e) => setStatusActionNote(e.target.value)}
                             className="w-full text-xs p-2 border border-[#CBD5E1] rounded-[2px] focus:outline-none focus:ring-1 focus:ring-[#0B2A4A]"
                           />
+                          {/* Procedural Review Action Templates */}
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="text-[10px] text-[#64748B] font-bold uppercase">Quick Templates:</span>
+                            <button
+                              type="button"
+                              onClick={() => setStatusActionNote("Called for itemized Bill of Quantities (BOQ) with unit material, labor, and equipment rates to verify independent cost estimation under GFR Rule 173.")}
+                              className="px-1.5 py-0.5 text-[10px] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
+                            >
+                              + BOQ Break-up
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setStatusActionNote("Required formal price justification and undertaking confirming independent bidding without collusion under GeM GTC Clause 19.")}
+                              className="px-1.5 py-0.5 text-[10px] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
+                            >
+                              + Price Justification
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setStatusActionNote("Dispatched notice requesting corporate resolution and statutory PAN/GSTIN registration documentation to confirm independent management.")}
+                              className="px-1.5 py-0.5 text-[10px] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
+                            >
+                              + Statutory Verification
+                            </button>
+                          </div>
+
                           <div className="flex flex-wrap items-center gap-1.5">
                             <button
                               onClick={async () => {

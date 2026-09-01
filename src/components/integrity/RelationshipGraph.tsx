@@ -37,11 +37,17 @@ const C = {
   sharedPan:    { bg: '#FFF7ED', bd: '#C2410C', tx: '#7C2D12' },
   sharedGstin:  { bg: '#FEFCE8', bd: '#A16207', tx: '#713F12' },
   sharedAddr:   { bg: '#F0FDF4', bd: '#15803D', tx: '#14532D' },
+  sharedDirector: { bg: '#F0F9FF', bd: '#0284C7', tx: '#0369A1' },
+  sharedOfficer: { bg: '#FAF5FF', bd: '#7C3AED', tx: '#5B21B6' },
+  sharedMismatch: { bg: '#FEF2F2', bd: '#E11D48', tx: '#9F1239' },
   sharedOther:  { bg: '#F5F3FF', bd: '#6D28D9', tx: '#4C1D95' },
 };
 
 function colForField(field: string) {
   const f = (field || '').toUpperCase();
+  if (f.includes('DIRECTOR') || f.includes('SIGNATORY')) return C.sharedDirector;
+  if (f.includes('OFFICER')) return C.sharedOfficer;
+  if (f.includes('MISMATCH') || f.includes('CROSS') || f.includes('INCONSISTENCY')) return C.sharedMismatch;
   if (f.includes('PAN') || f.includes('CIN') || f.includes('UDYAM')) return C.sharedPan;
   if (f.includes('GSTIN')) return C.sharedGstin;
   if (f.includes('ADDRESS')) return C.sharedAddr;
@@ -50,6 +56,9 @@ function colForField(field: string) {
 
 function edgeColorForField(field: string): string {
   const f = (field || '').toUpperCase();
+  if (f.includes('DIRECTOR') || f.includes('SIGNATORY')) return '#0284C7';
+  if (f.includes('OFFICER')) return '#7C3AED';
+  if (f.includes('MISMATCH') || f.includes('CROSS') || f.includes('INCONSISTENCY')) return '#E11D48';
   if (f.includes('PAN') || f.includes('CIN')) return '#C2410C';
   if (f.includes('GSTIN')) return '#A16207';
   if (f.includes('ADDRESS')) return '#15803D';
@@ -58,6 +67,9 @@ function edgeColorForField(field: string): string {
 
 function fieldLabel(field: string): string {
   const f = (field || '').toUpperCase();
+  if (f.includes('DIRECTOR')) return 'Common Director';
+  if (f.includes('OFFICER')) return 'Administrative Link';
+  if (f.includes('MISMATCH') || f.includes('INCONSISTENCY')) return 'Cross-Document Link';
   if (f.includes('PAN')) return 'PAN';
   if (f.includes('GSTIN')) return 'GSTIN';
   if (f.includes('ADDRESS')) return 'Address';
@@ -170,7 +182,11 @@ function buildGraph(
   const edges: Edge[] = [];
 
   const relFindings = assessment.findings.filter(
-    (f) => f.signal_type === 'RELATED_BIDDER' || f.signal_type === 'SHARED_ENTITY'
+    (f) => f.signal_type === 'RELATED_BIDDER' ||
+           f.signal_type === 'SHARED_ENTITY' ||
+           f.signal_type === 'COMMON_DIRECTOR_LINK' ||
+           f.signal_type === 'OFFICER_VENDOR_ASSOCIATION' ||
+           f.signal_type === 'DOCUMENT_IDENTITY_INCONSISTENCY'
   );
 
   const flaggedIds = new Set<string>();

@@ -519,6 +519,38 @@ export interface IntegrityEvidence {
   metadata?: Record<string, any>;
 }
 
+export interface RuleReference {
+  clause_id: string;
+  title: string;
+  description: string;
+  applicability: string;
+  source_document?: string | null;
+}
+
+export interface ScoreContributor {
+  signal_type: string;
+  title: string;
+  points_added: number;
+  base_impact: number;
+  multiplier: number;
+  evidence_count: number;
+  rule_clause?: string | null;
+}
+
+export interface RiskBasis {
+  price_similarity_threshold_pct: number;
+  min_historical_tenders_concentration: number;
+  winner_concentration_ratio: number;
+  min_co_participations: number;
+  min_rotation_tenders: number;
+  bid_to_estimate_threshold_pct: number;
+  narrow_competition_max_bidders: number;
+  officer_association_min_tenders: number;
+  officer_association_threshold_ratio: number;
+  statutory_identity_keys: string[];
+  operational_identity_keys: string[];
+}
+
 export interface IntegrityFinding {
   id: string;
   tender_id?: string | null;
@@ -531,6 +563,7 @@ export interface IntegrityFinding {
   title: string;
   reason: string;
   evidence: IntegrityEvidence[];
+  rule_reference?: RuleReference | null;
   recommended_action: string;
   status: 'OPEN' | 'UNDER_REVIEW' | 'ACKNOWLEDGED' | 'DISMISSED' | 'RESOLVED';
   detected_at: string;
@@ -545,7 +578,11 @@ export interface IntegrityAssessment {
   findings_count: number;
   findings: IntegrityFinding[];
   contributing_signals: string[];
+  score_breakdown: ScoreContributor[];
+  risk_basis?: RiskBasis | null;
+  evidence_counts?: Record<string, number>;
   assessed_at: string;
   summary: string;
 }
+
 
