@@ -191,13 +191,13 @@ export const VerificationHub: React.FC = () => {
             </strong>
           </div>
           <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">Exceptions</span>
+            <span className="text-[#64748B] block text-[11px] font-medium">Compliance exceptions</span>
             <strong className="text-base font-bold text-[#B72025] font-mono">
               {String(withExceptions).padStart(2, '0')}
             </strong>
           </div>
           <div className="px-4 py-0.5">
-            <span className="text-[#64748B] block text-[11px] font-medium">High risk</span>
+            <span className="text-[#64748B] block text-[11px] font-medium">High compliance risk</span>
             <strong className="text-base font-bold text-[#B72025] font-mono">
               {String(highRisk).padStart(2, '0')}
             </strong>
@@ -296,10 +296,10 @@ export const VerificationHub: React.FC = () => {
                 <tr>
                   <th>Bidder ID</th>
                   <th>Legal entity</th>
-                  <th>Documents</th>
-                  <th>Compliance</th>
-                  <th>Risk</th>
-                  <th>Status</th>
+                  <th>Compliance Evaluation</th>
+                  <th>Compliance Risk</th>
+                  <th>Integrity Risk</th>
+                  <th>Officer Decision</th>
                   <th className="text-right">Action</th>
                 </tr>
               </thead>
@@ -308,8 +308,8 @@ export const VerificationHub: React.FC = () => {
                   <tr
                     key={b.id}
                     className={
-                      b.status === 'EXCEPTION_FOUND' ||
-                      b.status === 'Exception Found'
+                      b.complianceStatus === 'EXCEPTION_FOUND' ||
+                      b.blockingExceptions > 0
                         ? 'bg-[#FFFDF5]'
                         : ''
                     }
@@ -324,23 +324,24 @@ export const VerificationHub: React.FC = () => {
                       <strong className="text-xs text-[#0F172A] block leading-snug">
                         {b.name}
                       </strong>
-                      {b.exceptions > 0 && (
+                      {b.blockingExceptions > 0 ? (
                         <span className="inline-flex items-center gap-0.5 mt-0.5 text-[10px] font-semibold text-[#B72025]">
                           <AlertTriangle className="w-2.5 h-2.5" />
-                          {b.exceptions} exception
-                          {b.exceptions !== 1 ? 's' : ''}
+                          {b.blockingExceptions} blocking exception
+                          {b.blockingExceptions !== 1 ? 's' : ''}
                         </span>
-                      )}
+                      ) : b.exceptions > 0 ? (
+                        <span className="inline-flex items-center gap-0.5 mt-0.5 text-[10px] font-medium text-[#D97706]">
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          {b.exceptions} discrepancy
+                          {b.exceptions !== 1 ? 'ies' : ''}
+                        </span>
+                      ) : null}
                     </td>
 
-                    {/* Documents */}
-                    <td className="text-xs text-[#475569] font-mono">
-                      {b.documents > 0 ? b.documents : '—'}
-                    </td>
-
-                    {/* Compliance Score */}
+                    {/* Compliance Evaluation */}
                     <td>
-                      {b.score > 0 ? (
+                      <div className="flex items-center gap-2">
                         <span
                           className={`text-xs font-bold font-mono ${
                             b.score >= 80
@@ -352,16 +353,42 @@ export const VerificationHub: React.FC = () => {
                         >
                           {b.score}/100
                         </span>
-                      ) : (
-                        <span className="text-xs text-[#94A3B8]">—</span>
-                      )}
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 border rounded-[2px] ${
+                          b.complianceStatus === 'COMPLIANT'
+                            ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                            : b.complianceStatus === 'EXCEPTION_FOUND'
+                            ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                            : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                        }`}>
+                          {b.complianceStatus === 'COMPLIANT'
+                            ? 'Compliant'
+                            : b.complianceStatus === 'EXCEPTION_FOUND'
+                            ? 'Exception Found'
+                            : b.complianceStatus === 'PENDING_DOCUMENTS'
+                            ? 'Pending Docs'
+                            : 'Under Review'}
+                        </span>
+                      </div>
                     </td>
 
-                    {/* Risk */}
-                    <td>{riskBadge(b.risk)}</td>
+                    {/* Compliance Risk */}
+                    <td>{riskBadge(b.complianceRisk || b.risk)}</td>
 
-                    {/* Status */}
-                    <td>{statusBadge(b.status)}</td>
+                    {/* Integrity Risk */}
+                    <td>{riskBadge(b.integrityRisk || 'LOW')}</td>
+
+                    {/* Officer Decision */}
+                    <td>
+                      <span className={`inline-block px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
+                        b.officerDecision === 'QUALIFIED'
+                          ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                          : b.officerDecision === 'DISQUALIFIED'
+                          ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                          : 'bg-white text-[#475569] border-[#CBD5E1]'
+                      }`}>
+                        {b.officerDecision || 'Pending Decision'}
+                      </span>
+                    </td>
 
                     {/* Action */}
                     <td className="text-right">

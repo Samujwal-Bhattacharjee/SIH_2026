@@ -124,6 +124,7 @@ def init_db():
             contact_phone       TEXT,
             enterprise_category TEXT,
             status              TEXT NOT NULL DEFAULT 'PENDING_DOCUMENTS',
+            compliance_status   TEXT DEFAULT 'PENDING_DOCUMENTS',
             compliance_score    REAL DEFAULT 0,
             risk_level          TEXT DEFAULT 'MEDIUM',
             officer_decision    TEXT,
@@ -252,11 +253,13 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_integrity_reviews_tender ON integrity_finding_reviews(tender_id);
         """)
 
-        # Migration: ensure quote_amount column exists on bidders table
+        # Migration: ensure quote_amount and compliance_status columns exist on bidders table
         try:
             cols = [c[1] for c in conn.execute("PRAGMA table_info(bidders)").fetchall()]
             if cols and "quote_amount" not in cols:
                 conn.execute("ALTER TABLE bidders ADD COLUMN quote_amount REAL")
+            if cols and "compliance_status" not in cols:
+                conn.execute("ALTER TABLE bidders ADD COLUMN compliance_status TEXT DEFAULT 'PENDING_DOCUMENTS'")
         except Exception:
             pass
 
@@ -388,13 +391,24 @@ def get_bidders(tender_id: Optional[str] = None) -> List[Dict[str, Any]]:
             rows = conn.execute("SELECT * FROM bidders ORDER BY created_at").fetchall()
 
         bidders = rows_to_list(rows)
-        # Hydrate document counts and exception counts
+        # Hydrate document counts, exception counts, and blocking exceptions
         for b in bidders:
             b_id = b["id"]
             doc_row = conn.execute("SELECT COUNT(*) FROM bidder_documents WHERE bidder_id = ?", (b_id,)).fetchone()
             exc_row = conn.execute("SELECT COUNT(*) FROM discrepancies WHERE bidder_id = ? AND is_resolved = 0", (b_id,)).fetchone()
+            mand_fail_row = conn.execute("""
+                SELECT COUNT(*) FROM compliance_results
+                WHERE bidder_id = ? AND status IN ('NON_COMPLIANT', 'EXPIRED', 'UNVERIFIED')
+            """, (b_id,)).fetchone()
+            crit_disc_row = conn.execute("""
+                SELECT COUNT(*) FROM discrepancies
+                WHERE bidder_id = ? AND severity = 'CRITICAL' AND is_resolved = 0
+            """, (b_id,)).fetchone()
             b["documents_count"] = doc_row[0] if doc_row else 0
             b["exceptions_count"] = exc_row[0] if exc_row else 0
+            b["blocking_exceptions_count"] = (mand_fail_row[0] if mand_fail_row else 0) + (crit_disc_row[0] if crit_disc_row else 0)
+            if not b.get("compliance_status"):
+                b["compliance_status"] = "EXCEPTION_FOUND" if b["blocking_exceptions_count"] > 0 else (b.get("status") if b.get("status") in ("COMPLIANT", "UNDER_REVIEW", "PENDING_DOCUMENTS") else "UNDER_REVIEW")
         return bidders
 
 
@@ -409,8 +423,19 @@ def get_bidder_by_id(bidder_id: str) -> Optional[Dict[str, Any]]:
             return None
         doc_row = conn.execute("SELECT COUNT(*) FROM bidder_documents WHERE bidder_id = ?", (bidder_id,)).fetchone()
         exc_row = conn.execute("SELECT COUNT(*) FROM discrepancies WHERE bidder_id = ? AND is_resolved = 0", (bidder_id,)).fetchone()
+        mand_fail_row = conn.execute("""
+            SELECT COUNT(*) FROM compliance_results
+            WHERE bidder_id = ? AND status IN ('NON_COMPLIANT', 'EXPIRED', 'UNVERIFIED')
+        """, (bidder_id,)).fetchone()
+        crit_disc_row = conn.execute("""
+            SELECT COUNT(*) FROM discrepancies
+            WHERE bidder_id = ? AND severity = 'CRITICAL' AND is_resolved = 0
+        """, (bidder_id,)).fetchone()
         b["documents_count"] = doc_row[0] if doc_row else 0
         b["exceptions_count"] = exc_row[0] if exc_row else 0
+        b["blocking_exceptions_count"] = (mand_fail_row[0] if mand_fail_row else 0) + (crit_disc_row[0] if crit_disc_row else 0)
+        if not b.get("compliance_status"):
+            b["compliance_status"] = "EXCEPTION_FOUND" if b["blocking_exceptions_count"] > 0 else (b.get("status") if b.get("status") in ("COMPLIANT", "UNDER_REVIEW", "PENDING_DOCUMENTS") else "UNDER_REVIEW")
         return b
 
 
@@ -661,19 +686,45 @@ def save_compliance_assessment(bidder_id: str, tender_id: str, assessment: Dict[
             ))
 
         # 4. Update bidder score & risk
+        from app.services.procurement_service import determine_compliance_status
+        comp_summary = determine_compliance_status(
+            assessment.get("checks", []),
+            assessment.get("discrepancies", [])
+        )
+        compliance_status_val = assessment.get("compliance_status") or comp_summary["status"]
         risk = assessment.get("risk_level", "MEDIUM")
-        status_val = "EXCEPTION_FOUND" if risk in ("HIGH", "CRITICAL") else "UNDER_REVIEW"
-        conn.execute("""
-            UPDATE bidders
-            SET compliance_score = ?, risk_level = ?, status = ?, updated_at = ?
-            WHERE id = ?
-        """, (
-            assessment.get("compliance_score", 0.0),
-            risk,
-            status_val,
-            now,
-            bidder_id
-        ))
+
+        # Check if officer has already made a decision
+        existing_row = conn.execute("SELECT officer_decision FROM bidders WHERE id = ?", (bidder_id,)).fetchone()
+        has_officer_decision = bool(existing_row and existing_row[0])
+
+        if has_officer_decision:
+            # Preserve the officer's decision in `status`, while updating objective `compliance_status`
+            conn.execute("""
+                UPDATE bidders
+                SET compliance_score = ?, risk_level = ?, compliance_status = ?, updated_at = ?
+                WHERE id = ?
+            """, (
+                assessment.get("compliance_score", 0.0),
+                risk,
+                compliance_status_val,
+                now,
+                bidder_id
+            ))
+        else:
+            # When no officer decision exists, both workflow status and compliance status track compliance_status_val
+            conn.execute("""
+                UPDATE bidders
+                SET compliance_score = ?, risk_level = ?, compliance_status = ?, status = ?, updated_at = ?
+                WHERE id = ?
+            """, (
+                assessment.get("compliance_score", 0.0),
+                risk,
+                compliance_status_val,
+                compliance_status_val,
+                now,
+                bidder_id
+            ))
 
 
 def get_compliance_results(bidder_id: str) -> List[Dict[str, Any]]:
@@ -889,11 +940,18 @@ def get_dashboard_summary() -> Dict[str, Any]:
             "total_findings": sum(r.get("findings_count", 0) for r in integrity_reviews),
         }
 
+        compliance_exceptions = sum(
+            1 for b in bidders
+            if b.get("compliance_status") == "EXCEPTION_FOUND" or b.get("blocking_exceptions_count", 0) > 0
+        )
+
         return {
             "active_tenders": active_tenders_count,
             "bids_under_verification": under_verification,
             "completed_assessments": completed_assessments,
             "high_risk_bidders": high_risk_bidders,
+            "high_compliance_risk_bidders": high_risk_bidders,
+            "compliance_exceptions": compliance_exceptions,
             "pending_documents": pending_docs,
             "verification_exceptions": discrepancies,
             "bidders": bidders,

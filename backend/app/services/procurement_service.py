@@ -115,6 +115,7 @@ SEVERITY_SCORE_MAP = {
     "COMPLIANT": 100,
     "NEEDS_REVIEW": 60,
     "PENDING": 30,
+    "UNVERIFIED": 0,
     "NON_COMPLIANT": 0,
     "NOT_APPLICABLE": 100,   # Doesn't reduce score
     "EXPIRED": 10,
@@ -182,6 +183,17 @@ def check_gst_present(all_fields: list[dict], documents: list[dict]) -> dict:
     gst_docs = [d for d in documents if "GST" in (d.get("document_type") or "").upper() or
                 "GST" in (d.get("file_name") or "").upper()]
     if gst_docs:
+        if gst_docs[0].get("ocr_status") == "FAILED":
+            return {
+                "status": "UNVERIFIED",
+                "severity": "HIGH",
+                "score": 0,
+                "evidence_value": None,
+                "evidence_doc_id": gst_docs[0].get("id"),
+                "evidence_field_key": None,
+                "confidence": 0.0,
+                "reason": "GST document uploaded but OCR processing failed. Document remains unverified.",
+            }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
@@ -226,6 +238,17 @@ def check_pan_present(all_fields: list[dict], documents: list[dict]) -> dict:
     pan_docs = [d for d in documents if "PAN" in (d.get("document_type") or "").upper() or
                 "PAN" in (d.get("file_name") or "").upper()]
     if pan_docs:
+        if pan_docs[0].get("ocr_status") == "FAILED":
+            return {
+                "status": "UNVERIFIED",
+                "severity": "HIGH",
+                "score": 0,
+                "evidence_value": None,
+                "evidence_doc_id": pan_docs[0].get("id"),
+                "evidence_field_key": None,
+                "confidence": 0.0,
+                "reason": "PAN document uploaded but OCR processing failed. Document remains unverified.",
+            }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
@@ -273,6 +296,17 @@ def check_udyam_present(all_fields: list[dict], documents: list[dict]) -> dict:
                   any(kw in (d.get("file_name") or "").upper()
                       for kw in ["UDYAM", "MSME"])]
     if udyam_docs:
+        if udyam_docs[0].get("ocr_status") == "FAILED":
+            return {
+                "status": "UNVERIFIED",
+                "severity": "MEDIUM",
+                "score": 0,
+                "evidence_value": None,
+                "evidence_doc_id": udyam_docs[0].get("id"),
+                "evidence_field_key": None,
+                "confidence": 0.0,
+                "reason": "Udyam document uploaded but OCR processing failed. Document remains unverified.",
+            }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
@@ -315,6 +349,17 @@ def check_oem_present(all_fields: list[dict], documents: list[dict]) -> dict:
         }
 
     doc = oem_docs[0]
+    if doc.get("ocr_status") == "FAILED":
+        return {
+            "status": "UNVERIFIED",
+            "severity": "HIGH",
+            "score": 0,
+            "evidence_value": None,
+            "evidence_doc_id": doc.get("id"),
+            "evidence_field_key": None,
+            "confidence": 0.0,
+            "reason": "OEM authorization letter uploaded but OCR processing failed. Document remains unverified.",
+        }
     doc_fields = doc.get("extracted_fields") or []
 
     # Check for expiry date
@@ -398,6 +443,17 @@ def check_blacklisting_declaration(all_fields: list[dict], documents: list[dict]
                       any(kw in (d.get("document_type") or "").upper()
                           for kw in ["BLACKLIST", "DEBARMENT", "DECLARATION"])]
     if blacklist_docs:
+        if blacklist_docs[0].get("ocr_status") == "FAILED":
+            return {
+                "status": "UNVERIFIED",
+                "severity": "HIGH",
+                "score": 0,
+                "evidence_value": None,
+                "evidence_doc_id": blacklist_docs[0].get("id"),
+                "evidence_field_key": None,
+                "confidence": 0.0,
+                "reason": "Declaration document uploaded but OCR processing failed. Document remains unverified.",
+            }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
@@ -445,6 +501,17 @@ def check_turnover_threshold(all_fields: list[dict], documents: list[dict],
                 any(kw in (d.get("document_type") or "").upper()
                     for kw in ["FINANCIAL", "TURNOVER", "ITR", "BALANCE", "AUDIT"])]
     if fin_docs:
+        if fin_docs[0].get("ocr_status") == "FAILED":
+            return {
+                "status": "UNVERIFIED",
+                "severity": "HIGH",
+                "score": 0,
+                "evidence_value": None,
+                "evidence_doc_id": fin_docs[0].get("id"),
+                "evidence_field_key": None,
+                "confidence": 0.0,
+                "reason": "Financial document uploaded but OCR processing failed. Document remains unverified.",
+            }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
@@ -591,11 +658,30 @@ def run_compliance_checks(
                     "reason": f"Compliance check encountered an error: {str(e)[:100]}",
                 }
 
+        status = result.get("status", "PENDING")
+        is_mand = bool(req.get("is_mandatory", True))
+        is_blocking = is_mand and (status in ("NON_COMPLIANT", "EXPIRED", "UNVERIFIED"))
+
+        if status == "COMPLIANT":
+            res_status = "PASS"
+        elif status in ("NON_COMPLIANT", "EXPIRED"):
+            res_status = "FAIL"
+        elif status == "PENDING":
+            res_status = "PENDING"
+        elif status == "UNVERIFIED":
+            res_status = "UNVERIFIED"
+        elif status == "NOT_APPLICABLE":
+            res_status = "NOT_APPLICABLE"
+        else:
+            res_status = "NEEDS_REVIEW"
+
         results.append({
             "requirement_id": req.get("requirement_id"),
             "requirement_name": req.get("name"),
             "category": req.get("category"),
-            "is_mandatory": req.get("is_mandatory", True),
+            "is_mandatory": is_mand,
+            "is_blocking": is_blocking,
+            "result_status": res_status,
             "weight": req.get("weight", 1.0),
             **result,
         })
@@ -823,6 +909,75 @@ def calculate_compliance_score(check_results: list[dict]) -> dict:
     return {"score": final_score, "reasons": reasons, "mandatory_failures": mandatory_failures}
 
 
+def determine_compliance_status(
+    check_results: list[dict],
+    discrepancies: Optional[list[dict]] = None,
+) -> dict:
+    """
+    Determine objective compliance status based strictly on tender mandatory requirements.
+    This answers: Can the bidder currently be considered compliant with the tender requirements?
+    
+    Status Hierarchy:
+    1. EXCEPTION_FOUND:
+       - Any mandatory requirement is NON_COMPLIANT, EXPIRED, or UNVERIFIED (failed OCR)
+       - OR any CRITICAL cross-document discrepancy exists
+       - Blocks eligibility until resolved
+    2. PENDING_DOCUMENTS:
+       - No failed mandatory requirements, but 1 or more mandatory requirements are PENDING submission
+    3. UNDER_REVIEW:
+       - All mandatory documents present and not failed, but 1 or more requirements require officer manual review
+    4. COMPLIANT:
+       - All mandatory requirements are satisfied (COMPLIANT / PASS)
+       - No unresolved critical discrepancies
+    """
+    discrepancies = discrepancies or []
+    critical_discrepancies = [d for d in discrepancies if d.get("severity") == "CRITICAL"]
+    
+    mandatory_total = 0
+    mandatory_satisfied = 0
+    mandatory_failed = 0
+    mandatory_pending = 0
+    mandatory_review = 0
+    
+    for check in check_results:
+        is_mand = bool(check.get("is_mandatory", True))
+        status = check.get("status", "PENDING")
+        
+        if is_mand:
+            mandatory_total += 1
+            if status == "COMPLIANT":
+                mandatory_satisfied += 1
+            elif status in ("NON_COMPLIANT", "EXPIRED", "UNVERIFIED"):
+                mandatory_failed += 1
+            elif status == "PENDING":
+                mandatory_pending += 1
+            elif status == "NEEDS_REVIEW":
+                mandatory_review += 1
+
+    blocking_exceptions = mandatory_failed + len(critical_discrepancies)
+
+    if blocking_exceptions > 0:
+        overall_status = "EXCEPTION_FOUND"
+    elif mandatory_pending > 0:
+        overall_status = "PENDING_DOCUMENTS"
+    elif mandatory_review > 0:
+        overall_status = "UNDER_REVIEW"
+    else:
+        overall_status = "COMPLIANT"
+
+    return {
+        "status": overall_status,
+        "compliance_status": overall_status,
+        "blocking_exceptions": blocking_exceptions,
+        "mandatory_total": mandatory_total,
+        "mandatory_satisfied": mandatory_satisfied,
+        "mandatory_failed": mandatory_failed,
+        "mandatory_pending": mandatory_pending,
+        "mandatory_review": mandatory_review,
+        "critical_discrepancies": len(critical_discrepancies),
+    }
+
+
 def calculate_risk_level(
     compliance_score: float,
     discrepancies: list[dict],
@@ -1041,15 +1196,19 @@ def run_full_verification(
     score_result = calculate_compliance_score(check_results)
     compliance_score = score_result["score"]
 
-    # Step 4: Risk
+    # Step 4: Compliance Status (Strictly determined by mandatory requirements and discrepancies)
+    compliance_summary = determine_compliance_status(check_results, discrepancies)
+    compliance_status = compliance_summary["status"]
+
+    # Step 5: Compliance Risk
     risk_result = calculate_risk_level(compliance_score, discrepancies, check_results)
 
-    # Step 5: Recommendations
+    # Step 6: Recommendations
     recommendations = generate_recommendations(
         check_results, discrepancies, risk_result["risk_level"]
     )
 
-    # Step 6: Missing documents
+    # Step 7: Missing documents
     missing_docs = [
         c["requirement_name"] for c in check_results
         if c.get("status") == "PENDING" and c.get("is_mandatory")
@@ -1059,7 +1218,11 @@ def run_full_verification(
         "bidder_id": bidder.get("id"),
         "bidder_name": bidder.get("legal_name"),
         "compliance_score": compliance_score,
-        "risk_level": risk_result["risk_level"],
+        "compliance_status": compliance_status,
+        "compliance_risk_level": risk_result["risk_level"],
+        "risk_level": risk_result["risk_level"],  # Kept for backward compatibility
+        "blocking_exceptions": compliance_summary["blocking_exceptions"],
+        "mandatory_summary": compliance_summary,
         "checks": check_results,
         "discrepancies": discrepancies,
         "missing_documents": missing_docs,
@@ -1069,7 +1232,7 @@ def run_full_verification(
         "mandatory_failures": score_result.get("mandatory_failures", 0),
         "verified_at": datetime.now(timezone.utc).isoformat(),
         "note": (
-            "AI-generated compliance assessment based on submitted documents and sandbox verification adapters. "
+            "AI-generated compliance assessment based on submitted documents and statutory verification adapters. "
             "Final qualification or disqualification decision rests with the Procurement Officer."
         ),
     }

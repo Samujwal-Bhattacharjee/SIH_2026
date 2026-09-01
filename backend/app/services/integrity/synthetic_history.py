@@ -817,6 +817,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             
             # Risk & Compliance defaults
             compliance_score = 88.0 if b_status in ("AWARDED", "QUALIFIED") else 75.0
+            compliance_status = "COMPLIANT" if b_status in ("AWARDED", "QUALIFIED") else ("EXCEPTION_FOUND" if b_status == "EXCEPTION_FOUND" else "UNDER_REVIEW")
             risk_level = "LOW" if b_status in ("AWARDED", "QUALIFIED") else "MEDIUM"
             decided_by = t_officer if b_status == "AWARDED" else None
 
@@ -824,10 +825,10 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
                 INSERT INTO bidders (
                     id, tender_id, legal_name, trade_name, gstin, pan, udyam_number, cin,
                     registered_address, contact_email, contact_phone, enterprise_category,
-                    status, compliance_score, risk_level, officer_decision, quote_amount,
+                    status, compliance_status, compliance_score, risk_level, officer_decision, quote_amount,
                     decided_by, created_at, updated_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 b_id,
                 t_id,
@@ -842,6 +843,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
                 b_profile.get("contact_phone"),
                 b_profile.get("enterprise_category", "Medium Enterprise"),
                 b_status,
+                compliance_status,
                 compliance_score,
                 risk_level,
                 b_decision,

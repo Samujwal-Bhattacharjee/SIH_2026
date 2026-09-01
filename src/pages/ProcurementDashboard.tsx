@@ -43,13 +43,13 @@ export const ProcurementDashboard: React.FC = () => {
   const integrityReviews: any[] = metrics?.integrity_reviews ?? [];
   const integritySummary = metrics?.integrity_summary ?? {
     reviews_requiring_attention: integrityReviews.length,
-    high_risk_cases: bidders.filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL').length,
+    high_risk_cases: 0,
     total_findings: 0,
   };
   const patternAlertsCount = integritySummary.reviews_requiring_attention ?? integrityReviews.length;
-  const highRiskCasesCount =
-    (integritySummary.high_risk_cases ?? 0) +
-    (metrics?.high_risk_bidders ?? bidders.filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL').length);
+  const complianceExceptionsCount =
+    metrics?.compliance_exceptions ??
+    bidders.filter((b) => b.complianceStatus === 'EXCEPTION_FOUND' || b.blockingExceptions > 0).length;
 
   const formatSignalLabel = (sig: string) => {
     switch (sig) {
@@ -124,8 +124,12 @@ export const ProcurementDashboard: React.FC = () => {
       category: 'Network infrastructure',
       documents: b.documents || 0,
       status: b.status || 'Under Review',
-      score: b.score ? Math.round(b.score) : 85,
-      risk: b.risk || 'LOW',
+      compliance_status: b.complianceStatus || (b.blockingExceptions > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW'),
+      score: b.complianceScore !== undefined ? b.complianceScore : b.score,
+      compliance_risk: (b.complianceRisk || b.risk || 'MEDIUM').toUpperCase(),
+      integrity_risk: (b.integrityRisk || 'LOW').toUpperCase(),
+      officer_decision: b.officerDecision,
+      blocking_exceptions: b.blockingExceptions,
       action_url: `/verification/${b.id}`,
     }));
   }, [bidders]);
@@ -220,17 +224,17 @@ export const ProcurementDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 4: High-Risk Cases */}
+        {/* Card 4: Compliance Exceptions */}
         <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#DC2626] uppercase tracking-wider block">
-            HIGH-RISK CASES
+            COMPLIANCE EXCEPTIONS
           </span>
           <div className="flex items-baseline gap-2.5 mt-3">
             <span className="text-4xl font-extrabold text-[#DC2626] font-mono leading-none tracking-tight">
-              {String(highRiskCasesCount).padStart(2, '0')}
+              {String(complianceExceptionsCount).padStart(2, '0')}
             </span>
             <span className="text-xs text-[#DC2626] font-medium">
-              Priority review
+              Mandatory exceptions
             </span>
           </div>
         </div>
@@ -369,12 +373,12 @@ export const ProcurementDashboard: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-gray-200 bg-[#FAF8FD]/80 backdrop-blur-xs text-[#475569]">
-                <th className="py-3 px-4 font-semibold w-[200px]">Tender ID</th>
+                <th className="py-3 px-4 font-semibold w-[160px]">Tender ID</th>
                 <th className="py-3 px-4 font-semibold">Tender Title / Bidder</th>
-                <th className="py-3 px-4 font-semibold w-[140px]">Status</th>
-                <th className="py-3 px-4 font-semibold w-[120px]">Compliance</th>
-                <th className="py-3 px-4 font-semibold w-[120px]">Risk</th>
-                <th className="py-3 px-4 font-semibold text-right w-[160px]">Officer Action</th>
+                <th className="py-3 px-4 font-semibold w-[180px]">Compliance Evaluation</th>
+                <th className="py-3 px-4 font-semibold w-[130px]">Compliance Risk</th>
+                <th className="py-3 px-4 font-semibold w-[130px]">Officer Decision</th>
+                <th className="py-3 px-4 font-semibold text-right w-[140px]">Officer Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200/50 bg-white/50 backdrop-blur-xs">
@@ -391,27 +395,70 @@ export const ProcurementDashboard: React.FC = () => {
                       <strong className="text-xs text-[#0F172A] block font-bold">
                         {b.name}
                       </strong>
-                      <span className="text-xs text-[#64748B] block mt-0.5">
-                        {b.category} • {b.documents} documents
+                      {b.blocking_exceptions > 0 ? (
+                        <span className="text-[10px] font-semibold text-[#B72025] inline-flex items-center gap-1 mt-0.5">
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          {b.blocking_exceptions} blocking exception{b.blocking_exceptions !== 1 ? 's' : ''}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-[#64748B] block mt-0.5">
+                          {b.category} • {b.documents} documents
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Compliance Evaluation (Score + Status) */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-[#0F172A] font-mono">
+                          {b.score}/100
+                        </span>
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 border rounded-[2px] ${
+                          b.compliance_status === 'COMPLIANT'
+                            ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                            : b.compliance_status === 'EXCEPTION_FOUND'
+                            ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                            : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                        }`}>
+                          {b.compliance_status === 'COMPLIANT'
+                            ? 'Compliant'
+                            : b.compliance_status === 'EXCEPTION_FOUND'
+                            ? 'Exception Found'
+                            : b.compliance_status === 'PENDING_DOCUMENTS'
+                            ? 'Pending Docs'
+                            : 'Under Review'}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Compliance Risk Badge */}
+                    <td className="py-3.5 px-4">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-[2px] border ${
+                        b.compliance_risk === 'HIGH' || b.compliance_risk === 'CRITICAL'
+                          ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                          : b.compliance_risk === 'MEDIUM'
+                          ? 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                          : 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                      }`}>
+                        {b.compliance_risk === 'HIGH' || b.compliance_risk === 'CRITICAL' ? (
+                          <AlertTriangle className="w-3 h-3" />
+                        ) : (
+                          <Check className="w-3 h-3" />
+                        )}
+                        {b.compliance_risk}
                       </span>
                     </td>
 
-                    {/* Status */}
+                    {/* Officer Decision */}
                     <td className="py-3.5 px-4">
-                      <span className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-[2px] bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                        {b.status}
-                      </span>
-                    </td>
-
-                    {/* Compliance Score */}
-                    <td className="py-3.5 px-4 font-bold text-sm text-[#0F172A] font-mono">
-                      {b.score}/100
-                    </td>
-
-                    {/* Risk Badge */}
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-[2px] bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]">
-                        <Check className="w-3 h-3" /> LOW
+                      <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-[2px] border ${
+                        b.officer_decision === 'QUALIFIED'
+                          ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                          : b.officer_decision === 'DISQUALIFIED'
+                          ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                          : 'bg-white text-[#475569] border-[#CBD5E1]'
+                      }`}>
+                        {b.officer_decision || 'Pending'}
                       </span>
                     </td>
 

@@ -206,12 +206,26 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
         if refreshed:
             bidder = refreshed
 
+    integrity_info = None
+    try:
+        ia = assess_bidder_integrity(bidder_id)
+        integrity_info = {
+            "overall_risk_score": ia.overall_risk_score,
+            "risk_level": ia.risk_level.value,
+            "findings_count": ia.findings_count,
+            "contributing_signals": ia.contributing_signals,
+            "summary": ia.summary,
+        }
+    except Exception as e:
+        logger.warning(f"Integrity evaluation note for bidder {bidder_id}: {e}")
+
     return {
         "bidder": bidder,
         "documents": docs,
         "requirements": results,
         "discrepancies": discrepancies,
         "recommendations": [],
+        "integrity": integrity_info,
         "assessment_updated_at": bidder.get("updated_at") if isinstance(bidder, dict) else None,
     }
 
@@ -464,16 +478,37 @@ async def review_requirement(
             WHERE bidder_id = ? AND requirement_id = ?
         """, (persistent_status, datetime.now(timezone.utc).isoformat(), bidder_id, requirement_id))
 
+    # Dynamically re-evaluate compliance metrics after requirement status update
+    from app.services.procurement_service import calculate_compliance_score, determine_compliance_status, calculate_risk_level
+    updated_checks = ps.get_compliance_results(bidder_id)
+    discrepancies = ps.get_discrepancies(bidder_id)
+    score_res = calculate_compliance_score(updated_checks)
+    comp_res = determine_compliance_status(updated_checks, discrepancies)
+    risk_res = calculate_risk_level(score_res["score"], discrepancies, updated_checks)
+
+    ps.update_bidder_record(bidder_id, {
+        "compliance_score": score_res["score"],
+        "compliance_status": comp_res["status"],
+        "risk_level": risk_res["risk_level"],
+    })
+
     ps.log_audit_event(
         action="Requirement review updated",
         actor=actor_name(user),
         tender_id=str(bidder.get("tender_id") or ""),
         bidder_id=bidder_id,
-        description=f"Requirement '{requirement_id}' marked '{persistent_status}'.",
+        description=f"Requirement '{requirement_id}' marked '{persistent_status}'. Compliance score updated to {score_res['score']}/100.",
         actor_user_id=str(user.get("id") or "") if isinstance(user, dict) else "",
     )
 
-    return {"bidder_id": bidder_id, "requirement_id": requirement_id, "status": persistent_status}
+    return {
+        "bidder_id": bidder_id,
+        "requirement_id": requirement_id,
+        "status": persistent_status,
+        "compliance_score": score_res["score"],
+        "compliance_status": comp_res["status"],
+        "risk_level": risk_res["risk_level"],
+    }
 
 
 # ============================================================

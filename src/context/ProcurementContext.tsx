@@ -11,6 +11,10 @@ export interface Requirement {
   status: CheckStatus;
   evidence: string;
   note: string;
+  isMandatory?: boolean;
+  isBlocking?: boolean;
+  resultStatus?: string; // 'PASS' | 'FAIL' | 'PENDING' | 'UNVERIFIED' | 'NEEDS_REVIEW' | 'NOT_APPLICABLE'
+  confidence?: number;
 }
 
 export interface Discrepancy {
@@ -26,15 +30,22 @@ export interface Bidder {
   id: string;
   name: string;
   score: number;
+  complianceScore?: number;
   risk: RiskLevel;
-  status: string;
+  complianceRisk?: RiskLevel;
+  status: string; // Workflow status ('QUALIFIED', 'UNDER_REVIEW', 'EXCEPTION_FOUND', etc.)
+  complianceStatus: string; // System objective compliance ('COMPLIANT', 'UNDER_REVIEW', 'EXCEPTION_FOUND', 'PENDING_DOCUMENTS')
   documents: number;
   exceptions: number;
+  blockingExceptions: number;
   requirements: Requirement[];
   discrepancies?: Discrepancy[];
   recommendations?: string[];
-  officerDecision?: string;
+  officerDecision?: string | null;
   officerNote?: string;
+  integrityRisk?: RiskLevel;
+  integrityScore?: number;
+  mandatorySummary?: any;
 }
 
 export interface AuditEvent {
@@ -85,24 +96,35 @@ const initialBidders: Bidder[] = [
     id: 'BID-001',
     name: 'Triveni Infotech Solutions Pvt. Ltd.',
     score: 87,
+    complianceScore: 87,
     risk: 'LOW',
+    complianceRisk: 'LOW',
     status: 'Under Review',
+    complianceStatus: 'UNDER_REVIEW',
     documents: 7,
     exceptions: 1,
+    blockingExceptions: 0,
     requirements: compliantRequirements,
     recommendations: [
       'Bidder appears compliant based on available evidence. Proceed to officer review.',
       'Confirm OEM signatory authorization before final qualification.'
     ],
+    officerDecision: null,
+    integrityRisk: 'LOW',
+    integrityScore: 12,
   },
   {
     id: 'BID-002',
     name: 'Narmada Systems & Services Pvt. Ltd.',
     score: 54,
+    complianceScore: 54,
     risk: 'HIGH',
+    complianceRisk: 'HIGH',
     status: 'Exception Found',
+    complianceStatus: 'EXCEPTION_FOUND',
     documents: 5,
     exceptions: 4,
+    blockingExceptions: 2,
     requirements: exceptionRequirements,
     discrepancies: [
       {
@@ -125,6 +147,9 @@ const initialBidders: Bidder[] = [
       'Obtain and upload a valid, unexpired OEM Manufacturer Authorization Form (MAF).',
       'Upload the missing Udyam/MSME Registration Certificate.'
     ],
+    officerDecision: null,
+    integrityRisk: 'LOW',
+    integrityScore: 18,
   },
 ];
 
@@ -147,27 +172,71 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setAudit((items) => [{ id: crypto.randomUUID(), time: nowTime(), action, actor, detail }, ...items]);
   };
 
-  const mapBidder = (row: any, detail?: any): Bidder => ({
-    id: row.id,
-    name: row.legal_name || row.name || 'Bidder',
-    score: Number(row.compliance_score ?? row.score ?? 0),
-    risk: (row.risk_level || row.risk || 'MEDIUM') as RiskLevel,
-    status: row.status || 'PENDING_DOCUMENTS',
-    documents: Number(row.documents_count ?? row.documents ?? 0),
-    exceptions: Number(row.exceptions_count ?? row.exceptions ?? 0),
-    requirements: (detail?.requirements || []).map((requirement: any) => ({
-      id: requirement.requirement_id || requirement.id,
-      name: requirement.requirement_name || requirement.name,
-      category: requirement.category || 'General',
-      status: requirement.status === 'COMPLIANT' ? 'Verified' : requirement.status === 'NON_COMPLIANT' || requirement.status === 'EXPIRED' ? 'Failed' : requirement.status === 'NEEDS_REVIEW' ? 'Needs Review' : requirement.status === 'NOT_APPLICABLE' ? 'Not Applicable' : 'Pending',
-      evidence: requirement.evidence_value || requirement.evidence_field_key || 'No supporting evidence available',
-      note: requirement.reason || 'Assessment pending.',
-    })),
-    discrepancies: (detail?.discrepancies || []).map((item: any) => ({ type: item.discrepancy_type, severity: item.severity, message: item.description, field: item.field_name, expected: item.expected_value, found: item.found_value })),
-    recommendations: detail?.recommendations || [],
-    officerDecision: row.officer_decision,
-    officerNote: row.officer_note,
-  });
+  const mapBidder = (row: any, detail?: any): Bidder => {
+    const rawScore = Number(row.compliance_score ?? row.score ?? detail?.bidder?.compliance_score ?? 0);
+    const complianceRisk = (row.risk_level || row.risk || detail?.bidder?.risk_level || 'MEDIUM') as RiskLevel;
+    const blockingExceptions = Number(
+      row.blocking_exceptions_count ??
+      detail?.bidder?.blocking_exceptions_count ??
+      detail?.blocking_exceptions ??
+      0
+    );
+    const complianceStatus =
+      row.compliance_status ||
+      detail?.bidder?.compliance_status ||
+      (blockingExceptions > 0 ? 'EXCEPTION_FOUND' : row.status || 'PENDING_DOCUMENTS');
+
+    return {
+      id: row.id,
+      name: row.legal_name || row.name || 'Bidder',
+      score: rawScore,
+      complianceScore: rawScore,
+      risk: complianceRisk,
+      complianceRisk: complianceRisk,
+      status: row.status || 'PENDING_DOCUMENTS',
+      complianceStatus: complianceStatus,
+      documents: Number(row.documents_count ?? row.documents ?? detail?.documents?.length ?? 0),
+      exceptions: Number(row.exceptions_count ?? row.exceptions ?? detail?.discrepancies?.length ?? 0),
+      blockingExceptions: blockingExceptions,
+      requirements: (detail?.requirements || []).map((requirement: any) => {
+        const isMandatory = requirement.is_mandatory !== undefined ? Boolean(requirement.is_mandatory) : true;
+        const status = requirement.status || 'PENDING';
+        const isBlocking = isMandatory && (status === 'NON_COMPLIANT' || status === 'EXPIRED' || status === 'UNVERIFIED');
+        let checkStatus: CheckStatus = 'Pending';
+        if (status === 'COMPLIANT') checkStatus = 'Verified';
+        else if (status === 'NON_COMPLIANT' || status === 'EXPIRED') checkStatus = 'Failed';
+        else if (status === 'NEEDS_REVIEW') checkStatus = 'Needs Review';
+        else if (status === 'NOT_APPLICABLE') checkStatus = 'Not Applicable';
+
+        return {
+          id: requirement.requirement_id || requirement.id,
+          name: requirement.requirement_name || requirement.name,
+          category: requirement.category || 'General',
+          status: checkStatus,
+          evidence: requirement.evidence_value || requirement.evidence_field_key || 'No supporting evidence available',
+          note: requirement.reason || 'Assessment pending.',
+          isMandatory,
+          isBlocking,
+          resultStatus: status === 'COMPLIANT' ? 'PASS' : (status === 'NON_COMPLIANT' || status === 'EXPIRED') ? 'FAIL' : status,
+          confidence: requirement.confidence,
+        };
+      }),
+      discrepancies: (detail?.discrepancies || []).map((item: any) => ({
+        type: item.discrepancy_type,
+        severity: item.severity,
+        message: item.description,
+        field: item.field_name,
+        expected: item.expected_value,
+        found: item.found_value
+      })),
+      recommendations: detail?.recommendations || [],
+      officerDecision: row.officer_decision || detail?.bidder?.officer_decision || null,
+      officerNote: row.officer_note || detail?.bidder?.officer_note || '',
+      integrityRisk: detail?.integrity?.risk_level as RiskLevel | undefined,
+      integrityScore: detail?.integrity?.overall_risk_score,
+      mandatorySummary: detail?.mandatory_summary,
+    };
+  };
 
   // Backend/database is authoritative in live mode. Mock mode deliberately
   // retains the existing fixture adapter for offline SIH demos.
@@ -218,10 +287,14 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
       id: newId,
       name,
       score: 0,
+      complianceScore: 0,
       risk: 'MEDIUM',
+      complianceRisk: 'MEDIUM',
       status: 'Pending Documents',
+      complianceStatus: 'PENDING_DOCUMENTS',
       documents: 0,
       exceptions: 0,
+      blockingExceptions: 0,
       requirements: [
         { id: 'gst', name: 'GST registration', category: 'Statutory compliance', status: 'Pending', evidence: 'Awaiting upload', note: 'Certificate required.' },
         { id: 'pan', name: 'PAN and Income Tax declaration', category: 'Statutory compliance', status: 'Pending', evidence: 'Awaiting upload', note: 'PAN card required.' },
@@ -252,16 +325,23 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (!isUsingMockApi()) await refreshData();
         if (res && res.assessment) {
           const { assessment, bidder: updatedBidder, doc_record } = res;
+          const compStatus = updatedBidder?.compliance_status ?? assessment.compliance_status ?? (assessment.blocking_exceptions > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW');
+          const compRisk = (updatedBidder?.risk_level ?? assessment.compliance_risk_level ?? assessment.risk_level ?? 'MEDIUM') as RiskLevel;
+          const blockingEx = Number(updatedBidder?.blocking_exceptions_count ?? assessment.blocking_exceptions ?? 0);
           setBidders((items) =>
             items.map((b) =>
               b.id === bidderId
                 ? {
                     ...b,
                     score: updatedBidder?.compliance_score ?? assessment.compliance_score ?? b.score,
-                    risk: updatedBidder?.risk_level ?? assessment.risk_level ?? b.risk,
-                    status: updatedBidder?.status ?? (assessment.risk_level === 'HIGH' ? 'Exception Found' : 'Under Review'),
+                    complianceScore: updatedBidder?.compliance_score ?? assessment.compliance_score ?? b.score,
+                    risk: compRisk,
+                    complianceRisk: compRisk,
+                    status: b.officerDecision ? b.status : (updatedBidder?.status ?? compStatus),
+                    complianceStatus: compStatus,
                     documents: updatedBidder?.documents_count ?? (b.documents + 1),
                     exceptions: updatedBidder?.exceptions_count ?? (assessment.discrepancies?.length || 0),
+                    blockingExceptions: blockingEx,
                     recommendations: assessment.recommendations || b.recommendations,
                     discrepancies: assessment.discrepancies?.map((d: any) => ({
                       type: d.discrepancy_type || d.type || 'DISCREPANCY',
@@ -310,14 +390,21 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
       if ((apiClient as any).procurement) {
         const assessment = await (apiClient as any).procurement.verifyBidder(bidderId);
         if (assessment && assessment.compliance_score !== undefined) {
+          const compStatus = assessment.compliance_status || (assessment.blocking_exceptions > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW');
+          const compRisk = (assessment.compliance_risk_level || assessment.risk_level || 'MEDIUM') as RiskLevel;
+          const blockingEx = Number(assessment.blocking_exceptions ?? 0);
           setBidders((items) =>
             items.map((b) =>
               b.id === bidderId
                 ? {
                     ...b,
                     score: assessment.compliance_score,
-                    risk: assessment.risk_level,
-                    status: assessment.risk_level === 'HIGH' ? 'Exception Found' : 'Under Review',
+                    complianceScore: assessment.compliance_score,
+                    risk: compRisk,
+                    complianceRisk: compRisk,
+                    status: b.officerDecision ? b.status : compStatus,
+                    complianceStatus: compStatus,
+                    blockingExceptions: blockingEx,
                     recommendations: assessment.recommendations,
                     discrepancies: assessment.discrepancies?.map((d: any) => ({
                       type: d.discrepancy_type,

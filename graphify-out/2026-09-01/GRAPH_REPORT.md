@@ -1,7 +1,7 @@
 # Graph Report - SIH  (2026-09-01)
 
 ## Corpus Check
-- 179 files · ~232,240 words
+- 179 files · ~232,463 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b7b600da`
+- Built from commit: `3347bf8f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -120,7 +120,7 @@
 - EmptyState.tsx
 - .test_validate_file_returns_none_on_success
 - .test_validate_file_returns_string_on_error
-- @types/node
+- tailwindcss
 - lucide-react
 
 ## God Nodes (most connected - your core abstractions)
@@ -262,7 +262,7 @@ Nodes (22): react, StatutoryDeadlineEngineProps, GovBadge, StatusBadge(), Status
 
 ### Community 28 - "devDependencies"
 Cohesion: 0.11
-Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, tailwindcss, @types/react (+11 more)
+Nodes (19): autoprefixer, oxlint, devDependencies, autoprefixer, oxlint, postcss, @types/node, @types/react (+11 more)
 
 ### Community 29 - "SIH 2026 — Complete Codebase Audit, Remaining Work & Team Task Allocation"
 Cohesion: 0.09

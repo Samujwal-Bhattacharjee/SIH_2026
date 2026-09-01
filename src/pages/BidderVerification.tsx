@@ -64,8 +64,15 @@ interface BidderView {
   gstin?: string;
   pan?: string;
   status: string;
+  compliance_status?: string;
   score: number;
   risk: string;
+  compliance_risk?: string;
+  integrity_risk?: string;
+  integrity_score?: number;
+  blocking_exceptions?: number;
+  officer_decision?: string | null;
+  officer_note?: string;
   documents: number;
   tender_id?: string;
   requirements: Requirement[];
@@ -86,24 +93,37 @@ export const BidderVerification: React.FC = () => {
         const res = await (apiClient as any).procurement.getBidder(bidderId);
         if (res?.bidder) {
           const b = res.bidder;
+          const compScore = Number(b.compliance_score ?? b.score ?? 0);
+          const compStatus = b.compliance_status || (b.blocking_exceptions_count > 0 ? 'EXCEPTION_FOUND' : b.status || 'UNDER_REVIEW');
+          const compRisk = b.risk_level || (compScore < 60 ? 'HIGH' : compScore < 80 ? 'MEDIUM' : 'LOW');
           setLiveBidder({
             id: b.id,
             name: b.legal_name || b.name,
             gstin: b.gstin,
             pan: b.pan,
-            status: b.status === 'COMPLIANT' || b.status === 'QUALIFIED' ? 'Qualified' : b.status === 'NON_COMPLIANT' || b.status === 'DISQUALIFIED' ? 'Disqualified' : 'Needs Review',
-            score: Math.round(b.score || b.compliance_score || 85),
-            risk: b.risk_level || (b.score < 60 ? 'HIGH' : b.score < 80 ? 'MEDIUM' : 'LOW'),
-            documents: res.documents?.length || 3,
+            status: b.status || compStatus,
+            compliance_status: compStatus,
+            score: compScore,
+            risk: compRisk,
+            compliance_risk: compRisk,
+            integrity_risk: res.integrity?.risk_level,
+            integrity_score: res.integrity?.overall_risk_score,
+            blocking_exceptions: b.blocking_exceptions_count,
+            officer_decision: b.officer_decision,
+            officer_note: b.officer_note,
+            documents: res.documents?.length || b.documents_count || 0,
             tender_id: b.tender_id,
             requirements: (res.requirements && res.requirements.length > 0) ? res.requirements.map((r: any) => ({
               id: r.requirement_id || r.id,
               name: r.name || r.title || r.requirement_name || 'Statutory Requirement',
               category: r.category || 'Statutory compliance',
-              status: r.status === 'COMPLIANT' ? 'Verified' : r.status === 'NON_COMPLIANT' ? 'Failed' : 'Needs Review',
-              evidence: r.evidence_summary || r.evidence || 'Document extract verified against declaration.',
-              note: r.discrepancy_note || r.note || '',
-            })) : (bidders[0]?.requirements || []),
+              status: r.status === 'COMPLIANT' ? 'Verified' : r.status === 'NON_COMPLIANT' || r.status === 'EXPIRED' ? 'Failed' : r.status === 'NEEDS_REVIEW' ? 'Needs Review' : r.status === 'NOT_APPLICABLE' ? 'Not Applicable' : 'Pending',
+              evidence: r.evidence_value || r.evidence_summary || r.evidence || 'Document extract verified against declaration.',
+              note: r.reason || r.discrepancy_note || r.note || '',
+              isMandatory: r.is_mandatory !== undefined ? Boolean(r.is_mandatory) : true,
+              isBlocking: Boolean(r.is_blocking),
+              resultStatus: r.result_status || (r.status === 'COMPLIANT' ? 'PASS' : r.status === 'NON_COMPLIANT' ? 'FAIL' : r.status),
+            })) : [],
             discrepancies: res.discrepancies || [],
             recommendations: res.recommendations || [],
           });
@@ -116,7 +136,24 @@ export const BidderVerification: React.FC = () => {
   }, [bidderId]);
 
   const matchedBidder = bidders.find((item) => item.id === bidderId);
-  const bidder: BidderView = liveBidder || (matchedBidder as any) || bidders[0];
+  const bidder: BidderView | null = liveBidder || (matchedBidder ? {
+    id: matchedBidder.id,
+    name: matchedBidder.name,
+    status: matchedBidder.status,
+    compliance_status: matchedBidder.complianceStatus,
+    score: matchedBidder.score,
+    risk: matchedBidder.risk,
+    compliance_risk: matchedBidder.complianceRisk || matchedBidder.risk,
+    integrity_risk: matchedBidder.integrityRisk,
+    integrity_score: matchedBidder.integrityScore,
+    blocking_exceptions: matchedBidder.blockingExceptions,
+    officer_decision: matchedBidder.officerDecision,
+    officer_note: matchedBidder.officerNote,
+    documents: matchedBidder.documents,
+    requirements: matchedBidder.requirements || [],
+    discrepancies: matchedBidder.discrepancies || [],
+    recommendations: matchedBidder.recommendations || [],
+  } : null);
 
   // ── Shared banner (replaces the previous single-tone actionMessage) ─────────
   const [banner, setBanner] = useState<Banner | null>(null);
@@ -138,6 +175,7 @@ export const BidderVerification: React.FC = () => {
     setBanner({ kind, message });
 
   const handleRunVerification = async () => {
+    if (!bidder) return;
     setVerifying(true);
     setBanner(null);
     try {
@@ -153,6 +191,7 @@ export const BidderVerification: React.FC = () => {
   };
 
   const handleDecision = async (backendStatus: string, label: string) => {
+    if (!bidder) return;
     setBanner(null);
     try {
       await decide(bidder.id, backendStatus, note);
@@ -187,7 +226,7 @@ export const BidderVerification: React.FC = () => {
   };
 
   const handleUpload = async () => {
-    if (!uploadFile || uploading) return;
+    if (!bidder || !uploadFile || uploading) return;
     setUploading(true);
     setBanner(null);
     try {
@@ -345,24 +384,40 @@ export const BidderVerification: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center border border-[#CBD5E1] divide-x divide-[#CBD5E1] bg-[#F8FAFC] rounded-[2px] text-xs">
-            <div className="px-3.5 py-2 text-center">
+          <div className="flex flex-wrap items-center border border-[#CBD5E1] divide-x divide-[#CBD5E1] bg-[#F8FAFC] rounded-[2px] text-xs">
+            <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Status
+                Compliance Status
               </span>
-              <strong className="text-xs text-[#0B2A4A] block mt-0.5">{bidder.status}</strong>
+              <span
+                className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
+                  bidder.compliance_status === 'COMPLIANT'
+                    ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                    : bidder.compliance_status === 'EXCEPTION_FOUND'
+                    ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                    : 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                }`}
+              >
+                {bidder.compliance_status === 'COMPLIANT'
+                  ? 'COMPLIANT'
+                  : bidder.compliance_status === 'EXCEPTION_FOUND'
+                  ? 'EXCEPTION FOUND'
+                  : bidder.compliance_status === 'PENDING_DOCUMENTS'
+                  ? 'PENDING DOCS'
+                  : 'UNDER REVIEW'}
+              </span>
             </div>
             <div className="px-3.5 py-2 text-center bg-white">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
                 Compliance score
               </span>
               <strong className="text-base font-semibold text-[#0B2A4A] font-mono block mt-0.5">
-                {bidder.score || '0'}/100
+                {bidder.score}/100
               </strong>
             </div>
-            <div className="px-3.5 py-2 text-center">
+            <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Risk assessment
+                Compliance Risk
               </span>
               <span
                 className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
@@ -373,14 +428,42 @@ export const BidderVerification: React.FC = () => {
                     : 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
                 }`}
               >
-                {bidder.risk === 'HIGH' || bidder.risk === 'CRITICAL'
-                  ? '[!] High'
-                  : bidder.risk === 'MEDIUM'
-                  ? '[!] Medium'
-                  : '[✓] Low'}
+                {bidder.risk}
               </span>
             </div>
-            <div className="px-3.5 py-2 text-center">
+            <div className="px-3 py-2 text-center bg-white">
+              <span className="block text-[10px] uppercase font-semibold text-[#475569]">
+                Integrity Risk
+              </span>
+              <span
+                className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
+                  bidder.integrity_risk === 'HIGH' || bidder.integrity_risk === 'CRITICAL'
+                    ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                    : bidder.integrity_risk === 'MEDIUM'
+                    ? 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]'
+                    : 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                }`}
+              >
+                {bidder.integrity_risk || 'LOW'}
+              </span>
+            </div>
+            <div className="px-3 py-2 text-center">
+              <span className="block text-[10px] uppercase font-semibold text-[#475569]">
+                Officer Decision
+              </span>
+              <span
+                className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
+                  bidder.officer_decision === 'QUALIFIED'
+                    ? 'bg-[#F0FDF4] text-[#15803D] border-[#BBF7D0]'
+                    : bidder.officer_decision === 'DISQUALIFIED'
+                    ? 'bg-[#FEF2F2] text-[#B72025] border-[#FCA5A5]'
+                    : 'bg-white text-[#475569] border-[#CBD5E1]'
+                }`}
+              >
+                {bidder.officer_decision || 'Pending'}
+              </span>
+            </div>
+            <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
                 Documents
               </span>
@@ -438,7 +521,19 @@ export const BidderVerification: React.FC = () => {
                     <React.Fragment key={req.id}>
                       <tr className="hover:bg-[#F0F4F8] transition-colors">
                         <td>
-                          <strong className="text-xs text-[#202124] block">{req.name}</strong>
+                          <div className="flex items-center gap-1.5">
+                            <strong className="text-xs text-[#202124] block">{req.name}</strong>
+                            {req.isMandatory && (
+                              <span className="text-[9px] font-bold px-1 py-0.5 text-[#991B1B] bg-[#FEE2E2] rounded-[2px] border border-[#FCA5A5]" title="Mandatory condition in tender terms">
+                                MANDATORY
+                              </span>
+                            )}
+                            {req.isBlocking && (
+                              <span className="text-[9px] font-bold px-1 py-0.5 text-[#B72025] bg-[#FEF2F2] rounded-[2px] border border-[#EF4444]" title="Blocking exception: prevents qualification until resolved">
+                                BLOCKING
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[11px] text-[#475569] block mt-0.5">
                             {req.note}
                           </span>
@@ -731,6 +826,19 @@ export const BidderVerification: React.FC = () => {
             <p className="text-[11px] text-[#475569] mt-1.5">
               Record official administrative action for this participating bidder.
             </p>
+
+            {bidder.officer_decision && (
+              <div className="mt-2.5 p-2 bg-[#F0FDF4] border border-[#BBF7D0] rounded-[2px] text-xs">
+                <span className="font-bold text-[#15803D] block">Current Recorded Decision: {bidder.officer_decision}</span>
+                {bidder.officer_note && <p className="text-[#166534] text-[11px] mt-0.5 font-medium">{bidder.officer_note}</p>}
+              </div>
+            )}
+
+            {bidder.blocking_exceptions && bidder.blocking_exceptions > 0 ? (
+              <div className="mt-2.5 p-2 bg-[#FFF1F2] border border-[#FCA5A5] rounded-[2px] text-[11px] text-[#991B1B]">
+                <strong>Notice:</strong> Bidder has {bidder.blocking_exceptions} unresolved mandatory requirement exception(s). If qualifying under special authority or waiver, record the justification in the rationale below.
+              </div>
+            ) : null}
 
             <label className="block text-xs font-semibold text-[#202124] mt-3 mb-1">
               Review findings &amp; rationale

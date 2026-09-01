@@ -1756,7 +1756,7 @@
       "file_type": "code",
       "norm_label": "edgesel",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L293"
+      "source_location": "L295"
     },
     {
       "id": "src_components_integrity_relationshipgraph_nodesel",
@@ -1769,7 +1769,7 @@
       "file_type": "code",
       "norm_label": "nodesel",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L292"
+      "source_location": "L294"
     },
     {
       "id": "src_components_integrity_relationshipgraph_relationshipgraphprops",
@@ -1782,7 +1782,7 @@
       "file_type": "code",
       "norm_label": "relationshipgraphprops",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L432"
+      "source_location": "L434"
     },
     {
       "id": "src_components_integrity_relationshipgraph_selection",
@@ -1795,7 +1795,7 @@
       "file_type": "code",
       "norm_label": "selection",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L294"
+      "source_location": "L296"
     },
     {
       "id": "src_components_integrity_relationshipgraph_sharednodedata",
@@ -6703,7 +6703,7 @@
       "file_type": "code",
       "norm_label": "detailpanel()",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L311"
+      "source_location": "L313"
     },
     {
       "id": "src_components_integrity_relationshipgraph_edgecolorforfield",
@@ -6727,7 +6727,7 @@
       "file_type": "code",
       "norm_label": "emptystate()",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L414"
+      "source_location": "L416"
     },
     {
       "id": "src_components_integrity_relationshipgraph_fieldlabel",
@@ -6751,7 +6751,7 @@
       "file_type": "code",
       "norm_label": "relationshipgraph()",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L441"
+      "source_location": "L443"
     },
     {
       "id": "src_components_integrity_relationshipgraph_rows",
@@ -6763,7 +6763,7 @@
       "file_type": "code",
       "norm_label": "rows()",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L296"
+      "source_location": "L298"
     },
     {
       "id": "src_components_integrity_relationshipgraph_sharednode",
@@ -11342,26 +11342,26 @@
       "source_location": "L560"
     },
     {
-      "id": "package_devdependencies_types_node",
-      "label": "@types/node",
+      "id": "package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 117,
-      "community_name": "@types/node",
+      "community_name": "tailwindcss",
       "file_type": "code",
-      "norm_label": "@types/node",
+      "norm_label": "tailwindcss",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L35"
     },
     {
-      "id": "types_node",
-      "label": "@types/node",
+      "id": "package_json_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 117,
-      "community_name": "@types/node",
+      "community_name": "tailwindcss",
       "file_type": "concept",
-      "norm_label": "@types/node",
+      "norm_label": "tailwindcss",
       "source_file": "package.json",
-      "source_location": "L28"
+      "source_location": "L35"
     },
     {
       "id": "package_dependencies_lucide_react",
@@ -14856,15 +14856,15 @@
       "source_location": "L34"
     },
     {
-      "id": "package_devdependencies_tailwindcss",
-      "label": "tailwindcss",
+      "id": "package_devdependencies_types_node",
+      "label": "@types/node",
       "_origin": "ast",
       "community": 28,
       "community_name": "devDependencies",
       "file_type": "code",
-      "norm_label": "tailwindcss",
+      "norm_label": "@types/node",
       "source_file": "package.json",
-      "source_location": "L35"
+      "source_location": "L28"
     },
     {
       "id": "package_devdependencies_types_react",
@@ -14944,17 +14944,6 @@
       "source_location": "L33"
     },
     {
-      "id": "package_json_tailwindcss",
-      "label": "tailwindcss",
-      "_origin": "ast",
-      "community": 28,
-      "community_name": "devDependencies",
-      "file_type": "concept",
-      "norm_label": "tailwindcss",
-      "source_file": "package.json",
-      "source_location": "L35"
-    },
-    {
       "id": "postcss",
       "label": "postcss",
       "_origin": "ast",
@@ -14964,6 +14953,17 @@
       "norm_label": "postcss",
       "source_file": "package.json",
       "source_location": "L34"
+    },
+    {
+      "id": "types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "devDependencies",
+      "file_type": "concept",
+      "norm_label": "@types/node",
+      "source_file": "package.json",
+      "source_location": "L28"
     },
     {
       "id": "types_react",
@@ -30442,7 +30442,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L452",
+      "source_location": "L458",
       "weight": 1.0
     },
     {
@@ -30454,7 +30454,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L504",
+      "source_location": "L510",
       "weight": 1.0
     },
     {
@@ -32134,7 +32134,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L438",
+      "source_location": "L440",
       "weight": 1.0
     },
     {
@@ -55666,7 +55666,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L292",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -55677,7 +55677,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L293",
+      "source_location": "L295",
       "weight": 1.0
     },
     {
@@ -55688,7 +55688,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L294",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -55699,7 +55699,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L296",
+      "source_location": "L298",
       "weight": 1.0
     },
     {
@@ -55710,7 +55710,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L311",
+      "source_location": "L313",
       "weight": 1.0
     },
     {
@@ -55732,7 +55732,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L414",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
@@ -55743,7 +55743,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L432",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -55754,7 +55754,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/integrity/RelationshipGraph.tsx",
-      "source_location": "L441",
+      "source_location": "L443",
       "weight": 1.0
     },
     {
@@ -66923,5 +66923,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b7b600daff76d15e21c872f9dbb4b6d8ee913214"
+  "built_at_commit": "3347bf8f80e96729d5f5538b8b75b15c7ec034b3"
 }
