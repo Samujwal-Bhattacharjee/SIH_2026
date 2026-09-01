@@ -266,6 +266,39 @@ export const ProcurementIntegrity: React.FC = () => {
     }
   };
 
+  const isHighOrCritical = assessment?.risk_level === 'HIGH' || assessment?.risk_level === 'CRITICAL';
+  const isMedium = assessment?.risk_level === 'MEDIUM';
+
+  const handleOfficerAction = async (
+    status: 'ACKNOWLEDGED' | 'UNDER_REVIEW' | 'RESOLVED' | 'DISMISSED',
+    defaultNote: string,
+    actionLabel: string
+  ) => {
+    if (!selectedFinding) return;
+    try {
+      await recordIntegrityReview(
+        selectedFinding.id,
+        status,
+        statusActionNote || defaultNote,
+        selectedTenderId,
+        selectedFinding.bidder_id || undefined,
+        actionLabel
+      );
+      setSelectedFinding({ ...selectedFinding, status });
+      setAssessment((prev) =>
+        prev
+          ? {
+              ...prev,
+              findings: prev.findings.map((f) => (f.id === selectedFinding.id ? { ...f, status } : f)),
+            }
+          : prev
+      );
+      setActionSuccess(`Finding ${selectedFinding.id} set to '${status.replace('_', ' ')}' and recorded in official audit register.`);
+    } catch (err: any) {
+      setError('Failed to record review action.');
+    }
+  };
+
   return (
     <div className="space-y-4 max-w-7xl mx-auto pb-12 font-sans">
       {/* ─── Institutional Title & Engine Status Strip (Glossy Frosted Banner) ─── */}
@@ -398,578 +431,526 @@ export const ProcurementIntegrity: React.FC = () => {
       {/* ─── Main Assessment Workspace Content ─────────────────────────────── */}
       {!loading && !error && assessment && (
         <div className="space-y-4">
-          {/* ── 1. Top KPI Summary Row ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* Risk Tier */}
-            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
-                Integrity Risk Classification
+          {/* ════════════════════════════════════════════════════════════════════════
+              LEVEL 1: ABOVE-THE-FOLD RISK SUMMARY
+              ════════════════════════════════════════════════════════════════════════ */}
+          <div className={`border rounded-[3px] p-4 shadow-xs transition-all ${
+            isHighOrCritical
+              ? 'bg-[#FEF2F2] border-[#F87171]'
+              : isMedium
+              ? 'bg-[#FEFCE8] border-[#FDE047]'
+              : 'bg-[#F0FDF4] border-[#BBF7D0]'
+          }`}>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              {/* Procurement Information */}
+              <div className="space-y-1 max-w-2xl">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-[2px] bg-white border border-[#CBD5E1] text-[#0B2A4A]">
+                    {selectedTenderId}
+                  </span>
+                  {currentTender?.tender_number && currentTender.tender_number !== selectedTenderId && (
+                    <span className="text-[11px] font-mono text-[#64748B]">
+                      {currentTender.tender_number}
+                    </span>
+                  )}
+                  <span className="text-xs text-[#CBD5E1]">|</span>
+                  <span className="text-xs text-[#475569] font-medium">
+                    {currentTender?.department || 'General Administration'}
+                  </span>
+                </div>
+                <h1 className="text-base font-bold text-[#0B2A4A] leading-tight">
+                  {currentTender?.title || selectedTenderId}
+                </h1>
+                <div className="text-xs text-[#64748B] flex flex-wrap items-center gap-3 pt-0.5">
+                  <span>Category: <strong className="text-[#334155]">{currentTender?.category || 'Procurement'}</strong></span>
+                  <span>•</span>
+                  <span>Est. Value: <strong className="text-[#334155]">₹{Number(currentTender?.estimated_value || 0).toLocaleString('en-IN')}</strong></span>
+                  <span>•</span>
+                  <span>Scope: <strong className="text-[#334155]">{selectedBidderId === 'ALL' ? `${bidders.length} Bidders Evaluated` : `Bidder ${selectedBidderId}`}</strong></span>
+                </div>
               </div>
-              <div className="my-2">
-                {getRiskBadge(assessment.risk_level)}
-              </div>
-              <div className="text-[11px] text-[#475569]">
-                Standard 4-Tier Statutory Review Category
-              </div>
-            </div>
 
-            {/* Numerical Score */}
-            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
-                Composite Risk Score
-              </div>
-              <div className="my-1 flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold font-mono text-[#0B2A4A]">
-                  {Number(assessment.overall_risk_score).toFixed(1)}
-                </span>
-                <span className="text-xs text-[#64748B] font-mono">/ 100</span>
-              </div>
-              <div className="w-full bg-[#E2E8F0] h-1.5 rounded-full overflow-hidden">
-                <div
-                  className={`h-full ${
-                    assessment.overall_risk_score >= 75
-                      ? 'bg-[#DC2626]'
-                      : assessment.overall_risk_score >= 50
-                      ? 'bg-[#EA580C]'
-                      : assessment.overall_risk_score >= 25
-                      ? 'bg-[#CA8A04]'
-                      : 'bg-[#16A34A]'
-                  }`}
-                  style={{ width: `${Math.min(100, Math.max(5, assessment.overall_risk_score))}%` }}
-                />
-              </div>
-            </div>
+              {/* Dominant Risk & Metric Badges */}
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col items-start lg:items-end">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1">
+                    Review Priority
+                  </div>
+                  <span className={`px-3 py-1 text-xs font-bold rounded-[2px] border flex items-center gap-1.5 shadow-2xs ${
+                    isHighOrCritical
+                      ? 'bg-[#DC2626] text-white border-[#B91C1C]'
+                      : isMedium
+                      ? 'bg-[#CA8A04] text-white border-[#A16207]'
+                      : 'bg-[#16A34A] text-white border-[#15803D]'
+                  }`}>
+                    {isHighOrCritical && <AlertTriangle className="w-3.5 h-3.5" />}
+                    {!isHighOrCritical && <ShieldCheck className="w-3.5 h-3.5" />}
+                    <span>
+                      {isHighOrCritical
+                        ? 'Procurement Review Required'
+                        : isMedium
+                        ? 'Procedural Review Advised'
+                        : 'Routine / Cleared'}
+                    </span>
+                  </span>
+                </div>
 
-            {/* Confidence Score */}
-            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
-                Deterministic Confidence
-              </div>
-              <div className="my-1 flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-[#0B2A4A]">
-                  {(Number(assessment.confidence_score) * 100).toFixed(0)}%
-                </span>
-                <span className="text-[10px] text-[#16A34A] font-medium ml-1">
-                  (High Certainty)
-                </span>
-              </div>
-              <div className="text-[11px] text-[#475569]">
-                Derived from verified statutory registries & OCR
-              </div>
-            </div>
+                <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-2.5 px-3.5 flex items-center gap-3.5 shadow-2xs">
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                      Overall Risk
+                    </div>
+                    <div className="mt-0.5">
+                      {getRiskBadge(assessment.risk_level)}
+                    </div>
+                  </div>
 
-            {/* Active Findings Count */}
-            <div className="bg-white border border-[#CBD5E1] rounded-[2px] p-3.5 shadow-xs flex flex-col justify-between">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
-                Identified Signals
-              </div>
-              <div className="my-1 flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold font-mono text-[#0B2A4A]">
-                  {assessment.findings_count}
-                </span>
-                <span className="text-xs text-[#64748B]">Review Trigger(s)</span>
-              </div>
-              <div className="text-[11px] text-[#475569] truncate">
-                {assessment.contributing_signals?.length > 0
-                  ? assessment.contributing_signals.join(', ')
-                  : 'Zero anomalous signals'}
+                  <div className="h-8 w-px bg-[#E2E8F0]" />
+
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                      Score
+                    </div>
+                    <div className="text-xl font-bold font-mono text-[#0B2A4A] leading-none mt-0.5">
+                      {Number(assessment.overall_risk_score).toFixed(1)}
+                      <span className="text-xs text-[#64748B] font-normal">/100</span>
+                    </div>
+                  </div>
+
+                  <div className="h-8 w-px bg-[#E2E8F0]" />
+
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                      Confidence
+                    </div>
+                    <div className="text-xl font-bold font-mono text-[#0B2A4A] leading-none mt-0.5">
+                      {(Number(assessment.confidence_score) * 100).toFixed(0)}%
+                    </div>
+                  </div>
+
+                  <div className="h-8 w-px bg-[#E2E8F0]" />
+
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                      Findings
+                    </div>
+                    <div className="text-xl font-bold font-mono text-[#0B2A4A] leading-none mt-0.5">
+                      {assessment.findings_count}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ── 2. Executive Summary Callout ── */}
-          <div className="bg-[#F0F5FA] border-l-4 border-[#0B2A4A] p-3.5 rounded-r-[3px] border-y border-r border-[#D0DDEB] flex items-start gap-2.5">
-            <Info className="w-4 h-4 text-[#0B2A4A] flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-[#1E293B] leading-relaxed">
-              <span className="font-bold text-[#0B2A4A] block mb-0.5">Integrity Assessment Summary</span>
-              {assessment.summary}
-            </div>
-          </div>
+          {/* ════════════════════════════════════════════════════════════════════════
+              LOW-RISK CLEAN PROCUREMENT PRESENTATION
+              ════════════════════════════════════════════════════════════════════════ */}
+          {assessment.findings_count === 0 ? (
+            <div className="space-y-4">
+              <div className="bg-white border border-[#CBD5E1] rounded-[3px] p-8 shadow-xs">
+                <div className="max-w-2xl mx-auto text-center space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center mx-auto border border-[#A7F3D0]">
+                    <CheckCircle2 className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="px-2.5 py-1 text-xs font-bold font-mono bg-[#DEF7EC] text-[#03543F] border border-[#BCF0DA] rounded-[2px]">
+                      [✓] LOW RISK — 0.0 / 100
+                    </span>
+                    <h2 className="text-base font-bold text-[#0B2A4A] mt-2">
+                      No Material Integrity Signals Identified
+                    </h2>
+                    <p className="text-xs text-[#475569] mt-1 leading-relaxed">
+                      Integrity evaluation completed from available procurement data. No anomalous bid pricing patterns,
+                      shared statutory identities, or historical cohort concentration patterns detected.
+                    </p>
+                  </div>
 
-          {/* ── 2b. Score Decomposition Waterfall ── */}
-          {assessment.score_breakdown && assessment.score_breakdown.length > 0 && (
-            <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
-              <div
-                className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between cursor-pointer select-none"
-                onClick={() => setShowDecomposition(!showDecomposition)}
-              >
-                <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-[#0B2A4A]" />
-                  <h3 className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wider">
-                    Score Decomposition Waterfall ({assessment.score_breakdown.length} Signal{assessment.score_breakdown.length !== 1 ? 's' : ''})
-                  </h3>
-                  <span className="text-[10px] text-[#64748B] font-mono hidden md:inline">
-                    Transparent mathematical aggregation with diminishing returns & statutory anchors
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-[#0B2A4A]">
-                    Total: {Number(assessment.overall_risk_score).toFixed(1)} pts
-                  </span>
-                  {showDecomposition ? <ChevronUp className="w-4 h-4 text-[#64748B]" /> : <ChevronDown className="w-4 h-4 text-[#64748B]" />}
+                  {/* Data Examined Grid */}
+                  <div className="p-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px] text-left">
+                    <div className="text-[11px] font-bold text-[#0B2A4A] uppercase tracking-wider mb-2.5">
+                      Procurement Dimensions Examined:
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-[#334155]">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Bid Price Spread:</strong> Fully independent quotations without artificial clustering.
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Bidder Identities:</strong> Distinct statutory PAN, GSTIN, CIN &amp; addresses.
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Participation History:</strong> Broad multi-vendor competition with no recurring cohort lock-in.
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Award Distribution:</strong> Fair historical category distribution across certified suppliers.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-[11px] text-[#64748B] font-mono">
+                    Evaluation completed at: {new Date(assessment.assessed_at).toLocaleString('en-IN')}
+                  </div>
                 </div>
               </div>
 
-              {showDecomposition && (
-                <div className="p-3 space-y-3">
-                  {/* Proportional Waterfall Bar */}
-                  <div className="w-full bg-[#E2E8F0] h-3 rounded-[2px] overflow-hidden flex shadow-inner">
-                    {assessment.score_breakdown.map((c, idx) => {
+              {/* Expandable Risk Basis Parameters */}
+              {assessment.risk_basis && (
+                <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
+                  <div
+                    className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between cursor-pointer select-none"
+                    onClick={() => setShowRiskBasis(!showRiskBasis)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Scale className="w-4 h-4 text-[#0B2A4A]" />
+                      <h3 className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wider">
+                        Risk Basis &amp; Statutory Evaluation Parameters
+                      </h3>
+                    </div>
+                    {showRiskBasis ? <ChevronUp className="w-4 h-4 text-[#64748B]" /> : <ChevronDown className="w-4 h-4 text-[#64748B]" />}
+                  </div>
+
+                  {showRiskBasis && (
+                    <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Price Delta Margin</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≤ {assessment.risk_basis.price_similarity_threshold_pct}%
+                        </div>
+                      </div>
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Supplier Concentration</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≥ {(Number(assessment.risk_basis.winner_concentration_ratio) * 100).toFixed(0)}%
+                        </div>
+                      </div>
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Cohort Quorum</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≥ {assessment.risk_basis.min_co_participations} Joint Tenders
+                        </div>
+                      </div>
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Rotation Horizon</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≥ {assessment.risk_basis.min_rotation_tenders} Tenders
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* ════════════════════════════════════════════════════════════════════════
+                HIGH / MEDIUM RISK CASE (POSITIVE SIGNALS DETECTED)
+                ════════════════════════════════════════════════════════════════════════ */
+            <div className="space-y-4">
+              {/* Executive Summary Callout */}
+              <div className="bg-[#F0F5FA] border-l-4 border-[#0B2A4A] p-3.5 rounded-r-[3px] border-y border-r border-[#D0DDEB] flex items-start gap-2.5">
+                <Info className="w-4 h-4 text-[#0B2A4A] flex-shrink-0 mt-0.5" />
+                <div className="text-xs text-[#1E293B] leading-relaxed">
+                  <span className="font-bold text-[#0B2A4A] block mb-0.5">Integrity Assessment Summary:</span>
+                  {assessment.summary}
+                </div>
+              </div>
+
+              {/* ════════════════════════════════════════════════════════════════════
+                  LEVEL 2: "WHY THIS PROCUREMENT WAS FLAGGED" & SCORE BREAKDOWN
+                  ════════════════════════════════════════════════════════════════════ */}
+              <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
+                <div className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h2 className="font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5">
+                      <SlidersHorizontal className="w-4 h-4 text-[#0B2A4A]" />
+                      Why This Procurement Was Flagged
+                    </h2>
+                    <p className="text-[11px] text-[#64748B] mt-0.5">
+                      Top contributing signals ranked by score impact • Contributor values mathematically sum to the final composite score ({Number(assessment.overall_risk_score).toFixed(1)} / 100)
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold px-2 py-1 bg-white border border-[#CBD5E1] rounded-[2px] text-[#0B2A4A]">
+                      Composite Score: {Number(assessment.overall_risk_score).toFixed(1)} / 100
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {/* Compact Visual Decomposition Waterfall Bar */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px] font-bold uppercase text-[#64748B]">
+                      <span>Visual Score Decomposition</span>
+                      <span className="font-mono">
+                        {assessment.score_breakdown?.map((c) => `+${Number(c.points_added).toFixed(1)}`).join(' ')} = {Number(assessment.overall_risk_score).toFixed(1)} pts
+                      </span>
+                    </div>
+                    <div className="w-full bg-[#E2E8F0] h-3.5 rounded-[2px] overflow-hidden flex shadow-inner">
+                      {assessment.score_breakdown?.map((c, idx) => {
+                        const widthPct = assessment.overall_risk_score > 0
+                          ? (c.points_added / assessment.overall_risk_score) * 100
+                          : 0;
+                        const colors = [
+                          'bg-[#DC2626]',
+                          'bg-[#EA580C]',
+                          'bg-[#D97706]',
+                          'bg-[#2563EB]',
+                          'bg-[#7C3AED]',
+                          'bg-[#0D9488]',
+                        ];
+                        const color = colors[idx % colors.length];
+                        return (
+                          <div
+                            key={idx}
+                            className={`${color} h-full transition-all border-r border-white/20`}
+                            style={{ width: `${widthPct}%` }}
+                            title={`${c.title}: +${Number(c.points_added).toFixed(1)} pts (${widthPct.toFixed(1)}%)`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Compact Ranked Contributing Signal Rows */}
+                  <div className="border border-[#E2E8F0] rounded-[2px] divide-y divide-[#E2E8F0] overflow-hidden">
+                    {assessment.score_breakdown?.map((c, idx) => {
+                      const matchedFinding = assessment.findings.find((f) => f.signal_type === c.signal_type);
+                      const isSelected = selectedFinding?.signal_type === c.signal_type;
                       const widthPct = assessment.overall_risk_score > 0
                         ? (c.points_added / assessment.overall_risk_score) * 100
                         : 0;
-                      const colors = [
-                        'bg-[#DC2626]',
-                        'bg-[#EA580C]',
-                        'bg-[#D97706]',
-                        'bg-[#2563EB]',
-                        'bg-[#7C3AED]',
-                        'bg-[#0D9488]',
-                        'bg-[#4B5563]',
-                      ];
-                      const color = colors[idx % colors.length];
+
                       return (
                         <div
                           key={idx}
-                          className={`${color} h-full transition-all`}
-                          style={{ width: `${widthPct}%` }}
-                          title={`${c.title}: +${Number(c.points_added).toFixed(1)} pts (${widthPct.toFixed(1)}%)`}
-                        />
+                          onClick={() => {
+                            if (matchedFinding) {
+                              setSelectedFinding(matchedFinding);
+                              const el = document.getElementById('signal-detail-section');
+                              if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                          className={`p-3 transition-colors cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-3 ${
+                            isSelected
+                              ? 'bg-[#F0F5FA] border-l-4 border-[#0B2A4A]'
+                              : 'hover:bg-[#F8FAFC]'
+                          }`}
+                        >
+                          {/* Left: Rank & Title */}
+                          <div className="flex items-start gap-3">
+                            <span className="text-xs font-mono font-bold text-[#64748B] w-6 pt-0.5">
+                              {String(idx + 1).padStart(2, '0')}
+                            </span>
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-xs text-[#0B2A4A]">
+                                  {c.title}
+                                </span>
+                                {c.rule_clause && (
+                                  <span className="px-1.5 py-0.2 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-mono text-[10px] rounded-[2px]">
+                                    {c.rule_clause}
+                                  </span>
+                                )}
+                                {matchedFinding && getSeverityPill(matchedFinding.severity)}
+                              </div>
+                              <div className="text-[11px] text-[#64748B] mt-0.5">
+                                {SIGNAL_LABELS[c.signal_type]?.description || c.signal_type}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right: Points Added, Contribution Bar & Action */}
+                          <div className="flex items-center gap-4 ml-9 md:ml-0 flex-shrink-0">
+                            {/* Proportional meter */}
+                            <div className="w-24 hidden sm:block">
+                              <div className="w-full bg-[#E2E8F0] h-2 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#0B2A4A]"
+                                  style={{ width: `${Math.min(100, widthPct)}%` }}
+                                />
+                              </div>
+                              <div className="text-[9px] text-[#64748B] text-right font-mono mt-0.5">
+                                {widthPct.toFixed(1)}% share
+                              </div>
+                            </div>
+
+                            {/* Points added */}
+                            <div className="text-right min-w-[70px]">
+                              <div className="text-sm font-bold font-mono text-[#0B2A4A]">
+                                +{Number(c.points_added).toFixed(1)}
+                              </div>
+                              <div className="text-[9px] text-[#64748B] font-mono">
+                                Base: {Number(c.base_impact).toFixed(1)}
+                              </div>
+                            </div>
+
+                            {/* Confidence */}
+                            {matchedFinding && (
+                              <div className="text-right min-w-[55px] hidden md:block">
+                                <div className="text-xs font-mono font-semibold text-[#1E293B]">
+                                  {(matchedFinding.confidence * 100).toFixed(0)}%
+                                </div>
+                                <div className="text-[9px] text-[#64748B]">Confidence</div>
+                              </div>
+                            )}
+
+                            {/* Select Button */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (matchedFinding) {
+                                  setSelectedFinding(matchedFinding);
+                                  const el = document.getElementById('signal-detail-section');
+                                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                }
+                              }}
+                              className={`px-2.5 py-1 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#0B2A4A] text-white'
+                                  : 'bg-white text-[#0B2A4A] border border-[#CBD5E1] hover:border-[#0B2A4A]'
+                              }`}
+                            >
+                              {isSelected ? 'Viewing' : 'Inspect →'}
+                            </button>
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
-
-                  {/* Decomposed Breakdown Table */}
-                  <div className="overflow-x-auto border border-[#E2E8F0] rounded-[2px]">
-                    <table className="w-full text-left text-xs border-collapse">
-                      <thead>
-                        <tr className="bg-[#F1F5F9] border-b border-[#CBD5E1] text-[#475569] font-bold text-[10px] uppercase">
-                          <th className="py-2 px-3">Signal Type & Indicator Title</th>
-                          <th className="py-2 px-2">Rule Reference</th>
-                          <th className="py-2 px-2 text-right">Base Impact</th>
-                          <th className="py-2 px-2 text-right">Multiplier</th>
-                          <th className="py-2 px-2 text-right font-bold text-[#0B2A4A]">Points Added</th>
-                          <th className="py-2 px-3 text-right">Audit Evidence</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#E2E8F0]">
-                        {assessment.score_breakdown.map((c, idx) => (
-                          <tr key={idx} className="hover:bg-[#F8FAFC]">
-                            <td className="py-2 px-3">
-                              <div className="font-bold text-[#0B2A4A] text-xs">{c.title}</div>
-                              <div className="text-[10px] text-[#64748B] font-mono">{c.signal_type}</div>
-                            </td>
-                            <td className="py-2 px-2 font-mono text-[11px] text-[#2563EB]">
-                              {c.rule_clause ? (
-                                <span className="px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] rounded-[2px]">
-                                  {c.rule_clause}
-                                </span>
-                              ) : (
-                                <span className="text-[#94A3B8]">—</span>
-                              )}
-                            </td>
-                            <td className="py-2 px-2 text-right font-mono text-[#475569]">
-                              {Number(c.base_impact).toFixed(1)}
-                            </td>
-                            <td className="py-2 px-2 text-right font-mono text-[#64748B]">
-                              {Number(c.multiplier).toFixed(2)}x
-                            </td>
-                            <td className="py-2 px-2 text-right font-mono font-bold text-[#0B2A4A]">
-                              +{Number(c.points_added).toFixed(1)}
-                            </td>
-                            <td className="py-2 px-3 text-right">
-                              <span className="px-1.5 py-0.5 text-[10px] font-mono bg-[#EDF2F7] text-[#4A5568] rounded-[2px]">
-                                {c.evidence_count} item{c.evidence_count !== 1 ? 's' : ''}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      <tfoot>
-                        <tr className="bg-[#F8FAFC] border-t-2 border-[#CBD5E1] font-bold text-xs">
-                          <td colSpan={4} className="py-2 px-3 text-right text-[#0B2A4A] uppercase">
-                            Aggregated Composite Risk Score:
-                          </td>
-                          <td className="py-2 px-2 text-right font-mono text-sm text-[#0B2A4A]">
-                            {Number(assessment.overall_risk_score).toFixed(1)} / 100
-                          </td>
-                          <td className="py-2 px-3 text-right text-[10px] text-[#64748B]">
-                            {getRiskBadge(assessment.risk_level)}
-                          </td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── 2c. Statutory Evaluation Risk Basis ── */}
-          {assessment.risk_basis && (
-            <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
-              <div
-                className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between cursor-pointer select-none"
-                onClick={() => setShowRiskBasis(!showRiskBasis)}
-              >
-                <div className="flex items-center gap-2">
-                  <Scale className="w-4 h-4 text-[#0B2A4A]" />
-                  <h3 className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wider">
-                    Risk Basis & Evaluation Parameters
-                  </h3>
-                  <span className="text-[10px] text-[#64748B] hidden md:inline">
-                    Active statutory and statistical criteria used to evaluate this procurement
-                  </span>
-                </div>
-                {showRiskBasis ? <ChevronUp className="w-4 h-4 text-[#64748B]" /> : <ChevronDown className="w-4 h-4 text-[#64748B]" />}
-              </div>
-
-              {showRiskBasis && (
-                <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Price Delta Margin</div>
-                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
-                      ≤ {assessment.risk_basis.price_similarity_threshold_pct}%
-                    </div>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">Quotes within 1% trigger verification</div>
-                  </div>
-
-                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Supplier Concentration</div>
-                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
-                      ≥ {(Number(assessment.risk_basis.winner_concentration_ratio) * 100).toFixed(0)}%
-                    </div>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">Min {assessment.risk_basis.min_historical_tenders_concentration} historical awards</div>
-                  </div>
-
-                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Cohort / Rotation Quorum</div>
-                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
-                      ≥ {assessment.risk_basis.min_co_participations} Joint Tenders
-                    </div>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">Rotation horizon: ≥ {assessment.risk_basis.min_rotation_tenders} tenders</div>
-                  </div>
-
-                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Bid-to-Estimate Anomaly</div>
-                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
-                      ≤ {assessment.risk_basis.bid_to_estimate_threshold_pct}%
-                    </div>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">Proximity to confidential estimate</div>
-                  </div>
-
-                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Narrow Market Quorum</div>
-                    <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
-                      ≤ {assessment.risk_basis.narrow_competition_max_bidders} Qualified Bidders
-                    </div>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">Repeated in category competitions</div>
-                  </div>
-
-                  <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Officer-Bidder Linkage</div>
-                    <div className="text-sm font-bold text-[#0B2A4A] mt-0.5">
-                      Audited Decisions Only
-                    </div>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">Zero speculative officer links</div>
-                  </div>
-
-                  <div className="sm:col-span-2 p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
-                    <div className="text-[10px] font-bold uppercase text-[#64748B]">Cross-Bidder Identity Keys</div>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {assessment.risk_basis.statutory_identity_keys?.map((k) => (
-                        <span key={k} className="px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-mono font-bold text-[10px] rounded-[2px]">
-                          {k} (Statutory)
-                        </span>
-                      ))}
-                      {assessment.risk_basis.operational_identity_keys?.map((k) => (
-                        <span key={k} className="px-1.5 py-0.5 bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] font-mono text-[10px] rounded-[2px]">
-                          {k} (Operational)
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── 3. Relationship Network ── */}
-          <div className="bg-white border border-[#D9DDE3] rounded-[3px] shadow-sm">
-            <div className="p-3 border-b border-[#D9DDE3] flex items-center justify-between bg-[#F8FAFC]">
-              <div>
-                <h2 className="font-serif font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5">
-                  <Network className="w-4 h-4 text-[#0B2A4A]" />
-                  Entity Relationship Network
-                </h2>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
-                  Procurement entity relationships derived from submitted bidder documents and
-                  statutory identifier cross-references. Click any node or edge for detail.
-                </p>
-              </div>
-              <span className="text-[10px] text-[#64748B] font-mono whitespace-nowrap">
-                {assessment.findings.filter(
-                  (f) => f.signal_type === 'RELATED_BIDDER' || f.signal_type === 'SHARED_ENTITY'
-                ).length} relationship finding{assessment.findings.filter(
-                  (f) => f.signal_type === 'RELATED_BIDDER' || f.signal_type === 'SHARED_ENTITY'
-                ).length !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <div className="p-3">
-              <RelationshipGraph
-                tenderId={selectedTenderId}
-                tenderLabel={
-                  currentTender
-                    ? (currentTender.tender_number ? `${currentTender.tender_number} — ${currentTender.title || ''}` : (currentTender.title || selectedTenderId))
-                    : selectedTenderId
-                }
-                tenderDepartment={currentTender?.department}
-                tenderEstimatedValue={currentTender?.estimated_value}
-                bidders={bidders.map((b) => ({ id: b.id, name: b.name, risk: b.risk }))}
-                assessment={assessment}
-              />
-            </div>
-          </div>
-
-          {/* ── 4. Empty State (Genuinely Clean Dataset) ── */}
-          {assessment.findings_count === 0 && (
-            <div className="bg-white border border-[#D9DDE3] rounded-[3px] p-10 text-center shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center mx-auto mb-3 border border-[#A7F3D0]">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h2 className="text-base font-bold text-[#0B2A4A]">Integrity assessment completed.</h2>
-              <p className="text-xs text-[#475569] max-w-lg mx-auto mt-1 leading-normal">
-                No material integrity signals were identified from the available procurement data.
-                Bid prices, historical records, and statutory identifiers show no detectable anomalies.
-              </p>
-              <div className="mt-4 text-[11px] text-[#64748B] font-mono">
-                Assessed at: {new Date(assessment.assessed_at).toLocaleString('en-IN')}
-              </div>
-            </div>
-          )}
-
-          {/* ── 4. Key Findings & Detailed Inspector (Split Layout) ── */}
-          {assessment.findings_count > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-              {/* Left Column: Findings List / Table (7 Cols) */}
-              <div className="lg:col-span-7 bg-white border border-[#D9DDE3] rounded-[3px] shadow-sm">
-                <div className="p-3 border-b border-[#D9DDE3] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-[#F8FAFC]">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wide">
-                      Key Findings ({filteredFindings.length})
-                    </span>
-                  </div>
-
-                  {/* Filter & Search Bar */}
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <div className="relative flex-1 sm:flex-initial">
-                      <Search className="w-3 h-3 text-[#94A3B8] absolute left-2 top-2" />
-                      <input
-                        type="text"
-                        placeholder="Search findings..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-7 pr-2 py-1 text-xs border border-[#CBD5E1] rounded-[2px] w-full sm:w-36 focus:outline-none focus:ring-1 focus:ring-[#0B2A4A]"
-                      />
-                    </div>
-                    <select
-                      value={filterSeverity}
-                      onChange={(e) => setFilterSeverity(e.target.value)}
-                      className="border border-[#CBD5E1] rounded-[2px] px-2 py-1 text-xs text-[#334155] bg-white focus:outline-none"
-                    >
-                      <option value="ALL">All Severity</option>
-                      <option value="CRITICAL">Critical</option>
-                      <option value="HIGH">High</option>
-                      <option value="MEDIUM">Medium</option>
-                      <option value="LOW">Low</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Table */}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-[#F1F5F9] border-b border-[#D9DDE3] text-[#475569] font-bold uppercase text-[10px]">
-                        <th className="py-2.5 px-3">Signal Type</th>
-                        <th className="py-2.5 px-2">Severity</th>
-                        <th className="py-2.5 px-2">Impact</th>
-                        <th className="py-2.5 px-3">Pattern / Reason Excerpt</th>
-                        <th className="py-2.5 px-2">Evidence</th>
-                        <th className="py-2.5 px-2 text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#E2E8F0]">
-                      {filteredFindings.map((finding) => {
-                        const isSelected = selectedFinding?.id === finding.id;
-                        const sigMeta = SIGNAL_LABELS[finding.signal_type] || { label: finding.signal_type };
-                        return (
-                          <tr
-                            key={finding.id}
-                            onClick={() => setSelectedFinding(finding)}
-                            className={`cursor-pointer transition-colors ${
-                              isSelected
-                                ? 'bg-[#F0F5FA] border-l-4 border-[#0B2A4A]'
-                                : 'hover:bg-[#F8FAFC]'
-                            }`}
-                          >
-                            <td className="py-2.5 px-3">
-                              <div className="font-bold text-[#0B2A4A] text-xs">
-                                {sigMeta.label}
-                              </div>
-                              <div className="text-[10px] text-[#64748B] font-mono">
-                                {finding.id}
-                              </div>
-                            </td>
-                            <td className="py-2.5 px-2">
-                              {getSeverityPill(finding.severity)}
-                            </td>
-                            <td className="py-2.5 px-2 font-mono text-[11px] text-[#334155]">
-                              +{finding.score_impact}
-                            </td>
-                            <td className="py-2.5 px-3 max-w-[220px]">
-                              <div className="font-semibold text-[#1E293B] truncate">
-                                {finding.title}
-                              </div>
-                              <div className="text-[11px] text-[#64748B] line-clamp-1">
-                                {finding.reason}
-                              </div>
-                            </td>
-                            <td className="py-2.5 px-2 whitespace-nowrap">
-                              <span className="px-1.5 py-0.5 text-[10px] font-mono bg-[#EDF2F7] text-[#4A5568] rounded-[2px]">
-                                {finding.evidence?.length || 0} item(s)
-                              </span>
-                            </td>
-                            <td className="py-2.5 px-2 text-right">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedFinding(finding);
-                                }}
-                                className={`px-2 py-1 text-[11px] font-semibold rounded-[2px] transition-colors cursor-pointer ${
-                                  isSelected
-                                    ? 'bg-[#0B2A4A] text-white'
-                                    : 'bg-white text-[#0B2A4A] border border-[#0B2A4A] hover:bg-[#F0F5FA]'
-                                }`}
-                              >
-                                {isSelected ? 'Selected' : 'Inspect'}
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
                 </div>
               </div>
 
-              {/* Right Column: Finding Deep-Dive & Evidence Explorer (5 Cols) */}
-              <div className="lg:col-span-5 bg-white border border-[#D9DDE3] rounded-[3px] shadow-sm sticky top-14">
+              {/* ════════════════════════════════════════════════════════════════════
+                  LEVEL 3: SIGNAL DETAIL, EVIDENCE-FIRST INSPECTOR & OFFICER ACTION
+                  ════════════════════════════════════════════════════════════════════ */}
+              <div id="signal-detail-section" className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
                 {selectedFinding ? (
                   <div>
                     {/* Header */}
-                    <div className="p-3.5 border-b border-[#D9DDE3] bg-[#F8FAFC]">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-mono text-[#64748B]">
-                          Finding ID: {selectedFinding.id}
-                        </span>
-                        <div className="flex items-center gap-1.5">
+                    <div className="p-4 bg-[#F8FAFC] border-b border-[#CBD5E1] flex flex-col md:flex-row md:items-center justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 bg-[#E2E8F0] text-[#334155] rounded-[2px]">
+                            Finding ID: {selectedFinding.id}
+                          </span>
                           {getSeverityPill(selectedFinding.severity)}
                           {getFindingStatusBadge(selectedFinding.status)}
                         </div>
-                      </div>
-                      <h2 className="font-bold text-sm text-[#0B2A4A] leading-snug">
-                        {selectedFinding.title}
-                      </h2>
-                      <div className="text-[11px] text-[#64748B] mt-0.5">
-                        Signal: <strong>{SIGNAL_LABELS[selectedFinding.signal_type]?.label || selectedFinding.signal_type}</strong>
-                        {' • '}
-                        Confidence: <strong>{(selectedFinding.confidence * 100).toFixed(0)}%</strong>
+                        <h2 className="font-bold text-base text-[#0B2A4A]">
+                          {selectedFinding.title}
+                        </h2>
+                        <div className="text-xs text-[#64748B] mt-0.5">
+                          Signal Type: <strong className="text-[#334155]">{SIGNAL_LABELS[selectedFinding.signal_type]?.label || selectedFinding.signal_type}</strong>
+                          {' • '}
+                          Deterministic Confidence: <strong className="text-[#334155]">{(selectedFinding.confidence * 100).toFixed(0)}%</strong>
+                        </div>
                       </div>
 
-                      {/* Related Bidders / Direct Verification Dossier Links */}
+                      {/* Direct Bidder Dossier Quick Links */}
                       {selectedFinding.related_bidder_ids && selectedFinding.related_bidder_ids.length > 0 && (
-                        <div className="mt-2.5 pt-2 border-t border-[#E2E8F0]">
-                          <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1 flex items-center gap-1">
-                            <Building2 className="w-3 h-3 text-[#0B2A4A]" />
-                            Direct Bidder Verification Links:
-                          </div>
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            {selectedFinding.related_bidder_ids.map((bId: string) => {
-                              const bidderObj = bidders.find((b) => b.id === bId);
-                              return (
-                                <Link
-                                  key={bId}
-                                  to={`/verification/${bId}`}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-white text-[#0B2A4A] border border-[#CBD5E1] hover:border-[#0B2A4A] hover:bg-[#F0F5FA] rounded-[2px] transition-colors shadow-2xs"
-                                  title={`Open verification dossier & statutory documents for ${bidderObj?.name || bId}`}
-                                >
-                                  <span>{bidderObj?.name ? `${bidderObj.name} (${bId})` : `Bidder ${bId}`}</span>
-                                  <ExternalLink className="w-3 h-3 text-[#0B2A4A]" />
-                                </Link>
-                              );
-                            })}
-                          </div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {selectedFinding.related_bidder_ids.map((bId: string) => {
+                            const bidderObj = bidders.find((b) => b.id === bId);
+                            return (
+                              <Link
+                                key={bId}
+                                to={`/verification/${bId}`}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-white text-[#0B2A4A] border border-[#CBD5E1] hover:border-[#0B2A4A] hover:bg-[#F0F5FA] rounded-[2px] transition-colors shadow-2xs"
+                                title={`Open verification dossier & statutory documents for ${bidderObj?.name || bId}`}
+                              >
+                                <span>{bidderObj?.name ? `${bidderObj.name} (${bId})` : `Bidder ${bId}`}</span>
+                                <ExternalLink className="w-3 h-3 text-[#0B2A4A]" />
+                              </Link>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
 
-                    <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto text-xs">
-                      {/* Statutory Rule Reference */}
-                      {selectedFinding.rule_reference && (
-                        <div className="bg-[#F8FAFC] border border-[#CBD5E1] p-3 rounded-[2px]">
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1 flex items-center justify-between">
+                    <div className="p-4 space-y-4">
+                      {/* WHAT & WHY GRID */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        {/* WHAT */}
+                        <div className="p-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px] space-y-1.5">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-[#0B2A4A] flex items-center gap-1">
+                            <Info className="w-3.5 h-3.5 text-[#0B2A4A]" />
+                            WHAT: Pattern Detected
+                          </div>
+                          <div className="text-xs text-[#1E293B] font-medium leading-relaxed">
+                            {selectedFinding.title}
+                          </div>
+                          <div className="text-[11px] text-[#475569] leading-relaxed">
+                            {selectedFinding.reason}
+                          </div>
+                        </div>
+
+                        {/* WHY / STATUTORY BASIS */}
+                        <div className="p-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px] space-y-1.5">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-[#0B2A4A] flex items-center justify-between">
                             <span className="flex items-center gap-1">
                               <Scale className="w-3.5 h-3.5 text-[#0B2A4A]" />
-                              Statutory & Regulatory Basis
+                              WHY: Statutory Rule Reference
                             </span>
-                            <span className="font-mono px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-bold text-[10px] rounded-[2px]">
-                              {selectedFinding.rule_reference.clause_id}
-                            </span>
+                            {selectedFinding.rule_reference && (
+                              <span className="font-mono px-1.5 py-0.2 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-bold text-[10px] rounded-[2px]">
+                                {selectedFinding.rule_reference.clause_id}
+                              </span>
+                            )}
                           </div>
-                          <div className="font-bold text-xs text-[#0B2A4A]">
-                            {selectedFinding.rule_reference.title}
-                          </div>
-                          <div className="text-[11px] text-[#475569] mt-0.5 leading-relaxed">
-                            {selectedFinding.rule_reference.description}
-                          </div>
-                          <div className="text-[10px] text-[#64748B] font-mono mt-1">
-                            Applicability: {selectedFinding.rule_reference.applicability}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* What was detected / Reason */}
-                      <div>
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1 flex items-center gap-1">
-                          <Info className="w-3.5 h-3.5 text-[#0B2A4A]" />
-                          What Was Detected & Why Flagged
-                        </div>
-                        <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-[2px] text-[#334155] leading-relaxed">
-                          {selectedFinding.reason}
+                          {selectedFinding.rule_reference ? (
+                            <>
+                              <div className="font-bold text-xs text-[#0B2A4A]">
+                                {selectedFinding.rule_reference.title}
+                              </div>
+                              <div className="text-[11px] text-[#475569] leading-relaxed">
+                                {selectedFinding.rule_reference.description}
+                              </div>
+                              <div className="text-[10px] text-[#64748B] font-mono">
+                                Applicability: {selectedFinding.rule_reference.applicability}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-[11px] text-[#475569]">
+                              Pursuant to General Financial Rules (GFR 2017) Rule 173 and GeM GTC guidelines.
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      {/* Structured Evidence Items */}
+                      {/* EVIDENCE-FIRST DESIGN SECTION */}
                       <div>
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1.5 flex items-center justify-between">
+                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-2 flex items-center justify-between">
                           <span className="flex items-center gap-1">
                             <Database className="w-3.5 h-3.5 text-[#0B2A4A]" />
-                            Structured Audit Evidence ({selectedFinding.evidence?.length || 0})
+                            EVIDENCE: Deterministic Supporting Records ({selectedFinding.evidence?.length || 0})
                           </span>
-                          <span className="text-[10px] text-[#64748B] font-normal">Deterministic Data Points</span>
+                          <span className="text-[10px] text-[#64748B] font-normal">
+                            Zero Speculation • Verified Document Extractions &amp; Registry Lookups
+                          </span>
                         </div>
 
+                        {/* Evidence Records List */}
                         {selectedFinding.evidence && selectedFinding.evidence.length > 0 ? (
-                          <div className="space-y-2">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                             {selectedFinding.evidence.map((ev, idx) => (
                               <div
                                 key={idx}
-                                className="bg-white border border-[#CBD5E1] p-2.5 rounded-[2px] shadow-2xs"
+                                className="bg-[#F8FAFC] border border-[#CBD5E1] p-3 rounded-[2px] shadow-2xs space-y-1.5"
                               >
-                                <div className="flex items-center justify-between text-[10px] mb-1">
-                                  <span className="px-1.5 py-0.2 bg-[#E2E8F0] text-[#334155] font-mono font-bold rounded-[2px]">
-                                    {ev.source_type}
+                                <div className="flex items-center justify-between text-[10px]">
+                                  <span className="px-1.5 py-0.5 bg-[#E2E8F0] text-[#0B2A4A] font-mono font-bold rounded-[2px]">
+                                    SOURCE: {ev.source_type}
                                   </span>
                                   {ev.source_id && (
                                     ev.source_id.startsWith('BID-') ? (
@@ -978,199 +959,135 @@ export const ProcurementIntegrity: React.FC = () => {
                                         className="text-[#0B2A4A] font-mono font-bold hover:underline inline-flex items-center gap-0.5"
                                         title={`Inspect bidder verification dossier for ${ev.source_id}`}
                                       >
-                                        <span>Ref: {ev.source_id}</span>
+                                        <span>Record: {ev.source_id}</span>
                                         <ExternalLink className="w-2.5 h-2.5" />
                                       </Link>
                                     ) : (
                                       <span className="text-[#64748B] font-mono">
-                                        Ref: {ev.source_id}
+                                        Record: {ev.source_id}
                                       </span>
                                     )
                                   )}
                                 </div>
-                                <div className="text-xs text-[#1E293B] font-medium">
+
+                                <div className="text-xs text-[#1E293B] font-medium leading-normal">
                                   {ev.description}
                                 </div>
-                                <div className="mt-1.5 text-[11px] bg-[#F1F5F9] px-2 py-1 rounded-[2px] font-mono text-[#0B2A4A] flex items-center justify-between">
-                                  <span>Field: {ev.field}</span>
-                                  <span className="font-bold truncate max-w-[180px]">
-                                    Value: {typeof ev.value === 'object' ? JSON.stringify(ev.value) : String(ev.value)}
+
+                                <div className="bg-white border border-[#E2E8F0] p-2 rounded-[2px] font-mono text-[11px] text-[#0B2A4A] flex items-center justify-between">
+                                  <span className="text-[#64748B]">Field: <strong>{ev.field}</strong></span>
+                                  <span className="font-bold text-[#DC2626] bg-[#FEF2F2] px-1.5 py-0.5 rounded-[2px] border border-[#FECACA] truncate max-w-[200px]">
+                                    {typeof ev.value === 'object' ? JSON.stringify(ev.value) : String(ev.value)}
                                   </span>
                                 </div>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <div className="text-[11px] text-[#64748B] italic p-2 bg-[#F8FAFC] border rounded-[2px]">
-                            No separate itemized evidence attached.
+                          <div className="p-3 text-xs text-[#64748B] italic bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                            No separate itemized evidence records attached to this finding.
                           </div>
                         )}
                       </div>
 
-                      {/* Recommended Procedural Action */}
-                      <div>
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1 flex items-center gap-1">
-                          <FileCheck className="w-3.5 h-3.5 text-[#0B2A4A]" />
-                          Recommended Procedural Action
-                        </div>
-                        <div className="bg-[#FEFCE8] border border-[#FEF08A] p-3 rounded-[2px] text-[#713F12] leading-relaxed">
-                          {selectedFinding.recommended_action}
-                        </div>
-                      </div>
-
-                      {/* Officer Review Actions */}
-                      <div className="border-t border-[#E2E8F0] pt-3">
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-2 flex items-center justify-between">
-                          <span>Procurement Officer Review Action</span>
-                          <span className="text-[10px] text-[#64748B] font-mono">Status: {selectedFinding.status}</span>
+                      {/* PROCEDURAL ACTION & OFFICER WORKSPACE */}
+                      <div className="border-t border-[#E2E8F0] pt-3 space-y-3">
+                        <div>
+                          <div className="text-[11px] font-bold uppercase tracking-wider text-[#0B2A4A] mb-1 flex items-center gap-1">
+                            <FileCheck className="w-3.5 h-3.5 text-[#0B2A4A]" />
+                            Recommended Procedural Action
+                          </div>
+                          <div className="bg-[#FEFCE8] border border-[#FEF08A] p-3 rounded-[2px] text-xs text-[#713F12] leading-relaxed">
+                            {selectedFinding.recommended_action}
+                          </div>
                         </div>
 
-                        {actionSuccess && (
-                          <div className="mb-2 p-2.5 bg-[#DEF7EC] border border-[#BCF0DA] text-[#03543F] rounded-[2px] text-xs font-semibold flex flex-col gap-1">
-                            <div className="flex items-center gap-1.5">
-                              <CheckCircle2 className="w-4 h-4 text-[#03543F] shrink-0" />
-                              <span>{actionSuccess}</span>
-                            </div>
-                            <div className="text-[11px] pl-5.5">
-                              <Link to="/audit-trail" className="underline font-bold text-[#0B2A4A] hover:text-[#123B63]">
-                                Open Official Audit Trail &rarr;
+                        {/* Officer Review Action Box */}
+                        <div className="p-3.5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] space-y-2.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-[#0B2A4A] uppercase tracking-wider text-[11px]">
+                              Procurement Officer Review Action
+                            </span>
+                            <span className="text-[10px] text-[#64748B] font-mono">
+                              Current Status: <strong>{selectedFinding.status}</strong>
+                            </span>
+                          </div>
+
+                          {actionSuccess && (
+                            <div className="p-2.5 bg-[#DEF7EC] border border-[#BCF0DA] text-[#03543F] rounded-[2px] text-xs font-semibold flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4 text-[#03543F] shrink-0" />
+                                <span>{actionSuccess}</span>
+                              </div>
+                              <Link to="/audit-trail" className="underline font-bold text-[#0B2A4A] hover:text-[#123B63] ml-2">
+                                Audit Trail &rarr;
                               </Link>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        <div className="space-y-2">
                           <textarea
                             rows={2}
                             placeholder="Enter administrative review note / clarification instruction..."
                             value={statusActionNote}
                             onChange={(e) => setStatusActionNote(e.target.value)}
-                            className="w-full text-xs p-2 border border-[#CBD5E1] rounded-[2px] focus:outline-none focus:ring-1 focus:ring-[#0B2A4A]"
+                            className="w-full text-xs p-2 bg-white border border-[#CBD5E1] rounded-[2px] focus:outline-none focus:ring-1 focus:ring-[#0B2A4A]"
                           />
-                          {/* Procedural Review Action Templates */}
+
+                          {/* Quick Templates */}
                           <div className="flex flex-wrap gap-1 items-center">
-                            <span className="text-[10px] text-[#64748B] font-bold uppercase">Quick Templates:</span>
+                            <span className="text-[10px] text-[#64748B] font-bold uppercase">Templates:</span>
                             <button
                               type="button"
                               onClick={() => setStatusActionNote("Called for itemized Bill of Quantities (BOQ) with unit material, labor, and equipment rates to verify independent cost estimation under GFR Rule 173.")}
-                              className="px-1.5 py-0.5 text-[10px] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
+                              className="px-2 py-0.5 text-[10px] bg-white hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
                             >
-                              + BOQ Break-up
+                              + BOQ Rate Break-up
                             </button>
                             <button
                               type="button"
                               onClick={() => setStatusActionNote("Required formal price justification and undertaking confirming independent bidding without collusion under GeM GTC Clause 19.")}
-                              className="px-1.5 py-0.5 text-[10px] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
+                              className="px-2 py-0.5 text-[10px] bg-white hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
                             >
                               + Price Justification
                             </button>
                             <button
                               type="button"
                               onClick={() => setStatusActionNote("Dispatched notice requesting corporate resolution and statutory PAN/GSTIN registration documentation to confirm independent management.")}
-                              className="px-1.5 py-0.5 text-[10px] bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
+                              className="px-2 py-0.5 text-[10px] bg-white hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] rounded-[2px] cursor-pointer"
                             >
                               + Statutory Verification
                             </button>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-1.5">
+                          {/* Action Buttons */}
+                          <div className="flex flex-wrap items-center gap-2 pt-1">
                             <button
-                              onClick={async () => {
-                                try {
-                                  await recordIntegrityReview(
-                                    selectedFinding.id,
-                                    'ACKNOWLEDGED',
-                                    statusActionNote || 'Finding acknowledged in officer review record.',
-                                    selectedTenderId,
-                                    selectedFinding.bidder_id || undefined,
-                                    'Acknowledge & Record Review'
-                                  );
-                                  setSelectedFinding({ ...selectedFinding, status: 'ACKNOWLEDGED' as any });
-                                  setAssessment((prev) => prev ? {
-                                    ...prev,
-                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'ACKNOWLEDGED' as any } : f)
-                                  } : prev);
-                                  setActionSuccess(`Finding ${selectedFinding.id} acknowledged and logged in official audit register.`);
-                                } catch (err: any) {
-                                  setError('Failed to record review action.');
-                                }
-                              }}
-                              className="px-2.5 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                              onClick={() => handleOfficerAction('ACKNOWLEDGED', 'Finding acknowledged in official officer review record.', 'Acknowledge Finding')}
+                              className="px-3 py-1.5 bg-[#0B2A4A] hover:bg-[#123B63] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
                             >
-                              Acknowledge &amp; Record Review
+                              Acknowledge
                             </button>
                             <button
-                              onClick={async () => {
-                                try {
-                                  await recordIntegrityReview(
-                                    selectedFinding.id,
-                                    'UNDER_REVIEW',
-                                    statusActionNote || 'Flagged for bidder clarification under GFR 144.',
-                                    selectedTenderId,
-                                    selectedFinding.bidder_id || undefined,
-                                    'Request Clarification'
-                                  );
-                                  setSelectedFinding({ ...selectedFinding, status: 'UNDER_REVIEW' as any });
-                                  setAssessment((prev) => prev ? {
-                                    ...prev,
-                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'UNDER_REVIEW' as any } : f)
-                                  } : prev);
-                                  setActionSuccess(`Finding ${selectedFinding.id} set to 'UNDER REVIEW' for clarification.`);
-                                } catch (err: any) {
-                                  setError('Failed to record review action.');
-                                }
-                              }}
-                              className="px-2.5 py-1.5 bg-white text-[#0B2A4A] border border-[#0B2A4A] hover:bg-[#F0F5FA] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                              onClick={() => handleOfficerAction('UNDER_REVIEW', 'Flagged for formal bidder clarification under GFR 144.', 'Mark Under Review')}
+                              className="px-3 py-1.5 bg-white text-[#0B2A4A] border border-[#0B2A4A] hover:bg-[#F0F5FA] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                            >
+                              Under Review
+                            </button>
+                            <button
+                              onClick={() => handleOfficerAction('UNDER_REVIEW', 'Dispatched clarification notice to participating bidders under GFR 173.', 'Request Clarification')}
+                              className="px-3 py-1.5 bg-white text-[#0B2A4A] border border-[#0B2A4A] hover:bg-[#F0F5FA] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
                             >
                               Request Clarification
                             </button>
                             <button
-                              onClick={async () => {
-                                try {
-                                  await recordIntegrityReview(
-                                    selectedFinding.id,
-                                    'RESOLVED',
-                                    statusActionNote || 'Bidder clarification verified and finding resolved.',
-                                    selectedTenderId,
-                                    selectedFinding.bidder_id || undefined,
-                                    'Mark Resolved'
-                                  );
-                                  setSelectedFinding({ ...selectedFinding, status: 'RESOLVED' as any });
-                                  setAssessment((prev) => prev ? {
-                                    ...prev,
-                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'RESOLVED' as any } : f)
-                                  } : prev);
-                                  setActionSuccess(`Finding ${selectedFinding.id} marked RESOLVED.`);
-                                } catch (err: any) {
-                                  setError('Failed to record review action.');
-                                }
-                              }}
-                              className="px-2.5 py-1.5 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] hover:bg-[#DCFCE7] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                              onClick={() => handleOfficerAction('RESOLVED', 'Bidder clarification verified and finding resolved.', 'Mark Resolved')}
+                              className="px-3 py-1.5 bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] hover:bg-[#DCFCE7] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
                             >
                               Mark Resolved
                             </button>
                             <button
-                              onClick={async () => {
-                                try {
-                                  await recordIntegrityReview(
-                                    selectedFinding.id,
-                                    'DISMISSED',
-                                    statusActionNote || 'Evaluated as standard market practice and dismissed.',
-                                    selectedTenderId,
-                                    selectedFinding.bidder_id || undefined,
-                                    'Dismiss Finding'
-                                  );
-                                  setSelectedFinding({ ...selectedFinding, status: 'DISMISSED' as any });
-                                  setAssessment((prev) => prev ? {
-                                    ...prev,
-                                    findings: prev.findings.map(f => f.id === selectedFinding.id ? { ...f, status: 'DISMISSED' as any } : f)
-                                  } : prev);
-                                  setActionSuccess(`Finding ${selectedFinding.id} dismissed.`);
-                                } catch (err: any) {
-                                  setError('Failed to record review action.');
-                                }
-                              }}
-                              className="px-2.5 py-1.5 bg-[#F8FAFC] text-[#64748B] border border-[#CBD5E1] hover:bg-[#F1F5F9] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                              onClick={() => handleOfficerAction('DISMISSED', 'Evaluated as standard commercial market practice and dismissed.', 'Dismiss Finding')}
+                              className="px-3 py-1.5 bg-[#F8FAFC] text-[#64748B] border border-[#CBD5E1] hover:bg-[#F1F5F9] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
                             >
                               Dismiss
                             </button>
@@ -1182,18 +1099,150 @@ export const ProcurementIntegrity: React.FC = () => {
                 ) : (
                   <div className="p-8 text-center text-xs text-[#64748B]">
                     <Eye className="w-6 h-6 text-[#94A3B8] mx-auto mb-2" />
-                    Select a finding from the table to inspect details and evidence.
+                    Select a contributing signal above to inspect audit evidence and recommended procedural actions.
                   </div>
                 )}
               </div>
+
+              {/* ════════════════════════════════════════════════════════════════════
+                  LEVEL 4: RELATIONSHIP NETWORK ("Who is connected to whom, and why?")
+                  ════════════════════════════════════════════════════════════════════ */}
+              <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
+                <div className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h2 className="font-bold text-sm text-[#0B2A4A] flex items-center gap-1.5">
+                      <Network className="w-4 h-4 text-[#0B2A4A]" />
+                      Entity Relationship Network
+                    </h2>
+                    <p className="text-[11px] text-[#64748B] mt-0.5">
+                      Answers: <em>&ldquo;Who is connected to whom, and why?&rdquo;</em> • Click any node or dashed connection to inspect evidence &amp; source.
+                    </p>
+                  </div>
+                  <span className="text-[10px] text-[#64748B] font-mono whitespace-nowrap">
+                    {assessment.findings.filter(
+                      (f) => f.signal_type === 'RELATED_BIDDER' ||
+                             f.signal_type === 'SHARED_ENTITY' ||
+                             f.signal_type === 'COMMON_DIRECTOR_LINK' ||
+                             f.signal_type === 'OFFICER_VENDOR_ASSOCIATION' ||
+                             f.signal_type === 'DOCUMENT_IDENTITY_INCONSISTENCY'
+                    ).length} relationship finding(s)
+                  </span>
+                </div>
+
+                <div className="p-3">
+                  <RelationshipGraph
+                    tenderId={selectedTenderId}
+                    tenderLabel={
+                      currentTender
+                        ? (currentTender.tender_number ? `${currentTender.tender_number} — ${currentTender.title || ''}` : (currentTender.title || selectedTenderId))
+                        : selectedTenderId
+                    }
+                    tenderDepartment={currentTender?.department}
+                    tenderEstimatedValue={currentTender?.estimated_value}
+                    bidders={bidders.map((b) => ({ id: b.id, name: b.name, risk: b.risk }))}
+                    assessment={assessment}
+                  />
+                </div>
+              </div>
+
+              {/* ════════════════════════════════════════════════════════════════════
+                  LEVEL 5: STATUTORY RISK BASIS & EVALUATION PARAMETERS (Expandable)
+                  ════════════════════════════════════════════════════════════════════ */}
+              {assessment.risk_basis && (
+                <div className="bg-white border border-[#CBD5E1] rounded-[3px] shadow-xs overflow-hidden">
+                  <div
+                    className="p-3 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between cursor-pointer select-none"
+                    onClick={() => setShowRiskBasis(!showRiskBasis)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Scale className="w-4 h-4 text-[#0B2A4A]" />
+                      <h3 className="font-bold text-xs text-[#0B2A4A] uppercase tracking-wider">
+                        Risk Basis &amp; Evaluation Parameters
+                      </h3>
+                      <span className="text-[10px] text-[#64748B] hidden md:inline">
+                        Active statutory and statistical thresholds used to evaluate this procurement
+                      </span>
+                    </div>
+                    {showRiskBasis ? <ChevronUp className="w-4 h-4 text-[#64748B]" /> : <ChevronDown className="w-4 h-4 text-[#64748B]" />}
+                  </div>
+
+                  {showRiskBasis && (
+                    <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Price Delta Margin</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≤ {assessment.risk_basis.price_similarity_threshold_pct}%
+                        </div>
+                        <div className="text-[10px] text-[#64748B] mt-0.5">Quotes within 1% trigger verification</div>
+                      </div>
+
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Supplier Concentration</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≥ {(Number(assessment.risk_basis.winner_concentration_ratio) * 100).toFixed(0)}%
+                        </div>
+                        <div className="text-[10px] text-[#64748B] mt-0.5">Min {assessment.risk_basis.min_historical_tenders_concentration} historical awards</div>
+                      </div>
+
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Cohort / Rotation Quorum</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≥ {assessment.risk_basis.min_co_participations} Joint Tenders
+                        </div>
+                        <div className="text-[10px] text-[#64748B] mt-0.5">Rotation horizon: ≥ {assessment.risk_basis.min_rotation_tenders} tenders</div>
+                      </div>
+
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Bid-to-Estimate Anomaly</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≤ {assessment.risk_basis.bid_to_estimate_threshold_pct}%
+                        </div>
+                        <div className="text-[10px] text-[#64748B] mt-0.5">Proximity to confidential estimate</div>
+                      </div>
+
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Narrow Market Quorum</div>
+                        <div className="text-sm font-bold font-mono text-[#0B2A4A] mt-0.5">
+                          ≤ {assessment.risk_basis.narrow_competition_max_bidders} Qualified Bidders
+                        </div>
+                        <div className="text-[10px] text-[#64748B] mt-0.5">Repeated in category competitions</div>
+                      </div>
+
+                      <div className="p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Officer-Bidder Linkage</div>
+                        <div className="text-sm font-bold text-[#0B2A4A] mt-0.5">
+                          Audited Decisions Only
+                        </div>
+                        <div className="text-[10px] text-[#64748B] mt-0.5">Zero speculative officer links</div>
+                      </div>
+
+                      <div className="sm:col-span-2 p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[2px]">
+                        <div className="text-[10px] font-bold uppercase text-[#64748B]">Cross-Bidder Identity Keys</div>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {assessment.risk_basis.statutory_identity_keys?.map((k) => (
+                            <span key={k} className="px-1.5 py-0.5 bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E3A8A] font-mono font-bold text-[10px] rounded-[2px]">
+                              {k} (Statutory)
+                            </span>
+                          ))}
+                          {assessment.risk_basis.operational_identity_keys?.map((k) => (
+                            <span key={k} className="px-1.5 py-0.5 bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] font-mono text-[10px] rounded-[2px]">
+                              {k} (Operational)
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
-          {/* ── 5. Statutory Decision-Support Notice (Footer) ── */}
+          {/* ── Statutory Decision-Support Notice (Footer) ── */}
           <div className="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-[3px] text-[11px] text-[#475569] leading-relaxed flex items-start gap-2">
             <ShieldCheck className="w-4 h-4 text-[#64748B] flex-shrink-0 mt-0.5" />
             <div>
-              <strong className="text-[#334155]">Statutory Advisory:</strong> Algorithmic integrity evaluations provide deterministic decision support pursuant to General Financial Rules (GFR 2017) and GeM guidelines. All signals represent administrative indicators requiring officer verification and do not constitute formal disqualification or investigative findings.
+              <strong className="text-[#334155]">Statutory Advisory:</strong> Algorithmic integrity evaluations provide deterministic decision support pursuant to General Financial Rules (GFR 2017) and GeM guidelines. All signals represent administrative review triggers requiring officer verification and do not constitute formal disqualification or investigative findings.
             </div>
           </div>
         </div>

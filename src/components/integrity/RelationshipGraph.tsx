@@ -276,6 +276,8 @@ function buildGraph(
             value: String(ev.value ?? ''),
             description: ev.description,
             confidence: finding.confidence,
+            sourceType: ev.source_type,
+            recommendedReview: finding.recommended_action,
             findingId: finding.id,
             sourceLabel: bidders.find((b) => b.id === bid)?.name || bid,
             targetLabel: `Shared ${ev.field.replace(/_/g, ' ')}`,
@@ -389,19 +391,19 @@ function DetailPanel({ sel, onClose }: { sel: Selection; onClose: () => void }) 
                 { l: 'To', v: String(d.targetLabel || '') },
                 ...(d.field ? [{ l: 'Shared Field', v: String(d.field).replace(/_/g, ' '), mono: true }] : []),
                 ...(d.value ? [{ l: 'Matched Value', v: String(d.value), mono: true }] : []),
+                ...(d.sourceType ? [{ l: 'Evidence Source', v: String(d.sourceType), mono: true }] : []),
                 ...(d.confidence ? [{ l: 'Confidence', v: `${(Number(d.confidence) * 100).toFixed(0)}%` }] : []),
               ]} />
               {typeof d.description === 'string' && d.description && (
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '6px 8px', borderRadius: 2, fontSize: 10, lineHeight: 1.5 }}>
-                  <span style={{ fontWeight: 700, color: '#0B2A4A', display: 'block', marginBottom: 2 }}>Evidence:</span>
+                  <span style={{ fontWeight: 700, color: '#0B2A4A', display: 'block', marginBottom: 2 }}>Audit Evidence:</span>
                   <span style={{ color: '#334155' }}>{d.description}</span>
                 </div>
               )}
-              {isStatutory && (
-                <div style={{ background: '#FEFCE8', border: '1px solid #FEF08A', padding: '6px 8px', borderRadius: 2, color: '#713F12', fontSize: 10, lineHeight: 1.5 }}>
-                  Verify whether the bidders represent independent competing entities as required under GFR 2017. This finding indicates an administrative review trigger, not proof of wrongdoing.
-                </div>
-              )}
+              <div style={{ background: '#FEFCE8', border: '1px solid #FEF08A', padding: '6px 8px', borderRadius: 2, color: '#713F12', fontSize: 10, lineHeight: 1.5 }}>
+                <span style={{ fontWeight: 700, display: 'block', marginBottom: 2 }}>Recommended Procedural Review:</span>
+                {String(d.recommendedReview || 'Verify whether the bidders represent independent competing entities as required under GFR 2017. This finding indicates an administrative review trigger, not proof of wrongdoing.')}
+              </div>
             </div>
           );
         })()}
@@ -443,7 +445,11 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = ({
 }) => {
   const relFindings = useMemo(
     () => assessment.findings.filter(
-      (f) => f.signal_type === 'RELATED_BIDDER' || f.signal_type === 'SHARED_ENTITY'
+      (f) => f.signal_type === 'RELATED_BIDDER' ||
+             f.signal_type === 'SHARED_ENTITY' ||
+             f.signal_type === 'COMMON_DIRECTOR_LINK' ||
+             f.signal_type === 'OFFICER_VENDOR_ASSOCIATION' ||
+             f.signal_type === 'DOCUMENT_IDENTITY_INCONSISTENCY'
     ),
     [assessment.findings]
   );
@@ -523,6 +529,8 @@ export const RelationshipGraph: React.FC<RelationshipGraphProps> = ({
               { color: C.sharedPan.bd,   label: 'Shared PAN / CIN', dashed: true },
               { color: C.sharedGstin.bd, label: 'Shared GSTIN',     dashed: true },
               { color: C.sharedAddr.bd,  label: 'Shared Address',   dashed: true },
+              { color: C.sharedDirector.bd, label: 'Common Director', dashed: true },
+              { color: C.sharedOfficer.bd, label: 'Officer Link',   dashed: true },
               { color: C.sharedOther.bd, label: 'Shared Other',     dashed: true },
             ] as const).map(({ color, label, dashed }) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
