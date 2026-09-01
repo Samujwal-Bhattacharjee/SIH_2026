@@ -113,17 +113,25 @@ export const BidderVerification: React.FC = () => {
             officer_note: b.officer_note,
             documents: res.documents?.length || b.documents_count || 0,
             tender_id: b.tender_id,
-            requirements: (res.requirements && res.requirements.length > 0) ? res.requirements.map((r: any) => ({
-              id: r.requirement_id || r.id,
-              name: r.name || r.title || r.requirement_name || 'Statutory Requirement',
-              category: r.category || 'Statutory compliance',
-              status: r.status === 'COMPLIANT' ? 'Verified' : r.status === 'NON_COMPLIANT' || r.status === 'EXPIRED' ? 'Failed' : r.status === 'NEEDS_REVIEW' ? 'Needs Review' : r.status === 'NOT_APPLICABLE' ? 'Not Applicable' : 'Pending',
-              evidence: r.evidence_value || r.evidence_summary || r.evidence || 'Document extract verified against declaration.',
-              note: r.reason || r.discrepancy_note || r.note || '',
-              isMandatory: r.is_mandatory !== undefined ? Boolean(r.is_mandatory) : true,
-              isBlocking: Boolean(r.is_blocking),
-              resultStatus: r.result_status || (r.status === 'COMPLIANT' ? 'PASS' : r.status === 'NON_COMPLIANT' ? 'FAIL' : r.status),
-            })) : [],
+            requirements: (res.requirements && res.requirements.length > 0) ? res.requirements.map((r: any) => {
+              const rawConf = r.confidence !== undefined && r.confidence !== null ? Number(r.confidence) : 0;
+              const evidenceAvail = Boolean(r.evidence_available ?? (r.evidence_value && rawConf > 0));
+              const evidenceSrc = r.evidence_source || (evidenceAvail ? r.evidence_doc_id : null);
+              return {
+                id: r.requirement_id || r.id,
+                name: r.name || r.title || r.requirement_name || 'Statutory Requirement',
+                category: r.category || 'Statutory compliance',
+                status: r.status === 'COMPLIANT' ? 'Verified' : r.status === 'NON_COMPLIANT' || r.status === 'EXPIRED' ? 'Failed' : r.status === 'NEEDS_REVIEW' ? 'Needs Review' : r.status === 'NOT_APPLICABLE' ? 'Not Applicable' : 'Pending',
+                evidence: r.evidence_value || (evidenceAvail ? r.evidence_field_key : null) || 'No supporting document submitted',
+                note: r.reason || r.discrepancy_note || r.note || '',
+                isMandatory: r.is_mandatory !== undefined ? Boolean(r.is_mandatory) : true,
+                isBlocking: Boolean(r.is_blocking),
+                resultStatus: r.result_status || (r.status === 'COMPLIANT' ? 'PASS' : r.status === 'NON_COMPLIANT' ? 'FAIL' : r.status),
+                confidence: rawConf,
+                evidenceAvailable: evidenceAvail,
+                evidenceSource: evidenceSrc,
+              };
+            }) : [],
             discrepancies: res.discrepancies || [],
             recommendations: res.recommendations || [],
           });
@@ -542,8 +550,12 @@ export const BidderVerification: React.FC = () => {
                           <span className="text-[11px] text-[#475569]">{req.category}</span>
                         </td>
                         <td>
-                          <span className="text-[11px] font-mono text-[#0B2A4A] bg-[#F0F4F8] px-2 py-0.5 border border-[#CBD2DE] rounded-[2px] block truncate max-w-[220px]">
-                            {req.evidence}
+                          <span className={`text-[11px] font-mono px-2 py-0.5 border rounded-[2px] block truncate max-w-[220px] ${
+                            req.evidenceAvailable
+                              ? 'text-[#0B2A4A] bg-[#F0F4F8] border-[#CBD2DE]'
+                              : 'text-[#64748B] bg-[#F8F9FA] border-[#E2E8F0] italic'
+                          }`}>
+                            {req.evidence || 'No supporting document submitted'}
                           </span>
                         </td>
                         <td>{statusBadge(req.status)}</td>
@@ -587,21 +599,31 @@ export const BidderVerification: React.FC = () => {
                                   <span className="text-[#475569] block text-[10px]">
                                     Source document:
                                   </span>
-                                  <strong className="text-[#202124]">{req.evidence}</strong>
+                                  <strong className="text-[#202124]">
+                                    {req.evidenceSource || (req.evidenceAvailable ? req.evidence : 'No document submitted')}
+                                  </strong>
                                 </div>
                                 <div>
                                   <span className="text-[#475569] block text-[10px]">
                                     Extraction method:
                                   </span>
                                   <strong className="text-[#202124]">
-                                    PyMuPDF + Regex Parser
+                                    {req.evidenceAvailable ? 'PyMuPDF + Regex Parser' : 'None (No document / unextracted)'}
                                   </strong>
                                 </div>
                                 <div>
                                   <span className="text-[#475569] block text-[10px]">
                                     Confidence level:
                                   </span>
-                                  <strong className="text-[#15803D]">96% (High)</strong>
+                                  {req.confidence !== undefined && req.confidence > 0 ? (
+                                    <strong className={req.confidence >= 0.8 ? "text-[#15803D]" : "text-[#D97706]"}>
+                                      {Math.round(req.confidence * 100)}% ({req.confidence >= 0.8 ? 'High' : 'Medium'})
+                                    </strong>
+                                  ) : (
+                                    <strong className="text-[#64748B]">
+                                      0% (None)
+                                    </strong>
+                                  )}
                                 </div>
                               </div>
                               <div className="pt-2 flex items-center justify-between border-t border-[#E6E9EF]">

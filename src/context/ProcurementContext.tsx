@@ -15,6 +15,8 @@ export interface Requirement {
   isBlocking?: boolean;
   resultStatus?: string; // 'PASS' | 'FAIL' | 'PENDING' | 'UNVERIFIED' | 'NEEDS_REVIEW' | 'NOT_APPLICABLE'
   confidence?: number;
+  evidenceAvailable?: boolean;
+  evidenceSource?: string | null;
 }
 
 export interface Discrepancy {
@@ -208,17 +210,25 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         else if (status === 'NEEDS_REVIEW') checkStatus = 'Needs Review';
         else if (status === 'NOT_APPLICABLE') checkStatus = 'Not Applicable';
 
+        const rawConf = requirement.confidence !== undefined && requirement.confidence !== null
+          ? Number(requirement.confidence)
+          : 0;
+        const evidenceAvail = Boolean(requirement.evidence_available ?? (requirement.evidence_value && rawConf > 0));
+        const evidenceSrc = requirement.evidence_source || (evidenceAvail ? requirement.evidence_doc_id : null);
+
         return {
           id: requirement.requirement_id || requirement.id,
           name: requirement.requirement_name || requirement.name,
           category: requirement.category || 'General',
           status: checkStatus,
-          evidence: requirement.evidence_value || requirement.evidence_field_key || 'No supporting evidence available',
+          evidence: requirement.evidence_value || (evidenceAvail ? requirement.evidence_field_key : null) || 'No supporting document submitted',
           note: requirement.reason || 'Assessment pending.',
           isMandatory,
           isBlocking,
           resultStatus: status === 'COMPLIANT' ? 'PASS' : (status === 'NON_COMPLIANT' || status === 'EXPIRED') ? 'FAIL' : status,
-          confidence: requirement.confidence,
+          confidence: rawConf,
+          evidenceAvailable: evidenceAvail,
+          evidenceSource: evidenceSrc,
         };
       }),
       discrepancies: (detail?.discrepancies || []).map((item: any) => ({

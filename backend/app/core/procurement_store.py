@@ -189,6 +189,7 @@ def init_db():
             evidence_doc_id     TEXT,
             evidence_field_key  TEXT,
             evidence_value      TEXT,
+            evidence_source     TEXT,
             confidence          REAL,
             reason              TEXT,
             verified_at         TEXT,
@@ -260,6 +261,9 @@ def init_db():
                 conn.execute("ALTER TABLE bidders ADD COLUMN quote_amount REAL")
             if cols and "compliance_status" not in cols:
                 conn.execute("ALTER TABLE bidders ADD COLUMN compliance_status TEXT DEFAULT 'PENDING_DOCUMENTS'")
+            cr_cols = [c[1] for c in conn.execute("PRAGMA table_info(compliance_results)").fetchall()]
+            if cr_cols and "evidence_source" not in cr_cols:
+                conn.execute("ALTER TABLE compliance_results ADD COLUMN evidence_source TEXT")
         except Exception:
             pass
 
@@ -644,8 +648,8 @@ def save_compliance_assessment(bidder_id: str, tender_id: str, assessment: Dict[
         # 2. Insert compliance check results
         for check in assessment.get("checks", []):
             conn.execute("""
-                INSERT INTO compliance_results (id, bidder_id, tender_id, requirement_id, requirement_name, category, status, severity, score, evidence_doc_id, evidence_field_key, evidence_value, confidence, reason, verified_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO compliance_results (id, bidder_id, tender_id, requirement_id, requirement_name, category, status, severity, score, evidence_doc_id, evidence_field_key, evidence_value, evidence_source, confidence, reason, verified_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 str(uuid.uuid4()),
                 bidder_id,
@@ -659,7 +663,8 @@ def save_compliance_assessment(bidder_id: str, tender_id: str, assessment: Dict[
                 check.get("evidence_doc_id"),
                 check.get("evidence_field_key"),
                 str(check.get("evidence_value") or ""),
-                check.get("confidence", 0.0),
+                check.get("evidence_source"),
+                float(check.get("confidence", 0.0) or 0.0),
                 check.get("reason") or check.get("description", ""),
                 now,
                 now

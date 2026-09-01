@@ -147,62 +147,101 @@ def _field_value(fields: list[dict], key: str) -> Optional[str]:
     return f.get("value") if f else None
 
 
+def _extract_field_with_evidence(doc: dict, key: str) -> Optional[dict]:
+    """Find a field by key in doc's extracted_fields and return field dict with confidence."""
+    fields = doc.get("extracted_fields") or []
+    if isinstance(fields, str):
+        try:
+            fields = json.loads(fields)
+        except Exception:
+            fields = []
+    if isinstance(fields, list):
+        for f in fields:
+            if isinstance(f, dict) and f.get("key") == key:
+                val = f.get("value")
+                if val is not None and str(val).strip() != "":
+                    conf = f.get("confidence")
+                    if conf is None or conf == "":
+                        conf = doc.get("ocr_confidence")
+                    try:
+                        conf_f = float(conf) if conf is not None else 0.85
+                        conf_f = max(0.0, min(1.0, conf_f))
+                    except (ValueError, TypeError):
+                        conf_f = 0.85
+                    return {
+                        "value": str(val).strip(),
+                        "confidence": round(conf_f, 2),
+                        "field_key": key,
+                        "doc_id": doc.get("id"),
+                        "doc_name": doc.get("file_name") or doc.get("document_type") or "Uploaded Document",
+                    }
+    return None
+
+
 def check_gst_present(all_fields: list[dict], documents: list[dict]) -> dict:
     """Check: GST registration certificate present and GSTIN extractable."""
-    # Look for GSTIN in any document's extracted fields
     for doc in documents:
-        doc_fields = doc.get("extracted_fields") or []
-        if isinstance(doc_fields, list):
-            gstin = _field_value(doc_fields, "gstin")
-            if gstin and len(gstin) == 15:
-                # Validate GSTIN format
-                if re.match(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$', gstin, re.I):
-                    return {
-                        "status": "COMPLIANT",
-                        "severity": "LOW",
-                        "score": 100,
-                        "evidence_value": gstin,
-                        "evidence_doc_id": doc.get("id"),
-                        "evidence_field_key": "gstin",
-                        "confidence": 0.96,
-                        "reason": f"Valid GSTIN {gstin} extracted from {doc.get('document_type', 'document')}.",
-                    }
-                else:
-                    return {
-                        "status": "NEEDS_REVIEW",
-                        "severity": "MEDIUM",
-                        "score": 50,
-                        "evidence_value": gstin,
-                        "evidence_doc_id": doc.get("id"),
-                        "evidence_field_key": "gstin",
-                        "confidence": 0.60,
-                        "reason": f"GSTIN {gstin} found but format validation failed. Officer review required.",
-                    }
+        ev = _extract_field_with_evidence(doc, "gstin")
+        if ev:
+            gstin = ev["value"].strip()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            if len(gstin) == 15 and re.match(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$', gstin, re.I):
+                return {
+                    "status": "COMPLIANT",
+                    "severity": "LOW",
+                    "score": 100,
+                    "evidence_value": gstin,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "gstin",
+                    "evidence_source": doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Valid GSTIN {gstin} extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
+                }
+            else:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": gstin,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "gstin",
+                    "evidence_source": doc_name,
+                    "evidence_available": True,
+                    "confidence": round(conf * 0.6, 2),
+                    "reason": f"GSTIN {gstin} found in {doc_name} but format validation failed. Officer review required.",
+                }
 
-    # Check if GST doc was uploaded by document type
     gst_docs = [d for d in documents if "GST" in (d.get("document_type") or "").upper() or
                 "GST" in (d.get("file_name") or "").upper()]
     if gst_docs:
-        if gst_docs[0].get("ocr_status") == "FAILED":
+        doc = gst_docs[0]
+        doc_name = doc.get("file_name") or doc.get("document_type") or "GST Certificate"
+        if doc.get("ocr_status") == "FAILED":
             return {
                 "status": "UNVERIFIED",
                 "severity": "HIGH",
                 "score": 0,
                 "evidence_value": None,
-                "evidence_doc_id": gst_docs[0].get("id"),
+                "evidence_doc_id": doc.get("id"),
                 "evidence_field_key": None,
+                "evidence_source": doc_name,
+                "evidence_available": False,
                 "confidence": 0.0,
-                "reason": "GST document uploaded but OCR processing failed. Document remains unverified.",
+                "reason": f"GST document '{doc_name}' uploaded but OCR processing failed. Document remains unverified.",
             }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
             "score": 50,
             "evidence_value": None,
-            "evidence_doc_id": gst_docs[0].get("id"),
+            "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
-            "confidence": 0.50,
-            "reason": "GST document uploaded but GSTIN could not be extracted. Manual verification required.",
+            "evidence_source": doc_name,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": f"GST document '{doc_name}' uploaded but GSTIN could not be extracted. Manual verification required.",
         }
 
     return {
@@ -212,52 +251,64 @@ def check_gst_present(all_fields: list[dict], documents: list[dict]) -> dict:
         "evidence_value": None,
         "evidence_doc_id": None,
         "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
         "confidence": 0.0,
-        "reason": "GST registration certificate not found in uploaded documents.",
+        "reason": "GST registration certificate not found in uploaded documents. Required for statutory compliance.",
     }
 
 
 def check_pan_present(all_fields: list[dict], documents: list[dict]) -> dict:
     """Check: PAN card present and PAN extractable."""
     for doc in documents:
-        doc_fields = doc.get("extracted_fields") or []
-        if isinstance(doc_fields, list):
-            pan = _field_value(doc_fields, "pan")
-            if pan and len(pan) == 10 and re.match(r'^[A-Z]{5}[0-9]{4}[A-Z]$', pan, re.I):
+        ev = _extract_field_with_evidence(doc, "pan")
+        if ev:
+            pan = ev["value"].strip().upper()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            if len(pan) == 10 and re.match(r'^[A-Z]{5}[0-9]{4}[A-Z]$', pan, re.I):
                 return {
                     "status": "COMPLIANT",
                     "severity": "LOW",
                     "score": 100,
                     "evidence_value": pan,
-                    "evidence_doc_id": doc.get("id"),
+                    "evidence_doc_id": ev["doc_id"],
                     "evidence_field_key": "pan",
-                    "confidence": 0.94,
-                    "reason": f"Valid PAN {pan} extracted and format verified.",
+                    "evidence_source": doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Valid PAN {pan} extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
                 }
 
     pan_docs = [d for d in documents if "PAN" in (d.get("document_type") or "").upper() or
                 "PAN" in (d.get("file_name") or "").upper()]
     if pan_docs:
-        if pan_docs[0].get("ocr_status") == "FAILED":
+        doc = pan_docs[0]
+        doc_name = doc.get("file_name") or doc.get("document_type") or "PAN Card"
+        if doc.get("ocr_status") == "FAILED":
             return {
                 "status": "UNVERIFIED",
                 "severity": "HIGH",
                 "score": 0,
                 "evidence_value": None,
-                "evidence_doc_id": pan_docs[0].get("id"),
+                "evidence_doc_id": doc.get("id"),
                 "evidence_field_key": None,
+                "evidence_source": doc_name,
+                "evidence_available": False,
                 "confidence": 0.0,
-                "reason": "PAN document uploaded but OCR processing failed. Document remains unverified.",
+                "reason": f"PAN document '{doc_name}' uploaded but OCR processing failed. Document remains unverified.",
             }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
             "score": 50,
             "evidence_value": None,
-            "evidence_doc_id": pan_docs[0].get("id"),
+            "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
-            "confidence": 0.50,
-            "reason": "PAN document uploaded but PAN number could not be extracted. Manual review needed.",
+            "evidence_source": doc_name,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": f"PAN document '{doc_name}' uploaded but PAN number could not be extracted. Manual review needed.",
         }
 
     return {
@@ -267,55 +318,65 @@ def check_pan_present(all_fields: list[dict], documents: list[dict]) -> dict:
         "evidence_value": None,
         "evidence_doc_id": None,
         "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
         "confidence": 0.0,
-        "reason": "PAN card not found in uploaded documents.",
+        "reason": "PAN card not found in uploaded documents. Required for statutory compliance.",
     }
 
 
 def check_udyam_present(all_fields: list[dict], documents: list[dict]) -> dict:
     """Check: Udyam/MSME certificate present."""
     for doc in documents:
-        doc_fields = doc.get("extracted_fields") or []
-        if isinstance(doc_fields, list):
-            udyam = _field_value(doc_fields, "udyamNumber")
-            if udyam and re.match(r'^UDYAM-[A-Z]{2}-\d{2}-\d{7}$', udyam.upper()):
+        ev = _extract_field_with_evidence(doc, "udyamNumber")
+        if ev:
+            udyam = ev["value"].strip().upper()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            if re.match(r'^UDYAM-[A-Z]{2}-\d{2}-\d{7}$', udyam):
                 return {
                     "status": "COMPLIANT",
                     "severity": "LOW",
                     "score": 100,
                     "evidence_value": udyam,
-                    "evidence_doc_id": doc.get("id"),
+                    "evidence_doc_id": ev["doc_id"],
                     "evidence_field_key": "udyamNumber",
-                    "confidence": 0.95,
-                    "reason": f"Valid Udyam number {udyam} extracted and format verified.",
+                    "evidence_source": doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Valid Udyam number {udyam} extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
                 }
 
     udyam_docs = [d for d in documents if
-                  any(kw in (d.get("document_type") or "").upper()
-                      for kw in ["UDYAM", "MSME"]) or
-                  any(kw in (d.get("file_name") or "").upper()
-                      for kw in ["UDYAM", "MSME"])]
+                  any(kw in (d.get("document_type") or "").upper() for kw in ["UDYAM", "MSME"]) or
+                  any(kw in (d.get("file_name") or "").upper() for kw in ["UDYAM", "MSME"])]
     if udyam_docs:
-        if udyam_docs[0].get("ocr_status") == "FAILED":
+        doc = udyam_docs[0]
+        doc_name = doc.get("file_name") or doc.get("document_type") or "Udyam Certificate"
+        if doc.get("ocr_status") == "FAILED":
             return {
                 "status": "UNVERIFIED",
                 "severity": "MEDIUM",
                 "score": 0,
                 "evidence_value": None,
-                "evidence_doc_id": udyam_docs[0].get("id"),
+                "evidence_doc_id": doc.get("id"),
                 "evidence_field_key": None,
+                "evidence_source": doc_name,
+                "evidence_available": False,
                 "confidence": 0.0,
-                "reason": "Udyam document uploaded but OCR processing failed. Document remains unverified.",
+                "reason": f"Udyam document '{doc_name}' uploaded but OCR processing failed. Document remains unverified.",
             }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
             "score": 60,
             "evidence_value": None,
-            "evidence_doc_id": udyam_docs[0].get("id"),
+            "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
-            "confidence": 0.55,
-            "reason": "Udyam/MSME document uploaded but registration number could not be extracted.",
+            "evidence_source": doc_name,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": f"Udyam/MSME document '{doc_name}' uploaded but registration number could not be extracted.",
         }
 
     return {
@@ -325,6 +386,8 @@ def check_udyam_present(all_fields: list[dict], documents: list[dict]) -> dict:
         "evidence_value": None,
         "evidence_doc_id": None,
         "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
         "confidence": 0.0,
         "reason": "Udyam/MSME registration certificate not submitted. Required if claiming MSME status.",
     }
@@ -344,11 +407,14 @@ def check_oem_present(all_fields: list[dict], documents: list[dict]) -> dict:
             "evidence_value": None,
             "evidence_doc_id": None,
             "evidence_field_key": None,
-            "confidence": 1.0,
-            "reason": "OEM authorization letter not found. This is a mandatory requirement for this tender.",
+            "evidence_source": None,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": "OEM authorization letter not found in submitted documents. Mandatory technical requirement.",
         }
 
     doc = oem_docs[0]
+    doc_name = doc.get("file_name") or doc.get("document_type") or "OEM Authorization"
     if doc.get("ocr_status") == "FAILED":
         return {
             "status": "UNVERIFIED",
@@ -357,28 +423,25 @@ def check_oem_present(all_fields: list[dict], documents: list[dict]) -> dict:
             "evidence_value": None,
             "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
+            "evidence_source": doc_name,
+            "evidence_available": False,
             "confidence": 0.0,
-            "reason": "OEM authorization letter uploaded but OCR processing failed. Document remains unverified.",
+            "reason": f"OEM authorization letter '{doc_name}' uploaded but OCR processing failed. Document remains unverified.",
         }
-    doc_fields = doc.get("extracted_fields") or []
 
-    # Check for expiry date
+    ev_expiry = _extract_field_with_evidence(doc, "expiryDate")
+    ev_ref = _extract_field_with_evidence(doc, "oemReference")
+    conf = (ev_expiry or ev_ref or {}).get("confidence", 0.85)
+
     expiry = None
-    if isinstance(doc_fields, list):
-        expiry_raw = _field_value(doc_fields, "expiryDate")
-        oem_ref = _field_value(doc_fields, "oemReference")
-
-        if expiry_raw:
+    expiry_raw = ev_expiry["value"] if ev_expiry else None
+    if expiry_raw:
+        for fmt in ["%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y", "%Y-%m-%d"]:
             try:
-                # Try to parse various date formats
-                for fmt in ["%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y", "%Y-%m-%d"]:
-                    try:
-                        expiry = datetime.strptime(expiry_raw, fmt).date()
-                        break
-                    except ValueError:
-                        continue
-            except Exception:
-                pass
+                expiry = datetime.strptime(expiry_raw, fmt).date()
+                break
+            except ValueError:
+                continue
 
     if expiry:
         today = date.today()
@@ -390,8 +453,10 @@ def check_oem_present(all_fields: list[dict], documents: list[dict]) -> dict:
                 "evidence_value": expiry_raw,
                 "evidence_doc_id": doc.get("id"),
                 "evidence_field_key": "expiryDate",
-                "confidence": 0.85,
-                "reason": f"OEM authorization has expired on {expiry_raw}. A fresh authorization letter is required.",
+                "evidence_source": doc_name,
+                "evidence_available": True,
+                "confidence": conf,
+                "reason": f"OEM authorization expired on {expiry_raw} in {doc_name}. A fresh authorization letter is required.",
             }
         else:
             days_until_expiry = (expiry - today).days
@@ -403,66 +468,90 @@ def check_oem_present(all_fields: list[dict], documents: list[dict]) -> dict:
                     "evidence_value": expiry_raw,
                     "evidence_doc_id": doc.get("id"),
                     "evidence_field_key": "expiryDate",
-                    "confidence": 0.85,
-                    "reason": f"OEM authorization expires in {days_until_expiry} days ({expiry_raw}). Verify bid validity covers required period.",
+                    "evidence_source": doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"OEM authorization expires in {days_until_expiry} days ({expiry_raw}) in {doc_name}. Verify bid validity covers required period.",
                 }
 
+    if ev_ref or ev_expiry:
+        return {
+            "status": "COMPLIANT",
+            "severity": "LOW",
+            "score": 90,
+            "evidence_value": ev_ref["value"] if ev_ref else expiry_raw,
+            "evidence_doc_id": doc.get("id"),
+            "evidence_field_key": "oemReference" if ev_ref else "expiryDate",
+            "evidence_source": doc_name,
+            "evidence_available": True,
+            "confidence": conf,
+            "reason": f"OEM authorization document '{doc_name}' present with reference. Validity and signatory authority require officer confirmation.",
+        }
+
     return {
-        "status": "COMPLIANT",
-        "severity": "LOW",
-        "score": 90,
-        "evidence_value": _field_value(doc_fields, "oemReference") if isinstance(doc_fields, list) else None,
+        "status": "NEEDS_REVIEW",
+        "severity": "MEDIUM",
+        "score": 60,
+        "evidence_value": None,
         "evidence_doc_id": doc.get("id"),
-        "evidence_field_key": "oemReference",
-        "confidence": 0.75,
-        "reason": "OEM authorization document present. Validity and signatory authority require officer confirmation.",
+        "evidence_field_key": None,
+        "evidence_source": doc_name,
+        "evidence_available": False,
+        "confidence": 0.0,
+        "reason": f"OEM authorization letter '{doc_name}' uploaded but reference and validity dates could not be extracted.",
     }
 
 
 def check_blacklisting_declaration(all_fields: list[dict], documents: list[dict]) -> dict:
     """Check: Non-blacklisting / non-debarment declaration present."""
-    # Check extracted fields first
     for doc in documents:
-        doc_fields = doc.get("extracted_fields") or []
-        if isinstance(doc_fields, list):
-            declaration = _field_value(doc_fields, "blacklistingDeclaration")
-            if declaration:
-                return {
-                    "status": "COMPLIANT",
-                    "severity": "LOW",
-                    "score": 100,
-                    "evidence_value": "Non-blacklisting declaration found",
-                    "evidence_doc_id": doc.get("id"),
-                    "evidence_field_key": "blacklistingDeclaration",
-                    "confidence": 0.80,
-                    "reason": "Non-blacklisting/non-debarment declaration found in submitted document.",
-                }
+        ev = _extract_field_with_evidence(doc, "blacklistingDeclaration")
+        if ev:
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            return {
+                "status": "COMPLIANT",
+                "severity": "LOW",
+                "score": 100,
+                "evidence_value": ev["value"] or "Non-blacklisting declaration confirmed",
+                "evidence_doc_id": ev["doc_id"],
+                "evidence_field_key": "blacklistingDeclaration",
+                "evidence_source": doc_name,
+                "evidence_available": True,
+                "confidence": conf,
+                "reason": f"Non-blacklisting/non-debarment declaration verified from {doc_name} with {int(conf * 100)}% extraction confidence.",
+            }
 
-    # Check by document type
     blacklist_docs = [d for d in documents if
                       any(kw in (d.get("document_type") or "").upper()
                           for kw in ["BLACKLIST", "DEBARMENT", "DECLARATION"])]
     if blacklist_docs:
-        if blacklist_docs[0].get("ocr_status") == "FAILED":
+        doc = blacklist_docs[0]
+        doc_name = doc.get("file_name") or doc.get("document_type") or "Declaration Document"
+        if doc.get("ocr_status") == "FAILED":
             return {
                 "status": "UNVERIFIED",
                 "severity": "HIGH",
                 "score": 0,
                 "evidence_value": None,
-                "evidence_doc_id": blacklist_docs[0].get("id"),
+                "evidence_doc_id": doc.get("id"),
                 "evidence_field_key": None,
+                "evidence_source": doc_name,
+                "evidence_available": False,
                 "confidence": 0.0,
-                "reason": "Declaration document uploaded but OCR processing failed. Document remains unverified.",
+                "reason": f"Declaration document '{doc_name}' uploaded but OCR processing failed. Document remains unverified.",
             }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
             "score": 70,
             "evidence_value": None,
-            "evidence_doc_id": blacklist_docs[0].get("id"),
+            "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
-            "confidence": 0.60,
-            "reason": "Declaration document uploaded but declaration text could not be automatically extracted. Officer verification needed.",
+            "evidence_source": doc_name,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": f"Declaration document '{doc_name}' uploaded but declaration clause could not be automatically extracted. Officer verification needed.",
         }
 
     return {
@@ -472,6 +561,8 @@ def check_blacklisting_declaration(all_fields: list[dict], documents: list[dict]
         "evidence_value": None,
         "evidence_doc_id": None,
         "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
         "confidence": 0.0,
         "reason": "Non-blacklisting declaration not found. Bidder must submit a self-declaration.",
     }
@@ -481,46 +572,54 @@ def check_turnover_threshold(all_fields: list[dict], documents: list[dict],
                              threshold_value: Optional[float] = None) -> dict:
     """Check: Annual turnover meets tender threshold."""
     for doc in documents:
-        doc_fields = doc.get("extracted_fields") or []
-        if isinstance(doc_fields, list):
-            turnover = _field_value(doc_fields, "annualTurnover")
-            if turnover:
-                return {
-                    "status": "NEEDS_REVIEW",
-                    "severity": "MEDIUM",
-                    "score": 70,
-                    "evidence_value": turnover,
-                    "evidence_doc_id": doc.get("id"),
-                    "evidence_field_key": "annualTurnover",
-                    "confidence": 0.65,
-                    "reason": f"Turnover information extracted: {turnover}. Officer must verify against tender threshold.",
-                }
+        ev = _extract_field_with_evidence(doc, "annualTurnover")
+        if ev:
+            turnover = ev["value"]
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            return {
+                "status": "NEEDS_REVIEW",
+                "severity": "MEDIUM",
+                "score": 70,
+                "evidence_value": turnover,
+                "evidence_doc_id": ev["doc_id"],
+                "evidence_field_key": "annualTurnover",
+                "evidence_source": doc_name,
+                "evidence_available": True,
+                "confidence": conf,
+                "reason": f"Turnover information extracted from {doc_name}: {turnover} with {int(conf * 100)}% extraction confidence. Officer must verify against tender threshold.",
+            }
 
-    # Check for financial statements
     fin_docs = [d for d in documents if
                 any(kw in (d.get("document_type") or "").upper()
                     for kw in ["FINANCIAL", "TURNOVER", "ITR", "BALANCE", "AUDIT"])]
     if fin_docs:
-        if fin_docs[0].get("ocr_status") == "FAILED":
+        doc = fin_docs[0]
+        doc_name = doc.get("file_name") or doc.get("document_type") or "Financial Document"
+        if doc.get("ocr_status") == "FAILED":
             return {
                 "status": "UNVERIFIED",
                 "severity": "HIGH",
                 "score": 0,
                 "evidence_value": None,
-                "evidence_doc_id": fin_docs[0].get("id"),
+                "evidence_doc_id": doc.get("id"),
                 "evidence_field_key": None,
+                "evidence_source": doc_name,
+                "evidence_available": False,
                 "confidence": 0.0,
-                "reason": "Financial document uploaded but OCR processing failed. Document remains unverified.",
+                "reason": f"Financial document '{doc_name}' uploaded but OCR processing failed. Document remains unverified.",
             }
         return {
             "status": "NEEDS_REVIEW",
             "severity": "MEDIUM",
             "score": 50,
             "evidence_value": None,
-            "evidence_doc_id": fin_docs[0].get("id"),
+            "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
-            "confidence": 0.50,
-            "reason": "Financial document uploaded but turnover amount could not be extracted. Manual review required.",
+            "evidence_source": doc_name,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": f"Financial document '{doc_name}' uploaded but annual turnover figure could not be extracted. Manual review required.",
         }
 
     return {
@@ -530,6 +629,8 @@ def check_turnover_threshold(all_fields: list[dict], documents: list[dict],
         "evidence_value": None,
         "evidence_doc_id": None,
         "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
         "confidence": 0.0,
         "reason": "Annual turnover evidence not found. Upload audited financial statements or ITR.",
     }
@@ -538,46 +639,53 @@ def check_turnover_threshold(all_fields: list[dict], documents: list[dict],
 def check_local_content(all_fields: list[dict], documents: list[dict]) -> dict:
     """Check: Local content declaration present."""
     for doc in documents:
-        doc_fields = doc.get("extracted_fields") or []
-        if isinstance(doc_fields, list):
-            lc_pct = _field_value(doc_fields, "localContentPct")
-            if lc_pct:
-                pct_match = re.search(r'([\d.]+)', lc_pct)
-                if pct_match:
-                    pct_val = float(pct_match.group(1))
-                    if pct_val >= 50:
-                        classification = "Class-I Local Supplier (≥50%)"
-                        score = 100
-                    elif pct_val >= 20:
-                        classification = "Class-II Local Supplier (≥20%)"
-                        score = 80
-                    else:
-                        classification = f"Below minimum ({pct_val}%)"
-                        score = 30
-                    return {
-                        "status": "COMPLIANT" if pct_val >= 20 else "NON_COMPLIANT",
-                        "severity": "LOW" if pct_val >= 50 else ("MEDIUM" if pct_val >= 20 else "HIGH"),
-                        "score": score,
-                        "evidence_value": lc_pct,
-                        "evidence_doc_id": doc.get("id"),
-                        "evidence_field_key": "localContentPct",
-                        "confidence": 0.85,
-                        "reason": f"Local content declared at {lc_pct}. Classification: {classification}.",
-                    }
+        ev = _extract_field_with_evidence(doc, "localContentPct")
+        if ev:
+            lc_pct = ev["value"]
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            pct_match = re.search(r'([\d.]+)', lc_pct)
+            if pct_match:
+                pct_val = float(pct_match.group(1))
+                if pct_val >= 50:
+                    classification = "Class-I Local Supplier (≥50%)"
+                    score = 100
+                elif pct_val >= 20:
+                    classification = "Class-II Local Supplier (≥20%)"
+                    score = 80
+                else:
+                    classification = f"Below minimum ({pct_val}%)"
+                    score = 30
+                return {
+                    "status": "COMPLIANT" if pct_val >= 20 else "NON_COMPLIANT",
+                    "severity": "LOW" if pct_val >= 50 else ("MEDIUM" if pct_val >= 20 else "HIGH"),
+                    "score": score,
+                    "evidence_value": lc_pct,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "localContentPct",
+                    "evidence_source": doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Local content declared at {lc_pct} in {doc_name}. Classification: {classification}.",
+                }
 
     lc_docs = [d for d in documents if
                any(kw in (d.get("document_type") or "").upper()
                    for kw in ["LOCAL CONTENT", "MAKE IN INDIA", "MII", "DOMESTIC"])]
     if lc_docs:
+        doc = lc_docs[0]
+        doc_name = doc.get("file_name") or doc.get("document_type") or "Local Content Document"
         return {
             "status": "NEEDS_REVIEW",
             "severity": "LOW",
             "score": 60,
             "evidence_value": None,
-            "evidence_doc_id": lc_docs[0].get("id"),
+            "evidence_doc_id": doc.get("id"),
             "evidence_field_key": None,
-            "confidence": 0.55,
-            "reason": "Local content document uploaded. Percentage could not be extracted. Manual verification required.",
+            "evidence_source": doc_name,
+            "evidence_available": False,
+            "confidence": 0.0,
+            "reason": f"Local content document '{doc_name}' uploaded. Percentage could not be extracted. Manual verification required.",
         }
 
     return {
@@ -587,6 +695,8 @@ def check_local_content(all_fields: list[dict], documents: list[dict]) -> dict:
         "evidence_value": None,
         "evidence_doc_id": None,
         "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
         "confidence": 0.0,
         "reason": "Local content declaration not submitted. Mark as Not Applicable if item is exempted.",
     }
@@ -675,6 +785,14 @@ def run_compliance_checks(
         else:
             res_status = "NEEDS_REVIEW"
 
+        ev_avail = bool(result.get("evidence_available", False))
+        ev_src = result.get("evidence_source")
+        raw_conf = float(result.get("confidence", 0.0) or 0.0)
+
+        # Enforce rule: if no evidence available, confidence MUST be 0.0
+        if not ev_avail and status in ("PENDING", "NON_COMPLIANT", "UNVERIFIED", "NOT_APPLICABLE"):
+            raw_conf = 0.0
+
         results.append({
             "requirement_id": req.get("requirement_id"),
             "requirement_name": req.get("name"),
@@ -684,6 +802,9 @@ def run_compliance_checks(
             "result_status": res_status,
             "weight": req.get("weight", 1.0),
             **result,
+            "evidence_available": ev_avail,
+            "evidence_source": ev_src,
+            "confidence": raw_conf,
         })
 
     return results
