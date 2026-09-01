@@ -137,10 +137,11 @@ export const ProcurementDashboard: React.FC = () => {
   return (
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
       {/* ── Page Header Strip (Glossy Frosted Card Banner) ────────────────── */}
+      {/* ── Page Header Strip (Glossy Frosted Card Banner) ────────────────── */}
       <GovPageHeader
-        title="Procurement Compliance Dashboard"
-        tag="PROCUREMENT OFFICER WORKSPACE"
-        subtitle="Consolidated evaluation register of active bids, compliance scores, and statutory document status."
+        title={t('page.dashboard.title', 'Procurement Compliance Dashboard')}
+        tag={t('page.dashboard.tag', 'PROCUREMENT OFFICER WORKSPACE')}
+        subtitle={t('page.dashboard.subtitle', 'Consolidated evaluation register of active bids, compliance scores, and statutory document status.')}
         actions={
           <>
             <button
@@ -148,7 +149,7 @@ export const ProcurementDashboard: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
             >
               <ShieldAlert className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
-              <span>Integrity Workspace</span>
+              <span>{t('page.dashboard.integrityWorkspace', 'Integrity Workspace')}</span>
             </button>
 
             <button
@@ -156,7 +157,7 @@ export const ProcurementDashboard: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
             >
               <PlusCircle className="w-4 h-4 text-[#FF9933] group-hover:rotate-90 transition-transform duration-300" />
-              <span>Create Tender</span>
+              <span>{t('page.dashboard.createTender', 'Create Tender')}</span>
             </button>
 
             <button
@@ -164,7 +165,7 @@ export const ProcurementDashboard: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
             >
               <ScrollText className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
-              <span>Audit Register</span>
+              <span>{t('page.dashboard.auditRegister', 'Audit Register')}</span>
             </button>
           </>
         }
@@ -182,14 +183,14 @@ export const ProcurementDashboard: React.FC = () => {
         {/* Card 1: Active Procurements */}
         <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block">
-            ACTIVE PROCUREMENTS
+            {t('page.dashboard.activeTenders', 'Active Procurements')}
           </span>
           <div className="flex items-baseline gap-2.5 mt-3">
             <span className="text-4xl font-extrabold text-[#0F172A] font-mono leading-none tracking-tight">
               {String(activeTendersCount).padStart(2, '0')}
             </span>
             <span className="text-xs text-[#475569] font-medium">
-              Active tenders
+              {t('page.dashboard.activeTenders', 'Active tenders')}
             </span>
           </div>
         </div>
@@ -197,14 +198,14 @@ export const ProcurementDashboard: React.FC = () => {
         {/* Card 2: Pending Verification */}
         <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block">
-            PENDING VERIFICATION
+            {t('page.dashboard.underVerification', 'Pending Verification')}
           </span>
           <div className="flex items-baseline gap-2.5 mt-3">
             <span className="text-4xl font-extrabold text-[#0F172A] font-mono leading-none tracking-tight">
               {String(underVerificationCount).padStart(2, '0')}
             </span>
             <span className="text-xs text-[#475569] font-medium">
-              Bids awaiting review
+              {t('page.dashboard.underVerification', 'Bids awaiting review')}
             </span>
           </div>
         </div>
@@ -212,14 +213,14 @@ export const ProcurementDashboard: React.FC = () => {
         {/* Card 3: Integrity Reviews */}
         <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#8A2C0E] uppercase tracking-wider block">
-            INTEGRITY REVIEWS
+            {t('page.dashboard.patternAlerts', 'Integrity Reviews')}
           </span>
           <div className="flex items-baseline gap-2.5 mt-3">
             <span className="text-4xl font-extrabold text-[#8A2C0E] font-mono leading-none tracking-tight">
               {String(patternAlertsCount).padStart(2, '0')}
             </span>
             <span className="text-xs text-[#475569] font-medium">
-              Pattern alerts
+              {t('page.dashboard.patternAlerts', 'Pattern alerts')}
             </span>
           </div>
         </div>
@@ -227,14 +228,14 @@ export const ProcurementDashboard: React.FC = () => {
         {/* Card 4: Compliance Exceptions */}
         <div className="gov-glass-card rounded-lg p-5 shadow-sm hover:shadow-md hover:scale-[1.01] transition-all">
           <span className="text-[11px] font-bold text-[#DC2626] uppercase tracking-wider block">
-            COMPLIANCE EXCEPTIONS
+            {t('page.dashboard.complianceExceptions', 'Compliance Exceptions')}
           </span>
           <div className="flex items-baseline gap-2.5 mt-3">
             <span className="text-4xl font-extrabold text-[#DC2626] font-mono leading-none tracking-tight">
               {String(complianceExceptionsCount).padStart(2, '0')}
             </span>
             <span className="text-xs text-[#DC2626] font-medium">
-              Mandatory exceptions
+              {t('page.dashboard.complianceExceptions', 'Mandatory exceptions')}
             </span>
           </div>
         </div>
@@ -248,7 +249,7 @@ export const ProcurementDashboard: React.FC = () => {
           <div className="flex-1">
             <div className="flex items-center flex-wrap gap-2">
               <h2 className="font-bold text-sm text-[#991B1B]">
-                Attention Required (Actionable Procurement Queue)
+                {t('page.dashboard.actionableQueue', 'Attention Required (Actionable Procurement Queue)')}
               </h2>
               <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-[#991B1B] text-white">
                 {actionableItems.length} Cases

@@ -5,12 +5,14 @@ import { hi } from '../i18n/hi';
 type Language = 'en' | 'hi';
 type TranslationKey = keyof typeof en;
 
+export type FontSize = 'small' | 'normal' | 'large';
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: TranslationKey, fallback?: string) => string;
-  fontSize: 'normal' | 'large' | 'larger';
-  setFontSize: (size: 'normal' | 'large' | 'larger') => void;
+  fontSize: FontSize;
+  setFontSize: (size: FontSize) => void;
   highContrast: boolean;
   setHighContrast: (val: boolean) => void;
 }
@@ -24,8 +26,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return (localStorage.getItem('gov_lang') as Language) || 'en';
   });
 
-  const [fontSize, setFontSizeState] = useState<'normal' | 'large' | 'larger'>(() => {
-    return (localStorage.getItem('gov_font_size') as 'normal' | 'large' | 'larger') || 'normal';
+  const [fontSize, setFontSizeState] = useState<FontSize>(() => {
+    const saved = localStorage.getItem('gov_font_size');
+    if (saved === 'small' || saved === 'normal' || saved === 'large') return saved;
+    return 'normal';
   });
 
   const [highContrast, setHighContrastState] = useState<boolean>(() => {
@@ -38,15 +42,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     document.documentElement.lang = lang;
   };
 
-  const setFontSize = (size: 'normal' | 'large' | 'larger') => {
+  const setFontSize = (size: FontSize) => {
     setFontSizeState(size);
     localStorage.setItem('gov_font_size', size);
-    if (size === 'normal') {
+    document.documentElement.setAttribute('data-font-size', size);
+    if (size === 'small') {
+      document.documentElement.style.fontSize = '12px';
+    } else if (size === 'normal') {
       document.documentElement.style.fontSize = '14px';
     } else if (size === 'large') {
-      document.documentElement.style.fontSize = '16px';
-    } else if (size === 'larger') {
-      document.documentElement.style.fontSize = '18px';
+      document.documentElement.style.fontSize = '16.5px';
     }
   };
 
@@ -55,13 +60,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem('gov_high_contrast', String(val));
     if (val) {
       document.documentElement.classList.add('gov-high-contrast');
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
       document.documentElement.classList.remove('gov-high-contrast');
+      document.documentElement.removeAttribute('data-theme');
     }
   };
 
   useEffect(() => {
     setFontSize(fontSize);
+    setLanguage(language);
+    if (highContrast) {
+      document.documentElement.classList.add('gov-high-contrast');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
   }, []);
 
   const t = (key: TranslationKey, fallback?: string): string => {

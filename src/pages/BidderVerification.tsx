@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { CheckStatus, Requirement, useProcurement } from '../context/ProcurementContext';
+import { useLanguage } from '../context/LanguageContext';
 import { apiClient } from '../services/api/apiClient';
 
 // ─── Decision mapping: UI label → backend/DB enum ────────────────────────────
@@ -84,6 +85,7 @@ export const BidderVerification: React.FC = () => {
   const { bidderId } = useParams();
   const { bidders, decide, updateRequirement, runVerification, uploadDocument, loading } =
     useProcurement();
+  const { t } = useLanguage();
   const [liveBidder, setLiveBidder] = useState<BidderView | null>(null);
 
   useEffect(() => {
@@ -218,33 +220,32 @@ export const BidderVerification: React.FC = () => {
     // Client-side pre-validation (backend remains authoritative)
     if (!ALLOWED_TYPES.includes(file.type)) {
       showBanner('error', `File type '${file.type}' is not supported. Allowed: PDF, PNG, JPEG.`);
-      e.target.value = '';
       return;
     }
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      showBanner(
-        'error',
-        `File size (${(file.size / 1024 / 1024).toFixed(1)} MB) exceeds the ${MAX_SIZE_MB} MB limit.`
-      );
-      e.target.value = '';
+      showBanner('error', `File size exceeds the ${MAX_SIZE_MB} MB limit.`);
       return;
     }
-    setBanner(null);
     setUploadFile(file);
+    setBanner(null);
   };
 
   const handleUpload = async () => {
-    if (!bidder || !uploadFile || uploading) return;
+    if (!bidder || !uploadFile) return;
     setUploading(true);
     setBanner(null);
     try {
-      await uploadDocument(bidder.id, uploadFile.name, uploadFile, docType);
+      await uploadDocument(
+        bidder.id,
+        uploadFile.name,
+        uploadFile,
+        docType === 'auto' ? undefined : docType
+      );
       showBanner(
         'success',
-        `'${uploadFile.name}' uploaded successfully. OCR and field extraction completed.`
+        `Document '${uploadFile.name}' uploaded and processed with OCR successfully.`
       );
       setUploadFile(null);
-      setDocType('auto');
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'The document could not be saved.';
@@ -265,30 +266,30 @@ export const BidderVerification: React.FC = () => {
     if (status === 'Verified')
       return (
         <span className="gov-badge gov-badge-success">
-          [✓] Verified
+          [✓] {t('page.bidderVerification.verified', 'Verified')}
         </span>
       );
     if (status === 'Failed')
       return (
         <span className="gov-badge gov-badge-error">
-          [✕] Failed
+          [✕] {t('status.rejected', 'Failed')}
         </span>
       );
     if (status === 'Needs Review')
       return (
         <span className="gov-badge gov-badge-info">
-          [!] Review required
+          [!] {t('status.forwarded', 'Review required')}
         </span>
       );
     if (status === 'Not Applicable')
       return (
         <span className="gov-badge gov-badge-neutral">
-          Not applicable
+          {t('status.disposed', 'Not applicable')}
         </span>
       );
     return (
       <span className="gov-badge gov-badge-warning">
-        [○] Pending
+        [○] {t('status.pending', 'Pending')}
       </span>
     );
   };
@@ -298,7 +299,7 @@ export const BidderVerification: React.FC = () => {
     return (
       <div className="flex items-center gap-2 text-xs text-[#475569] py-8 font-sans">
         <RotateCw className="w-4 h-4 animate-spin text-[#0B2A4A]" />
-        <span>Loading bidder verification workspace…</span>
+        <span>{t('page.verification.loadingQueue', 'Loading bidder verification workspace…')}</span>
       </div>
     );
   }
@@ -308,6 +309,7 @@ export const BidderVerification: React.FC = () => {
     (r) => r.status === 'Failed' || r.status === 'Needs Review'
   ).length;
   const pendingCount = bidder.requirements.filter((r) => r.status === 'Pending').length;
+  const hasEvaluated = bidder.requirements && bidder.requirements.length > 0;
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -319,7 +321,7 @@ export const BidderVerification: React.FC = () => {
             to="/tenders"
             className="hover:underline text-[#0B2A4A] flex items-center gap-1.5 font-bold"
           >
-            <ArrowLeft className="w-4 h-4 text-[#0B2A4A]" /> Back to Tender Register
+            <ArrowLeft className="w-4 h-4 text-[#0B2A4A]" /> {t('page.bidderVerification.backToTender', 'Back to Tender Register')}
           </Link>
           <span>/</span>
           <span className="font-mono font-bold px-2 py-0.5 rounded bg-white/70 text-[#0B2A4A] border border-white/80">{bidder.id}</span>
@@ -332,7 +334,7 @@ export const BidderVerification: React.FC = () => {
             title="Inspect cross-tender integrity signals and relationship graphs"
           >
             <ShieldAlert className="w-3.5 h-3.5 text-[#0B2A4A]" />
-            <span>Integrity Signals</span>
+            <span>{t('page.bidderVerification.integritySignals', 'Integrity Signals')}</span>
           </Link>
           <button
             onClick={handleRunVerification}
@@ -344,7 +346,13 @@ export const BidderVerification: React.FC = () => {
             ) : (
               <Play className="w-3 h-3 fill-current" />
             )}
-            <span>{verifying ? 'Assessing Compliance...' : 'Start Compliance Verification'}</span>
+            <span>
+              {verifying
+                ? t('page.bidderVerification.assessing', 'Assessing Compliance...')
+                : hasEvaluated
+                ? t('page.bidderVerification.reEvaluate', 'Re-evaluate Compliance')
+                : t('page.bidderVerification.startVerification', 'Start Compliance Verification')}
+            </span>
           </button>
         </div>
       </div>
@@ -382,9 +390,9 @@ export const BidderVerification: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs font-bold text-[#0B2A4A] bg-white/70 px-2 py-0.5 border border-[#CBD5E1] rounded-[4px]">
-                TENDER: GEM/2026/B/418207
+                TENDER: {(bidder as any)?.tender_id || 'GEM/2026/B/418207'}
               </span>
-              <span className="text-xs text-[#64748B] font-medium">• Bidder Verification Dossier</span>
+              <span className="text-xs text-[#64748B] font-medium">• {t('page.bidderVerification.dossier', 'Bidder Verification Dossier')}</span>
             </div>
             <h1 className="font-serif font-extrabold text-xl sm:text-2xl text-[#0B2A4A] mt-1">{bidder.name}</h1>
             <p className="text-xs text-[#475569] font-medium mt-0.5">
@@ -395,7 +403,7 @@ export const BidderVerification: React.FC = () => {
           <div className="flex flex-wrap items-center border border-[#CBD5E1] divide-x divide-[#CBD5E1] bg-[#F8FAFC] rounded-[2px] text-xs">
             <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Compliance Status
+                {t('page.bidderVerification.complianceStatus', 'Compliance Status')}
               </span>
               <span
                 className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
@@ -417,7 +425,7 @@ export const BidderVerification: React.FC = () => {
             </div>
             <div className="px-3.5 py-2 text-center bg-white">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Compliance score
+                {t('page.bidderVerification.complianceScore', 'Compliance score')}
               </span>
               <strong className="text-base font-semibold text-[#0B2A4A] font-mono block mt-0.5">
                 {bidder.score}/100
@@ -425,7 +433,7 @@ export const BidderVerification: React.FC = () => {
             </div>
             <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Compliance Risk
+                {t('page.bidderVerification.complianceRisk', 'Compliance Risk')}
               </span>
               <span
                 className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
@@ -441,7 +449,7 @@ export const BidderVerification: React.FC = () => {
             </div>
             <div className="px-3 py-2 text-center bg-white">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Integrity Risk
+                {t('page.bidderVerification.integrityRisk', 'Integrity Risk')}
               </span>
               <span
                 className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
@@ -457,7 +465,7 @@ export const BidderVerification: React.FC = () => {
             </div>
             <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Officer Decision
+                {t('page.bidderVerification.officerDecision', 'Officer Decision')}
               </span>
               <span
                 className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
@@ -473,7 +481,7 @@ export const BidderVerification: React.FC = () => {
             </div>
             <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                Documents
+                {t('page.bidderVerification.documents', 'Documents')}
               </span>
               <strong className="text-xs text-[#0B2A4A] font-mono block mt-0.5">
                 {bidder.documents}
@@ -485,15 +493,14 @@ export const BidderVerification: React.FC = () => {
         {/* Evidence Subtext Strip */}
         <div className="mt-3 pt-2.5 border-t border-[#E6E9EF] text-xs text-[#475569] flex flex-wrap items-center gap-3">
           <span>
-            <strong>Assessment basis:</strong> {bidder.requirements.length} statutory requirements
-            evaluated
+            <strong>{t('page.bidderVerification.assessmentBasis', 'Assessment basis:')}</strong> {bidder.requirements.length} {t('page.bidderVerification.statutoryReqsEvaluated', 'statutory requirements evaluated')}
           </span>
           <span>•</span>
-          <span className="text-[#15803D] font-medium">{verifiedCount} verified</span>
+          <span className="text-[#15803D] font-medium">{verifiedCount} {t('page.bidderVerification.verified', 'verified')}</span>
           <span>•</span>
-          <span className="text-[#B72025] font-medium">{exceptionCount} exception(s)</span>
+          <span className="text-[#B72025] font-medium">{exceptionCount} {t('page.bidderVerification.exceptions', 'exception(s)')}</span>
           <span>•</span>
-          <span className="text-[#D97706] font-medium">{pendingCount} pending submission</span>
+          <span className="text-[#D97706] font-medium">{pendingCount} {t('page.bidderVerification.pendingSubmission', 'pending submission')}</span>
         </div>
       </section>
 
@@ -505,11 +512,10 @@ export const BidderVerification: React.FC = () => {
           <div className="bg-white border border-[#D9DDE3] rounded-[2px]">
             <div className="px-4 py-3 border-b border-[#D9DDE3]">
               <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">
-                Compliance verification matrix
+                {t('page.bidderVerification.matrixTitle', 'Compliance verification matrix')}
               </h2>
               <p className="text-[11px] text-[#475569]">
-                Evaluated criteria, extracted evidence from submitted documents, and officer review
-                state.
+                {t('page.bidderVerification.matrixSubtitle', 'Evaluated criteria, extracted evidence from submitted documents, and officer review state.')}
               </p>
             </div>
 
@@ -517,11 +523,11 @@ export const BidderVerification: React.FC = () => {
               <table className="gov-table">
                 <thead>
                   <tr>
-                    <th>Requirement</th>
-                    <th>Category</th>
-                    <th>Extracted evidence</th>
-                    <th>Status</th>
-                    <th className="text-right">Action</th>
+                    <th>{t('page.bidderVerification.thRequirement', 'Requirement')}</th>
+                    <th>{t('page.bidderVerification.thCategory', 'Category')}</th>
+                    <th>{t('page.bidderVerification.thEvidence', 'Extracted evidence')}</th>
+                    <th>{t('page.bidderVerification.thStatus', 'Status')}</th>
+                    <th className="text-right">{t('page.bidderVerification.thAction', 'Action')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -568,7 +574,7 @@ export const BidderVerification: React.FC = () => {
                             }
                             className="text-xs text-[#0B2A4A] font-semibold hover:underline inline-flex items-center gap-0.5 cursor-pointer"
                           >
-                            {expandedRequirement === req.id ? 'Hide details' : 'View evidence'}
+                            {expandedRequirement === req.id ? t('page.bidderVerification.hideDetails', 'Hide details') : t('page.bidderVerification.viewEvidence', 'View evidence')}
                             {expandedRequirement === req.id ? (
                               <ChevronUp className="w-3 h-3" />
                             ) : (
@@ -585,19 +591,19 @@ export const BidderVerification: React.FC = () => {
                             <div className="bg-white p-3 border border-[#CBD2DE] rounded-[2px] text-xs space-y-2">
                               <div className="flex items-center justify-between border-b border-[#E6E9EF] pb-1.5">
                                 <span className="font-bold text-[#0B2A4A]">
-                                  Evidence audit trail:
+                                  {t('page.bidderVerification.evidenceAuditTrail', 'Evidence audit trail:')}
                                 </span>
-                                <span className="text-[11px] text-[#475569] font-mono">
-                                  Rule: STATUTORY_VALIDATION_ACTIVE
+                                <span className="text-[11px] text-[#475569] font-mono font-semibold">
+                                  Rule: RULE_{req.id.toUpperCase().replace(/-/g, '_')}
                                 </span>
                               </div>
                               <p className="text-[#334155] leading-relaxed text-[11px]">
-                                <strong>Detailed finding:</strong> {req.note}
+                                <strong>{t('page.bidderVerification.detailedFinding', 'Detailed finding:')}</strong> {req.note}
                               </p>
                               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
                                 <div>
                                   <span className="text-[#475569] block text-[10px]">
-                                    Source document:
+                                    {t('page.bidderVerification.sourceDocument', 'Source document:')}
                                   </span>
                                   <strong className="text-[#202124]">
                                     {req.evidenceSource || (req.evidenceAvailable ? req.evidence : 'No document submitted')}
@@ -605,15 +611,15 @@ export const BidderVerification: React.FC = () => {
                                 </div>
                                 <div>
                                   <span className="text-[#475569] block text-[10px]">
-                                    Extraction method:
+                                    {t('page.bidderVerification.extractionMethod', 'Extraction method:')}
                                   </span>
                                   <strong className="text-[#202124]">
-                                    {req.evidenceAvailable ? 'PyMuPDF + Regex Parser' : 'None (No document / unextracted)'}
+                                    {req.evidenceAvailable ? 'PyMuPDF + Deterministic Rule Engine' : 'None (No document / unextracted)'}
                                   </strong>
                                 </div>
                                 <div>
                                   <span className="text-[#475569] block text-[10px]">
-                                    Confidence level:
+                                    {t('page.bidderVerification.confidenceLevel', 'Confidence level:')}
                                   </span>
                                   {req.confidence !== undefined && req.confidence > 0 ? (
                                     <strong className={req.confidence >= 0.8 ? "text-[#15803D]" : "text-[#D97706]"}>
@@ -628,7 +634,7 @@ export const BidderVerification: React.FC = () => {
                               </div>
                               <div className="pt-2 flex items-center justify-between border-t border-[#E6E9EF]">
                                 <span className="text-[11px] text-[#475569]">
-                                  Manual officer override:
+                                  {t('page.bidderVerification.manualOverride', 'Manual officer override:')}
                                 </span>
                                 <select
                                   value={req.status}
@@ -664,10 +670,9 @@ export const BidderVerification: React.FC = () => {
             <div className="px-4 py-3 border-b border-[#D9DDE3] flex items-center gap-2">
               <FileText className="w-4 h-4 text-[#0B2A4A] shrink-0" />
               <div>
-                <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">Upload document</h2>
+                <h2 className="font-serif font-bold text-sm text-[#0B2A4A]">{t('page.bidderVerification.uploadDocTitle', 'Upload document')}</h2>
                 <p className="text-[11px] text-[#475569]">
-                  Attach a supporting document for this bidder. OCR and field extraction run
-                  automatically.
+                  {t('page.bidderVerification.uploadDocSubtitle', 'Attach a supporting document for this bidder. OCR and field extraction run automatically.')}
                 </p>
               </div>
             </div>
@@ -694,7 +699,7 @@ export const BidderVerification: React.FC = () => {
                   }`}
                 >
                   <Paperclip className="w-3.5 h-3.5" />
-                  Choose file
+                  {t('page.bidderVerification.chooseFile', 'Choose file')}
                 </label>
 
                 {/* Selected file pill */}
@@ -712,7 +717,7 @@ export const BidderVerification: React.FC = () => {
                     </button>
                   </span>
                 ) : (
-                  <span className="text-[11px] text-[#94A3B8] italic">No file selected</span>
+                  <span className="text-[11px] text-[#94A3B8] italic">{t('page.bidderVerification.noFileChosen', 'No file selected')}</span>
                 )}
               </div>
 
@@ -751,12 +756,12 @@ export const BidderVerification: React.FC = () => {
                   {uploading ? (
                     <>
                       <RotateCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Uploading...</span>
+                      <span>{t('page.bidderVerification.uploading', 'Uploading...')}</span>
                     </>
                   ) : (
                     <>
                       <Upload className="w-3.5 h-3.5" />
-                      <span>Upload</span>
+                      <span>{t('page.bidderVerification.uploadBtn', 'Upload & Extract')}</span>
                     </>
                   )}
                 </button>
@@ -776,7 +781,7 @@ export const BidderVerification: React.FC = () => {
               <div className="px-4 py-2.5 bg-[#FFF1F2] border-b border-[#FCA5A5] flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-[#B72025]" />
                 <h2 className="font-serif font-bold text-xs uppercase tracking-wide text-[#991B1B]">
-                  Cross-document inconsistencies &amp; discrepancies ({bidder.discrepancies.length})
+                  {t('page.bidderVerification.discrepanciesTitle', 'Cross-document inconsistencies & discrepancies')} ({bidder.discrepancies.length})
                 </h2>
               </div>
 
@@ -819,7 +824,7 @@ export const BidderVerification: React.FC = () => {
           <section className="bg-white border border-[#D9DDE3] p-4 rounded-[2px]">
             <h2 className="font-serif font-bold text-xs text-[#0B2A4A] uppercase tracking-wide flex items-center gap-1.5 border-b border-[#E6E9EF] pb-2">
               <Info className="w-3.5 h-3.5 text-[#0B2A4A]" />
-              Officer recommendations
+              {t('page.integrity.recommendedAction', 'Officer recommendations')}
             </h2>
 
             <ul className="mt-3 space-y-2 text-xs text-[#334155]">
@@ -843,10 +848,10 @@ export const BidderVerification: React.FC = () => {
           {/* Officer Decision Box */}
           <section className="bg-white border border-[#D9DDE3] p-4 rounded-[2px]">
             <h2 className="font-serif font-bold text-xs text-[#0B2A4A] uppercase tracking-wide border-b border-[#E6E9EF] pb-2">
-              Procurement officer review &amp; decision
+              {t('page.bidderVerification.officerDecisionTitle', 'Procurement officer review & decision')}
             </h2>
             <p className="text-[11px] text-[#475569] mt-1.5">
-              Record official administrative action for this participating bidder.
+              {t('page.bidderVerification.officerDecisionSubtitle', 'Record official administrative action for this participating bidder.')}
             </p>
 
             {bidder.officer_decision && (
@@ -863,7 +868,7 @@ export const BidderVerification: React.FC = () => {
             ) : null}
 
             <label className="block text-xs font-semibold text-[#202124] mt-3 mb-1">
-              Review findings &amp; rationale
+              {t('page.bidderVerification.officerNote', 'Review findings & rationale')}
             </label>
             <textarea
               value={note}

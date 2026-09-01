@@ -63,35 +63,38 @@ export const GovTopStrip: React.FC = () => {
           <span className="text-gray-500">|</span>
 
           {/* Font Resizing Controls */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1" role="group" aria-label="Font Size Controls">
             <button
-              onClick={() => setFontSize('normal')}
-              title="Standard Font Size"
+              onClick={() => setFontSize('small')}
+              title="Decrease Font Size (A-)"
+              aria-label="Decrease Font Size"
               className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] cursor-pointer transition-colors ${
-                fontSize === 'normal'
-                  ? 'bg-white text-[#4A154B] font-bold'
+                fontSize === 'small'
+                  ? 'bg-white text-[#4A154B] font-bold shadow-xs'
                   : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               A-
             </button>
             <button
-              onClick={() => setFontSize('large')}
-              title="Large Font Size"
+              onClick={() => setFontSize('normal')}
+              title="Default Font Size (A)"
+              aria-label="Default Font Size"
               className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] cursor-pointer transition-colors ${
-                fontSize === 'large'
-                  ? 'bg-white text-[#4A154B] font-bold'
+                fontSize === 'normal'
+                  ? 'bg-white text-[#4A154B] font-bold shadow-xs'
                   : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >
               A
             </button>
             <button
-              onClick={() => setFontSize('larger')}
-              title="Extra Large Font Size"
+              onClick={() => setFontSize('large')}
+              title="Increase Font Size (A+)"
+              aria-label="Increase Font Size"
               className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[11px] cursor-pointer transition-colors ${
-                fontSize === 'larger'
-                  ? 'bg-white text-[#4A154B] font-bold'
+                fontSize === 'large'
+                  ? 'bg-white text-[#4A154B] font-bold shadow-xs'
                   : 'text-gray-300 hover:text-white hover:bg-white/10'
               }`}
             >

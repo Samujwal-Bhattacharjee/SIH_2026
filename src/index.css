@@ -150,9 +150,26 @@
   --ux4g-border-neutral-subtle: #1E293B !important;
 }
 
-/* ── Base ─────────────────────────────────────────────────────────────────── */
+/* ── Base & Global Font Scaling (UX4G Standard) ────────────────────────── */
 html { font-size: 14px; }
 @media (min-width: 1536px) { html { font-size: 14px; } }
+
+html[data-font-size="small"] {
+  font-size: 12px !important;
+}
+
+html[data-font-size="normal"] {
+  font-size: 14px !important;
+}
+
+html[data-font-size="large"] {
+  font-size: 16.5px !important;
+}
+
+/* High Contrast Accessibility Mode */
+html.gov-high-contrast {
+  filter: contrast(110%);
+}
 
 body {
   background-color: var(--ux4g-bg-neutral-default);
@@ -161,6 +178,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
+  transition: font-size 0.15s ease-out;
 }
 
 /* ── Focus ring — WCAG 2.1 AA ────────────────────────────────────────────── */

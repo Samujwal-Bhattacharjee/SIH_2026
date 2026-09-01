@@ -13,10 +13,12 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
+import { useLanguage } from '../context/LanguageContext';
 import { GovPageHeader } from '../components/common/GovPageHeader';
 
 export const Tenders: React.FC = () => {
   const { bidders, addTender, addBidder, error } = useProcurement();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
@@ -68,16 +70,16 @@ export const Tenders: React.FC = () => {
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
       {/* ── Page Header Strip ────────────────────────────────────────────── */}
       <GovPageHeader
-        title="Tender Compliance Workspace"
+        title={t('page.tenders.title', 'Procurement Tenders')}
         tag="TENDER SPECIFICATION & ENROLLMENT"
-        subtitle="Define tender criteria, enroll participating bidders, and initiate document verification workflows."
+        subtitle={t('page.tenders.subtitle', 'Active government procurement files, statutory compliance status, and registered bidders.')}
         actions={
           <Link
             to="/documents"
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all"
           >
             <Upload className="w-4 h-4 text-white" />
-            <span>Upload Bidder Documents</span>
+            <span>{t('action.uploadDoc', 'Upload Bidder Documents')}</span>
           </Link>
         }
       />

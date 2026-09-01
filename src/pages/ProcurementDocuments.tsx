@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
+import { useLanguage } from '../context/LanguageContext';
 import { GovPageHeader } from '../components/common/GovPageHeader';
 
 interface ExtractedField {
@@ -25,6 +26,7 @@ interface ExtractedField {
 
 export const ProcurementDocuments: React.FC = () => {
   const { bidders, uploadDocument, documents, error } = useProcurement();
+  const { t } = useLanguage();
   // bidderId is null until real bidders arrive from backend — never assume 'BID-001'
   const [bidderId, setBidderId] = useState<string | null>(null);
 
@@ -120,9 +122,9 @@ export const ProcurementDocuments: React.FC = () => {
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
       {/* ── Page Header & Status Pills Strip (Glossy Frosted Banner) ─── */}
       <GovPageHeader
-        title="Document Verification & OCR Intelligence"
+        title={t('page.documents.title', 'Document Verification & OCR Intelligence')}
         tag="EVIDENCE EXTRACTION & OCR"
-        subtitle="Upload bidder documents and review extracted evidence before compliance assessment."
+        subtitle={t('landing.feature3', 'Upload bidder documents and review extracted evidence before compliance assessment.')}
         actions={
           <div className="flex items-center flex-wrap gap-2 text-xs">
             <span className="px-3 py-1 bg-white/80 text-[#6D28D9] border border-[#E9D5FF] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
