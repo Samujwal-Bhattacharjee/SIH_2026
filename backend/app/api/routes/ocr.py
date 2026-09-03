@@ -27,10 +27,13 @@ async def process_ocr(
     """
     file_bytes = await file.read()
 
+    filename = file.filename or "uploaded_document"
+    content_type = file.content_type or "application/octet-stream"
+
     # Validate file
     error = document_service.validate_file(
-        filename=file.filename,
-        content_type=file.content_type,
+        filename=filename,
+        content_type=content_type,
         file_size=len(file_bytes),
     )
     if error:
@@ -39,8 +42,8 @@ async def process_ocr(
     try:
         result = document_service.process_ocr_from_bytes(
             file_bytes=file_bytes,
-            filename=file.filename,
-            content_type=file.content_type,
+            filename=filename,
+            content_type=content_type,
         )
         return result
     except Exception as e:

@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies / Build output
 node_modules
 dist
 dist-ssr
@@ -29,14 +30,21 @@ secrets.json
 credentials.json
 service_account*.json
 
-
 # Python
+**/__pycache__/
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Python virtual environments
+**/.venv/
+**/venv/
+backend/.venv/
+.venv/
+venv/
 
 # Editor directories and files
 .vscode/*

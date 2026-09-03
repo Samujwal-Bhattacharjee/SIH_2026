@@ -23,6 +23,7 @@ import os
 import sys
 import json
 import logging
+from typing import Any
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -156,12 +157,13 @@ def train():
     # Step 6: Evaluate — DO NOT hardcode these values
     # ============================================================
     y_pred = clf.predict(X_test)
-    y_proba = clf.predict_proba(X_test)[:, 1]
+    proba: Any = clf.predict_proba(X_test)
+    y_proba = proba[:, 1]
 
     accuracy  = float(accuracy_score(y_test, y_pred))
-    precision = float(precision_score(y_test, y_pred, zero_division=0))
-    recall    = float(recall_score(y_test, y_pred, zero_division=0))
-    f1        = float(f1_score(y_test, y_pred, zero_division=0))
+    precision = float(precision_score(y_test, y_pred, zero_division="warn"))
+    recall    = float(recall_score(y_test, y_pred, zero_division="warn"))
+    f1        = float(f1_score(y_test, y_pred, zero_division="warn"))
     roc_auc   = float(roc_auc_score(y_test, y_proba))
 
     metrics = {

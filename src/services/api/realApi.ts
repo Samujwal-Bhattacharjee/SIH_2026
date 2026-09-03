@@ -471,7 +471,7 @@ export const realApi = {
     async getTender(id: string): Promise<any> {
       return request<any>(`/api/v1/procurement/tenders/${id}`);
     },
-    async createTender(tender: { title: string; department?: string; estimated_value?: number }): Promise<any> {
+    async createTender(tender: { title: string; department?: string; estimated_value?: number; bid_closing_date?: string; description?: string }): Promise<any> {
       return request<any>('/api/v1/procurement/tenders', {
         method: 'POST',
         body: JSON.stringify(tender),

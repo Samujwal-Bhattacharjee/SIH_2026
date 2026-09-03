@@ -4,7 +4,9 @@ export interface SystemAlert {
   id: string;
   title: string;
   message: string;
-  type: 'CRITICAL' | 'WARNING' | 'INFO';
+  type: 'CRITICAL' | 'WARNING' | 'INFO' | 'SUCCESS' | 'ERROR' | 'NEW_TENDER' | 'NEW_BIDDER' | 'DOCUMENT_UPLOADED' | 'OCR_COMPLETED' | 'COMPLIANCE_ALERT' | 'REVIEW_REQUIRED';
+  severity?: string;
+  relatedEntityId?: string;
   timestamp: string;
   link?: string;
   read: boolean;
@@ -18,6 +20,8 @@ interface SystemContextType {
   alerts: SystemAlert[];
   unreadAlertCount: number;
   markAlertAsRead: (id: string) => void;
+  markAllAlertsAsRead: () => void;
+  addAlert: (alert: Omit<SystemAlert, 'id' | 'read' | 'timestamp'>) => void;
   isStatusDrawerOpen: boolean;
   setIsStatusDrawerOpen: (open: boolean) => void;
   systemSubsystems: {
@@ -63,7 +67,15 @@ const SystemContext = createContext<SystemContextType | undefined>(undefined);
 export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isStatusDrawerOpen, setIsStatusDrawerOpen] = useState(false);
-  const [alerts, setAlerts] = useState<SystemAlert[]>(INITIAL_ALERTS);
+  
+  const [alerts, setAlerts] = useState<SystemAlert[]>(() => {
+    const saved = localStorage.getItem('system-alerts');
+    return saved ? JSON.parse(saved) : INITIAL_ALERTS;
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem('system-alerts', JSON.stringify(alerts)); } catch { /* ignore */ }
+  }, [alerts]);
 
   // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
@@ -72,13 +84,10 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         e.preventDefault();
         setIsSearchOpen((prev) => !prev);
       }
-      if (e.key === 'Escape' && isSearchOpen) {
-        setIsSearchOpen(false);
-      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSearchOpen]);
+  }, []);
 
   const openSearch = () => setIsSearchOpen(true);
   const closeSearch = () => setIsSearchOpen(false);
@@ -87,6 +96,20 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setAlerts((prev) =>
       prev.map((a) => (a.id === id ? { ...a, read: true } : a))
     );
+  };
+
+  const markAllAlertsAsRead = () => {
+    setAlerts((prev) => prev.map((a) => ({ ...a, read: true })));
+  };
+
+  const addAlert = (newAlert: Omit<SystemAlert, 'id' | 'read' | 'timestamp'>) => {
+    const alert: SystemAlert = {
+      ...newAlert,
+      id: `alt-${Date.now()}`,
+      read: false,
+      timestamp: 'Just now'
+    };
+    setAlerts((prev) => [alert, ...prev]);
   };
 
   const unreadAlertCount = alerts.filter((a) => !a.read).length;
@@ -134,6 +157,8 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         alerts,
         unreadAlertCount,
         markAlertAsRead,
+        markAllAlertsAsRead,
+        addAlert,
         isStatusDrawerOpen,
         setIsStatusDrawerOpen,
         systemSubsystems,

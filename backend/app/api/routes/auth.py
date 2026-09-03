@@ -3,6 +3,7 @@ Authentication routes.
 Delegates to Supabase Auth for actual credential verification.
 """
 import logging
+from typing import Any
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from app.core.database import get_supabase, get_supabase_anon
@@ -128,7 +129,7 @@ async def login(request_body: LoginRequest):
 
     supabase_user = None
     access_token = ""
-    profile = None
+    profile: dict[str, Any] = {}
 
     try:
         auth_response = supabase_auth.auth.sign_in_with_password({
@@ -148,7 +149,7 @@ async def login(request_body: LoginRequest):
             if not profile_result or not getattr(profile_result, "data", None):
                 profile = _create_default_profile(supabase, supabase_user)
             else:
-                profile = profile_result.data
+                profile = profile_result.data if isinstance(profile_result.data, dict) else {}
     except Exception as e:
         logger.info(f"Supabase auth check note for {request_body.email}: {e}")
 
@@ -176,14 +177,16 @@ async def login(request_body: LoginRequest):
         }
 
     expiry = (datetime.now(timezone.utc) + timedelta(hours=8)).isoformat()
+    p_id = str(profile.get("id") or f"USR-{abs(hash(request_body.email)) % 90000 + 10000}")
+    p_email = str(profile.get("email") or request_body.email)
     user_out = UserOut(
-        id=profile["id"],
-        email=profile["email"],
-        name=profile.get("name", request_body.email.split("@")[0].title()),
-        role=profile.get("role", "OPERATIONS_OFFICER"),
-        department=profile.get("department", "Department of Administrative Reforms"),
-        designation=profile.get("designation", "Procurement Officer"),
-        badgeNumber=profile.get("badge_number", f"GOI-{profile['id'][:8].upper()}"),
+        id=p_id,
+        email=p_email,
+        name=str(profile.get("name") or request_body.email.split("@")[0].title()),
+        role=str(profile.get("role") or "OPERATIONS_OFFICER"),
+        department=str(profile.get("department") or "Department of Administrative Reforms"),
+        designation=str(profile.get("designation") or "Procurement Officer"),
+        badgeNumber=str(profile.get("badge_number") or f"GOI-{p_id[:8].upper()}"),
         sessionExpiry=expiry,
     )
 

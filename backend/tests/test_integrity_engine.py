@@ -1075,6 +1075,7 @@ def test_v2_losing_bid_cover_pattern():
     assert f.signal_type == SignalType.LOSING_BID_PATTERN
     assert f.bidder_id == "BID-RUNNER"
     assert "runner-up" in f.title.lower()
+    assert f.rule_reference is not None
     assert f.rule_reference.clause_id == "GEM-GTC-CL19"
 
 
@@ -1097,6 +1098,7 @@ def test_v2_non_competition_pattern():
     findings = analyze_non_competition_pattern(bidders, [{"id": f"HT-{i}"} for i in range(5)], tender_id="TEN-NC-01")
     assert len(findings) == 1
     assert findings[0].signal_type == SignalType.NON_COMPETITION_PATTERN
+    assert findings[0].rule_reference is not None
     assert findings[0].rule_reference.clause_id == "GFR-2017-R173-XX"
 
 
@@ -1113,6 +1115,7 @@ def test_v2_common_directors_link():
     assert f.signal_type == SignalType.COMMON_DIRECTOR_LINK
     assert f.severity == RiskLevel.HIGH
     assert "Vikramaditya Rao" in f.evidence[0].value
+    assert f.rule_reference is not None
     assert f.rule_reference.clause_id == "MCA-COMP-2013"
 
 
@@ -1135,6 +1138,7 @@ def test_v2_officer_vendor_association_present_and_absent():
     assert "S. K. Verma" in f.title
     assert "Conflict-of-Interest" in f.title or "Administrative Association" in f.title
     assert "corrupt" not in f.reason.lower()
+    assert f.rule_reference is not None
     assert f.rule_reference.clause_id == "GFR-2017-R175"
 
     # 2. Absent (no decided_by / created_by fields) -> gracefully empty
@@ -1159,6 +1163,7 @@ def test_v2_narrow_competition_pattern():
     findings = analyze_narrow_competition(bidders, lab_tenders, tender_id="TEN-LAB-CURR", category="Specialized Lab")
     assert len(findings) == 1
     assert findings[0].signal_type == SignalType.NARROW_COMPETITION
+    assert findings[0].rule_reference is not None
     assert findings[0].rule_reference.clause_id == "GFR-2017-R173-XVIII"
 
 
@@ -1177,6 +1182,7 @@ def test_v2_commercial_boq_anomaly():
     findings = analyze_commercial_boq_patterns([b1, b2], tender_id="TEN-BOQ-01")
     assert len(findings) == 1
     assert findings[0].signal_type == SignalType.COMMERCIAL_BOQ_ANOMALY
+    assert findings[0].rule_reference is not None
     assert findings[0].rule_reference.clause_id == "GFR-2017-R173-BOQ"
 
 
@@ -1190,6 +1196,7 @@ def test_v2_submission_timing_anomaly():
     findings = analyze_submission_timing([b1, b2], tender_id="TEN-TIME-01")
     assert len(findings) == 1
     assert findings[0].signal_type == SignalType.SUBMISSION_TIMING_ANOMALY
+    assert findings[0].rule_reference is not None
     assert findings[0].rule_reference.clause_id == "GEM-GTC-SUB"
 
 
@@ -1205,6 +1212,7 @@ def test_v2_document_identity_cross_contamination():
     f = findings[0]
     assert f.signal_type == SignalType.DOCUMENT_IDENTITY_INCONSISTENCY
     assert f.severity == RiskLevel.HIGH
+    assert f.rule_reference is not None
     assert f.rule_reference.clause_id == "GEM-GTC-DOC"
 
 

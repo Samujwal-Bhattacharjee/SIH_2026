@@ -29,6 +29,48 @@ async def lifespan(app: FastAPI):
     logger.info(f"Debug mode: {settings.DEBUG}")
     logger.info(f"CORS origins: {settings.cors_origins_list}")
 
+    # ================================================================
+    # SESSION-EPHEMERAL RESET (DEMO_SESSION_MODE)
+    # When enabled, the procurement SQLite database is deleted and
+    # re-seeded from the pristine deterministic baseline on EVERY
+    # startup.  This is the primary correctness guarantee — it works
+    # even if the previous session ended with kill -9.
+    # Only the local SQLite file is affected; Supabase Postgres is
+    # never touched.
+    # ================================================================
+    if settings.DEMO_SESSION_MODE:
+        logger.info("DEMO_SESSION_MODE is ENABLED — resetting procurement database to pristine baseline.")
+        try:
+            from app.core.procurement_store import reset_session_db
+            reset_session_db(enabled=True)
+            logger.info("DEMO_SESSION_MODE: Procurement database successfully reset to baseline.")
+        except Exception as e:
+            logger.error(f"DEMO_SESSION_MODE: Database reset failed — {e}", exc_info=True)
+            raise RuntimeError(f"Cannot start in DEMO_SESSION_MODE: DB reset failed: {e}") from e
+
+        # Best-effort: clear session-uploaded files from Supabase Storage.
+        # Baseline seed documents are metadata-only in SQLite; no real bytes
+        # live in the bucket from the baseline, so clearing is safe.
+        try:
+            from app.core.database import get_supabase
+            from app.core.config import settings as _s
+            sb = get_supabase()
+            bucket = _s.SUPABASE_STORAGE_BUCKET
+            objects = sb.storage.from_(bucket).list()
+            if objects:
+                paths = [o["name"] for o in objects if isinstance(o, dict) and o.get("name")]
+                if paths:
+                    sb.storage.from_(bucket).remove(paths)
+                    logger.info(f"DEMO_SESSION_MODE: Cleared {len(paths)} session-uploaded file(s) from storage bucket '{bucket}'.")
+                else:
+                    logger.info(f"DEMO_SESSION_MODE: Storage bucket '{bucket}' is already empty.")
+            else:
+                logger.info(f"DEMO_SESSION_MODE: Storage bucket '{bucket}' is already empty.")
+        except Exception as e:
+            logger.warning(f"DEMO_SESSION_MODE: Could not clear storage bucket (non-fatal): {e}")
+    else:
+        logger.info("DEMO_SESSION_MODE is DISABLED — procurement database state persists across restarts (production mode).")
+
     # Ensure Supabase Storage bucket exists so document uploads never fail
     try:
         from app.core.database import get_supabase
@@ -54,6 +96,7 @@ async def lifespan(app: FastAPI):
 
     yield
     logger.info("Shutting down GOIP backend")
+
 
 
 

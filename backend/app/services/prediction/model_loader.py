@@ -60,8 +60,10 @@ def get_metrics() -> Dict:
     if os.path.exists(_METRICS_PATH):
         try:
             with open(_METRICS_PATH) as f:
-                _metrics = json.load(f)
-            return _metrics
+                data = json.load(f)
+            if isinstance(data, dict):
+                _metrics = data
+                return _metrics
         except Exception:
             pass
 
@@ -77,8 +79,10 @@ def get_feature_importance() -> Dict:
     if os.path.exists(_FEATURE_IMPORTANCE_PATH):
         try:
             with open(_FEATURE_IMPORTANCE_PATH) as f:
-                _feature_importance = json.load(f)
-            return _feature_importance
+                data = json.load(f)
+            if isinstance(data, dict):
+                _feature_importance = data
+                return _feature_importance
         except Exception:
             pass
 

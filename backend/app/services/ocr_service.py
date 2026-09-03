@@ -28,7 +28,7 @@ def extract_text_from_pdf_digital(file_bytes: bytes) -> str:
     Fast and accurate for machine-generated PDFs.
     """
     try:
-        import fitz  # PyMuPDF
+        import pymupdf as fitz
         doc = fitz.open(stream=file_bytes, filetype="pdf")
         text_parts = []
         for page in doc:
@@ -81,7 +81,7 @@ def extract_text_from_pdf_ocr(file_bytes: bytes) -> tuple[str, float]:
     Used when PyMuPDF yields insufficient text (scanned PDFs).
     """
     try:
-        import fitz
+        import pymupdf as fitz
         doc = fitz.open(stream=file_bytes, filetype="pdf")
         all_text = []
         all_confidences = []
@@ -279,17 +279,28 @@ def extract_fields_from_text(text: str) -> list[dict]:
             "isExtracted": True,
         })
 
-    # --- Land Acquisition Domain Field Extraction (SIH26017) ---
+    # --- FairBid Petroleum Dealership Extraction ---
     try:
-        from app.services.land_document_extractor import extract_la_fields, fields_to_ocr_list
-        la_dict = extract_la_fields(text)
-        la_fields_list = fields_to_ocr_list(la_dict)
-        existing_keys = {f["key"] for f in fields}
-        for la_f in la_fields_list:
-            if la_f["key"] not in existing_keys:
-                fields.append(la_f)
+        from app.services.fairbid_extractor import is_fairbid_document, extract_fairbid_canonical
+        if is_fairbid_document(text):
+            canonical = extract_fairbid_canonical(text)
+            return canonical.get("extracted_fields", [])
     except Exception as e:
-        logger.warning(f"LA field extraction error: {e}")
+        logger.warning(f"FairBid extractor note: {e}")
+
+    # --- Land Acquisition Domain Field Extraction (SIH26017) ---
+    # Only run on explicit Land Acquisition documents to avoid polluting other records
+    if re.search(r'\b(?:Land\s+Acquisition|RFCTLARR|Notification\s+u/s|Section\s+11|Survey\s+No)\b', text, re.IGNORECASE):
+        try:
+            from app.services.land_document_extractor import extract_la_fields, fields_to_ocr_list
+            la_dict = extract_la_fields(text)
+            la_fields_list = fields_to_ocr_list(la_dict)
+            existing_keys = {f["key"] for f in fields}
+            for la_f in la_fields_list:
+                if la_f["key"] not in existing_keys:
+                    fields.append(la_f)
+        except Exception as e:
+            logger.warning(f"LA field extraction error: {e}")
 
     # --- Procurement / Bid Compliance Field Extraction (SIH26100) ---
     existing_keys = {f["key"] for f in fields}
@@ -325,10 +336,10 @@ def extract_procurement_fields(text: str) -> list[dict]:
     fields = []
 
     # -----------------------------------------------
-    # GSTIN — 15-char alphanumeric: 2 digits + 10 PAN + 1 + Z + 1
+    # GSTIN — 15-char alphanumeric or FairBid synthetic
     # -----------------------------------------------
     gstin_match = re.search(
-        r'\b([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})\b',
+        r'\b(FAIRBID-GSTIN-[A-Z0-9\-]+|[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})\b',
         text,
         re.IGNORECASE
     )
@@ -342,16 +353,15 @@ def extract_procurement_fields(text: str) -> list[dict]:
         })
 
     # -----------------------------------------------
-    # PAN — 10-char: 5 letters + 4 digits + 1 letter
-    # Avoid matching inside GSTIN (char 3-12)
+    # PAN — 10-char or FairBid synthetic
+    # Avoid matching inside GSTIN
     # -----------------------------------------------
     pan_match = re.search(
-        r'(?<![0-9])\b([A-Z]{5}[0-9]{4}[A-Z]{1})\b(?![0-9A-Z])',
+        r'(?<![0-9])\b(FAIRBID-PAN-[A-Z0-9\-]+|[A-Z]{5}[0-9]{4}[A-Z]{1})\b(?![0-9A-Z])',
         text,
         re.IGNORECASE
     )
     if pan_match:
-        # Make sure it's not the PAN embedded inside a GSTIN we already found
         pan_val = pan_match.group(1).upper()
         gstin_val = next((f["value"] for f in fields if f["key"] == "gstin"), "")
         if pan_val not in gstin_val:
@@ -365,10 +375,9 @@ def extract_procurement_fields(text: str) -> list[dict]:
 
     # -----------------------------------------------
     # Udyam Registration Number
-    # Format: UDYAM-XX-YY-NNNNNNN
     # -----------------------------------------------
     udyam_match = re.search(
-        r'\b(UDYAM[-\s][A-Z]{2}[-\s][0-9]{2}[-\s][0-9]{7})\b',
+        r'\b(FAIRBID-UDYAM-[A-Z0-9\-]+|UDYAM[-\s][A-Z]{2}[-\s][0-9]{2}[-\s][0-9]{7})\b',
         text,
         re.IGNORECASE
     )
@@ -383,10 +392,9 @@ def extract_procurement_fields(text: str) -> list[dict]:
 
     # -----------------------------------------------
     # CIN — Corporate Identity Number
-    # Format: U/L + 5 digits + 2 letters + 4 digits + 3 letters + 6 digits
     # -----------------------------------------------
     cin_match = re.search(
-        r'\b([UL][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})\b',
+        r'\b(FAIRBID-CIN-[A-Z0-9\-]+|[UL][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})\b',
         text,
         re.IGNORECASE
     )
@@ -401,23 +409,24 @@ def extract_procurement_fields(text: str) -> list[dict]:
 
     # -----------------------------------------------
     # Legal / Company Name
-    # Looks for common certificate header patterns
+    # Stops at line boundary or header labels (prevents "IOCL STATE")
     # -----------------------------------------------
     company_patterns = [
-        r'(?:This\s+is\s+to\s+certify\s+that|Registered\s+to|Name\s+of\s+(?:Enterprise|Applicant|Company|Firm|Business))\s*[:\-]?\s*\n?\s*([A-Z][A-Za-z\s&\.\,\(\)]{3,80}(?:Pvt\.?|Private|Ltd\.?|Limited|LLP|Technologies|Solutions|Enterprises|Industries|Services|Systems|Associates)?[A-Za-z\s\.]*)',
-        r'(?:M/s\.?|Messrs\.?)\s+([A-Z][A-Za-z\s&\.\,\(\)]{3,80})',
-        r'(?:Name|Company|Firm)\s*[:\-]\s*([A-Z][A-Za-z\s&\.\,\(\)]{5,80})',
+        r'(?:This\s+is\s+to\s+certify\s+that|Registered\s+to|Name\s+of\s+(?:Enterprise|Applicant|Company|Firm|Business))\s*[:\-]?\s*\n?\s*([A-Z][A-Za-z0-9\s&\.\,\(\)]{3,80}?(?:Pvt\.?|Private|Ltd\.?|Limited|LLP|Technologies|Solutions|Enterprises|Industries|Services|Systems|Associates)?)',
+        r'(?:M/s\.?|Messrs\.?)\s+([A-Z][A-Za-z0-9\s&\.\,\(\)]{3,80})',
+        r'(?:Name|Company|Firm)\s*[:\-]\s*([A-Z][A-Za-z0-9\s&\.\,\(\)]{5,80})',
     ]
     for pat in company_patterns:
-        m = re.search(pat, text, re.IGNORECASE | re.MULTILINE)
+        m = re.search(pat, text, re.IGNORECASE)
         if m:
-            name_val = m.group(1).strip().rstrip(".,;:")
+            raw_val = m.group(1).strip()
+            name_val = re.split(r'[\n\r]+|\b(?:STATE|DISTRICT|LOCATION|ROAD)\b', raw_val)[0].strip().rstrip(".,;:")
             if len(name_val) >= 5 and len(name_val) <= 120:
                 fields.append({
                     "key": "legalName",
                     "label": "Legal / Company Name",
                     "value": name_val,
-                    "confidence": 0.75,
+                    "confidence": 0.85,
                     "isExtracted": True,
                 })
                 break
@@ -462,11 +471,10 @@ def extract_procurement_fields(text: str) -> list[dict]:
             break
 
     # -----------------------------------------------
-    # Annual Turnover
+    # Annual Turnover — Requires explicit Turnover label
     # -----------------------------------------------
     turnover_patterns = [
         r'(?:Annual\s+Turnover|Total\s+Turnover|Net\s+Turnover|Gross\s+Turnover)\s*[:\-]?\s*(?:Rs\.?|INR|₹)?\s*([\d,]+(?:\.\d+)?)\s*(?:Lakh|Crore|Cr\.?|L\.?|lakhs?|crores?)?',
-        r'(?:Rs\.?|INR|₹)\s*([\d,]+(?:\.\d+)?)\s*(?:Lakh|Crore|Cr\.?|L\.?)',
     ]
     for pat in turnover_patterns:
         m = re.search(pat, text, re.IGNORECASE)
@@ -476,7 +484,7 @@ def extract_procurement_fields(text: str) -> list[dict]:
                 "key": "annualTurnover",
                 "label": "Annual Turnover",
                 "value": raw_val[:100],
-                "confidence": 0.72,
+                "confidence": 0.80,
                 "isExtracted": True,
             })
             break
@@ -499,12 +507,11 @@ def extract_procurement_fields(text: str) -> list[dict]:
         })
 
     # -----------------------------------------------
-    # OEM Authorization Reference
+    # OEM Authorization Reference (Explicit OEM/MAF only, NEVER generic Ref)
     # -----------------------------------------------
     oem_patterns = [
         r'(?:OEM\s+Auth(?:orization|orisation)?(?:\s+Letter)?(?:\s+Ref(?:erence)?(?:\s+No\.?)?)?|MAF\s+(?:No\.?|Reference))[:\-\s]*([A-Z0-9\/\-\.]{4,40})',
         r'(?:Manufacturer\s+Authorization)\s*(?:No\.?|Number|Ref\.?)[:\-\s]*([A-Z0-9\/\-\.]{4,40})',
-        r'Ref(?:erence)?(?:\s+No\.?)?[:\-\s]+([A-Z0-9\/\-]{5,30})',
     ]
     for pat in oem_patterns:
         m = re.search(pat, text, re.IGNORECASE)
@@ -513,7 +520,7 @@ def extract_procurement_fields(text: str) -> list[dict]:
                 "key": "oemReference",
                 "label": "OEM Authorization Reference",
                 "value": m.group(1).strip(),
-                "confidence": 0.78,
+                "confidence": 0.85,
                 "isExtracted": True,
             })
             break
@@ -598,6 +605,7 @@ def extract_procurement_fields(text: str) -> list[dict]:
 
 DOCUMENT_TYPE_RULES = [
     # (regex pattern, document_type, priority)
+    (r'\bRetail\s+Outlet\s+Dealership\b|\bPetroleum\s+dealership\b|\bFB-[A-Z0-9\-]+\b', "Retail Outlet Dealership / Bid Compliance Simulation", 20),
     (r'\bGSTIN\b|\bGST\s+Registration\b|\bGoods\s+and\s+Services\s+Tax\b', "GST Certificate", 10),
     (r'\bPermanent\s+Account\s+Number\b|\bPAN\s+Card\b|\bIncome\s+Tax\s+Department.*\bPAN\b', "PAN Card", 10),
     (r'\bUdyam\s+Registration\b|\bUDYAM[-\s]', "Udyam/MSME Certificate", 10),
@@ -627,6 +635,8 @@ def classify_document_type(text: str, filename: str = "") -> str:
     if not text:
         # Fallback: try filename-based classification
         filename_lower = filename.lower()
+        if "fairbid" in filename_lower or "dealership" in filename_lower:
+            return "Retail Outlet Dealership / Bid Compliance Simulation"
         if "gst" in filename_lower:
             return "GST Certificate"
         if "pan" in filename_lower:
@@ -640,6 +650,13 @@ def classify_document_type(text: str, filename: str = "") -> str:
         if "itr" in filename_lower or "income_tax" in filename_lower:
             return "Income Tax / ITR"
         return "Other"
+
+    try:
+        from app.services.fairbid_extractor import is_fairbid_document
+        if is_fairbid_document(text):
+            return "Retail Outlet Dealership / Bid Compliance Simulation"
+    except Exception:
+        pass
 
     # Score each candidate type
     best_type = "Other"

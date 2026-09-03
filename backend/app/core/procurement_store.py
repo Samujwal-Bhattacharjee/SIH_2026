@@ -68,8 +68,15 @@ def rows_to_list(rows: List[sqlite3.Row]) -> List[Dict[str, Any]]:
     return result
 
 
-def init_db():
-    """Create all procurement tables if they do not exist, and seed baseline data."""
+def init_db(_force_seed: bool = False):
+    """
+    Create all procurement tables if they do not exist, and seed baseline data.
+
+    Args:
+        _force_seed: When True, always run seed_initial_data() regardless of
+                     whether the tenders table is already populated. Used by
+                     reset_session_db() after deleting the database file.
+    """
     with get_db() as conn:
         conn.executescript("""
         CREATE TABLE IF NOT EXISTS tenders (
@@ -271,7 +278,7 @@ def init_db():
         cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM tenders")
         count_row = cur.fetchone()
-        if count_row and count_row[0] == 0:
+        if _force_seed or (count_row and count_row[0] == 0):
             seed_initial_data(conn)
 
 
@@ -291,6 +298,60 @@ def reset_and_seed_procurement_data() -> Dict[str, int]:
     with get_db() as conn:
         from app.services.integrity.synthetic_history import seed_synthetic_procurement_history
         return seed_synthetic_procurement_history(conn)
+
+
+def reset_session_db(db_path: Optional[str] = None, *, enabled: bool = True) -> None:
+    """
+    SESSION-EPHEMERAL RESET — Core startup routine for DEMO_SESSION_MODE.
+
+    Deletes the SQLite procurement database file and recreates it from the
+    pristine deterministic baseline seed.  Every backend startup in
+    DEMO_SESSION_MODE calls this so that ALL session-created data
+    (tenders, bidders, documents, compliance results, audit events,
+    integrity reviews) disappears on restart.
+
+    Safety guarantees:
+    - Only touches the local SQLite file — Supabase Postgres is never modified.
+    - The pristine seed (synthetic_history.py) is read-only input; it is never
+      mutated by this function.
+    - Source code, migrations, and configuration files are never touched.
+    - When ``enabled`` is False (i.e. DEMO_SESSION_MODE=false in production),
+      this function is a strict no-op — it neither deletes nor modifies anything.
+
+    Args:
+        db_path:  Path to the SQLite file. Defaults to the standard DB_PATH.
+                  Override in tests to use a temp directory.
+        enabled:  Pass ``settings.DEMO_SESSION_MODE``. When False, this
+                  function does nothing (production safety guard).
+    """
+    if not enabled:
+        logger.info("reset_session_db: DEMO_SESSION_MODE is disabled — skipping ephemeral reset (production mode).")
+        return
+
+    # global must be declared before first use of DB_PATH in this function scope
+    global DB_PATH
+    target = db_path or DB_PATH
+
+    # ── 1. Delete the existing runtime database ──────────────────────────────
+    if os.path.exists(target):
+        try:
+            os.remove(target)
+            logger.info(f"reset_session_db: Deleted runtime database at '{target}'.")
+        except OSError as exc:
+            logger.error(f"reset_session_db: Could not delete '{target}': {exc}")
+            raise
+    else:
+        logger.info(f"reset_session_db: No existing database at '{target}' — starting fresh.")
+
+    # ── 2. Recreate schema + seed baseline ──────────────────────────────────
+    # Temporarily swap DB_PATH so init_db() targets the correct file.
+    _original_path = DB_PATH
+    try:
+        DB_PATH = target
+        init_db(_force_seed=True)
+        logger.info("reset_session_db: Procurement database reset to pristine baseline.")
+    finally:
+        DB_PATH = _original_path
 
 
 # ============================================================

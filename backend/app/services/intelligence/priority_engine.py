@@ -88,11 +88,8 @@ def compute_case_intelligence(
         current_stage=current_stage,
     )
 
-    now_iso = (
-        normalize_to_date(current_date).isoformat()
-        if current_date
-        else datetime.now(timezone.utc).isoformat()
-    )
+    c_date = normalize_to_date(current_date) if current_date else None
+    now_iso = c_date.isoformat() if c_date else datetime.now(timezone.utc).isoformat()
 
     return CaseIntelligenceResult(
         case_id=case_id,
@@ -270,14 +267,11 @@ def aggregate_dashboard_intelligence(
     primary_stage = None
     primary_count = 0
     if stage_bottleneck_counts:
-        primary_stage = max(stage_bottleneck_counts, key=stage_bottleneck_counts.get)
+        primary_stage = max(stage_bottleneck_counts, key=lambda k: stage_bottleneck_counts.get(k, 0))
         primary_count = stage_bottleneck_counts[primary_stage]
 
-    now_iso = (
-        normalize_to_date(current_date).isoformat()
-        if current_date
-        else datetime.now(timezone.utc).isoformat()
-    )
+    c_date = normalize_to_date(current_date) if current_date else None
+    now_iso = c_date.isoformat() if c_date else datetime.now(timezone.utc).isoformat()
 
     return DashboardIntelligenceSummary(
         total_cases=total,

@@ -3,6 +3,7 @@ Security utilities: JWT verification, password handling, and auth dependencies.
 Uses Supabase JWT validation — no separate JWT library setup needed.
 """
 import logging
+from typing import Any
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -89,7 +90,7 @@ async def get_current_user_id(
             detail="Authentication credentials are required",
         )
     payload = decode_supabase_jwt(credentials.credentials)
-    user_id: str = payload.get("sub")
+    user_id = str(payload.get("sub") or "")
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -112,7 +113,7 @@ async def get_current_user(
             detail="Authentication credentials are required",
         )
     payload = decode_supabase_jwt(credentials.credentials)
-    user_id: str = payload.get("sub")
+    user_id = str(payload.get("sub") or "")
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -122,8 +123,9 @@ async def get_current_user(
     supabase = get_supabase()
     try:
         result = supabase.table("users").select("*").eq("id", user_id).maybe_single().execute()
-        if result and getattr(result, "data", None):
-            return result.data
+        u_data: Any = getattr(result, "data", None)
+        if result and isinstance(u_data, dict):
+            return u_data
     except Exception as e:
         logger.debug(f"User profile lookup from table failed for {user_id}: {e}")
 

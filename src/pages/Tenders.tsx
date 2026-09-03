@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -11,42 +11,194 @@ import {
   ChevronRight,
   CheckCircle2,
   Calendar,
+  ChevronDown,
+  Loader2,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
 import { useLanguage } from '../context/LanguageContext';
 import { GovPageHeader } from '../components/common/GovPageHeader';
+import { useSystem } from '../context/SystemContext';
+
+const DEPARTMENTS = [
+  'Public Works Department (PWD)',
+  'Highways and Minor Ports Department',
+  'Rural Development and Panchayat Raj Department',
+  'Municipal Administration and Water Supply Department',
+  'Health and Family Welfare Department',
+  'School Education Department',
+  'Higher Education Department',
+  'Energy Department',
+  'Transport Department',
+  'Industries, Investment Promotion and Commerce Department',
+  'Information Technology and Digital Services Department',
+  'Revenue and Disaster Management Department',
+  'Finance Department',
+  'Housing and Urban Development Department',
+  'Environment, Climate Change and Forests Department',
+  'Agriculture and Farmers Welfare Department',
+  'Animal Husbandry, Dairying, Fisheries and Fishermen Welfare Department',
+  'Cooperation, Food and Consumer Protection Department',
+  'Commercial Taxes and Registration Department',
+  'Social Welfare and Women Empowerment Department',
+  'Labour Welfare and Skill Development Department',
+  'Handlooms, Handicrafts, Textiles and Khadi Department',
+  'Tourism Department',
+  'Tamil Nadu e-Governance Agency (TNeGA)',
+  'Chennai Metropolitan Water Supply and Sewerage Board',
+  'Tamil Nadu Generation and Distribution Corporation Limited (TANGEDCO)',
+  'Tamil Nadu Civil Supplies Corporation',
+  'Chennai Metropolitan Development Authority',
+  'Tamil Nadu Road Development Company',
+  'Department of Administrative Reforms',
+  'Department of Information Technology',
+  'Other Government / PSU Organisation',
+];
 
 export const Tenders: React.FC = () => {
-  const { bidders, addTender, addBidder, error } = useProcurement();
+  const { bidders, activeTenders, isLiveDatabase, addTender, addBidder, error } = useProcurement();
+  const { addAlert } = useSystem();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
+  const [activeTenderIndex, setActiveTenderIndex] = useState(0);
+  const [fadeTender, setFadeTender] = useState(true);
+
+  // Rotate active tenders every 4.5 seconds if multiple exist
+  useEffect(() => {
+    if (activeTenders.length <= 1) return;
+    const interval = setInterval(() => {
+      setFadeTender(false);
+      setTimeout(() => {
+        setActiveTenderIndex((prev) => (prev + 1) % activeTenders.length);
+        setFadeTender(true);
+      }, 200);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [activeTenders.length]);
+
+  const safeIndex = activeTenderIndex < activeTenders.length ? activeTenderIndex : 0;
+  const currentTender = activeTenders[safeIndex] || {
+    tender_number: 'GEM/2026/B/418207',
+    title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
+    department: 'Department of Administrative Reforms',
+    bid_closing_date: '2026-08-30',
+    estimated_value: 45000000.0,
+  };
+
   const [title, setTitle] = useState('');
-  const [department, setDepartment] = useState('Department of Administrative Reforms');
-  const [closingDate, setClosingDate] = useState('2026-08-30');
+  const [department, setDepartment] = useState('');
+  const [deptSearch, setDeptSearch] = useState('');
+  const [isDeptOpen, setIsDeptOpen] = useState(false);
+  const [closingDate, setClosingDate] = useState('');
   const [bidderName, setBidderName] = useState('');
   const [bidderGstin, setBidderGstin] = useState('');
   const [bidderPan, setBidderPan] = useState('');
   const [filterSearch, setFilterSearch] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
+  // Form validation errors
+  const [tenderErrors, setTenderErrors] = useState<{ title?: string; department?: string; closingDate?: string }>({});
+  const [bidderErrors, setBidderErrors] = useState<{ name?: string }>({});
+
+  // Loading / success states
+  const [tenderLoading, setTenderLoading] = useState(false);
+  const [tenderSuccess, setTenderSuccess] = useState(false);
+  const [bidderLoading, setBidderLoading] = useState(false);
+  const [bidderSuccess, setBidderSuccess] = useState(false);
+
+  const deptRef = useRef<HTMLDivElement>(null);
+
+  // Close dept dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (deptRef.current && !deptRef.current.contains(e.target as Node)) {
+        setIsDeptOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const filteredDepts = DEPARTMENTS.filter((d) =>
+    d.toLowerCase().includes(deptSearch.toLowerCase())
+  );
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const validateTender = () => {
+    const errs: typeof tenderErrors = {};
+    if (!title.trim()) errs.title = 'Tender title is required.';
+    if (!department) errs.department = 'Please select a department.';
+    if (!closingDate) errs.closingDate = 'Bid closing date is required.';
+    else if (closingDate < today) errs.closingDate = 'Closing date must be a future date.';
+    setTenderErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const validateBidder = () => {
+    const errs: typeof bidderErrors = {};
+    if (!bidderName.trim()) errs.name = 'Bidder legal name is required.';
+    setBidderErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const submitTender = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (title.trim()) {
-      await addTender(title.trim());
-      setStatusMessage(`Tender record created: "${title.trim()}".`);
+    if (!validateTender() || tenderLoading || tenderSuccess) return;
+    setTenderLoading(true);
+    try {
+      const tenderTitle = title.trim();
+      await addTender(tenderTitle, department, closingDate);
+      setActiveTenderIndex(0);
+      addAlert({
+        type: 'NEW_TENDER',
+        title: 'New Tender Registered',
+        message: `"${tenderTitle}" — ${department} registered a new tender.`,
+        link: '/tenders',
+        severity: 'LOW',
+        relatedEntityId: tenderTitle,
+      });
+      setTenderSuccess(true);
+      setStatusMessage(`Tender record created: "${tenderTitle}".`);
       setTitle('');
+      setDepartment('');
+      setDeptSearch('');
+      setClosingDate('');
+      setTenderErrors({});
+      setTimeout(() => setTenderSuccess(false), 2500);
+    } catch {
+      // error is handled by ProcurementContext and shown via error prop
+    } finally {
+      setTenderLoading(false);
     }
   };
 
   const submitBidder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (bidderName.trim()) {
-      await addBidder(bidderName.trim(), bidderGstin.trim() || undefined, bidderPan.trim() || undefined);
-      setStatusMessage(`Participating bidder enrolled: "${bidderName.trim()}".`);
+    if (!validateBidder() || bidderLoading || bidderSuccess) return;
+    setBidderLoading(true);
+    const name = bidderName.trim();
+    try {
+      await addBidder(name, bidderGstin.trim() || undefined, bidderPan.trim() || undefined);
+      addAlert({
+        type: 'NEW_BIDDER',
+        title: 'New Bidder Registered',
+        message: `New participating bidder "${name}" added.`,
+        link: '/verification',
+        severity: 'LOW',
+        relatedEntityId: name,
+      });
+      setBidderSuccess(true);
+      setStatusMessage(`Participating bidder enrolled: "${name}".`);
       setBidderName('');
       setBidderGstin('');
       setBidderPan('');
+      setBidderErrors({});
+      setTimeout(() => setBidderSuccess(false), 2500);
+    } catch {
+      // error is handled by ProcurementContext
+    } finally {
+      setBidderLoading(false);
     }
   };
 
@@ -76,7 +228,7 @@ export const Tenders: React.FC = () => {
         actions={
           <Link
             to="/documents"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E0854] hover:bg-[#1E053A] text-white rounded-[4px] text-xs font-semibold shadow-xs gov-btn-glossy transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer"
           >
             <Upload className="w-4 h-4 text-white" />
             <span>{t('page.tenders.uploadBidderDocs', 'Upload Bidder Documents')}</span>
@@ -92,7 +244,7 @@ export const Tenders: React.FC = () => {
           </div>
           <button
             onClick={() => setStatusMessage(null)}
-            className="text-[#15803D] underline cursor-pointer text-xs font-semibold"
+            className="text-[#15803D] underline cursor-pointer text-xs font-semibold hover:text-[#166534] transition-colors"
           >
             Dismiss
           </button>
@@ -106,35 +258,66 @@ export const Tenders: React.FC = () => {
         </div>
       )}
 
-      {/* ── Active Tender Specification Card ──────────────────────────────── */}
+      {/* ── Active Tender Specification Card (Cycling / Rotating) ─────────── */}
       <section className="bg-white border border-[#E5E7EB] rounded-[4px] p-5 shadow-2xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
+          <div className={`transition-opacity duration-200 ${fadeTender ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono text-xs font-bold text-[#0F172A]">
-                GEM/2026/B/418207
+                {currentTender.tender_number}
               </span>
               <span className="px-2.5 py-0.5 bg-[#EDE9FE] text-[#6D28D9] rounded-full text-[11px] font-semibold">
                 {t('page.tenders.activeTenderBadge', 'Active tender')}
               </span>
+              <span className="px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded text-[10px] font-medium border border-[#E2E8F0]">
+                {isLiveDatabase ? 'Live database record' : 'Sample records'}
+              </span>
+              {activeTenders.length > 1 && (
+                <span className="text-[11px] font-mono font-semibold text-[#475569] ml-1">
+                  {safeIndex + 1} / {activeTenders.length}
+                </span>
+              )}
             </div>
 
             <h2 className="font-serif font-bold text-base sm:text-lg text-[#0F172A] mt-2 leading-snug">
-              Supply and Installation of Network Infrastructure for Government Administrative Offices
+              {currentTender.title}
             </h2>
 
             <p className="text-xs text-[#64748B] mt-1">
-              Department of Administrative Reforms • Bid closing: 30 Aug 2026 • Estimated value: ₹4,50,00,000
+              {currentTender.department} • Bid closing: {currentTender.bid_closing_date || '30 Aug 2026'}
+              {currentTender.estimated_value ? ` • Estimated value: ₹${Number(currentTender.estimated_value).toLocaleString('en-IN')}` : ''}
             </p>
           </div>
 
-          <Link
-            to="/documents"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] shrink-0 transition-colors"
-          >
-            <Upload className="w-4 h-4 text-[#0F172A]" />
-            <span>{t('page.tenders.uploadBidderDocs', 'Upload bidder documents')}</span>
-          </Link>
+          <div className="flex items-center gap-3 shrink-0">
+            {activeTenders.length > 1 && (
+              <div className="flex items-center gap-1.5" aria-label="Tender carousel navigation">
+                {activeTenders.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setFadeTender(false);
+                      setTimeout(() => {
+                        setActiveTenderIndex(i);
+                        setFadeTender(true);
+                      }, 150);
+                    }}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                      i === safeIndex ? 'bg-[#2E0854] w-5' : 'bg-gray-300 hover:bg-gray-400 w-2'
+                    }`}
+                    aria-label={`View tender ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+            <Link
+              to="/documents"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] transition-colors group px-3 py-1.5 rounded-[4px] hover:bg-gray-100"
+            >
+              <Upload className="w-4 h-4 text-[#0F172A] group-hover:text-[#2E0854] transition-colors" />
+              <span>{t('page.tenders.uploadBidderDocs', 'Upload bidder documents')}</span>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -184,52 +367,131 @@ export const Tenders: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={submitTender} className="mt-4 space-y-4 text-xs">
+          <form onSubmit={submitTender} className="mt-4 space-y-4 text-xs" noValidate>
             <div>
-              <label className="block font-semibold text-[#0F172A] mb-1">
+              <label className="block font-semibold text-[#0F172A] mb-1" htmlFor="tender-title">
                 {t('page.tenders.tenderTitleLabel', 'Tender title *')}
               </label>
               <input
+                id="tender-title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => { setTitle(e.target.value); if (tenderErrors.title) setTenderErrors((prev) => ({ ...prev, title: undefined })); }}
                 placeholder={t('page.tenders.tenderTitlePlaceholder', 'Enter procurement tender title')}
-                className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                className={`w-full bg-[#F8FAFC] border rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2E0854]/20 focus:border-[#2E0854] transition-colors ${tenderErrors.title ? 'border-[#DC2626]' : 'border-[#CBD5E1]'}`}
               />
+              {tenderErrors.title && <p className="text-[#DC2626] text-[11px] mt-1">{tenderErrors.title}</p>}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Department searchable dropdown */}
               <div>
-                <label className="block font-semibold text-[#0F172A] mb-1">
+                <label className="block font-semibold text-[#0F172A] mb-1" htmlFor="dept-search">
                   {t('page.tenders.departmentLabel', 'Department *')}
                 </label>
-                <input
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
-                />
+                <div className="relative" ref={deptRef}>
+                  <button
+                    type="button"
+                    id="dept-trigger"
+                    aria-haspopup="listbox"
+                    aria-expanded={isDeptOpen}
+                    onClick={() => setIsDeptOpen((p) => !p)}
+                    className={`w-full bg-[#F8FAFC] border rounded-[2px] px-3 py-2 text-xs text-left flex items-center justify-between gap-2 focus:outline-none focus:ring-2 focus:ring-[#2E0854]/20 focus:border-[#2E0854] transition-colors cursor-pointer ${tenderErrors.department ? 'border-[#DC2626]' : 'border-[#CBD5E1]'}`}
+                  >
+                    <span className={department ? 'text-[#0F172A]' : 'text-[#94A3B8]'}>
+                      {department || 'Select department…'}
+                    </span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-[#64748B] shrink-0 transition-transform duration-200 ${isDeptOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {isDeptOpen && (
+                    <div
+                      className="absolute z-30 top-full left-0 right-0 mt-0.5 bg-white border border-[#CBD5E1] rounded-[2px] shadow-lg overflow-hidden"
+                      role="listbox"
+                      aria-label="Department"
+                    >
+                      {/* Search within dropdown */}
+                      <div className="p-2 border-b border-[#E5E7EB]">
+                        <div className="relative">
+                          <Search className="w-3 h-3 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                          <input
+                            id="dept-search"
+                            autoFocus
+                            value={deptSearch}
+                            onChange={(e) => setDeptSearch(e.target.value)}
+                            placeholder="Search departments…"
+                            className="w-full pl-7 pr-2 py-1.5 text-xs bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] focus:outline-none focus:border-[#2E0854] transition-colors"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Escape') setIsDeptOpen(false);
+                              if (e.key === 'Enter' && filteredDepts.length === 1) {
+                                setDepartment(filteredDepts[0]);
+                                setDeptSearch('');
+                                setIsDeptOpen(false);
+                                if (tenderErrors.department) setTenderErrors((prev) => ({ ...prev, department: undefined }));
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <ul className="max-h-48 overflow-y-auto py-1">
+                        {filteredDepts.length > 0 ? filteredDepts.map((dept) => (
+                          <li
+                            key={dept}
+                            role="option"
+                            aria-selected={department === dept}
+                            onClick={() => {
+                              setDepartment(dept);
+                              setDeptSearch('');
+                              setIsDeptOpen(false);
+                              if (tenderErrors.department) setTenderErrors((prev) => ({ ...prev, department: undefined }));
+                            }}
+                            className={`px-3 py-1.5 text-xs cursor-pointer flex items-center justify-between gap-2 hover:bg-[#F3E8FF] transition-colors ${department === dept ? 'bg-[#F3E8FF] text-[#2E0854] font-semibold' : 'text-[#0F172A]'}`}
+                          >
+                            <span className="leading-snug">{dept}</span>
+                            {department === dept && <Check className="w-3 h-3 text-[#2E0854] shrink-0" />}
+                          </li>
+                        )) : (
+                          <li className="px-3 py-3 text-xs text-[#64748B] text-center">No departments match</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                {tenderErrors.department && <p className="text-[#DC2626] text-[11px] mt-1">{tenderErrors.department}</p>}
               </div>
 
               <div>
-                <label className="block font-semibold text-[#0F172A] mb-1">
+                <label className="block font-semibold text-[#0F172A] mb-1" htmlFor="closing-date">
                   {t('page.tenders.closingDateLabel', 'Bid closing date *')}
                 </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    value={closingDate}
-                    onChange={(e) => setClosingDate(e.target.value)}
-                    className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
-                  />
-                </div>
+                <input
+                  id="closing-date"
+                  type="date"
+                  min={today}
+                  value={closingDate}
+                  onChange={(e) => { setClosingDate(e.target.value); if (tenderErrors.closingDate) setTenderErrors((prev) => ({ ...prev, closingDate: undefined })); }}
+                  className={`w-full bg-white border rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2E0854]/20 focus:border-[#2E0854] transition-colors ${tenderErrors.closingDate ? 'border-[#DC2626]' : 'border-[#CBD5E1]'}`}
+                />
+                {tenderErrors.closingDate && <p className="text-[#DC2626] text-[11px] mt-1">{tenderErrors.closingDate}</p>}
               </div>
             </div>
 
             <div className="pt-2">
               <button
                 type="submit"
-                className="text-xs font-semibold text-[#0F172A] hover:text-[#2E0854] cursor-pointer"
+                disabled={tenderLoading || tenderSuccess}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-[2px] text-xs font-semibold transition-all duration-150 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2E0854]/30 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-xs ${
+                  tenderSuccess
+                    ? 'bg-[#15803D] text-white border border-[#15803D]'
+                    : 'bg-[#2E0854] hover:bg-[#1E053A] text-white border border-[#2E0854]'
+                }`}
               >
-                {t('page.tenders.createRecordBtn', 'Create tender record')}
+                {tenderLoading ? (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Creating Tender…</>
+                ) : tenderSuccess ? (
+                  <><CheckCircle2 className="w-3.5 h-3.5" /> Tender Created</>
+                ) : (
+                  t('page.tenders.createRecordBtn', 'Create tender record')
+                )}
               </button>
             </div>
           </form>
@@ -249,41 +511,45 @@ export const Tenders: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={submitBidder} className="mt-4 space-y-4 text-xs">
+          <form onSubmit={submitBidder} className="mt-4 space-y-4 text-xs" noValidate>
             <div>
-              <label className="block font-semibold text-[#0F172A] mb-1">
+              <label className="block font-semibold text-[#0F172A] mb-1" htmlFor="bidder-name">
                 {t('page.tenders.bidderNameLabel', 'Bidder legal name *')}
               </label>
               <input
+                id="bidder-name"
                 value={bidderName}
-                onChange={(e) => setBidderName(e.target.value)}
+                onChange={(e) => { setBidderName(e.target.value); if (bidderErrors.name) setBidderErrors({}); }}
                 placeholder={t('page.tenders.bidderNamePlaceholder', 'Enter legal business entity name')}
-                className="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                className={`w-full bg-[#F8FAFC] border rounded-[2px] px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2E0854]/20 focus:border-[#2E0854] transition-colors ${bidderErrors.name ? 'border-[#DC2626]' : 'border-[#CBD5E1]'}`}
               />
+              {bidderErrors.name && <p className="text-[#DC2626] text-[11px] mt-1">{bidderErrors.name}</p>}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block font-semibold text-[#0F172A] mb-1">
+                <label className="block font-semibold text-[#0F172A] mb-1" htmlFor="bidder-gstin">
                   {t('page.tenders.gstinLabel', 'GSTIN (15 characters)')}
                 </label>
                 <input
+                  id="bidder-gstin"
                   value={bidderGstin}
                   onChange={(e) => setBidderGstin(e.target.value)}
                   placeholder="27AABCT4180Q1ZV"
-                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] font-mono focus:outline-none focus:border-[#2E0854]"
+                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] font-mono focus:outline-none focus:ring-2 focus:ring-[#2E0854]/20 focus:border-[#2E0854] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[#0F172A] mb-1">
+                <label className="block font-semibold text-[#0F172A] mb-1" htmlFor="bidder-pan">
                   {t('page.tenders.panLabel', 'PAN (10 characters)')}
                 </label>
                 <input
+                  id="bidder-pan"
                   value={bidderPan}
                   onChange={(e) => setBidderPan(e.target.value)}
                   placeholder="AABCT4180Q"
-                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] font-mono focus:outline-none focus:border-[#2E0854]"
+                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] px-3 py-2 text-xs text-[#0F172A] font-mono focus:outline-none focus:ring-2 focus:ring-[#2E0854]/20 focus:border-[#2E0854] transition-colors"
                 />
               </div>
             </div>
@@ -291,9 +557,20 @@ export const Tenders: React.FC = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-[#0B1536] hover:bg-[#1E053A] text-white rounded-[2px] text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+                disabled={bidderLoading || bidderSuccess}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-[2px] text-xs font-semibold transition-all duration-150 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0B1536]/30 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-xs ${
+                  bidderSuccess
+                    ? 'bg-[#15803D] text-white border border-[#15803D]'
+                    : 'bg-[#0B1536] hover:bg-[#1E053A] text-white border border-[#0B1536]'
+                }`}
               >
-                {t('page.tenders.enrollBidderBtn', 'Enroll participating bidder')}
+                {bidderLoading ? (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Enrolling…</>
+                ) : bidderSuccess ? (
+                  <><CheckCircle2 className="w-3.5 h-3.5" /> Bidder Enrolled</>
+                ) : (
+                  t('page.tenders.enrollBidderBtn', 'Enroll participating bidder')
+                )}
               </button>
             </div>
           </form>
@@ -319,7 +596,7 @@ export const Tenders: React.FC = () => {
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
               placeholder={t('page.tenders.searchBidderPlaceholder', 'Search enrolled bidder by name or ID...')}
-              className="w-full bg-white border border-[#CBD5E1] rounded-[4px] pl-8 pr-3 py-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+              className="w-full bg-white border border-[#CBD5E1] rounded-[4px] pl-8 pr-3 py-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854] focus:ring-2 focus:ring-[#2E0854]/15 transition-colors"
             />
           </div>
         </div>
@@ -399,7 +676,7 @@ export const Tenders: React.FC = () => {
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <Link
                         to={`/verification/${b.id}`}
-                        className="text-xs font-semibold text-[#2E0854] hover:underline inline-flex items-center gap-0.5"
+                        className="inline-flex items-center gap-0.5 text-xs font-semibold text-[#2E0854] hover:text-[#1E053A] hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-[#2E0854]/30 rounded-[2px]"
                       >
                         <span>{t('page.hub.verifyBidder', 'Open assessment')}</span>
                         <ChevronRight className="w-3.5 h-3.5" />

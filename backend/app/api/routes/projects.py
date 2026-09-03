@@ -130,11 +130,13 @@ async def list_projects(
         )
 
     result = query.order("created_at", desc=True).execute()
-    rows = result.data or []
+    rows: list[Any] = result.data or []
 
     # Enrich each with ML prediction and map to frontend format
     projects = []
     for r in rows:
+        if not isinstance(r, dict):
+            continue
         enriched_row = _enrich_project_with_ml(r)
         # Apply risk_level filter if specified
         if risk_level and risk_level != "ALL":
@@ -240,12 +242,13 @@ async def create_project(
     db_row["model_version"] = pred["model_version"]
 
     res = supabase.table("cases").insert(db_row).execute()
-    if not res.data:
+    res_data: Any = res.data
+    if not res_data or not isinstance(res_data, list):
         raise HTTPException(status_code=500, detail="Failed to create project")
 
     # Initial stage movement
     supabase.table("case_movements").insert({
-        "case_id": res.data[0]["id"],
+        "case_id": res_data[0]["id"],
         "from_stage": None,
         "to_stage": db_row["current_stage"],
         "assigned_to": db_row["assigned_officer"],
@@ -254,7 +257,7 @@ async def create_project(
         "status": "IN_PROGRESS",
     }).execute()
 
-    return case_service._map_db_case_to_frontend(res.data[0])
+    return case_service._map_db_case_to_frontend(res_data[0])
 
 
 # ============================================================
@@ -275,17 +278,19 @@ async def update_project(
     updates["updated_at"] = datetime.now(timezone.utc).isoformat()
 
     # Re-evaluate ML prediction on updated state
-    merged = {**existing.data, **updates}
+    exist_dict = existing.data if isinstance(existing.data, dict) else {}
+    merged = {**exist_dict, **updates}
     pred = predict_delay(merged)
     updates["delay_probability"] = pred["delay_probability"]
     updates["predicted_delay_days"] = pred["predicted_delay_days"]
     updates["ml_risk_level"] = pred["risk_level"]
 
     res = supabase.table("cases").update(updates).eq("id", project_id).execute()
-    if not res.data:
+    res_data: Any = res.data
+    if not res_data or not isinstance(res_data, list):
         raise HTTPException(status_code=500, detail="Update failed")
 
-    return case_service._map_db_case_to_frontend(res.data[0])
+    return case_service._map_db_case_to_frontend(res_data[0])
 
 
 # ============================================================
@@ -301,16 +306,17 @@ async def get_project_prediction(
     if not res or not getattr(res, "data", None):
         raise HTTPException(status_code=404, detail="Project not found")
 
-    project = res.data
-    pred = predict_delay(project)
+    project: Any = res.data
+    p_dict = project if isinstance(project, dict) else {}
+    pred = predict_delay(p_dict)
     metrics = get_metrics()
 
     return {
         "project_id": project_id,
-        "project_code": project.get("project_code") or project.get("file_number"),
-        "project_name": project.get("title"),
-        "district": project.get("district"),
-        "current_stage": project.get("current_stage"),
+        "project_code": p_dict.get("project_code") or p_dict.get("file_number"),
+        "project_name": p_dict.get("title"),
+        "district": p_dict.get("district"),
+        "current_stage": p_dict.get("current_stage"),
         "delay_probability": pred["delay_probability"],
         "risk_level": pred["risk_level"],
         "predicted_delay_days": pred["predicted_delay_days"],
@@ -342,14 +348,14 @@ async def get_project_bottlenecks(
     if not case_res or not getattr(case_res, "data", None):
         raise HTTPException(status_code=404, detail="Project not found")
 
-    project = case_res.data
+    project: Any = case_res.data
     mov_res = supabase.table("case_movements").select("*").eq("case_id", project_id).order("started_at").execute()
-    movements = mov_res.data or []
+    movements: list[Any] = mov_res.data or []
 
-    current_stage = project.get("current_stage", "Project Initiation")
-    dwell_days = calculate_stage_dwell_days(project, movements=movements)
+    current_stage = str(project.get("current_stage") or "Project Initiation") if isinstance(project, dict) else "Project Initiation"
+    dwell_days = calculate_stage_dwell_days(project if isinstance(project, dict) else {}, movements=movements)
     expected_days = get_expected_days(current_stage)
-    bottleneck_info = detect_case_bottleneck(project, movements=movements)
+    bottleneck_info = detect_case_bottleneck(project if isinstance(project, dict) else {}, movements=movements)
 
     delay_days = max(0, dwell_days - expected_days)
 
@@ -386,12 +392,13 @@ async def get_project_delay_factors(
     if not res or not getattr(res, "data", None):
         raise HTTPException(status_code=404, detail="Project not found")
 
-    project = res.data
-    pred = predict_delay(project)
+    project: Any = res.data
+    pred = predict_delay(project if isinstance(project, dict) else {})
     fi = get_feature_importance()
 
     observed_factors = []
-    if project.get("ownership_conflict"):
+    p_dict = project if isinstance(project, dict) else {}
+    if p_dict.get("ownership_conflict"):
         observed_factors.append({
             "factor": "ownership_conflict",
             "name": "Ownership Conflict",
@@ -399,7 +406,7 @@ async def get_project_delay_factors(
             "status": "CRITICAL",
             "description": "Disputed title / contested ownership on one or more land parcels",
         })
-    if project.get("legal_dispute"):
+    if p_dict.get("legal_dispute"):
         observed_factors.append({
             "factor": "legal_dispute",
             "name": "Legal Dispute / Court Case",
@@ -407,7 +414,7 @@ async def get_project_delay_factors(
             "status": "CRITICAL",
             "description": "Stay order or writ petition pending in court",
         })
-    comp_days = int(project.get("compensation_pending_days") or 0)
+    comp_days = int(p_dict.get("compensation_pending_days") or 0)
     if comp_days > 0:
         observed_factors.append({
             "factor": "compensation_pending_days",
@@ -416,7 +423,7 @@ async def get_project_delay_factors(
             "status": "HIGH" if comp_days > 30 else "MEDIUM",
             "description": "Time elapsed awaiting compensation disbursement sanction",
         })
-    doc_comp = float(project.get("documentation_completeness") or 100)
+    doc_comp = float(p_dict.get("documentation_completeness") or 100)
     if doc_comp < 80:
         observed_factors.append({
             "factor": "documentation_completeness",
@@ -425,7 +432,7 @@ async def get_project_delay_factors(
             "status": "HIGH" if doc_comp < 60 else "MEDIUM",
             "description": "Missing required cadastral maps, survey approvals, or RoR documents",
         })
-    if project.get("inter_dept_dependency"):
+    if p_dict.get("inter_dept_dependency"):
         observed_factors.append({
             "factor": "inter_dept_dependency",
             "name": "Inter-Department Dependency",
@@ -459,14 +466,15 @@ async def get_project_recommendations(
     if not case_res or not getattr(case_res, "data", None):
         raise HTTPException(status_code=404, detail="Project not found")
 
-    project = case_res.data
+    project: Any = case_res.data
     mov_res = supabase.table("case_movements").select("*").eq("case_id", project_id).order("started_at").execute()
-    movements = mov_res.data or []
+    movements: list[Any] = mov_res.data or []
 
-    bottleneck_info = detect_case_bottleneck(project, movements=movements)
-    pred = predict_delay(project)
+    p_dict = project if isinstance(project, dict) else {}
+    bottleneck_info = detect_case_bottleneck(p_dict, movements=movements)
+    pred = predict_delay(p_dict)
     recs = generate_la_recommendations(
-        project,
+        p_dict,
         bottleneck_info=bottleneck_info,
         delay_probability=pred["delay_probability"],
     )
@@ -492,11 +500,11 @@ async def get_project_timeline(
     if not case_res or not getattr(case_res, "data", None):
         raise HTTPException(status_code=404, detail="Project not found")
 
-    project = case_res.data
+    project: Any = case_res.data
     mov_res = supabase.table("case_movements").select("*").eq("case_id", project_id).order("started_at").execute()
-    movements = mov_res.data or []
+    movements: list[Any] = mov_res.data or []
 
-    current_stage = project.get("current_stage", "Project Initiation")
+    current_stage = str(project.get("current_stage") or "Project Initiation") if isinstance(project, dict) else "Project Initiation"
     curr_stage_idx = get_stage_index(current_stage)
 
     # Build timeline stages
@@ -504,15 +512,17 @@ async def get_project_timeline(
     for idx, stage_name in enumerate(LAND_ACQUISITION_STAGES):
         expected = get_expected_days(stage_name)
         # Find corresponding movement if any
-        matching_mov = next((m for m in movements if m.get("to_stage") == stage_name or m.get("from_stage") == stage_name), None)
+        matching_mov: Any = next((m for m in movements if isinstance(m, dict) and (m.get("to_stage") == stage_name or m.get("from_stage") == stage_name)), None)
 
         if idx < curr_stage_idx:
             # Completed stage
             actual = expected  # baseline default
             if matching_mov and matching_mov.get("completed_at") and matching_mov.get("started_at"):
                 try:
-                    s_dt = datetime.fromisoformat(matching_mov["started_at"][:19])
-                    c_dt = datetime.fromisoformat(matching_mov["completed_at"][:19])
+                    s_str = str(matching_mov.get("started_at") or "")
+                    c_str = str(matching_mov.get("completed_at") or "")
+                    s_dt = datetime.fromisoformat(s_str[:19])
+                    c_dt = datetime.fromisoformat(c_str[:19])
                     actual = max(1, (c_dt - s_dt).days)
                 except Exception:
                     actual = expected
@@ -520,7 +530,7 @@ async def get_project_timeline(
             delay = max(0, actual - expected)
         elif idx == curr_stage_idx:
             # Current stage in progress
-            actual = calculate_stage_dwell_days(project, movements=movements)
+            actual = calculate_stage_dwell_days(project if isinstance(project, dict) else {}, movements=movements)
             stage_status = "IN_PROGRESS"
             delay = max(0, actual - expected)
         else:
@@ -561,14 +571,16 @@ async def upload_project_document(
     from app.services.document_service import upload_document, validate_file, process_ocr
 
     file_bytes = await file.read()
-    val_err = validate_file(file.filename, file.content_type, len(file_bytes))
+    filename = file.filename or "uploaded_document"
+    content_type = file.content_type or "application/octet-stream"
+    val_err = validate_file(filename, content_type, len(file_bytes))
     if val_err:
         raise HTTPException(status_code=400, detail=val_err)
 
-    doc_record = upload_document(
+    doc_record: Any = upload_document(
         file_bytes=file_bytes,
-        filename=file.filename,
-        content_type=file.content_type,
+        filename=filename,
+        content_type=content_type,
         case_id=project_id,
         document_type=document_type,
         uploaded_by=user.get("name", "Officer"),

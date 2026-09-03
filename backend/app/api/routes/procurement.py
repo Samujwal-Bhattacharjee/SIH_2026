@@ -219,6 +219,18 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
     except Exception as e:
         logger.warning(f"Integrity evaluation note for bidder {bidder_id}: {e}")
 
+    # Extract latest canonical verification_record if available
+    verification_record = None
+    for d in docs:
+        ef = d.get("extracted_fields")
+        if isinstance(ef, dict):
+            if "verification_record" in ef and isinstance(ef["verification_record"], dict):
+                verification_record = ef["verification_record"]
+                break
+            elif "opportunity" in ef and "bidder" in ef:
+                verification_record = ef
+                break
+
     return {
         "bidder": bidder,
         "documents": docs,
@@ -226,6 +238,7 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
         "discrepancies": discrepancies,
         "recommendations": [],
         "integrity": integrity_info,
+        "verification_record": verification_record,
         "assessment_updated_at": bidder.get("updated_at") if isinstance(bidder, dict) else None,
     }
 
@@ -242,16 +255,13 @@ async def upload_bidder_document(
     user: dict = Depends(get_current_user),
 ):
     """
-    Complete end-to-end document processing pipeline:
-    1. Accept uploaded file
-    2. Validate file format and size
-    3. Run OCR (PyMuPDF with Tesseract fallback)
-    4. Classify document type
-    5. Extract structured fields (GSTIN, PAN, Udyam, OEM, etc.)
-    6. Persist document record and link to bidder
-    7. Re-run compliance verification
-    8. Persist assessment findings and audit event
-    9. Return full persisted result
+    Step 1: Read file and run OCR extraction.
+    Step 2: Classify document type if not specified.
+    Step 3: Persist document record with extracted fields to database.
+    Step 4: Link document to bidder.
+    Step 5: Run compliance assessment against all tender requirements.
+    Step 6: Persist updated assessment and discrepancy logs.
+    Step 7: Record audit trail events.
     """
     bidder = ps.get_bidder_by_id(bidder_id)
     if not bidder:
@@ -287,8 +297,26 @@ async def upload_bidder_document(
     else:
         classified_type: str = document_type
 
+    # Canonical FairBid Extraction & Normalization
+    verification_record = None
+    try:
+        from app.services.fairbid_extractor import is_fairbid_document, extract_fairbid_canonical
+        if is_fairbid_document(extracted_text):
+            verification_record = extract_fairbid_canonical(extracted_text, filename=filename, ocr_engine_conf=confidence)
+            extracted_fields = verification_record.get("extracted_fields", extracted_fields)
+            if "Retail Outlet Dealership" in (verification_record.get("document", {}).get("document_type") or ""):
+                classified_type = verification_record["document"]["document_type"]
+    except Exception as e:
+        logger.warning(f"FairBid extraction in route failed: {e}")
+
     # Step 3: Persist document to database
     doc_id = f"DOC-{bidder_id}-{now[11:19].replace(':', '')}"
+    doc_payload_fields = {
+        "fields": extracted_fields,
+        "verification_record": verification_record,
+        **(verification_record or {}),
+    } if verification_record else extracted_fields
+
     doc_record = ps.save_document_record({
         "id": doc_id,
         "case_id": bidder_id,
@@ -298,7 +326,7 @@ async def upload_bidder_document(
         "document_type": classified_type,
         "ocr_status": "COMPLETED" if extracted_text or extracted_fields else "PENDING",
         "extracted_text": extracted_text,
-        "extracted_fields": extracted_fields,
+        "extracted_fields": doc_payload_fields,
         "ocr_engine": engine_used,
         "ocr_confidence": confidence,
         "uploaded_by": actor_name(user),
@@ -307,6 +335,26 @@ async def upload_bidder_document(
 
     # Step 4: Link document to bidder
     ps.link_bidder_document(bidder_id, doc_id, classified_type)
+
+    # If verification_record has bidder details, update bidder profile
+    if verification_record and verification_record.get("bidder"):
+        b_info = verification_record["bidder"]
+        b_updates = {}
+        if b_info.get("bidder_name"):
+            b_updates["legal_name"] = b_info["bidder_name"]
+        if b_info.get("gstin"):
+            b_updates["gstin"] = b_info["gstin"]
+        if b_info.get("pan"):
+            b_updates["pan"] = b_info["pan"]
+        if b_info.get("udyam_registration_number"):
+            b_updates["udyam_number"] = b_info["udyam_registration_number"]
+        if b_info.get("cin"):
+            b_updates["cin"] = b_info["cin"]
+        if b_info.get("bidder_classification"):
+            b_updates["enterprise_category"] = b_info["bidder_classification"]
+        if b_updates:
+            ps.update_bidder_record(bidder_id, b_updates)
+            bidder = ps.get_bidder_by_id(bidder_id) or bidder
 
     # Step 5: Fetch all bidder documents & re-run compliance verification
     all_docs = ps.get_bidder_documents(bidder_id)
@@ -349,6 +397,7 @@ async def upload_bidder_document(
     return {
         "doc_record": doc_record,
         "extracted_fields": extracted_fields,
+        "verification_record": verification_record,
         "extracted_text_preview": extracted_text[:500] if extracted_text else "",
         "document_type": classified_type,
         "confidence": confidence,

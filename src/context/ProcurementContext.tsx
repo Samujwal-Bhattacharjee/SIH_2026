@@ -58,11 +58,26 @@ export interface AuditEvent {
   detail: string;
 }
 
+export interface TenderRecord {
+  id: string;
+  tender_number: string;
+  title: string;
+  department: string;
+  status: string;
+  bid_closing_date?: string;
+  estimated_value?: number;
+  category?: string;
+  created_at?: string;
+}
+
 interface ProcurementContextValue {
   bidders: Bidder[];
+  tenders: TenderRecord[];
+  activeTenders: TenderRecord[];
+  isLiveDatabase: boolean;
   audit: AuditEvent[];
   loading: boolean;
-  addTender: (title: string) => Promise<void>;
+  addTender: (title: string, department?: string, closingDate?: string) => Promise<any>;
   addBidder: (name: string, gstin?: string, pan?: string) => Promise<void>;
   uploadDocument: (bidderId: string, fileName: string, file?: File, documentType?: string) => Promise<any>;
   runVerification: (bidderId: string) => Promise<any>;
@@ -160,6 +175,8 @@ const nowTime = () => new Date().toLocaleTimeString('en-IN', { hour: '2-digit', 
 
 export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [bidders, setBidders] = useState<Bidder[]>(isUsingMockApi() ? initialBidders : []);
+  const [tenders, setTenders] = useState<TenderRecord[]>([]);
+  const isLiveDatabase = !isUsingMockApi();
   const [loading, setLoading] = useState(false);
   const [audit, setAudit] = useState<AuditEvent[]>(isUsingMockApi() ? [
     { id: 'a1', time: '10:42', action: 'Tender document uploaded', actor: 'Procurement Officer', detail: 'GEM/2026/B/418207 — Network Infrastructure procurement' },
@@ -169,6 +186,12 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [documents, setDocuments] = useState<any[]>([]);
   const [tenderId, setTenderId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const activeTenders = React.useMemo(() => {
+    return tenders
+      .filter((t) => !t.status || t.status.toUpperCase() === 'ACTIVE')
+      .slice(0, 4);
+  }, [tenders]);
 
   const log = (action: string, detail: string, actor = 'Procurement Officer') => {
     setAudit((items) => [{ id: crypto.randomUUID(), time: nowTime(), action, actor, detail }, ...items]);
@@ -255,8 +278,10 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setError(null);
     try {
       const procurement = (apiClient as any).procurement;
-      const tenders = await procurement.getTenders();
-      const activeTender = tenders[0];
+      const rawTenders = await procurement.getTenders();
+      const allTenders = rawTenders || [];
+      setTenders(allTenders);
+      const activeTender = allTenders.find((t: any) => !t.status || t.status.toUpperCase() === 'ACTIVE') || allTenders[0];
       if (!activeTender) { setTenderId(null); setBidders([]); setDocuments([]); setAudit([]); return; }
       setTenderId(activeTender.id);
       const [remoteBidders, remoteAudit, remoteDocuments] = await Promise.all([
@@ -279,11 +304,16 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     refreshData();
   }, []);
 
-  const addTender = async (title: string) => {
+  const addTender = async (title: string, department?: string, closingDate?: string) => {
     try {
-      await (apiClient as any).procurement.createTender({ title });
+      const res = await (apiClient as any).procurement.createTender({
+        title,
+        department: department || 'Department of Administrative Reforms',
+        bid_closing_date: closingDate || '2026-09-15',
+      });
       if (isUsingMockApi()) log('Tender created', title);
       await refreshData();
+      return res;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to create tender.');
       throw e;
@@ -334,7 +364,7 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const res = await (apiClient as any).procurement.uploadBidderDocument(bidderId, file, documentType);
         if (!isUsingMockApi()) await refreshData();
         if (res && res.assessment) {
-          const { assessment, bidder: updatedBidder, doc_record } = res;
+          const { assessment, bidder: updatedBidder } = res;
           const compStatus = updatedBidder?.compliance_status ?? assessment.compliance_status ?? (assessment.blocking_exceptions > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW');
           const compRisk = (updatedBidder?.risk_level ?? assessment.compliance_risk_level ?? assessment.risk_level ?? 'MEDIUM') as RiskLevel;
           const blockingEx = Number(updatedBidder?.blocking_exceptions_count ?? assessment.blocking_exceptions ?? 0);
@@ -520,6 +550,9 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     <ProcurementContext.Provider
       value={{
         bidders,
+        tenders,
+        activeTenders,
+        isLiveDatabase,
         audit,
         loading,
         addTender,

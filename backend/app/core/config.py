@@ -3,13 +3,12 @@ Core application configuration.
 All settings are loaded from environment variables via Pydantic BaseSettings.
 This is the ONLY place where environment variables are read.
 """
-from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 
 
 class Settings(BaseSettings):
-    model_config = ConfigDict(env_file=[".env", "backend/.env"], env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=[".env", "backend/.env"], env_file_encoding="utf-8", extra="ignore")
 
     # Application
     APP_NAME: str = "GOIP Government File Tracking System"
@@ -34,6 +33,16 @@ class Settings(BaseSettings):
 
     # Logging
     LOG_LEVEL: str = "INFO"
+
+    # ----------------------------------------------------------------
+    # Session-Ephemeral Mode
+    # When True the procurement SQLite database is wiped and re-seeded
+    # from the pristine deterministic baseline on every backend startup.
+    # All session-created/modified data (tenders, bidders, documents,
+    # compliance results, audit events) disappears on restart.
+    # Set to False for production deployments where data must persist.
+    # ----------------------------------------------------------------
+    DEMO_SESSION_MODE: bool = True
 
     @property
     def cors_origins_list(self) -> List[str]:

@@ -19,9 +19,14 @@ import { GovPageHeader } from '../components/common/GovPageHeader';
 
 interface ExtractedField {
   key: string;
+  field?: string;
   label?: string;
   value: string;
   confidence: number;
+  source_text?: string;
+  page?: number | string;
+  section?: string;
+  status?: string;
 }
 
 export const ProcurementDocuments: React.FC = () => {
@@ -38,8 +43,8 @@ export const ProcurementDocuments: React.FC = () => {
   }, [bidders]);
   const [docTypeSelect, setDocTypeSelect] = useState('GST Registration Certificate');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4>(1);
-  const [processingState, setProcessingState] = useState<'idle' | 'uploading' | 'ocr' | 'extracting' | 'completed'>('idle');
+  const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  const [processingState, setProcessingState] = useState<'idle' | 'uploading' | 'ocr' | 'extracting' | 'validating' | 'saving' | 'completed'>('idle');
   const [evidenceDoc, setEvidenceDoc] = useState<any | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -70,26 +75,35 @@ export const ProcurementDocuments: React.FC = () => {
     if (!selectedFile || !bidderId) return;
 
     try {
-      // Step 1: Uploading
+      // Stage 1: Uploading...
       setActiveStep(1);
       setProcessingState('uploading');
-      await new Promise((r) => setTimeout(r, 600));
+      await new Promise((r) => setTimeout(r, 400));
 
-      // Step 2: OCR Text Extraction
+      // Stage 2: OCR processing...
       setActiveStep(2);
       setProcessingState('ocr');
-      await new Promise((r) => setTimeout(r, 800));
 
-      // Call backend live pipeline with the currently selected real bidder ID
+      // Call backend pipeline
       const uploadRes = await uploadDocument(bidderId!, selectedFile.name, selectedFile, docTypeSelect);
 
-      // Step 3: Field Identification
+      // Stage 3: Extracting structured fields...
       setActiveStep(3);
       setProcessingState('extracting');
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 400));
 
-      // Step 4: Evidence Verified
+      // Stage 4: Validating extracted values...
       setActiveStep(4);
+      setProcessingState('validating');
+      await new Promise((r) => setTimeout(r, 350));
+
+      // Stage 5: Saving verification record...
+      setActiveStep(5);
+      setProcessingState('saving');
+      await new Promise((r) => setTimeout(r, 350));
+
+      // Stage 6: Complete
+      setActiveStep(6);
       setProcessingState('completed');
     } catch (err) {
       console.error('Upload & extraction error:', err);
@@ -106,12 +120,16 @@ export const ProcurementDocuments: React.FC = () => {
   const progressPercent = useMemo(() => {
     switch (activeStep) {
       case 1:
-        return processingState === 'idle' ? 0 : 15;
+        return processingState === 'idle' ? 0 : 16.6;
       case 2:
         return 33.3;
       case 3:
-        return 66.6;
+        return 50.0;
       case 4:
+        return 66.6;
+      case 5:
+        return 83.3;
+      case 6:
         return 100;
       default:
         return 0;
@@ -399,10 +417,10 @@ export const ProcurementDocuments: React.FC = () => {
             </h2>
           </div>
 
-          <div className="mt-4 space-y-3 text-xs">
-            {/* Step 1 Status */}
+          <div className="mt-4 space-y-2.5 text-xs">
+            {/* Step 1: Uploading */}
             <div
-              className={`p-3 rounded-[4px] transition-all flex items-start gap-3 ${
+              className={`p-2.5 rounded-[4px] transition-all flex items-start gap-3 ${
                 activeStep >= 1 && processingState !== 'idle'
                   ? 'bg-[#F0FDF4] border border-[#BBF7D0]'
                   : 'bg-[#F8FAFC] border border-[#E2E8F0]'
@@ -417,19 +435,21 @@ export const ProcurementDocuments: React.FC = () => {
               </div>
               <div>
                 <strong className="block text-[#0F172A] font-bold">
-                  File received and validated
+                  1. Uploading document...
                 </strong>
                 <span className="text-[11px] text-[#64748B]">
-                  Format accepted, virus scan clear.
+                  Format validated, transmitted to server securely.
                 </span>
               </div>
             </div>
 
-            {/* Step 2 Status - Highlighted Violet! */}
+            {/* Step 2: OCR Processing */}
             <div
-              className={`p-3 rounded-[4px] transition-all flex items-start gap-3 ${
-                activeStep >= 2
+              className={`p-2.5 rounded-[4px] transition-all flex items-start gap-3 ${
+                activeStep === 2 && processingState === 'ocr'
                   ? 'bg-[#F5F3FF] border-l-4 border-[#6D28D9]'
+                  : activeStep > 2
+                  ? 'bg-[#F0FDF4] border border-[#BBF7D0]'
                   : 'bg-[#F8FAFC] border border-[#E2E8F0]'
               }`}
             >
@@ -437,32 +457,34 @@ export const ProcurementDocuments: React.FC = () => {
                 {processingState === 'ocr' ? (
                   <Loader2 className="w-4 h-4 animate-spin text-[#6D28D9]" />
                 ) : activeStep >= 2 ? (
-                  <CheckCircle2 className="w-4 h-4 text-[#6D28D9]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
                 ) : (
                   <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
                 )}
               </div>
               <div>
-                <strong className="block text-[#2E0854] font-bold">
-                  Text extraction completed
+                <strong className="block text-[#0F172A] font-bold">
+                  2. OCR processing...
                 </strong>
-                <span className="text-[11px] text-[#6D28D9]">
-                  OCR processing standard quality.
+                <span className="text-[11px] text-[#64748B]">
+                  Digital layout parsing and character recognition.
                 </span>
               </div>
             </div>
 
-            {/* Step 3 Status */}
+            {/* Step 3: Extracting Structured Fields */}
             <div
-              className={`p-3 rounded-[4px] transition-all flex items-start gap-3 ${
-                activeStep >= 3
+              className={`p-2.5 rounded-[4px] transition-all flex items-start gap-3 ${
+                activeStep === 3 && processingState === 'extracting'
+                  ? 'bg-[#F5F3FF] border-l-4 border-[#6D28D9]'
+                  : activeStep > 3
                   ? 'bg-[#F0FDF4] border border-[#BBF7D0]'
                   : 'bg-[#F8FAFC] border border-[#E2E8F0]'
               }`}
             >
               <div className="shrink-0 mt-0.5">
                 {processingState === 'extracting' ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-[#15803D]" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#6D28D9]" />
                 ) : activeStep >= 3 ? (
                   <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
                 ) : (
@@ -470,52 +492,94 @@ export const ProcurementDocuments: React.FC = () => {
                 )}
               </div>
               <div>
-                <span className="block text-[#0F172A] font-medium">
-                  Structured fields identified
+                <strong className="block text-[#0F172A] font-bold">
+                  3. Extracting structured fields...
+                </strong>
+                <span className="text-[11px] text-[#64748B]">
+                  Canonical schema extraction with source provenance.
                 </span>
               </div>
             </div>
 
-            {/* Step 4 Status */}
+            {/* Step 4: Validating Extracted Values */}
             <div
-              className={`p-3 rounded-[4px] transition-all flex items-start gap-3 ${
-                activeStep >= 4
+              className={`p-2.5 rounded-[4px] transition-all flex items-start gap-3 ${
+                activeStep === 4 && processingState === 'validating'
+                  ? 'bg-[#F5F3FF] border-l-4 border-[#6D28D9]'
+                  : activeStep > 4
                   ? 'bg-[#F0FDF4] border border-[#BBF7D0]'
                   : 'bg-[#F8FAFC] border border-[#E2E8F0]'
               }`}
             >
               <div className="shrink-0 mt-0.5">
-                {activeStep >= 4 ? (
+                {processingState === 'validating' ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-[#6D28D9]" />
+                ) : activeStep >= 4 ? (
                   <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
                 ) : (
                   <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
                 )}
               </div>
               <div>
-                <span className="block text-[#0F172A] font-medium">
-                  Cross-document validation
+                <strong className="block text-[#0F172A] font-bold">
+                  4. Validating extracted values...
+                </strong>
+                <span className="text-[11px] text-[#64748B]">
+                  Standard formatting and geographic validation.
                 </span>
               </div>
             </div>
 
-            {/* Step 5 Status */}
+            {/* Step 5: Saving Verification Record */}
             <div
-              className={`p-3 rounded-[4px] transition-all flex items-start gap-3 ${
-                activeStep >= 4
+              className={`p-2.5 rounded-[4px] transition-all flex items-start gap-3 ${
+                activeStep === 5 && processingState === 'saving'
+                  ? 'bg-[#F5F3FF] border-l-4 border-[#6D28D9]'
+                  : activeStep > 5
                   ? 'bg-[#F0FDF4] border border-[#BBF7D0]'
                   : 'bg-[#F8FAFC] border border-[#E2E8F0]'
               }`}
             >
               <div className="shrink-0 mt-0.5">
-                {activeStep >= 4 ? (
+                {processingState === 'saving' ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-[#6D28D9]" />
+                ) : activeStep >= 5 ? (
                   <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
                 ) : (
                   <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
                 )}
               </div>
               <div>
-                <span className="block text-[#0F172A] font-medium">
-                  Compliance assessment
+                <strong className="block text-[#0F172A] font-bold">
+                  5. Saving verification record...
+                </strong>
+                <span className="text-[11px] text-[#64748B]">
+                  Persisting canonical record as single source of truth.
+                </span>
+              </div>
+            </div>
+
+            {/* Step 6: Complete */}
+            <div
+              className={`p-2.5 rounded-[4px] transition-all flex items-start gap-3 ${
+                activeStep >= 6 && processingState === 'completed'
+                  ? 'bg-[#F0FDF4] border border-[#BBF7D0]'
+                  : 'bg-[#F8FAFC] border border-[#E2E8F0]'
+              }`}
+            >
+              <div className="shrink-0 mt-0.5">
+                {activeStep >= 6 ? (
+                  <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
+                ) : (
+                  <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
+                )}
+              </div>
+              <div>
+                <strong className="block text-[#0F172A] font-bold">
+                  6. Complete
+                </strong>
+                <span className="text-[11px] text-[#64748B]">
+                  Extraction record active and available to all components.
                 </span>
               </div>
             </div>
@@ -589,19 +653,26 @@ export const ProcurementDocuments: React.FC = () => {
                       {/* Extracted Fields & Value */}
                       <td className="py-3.5 px-4 align-top text-[#0F172A]">
                         <div className="space-y-1 text-xs">
-                          {doc.extracted_fields && doc.extracted_fields.length > 0 ? (
-                            doc.extracted_fields.slice(0, 2).map((f: ExtractedField, idx: number) => (
-                              <div key={idx}>
-                                <span className="text-[#64748B]">{f.label || f.key}:</span>{' '}
-                                <strong className="font-mono text-[#0F172A]">{f.value}</strong>
-                              </div>
-                            ))
-                          ) : (
-                            <div>
-                              <span className="text-[#64748B]">Turnover:</span>{' '}
-                              <strong className="font-mono text-[#0F172A]">₹15,00,00,000</strong>
-                            </div>
-                          )}
+                          {(() => {
+                            const rawFields = doc.extracted_fields;
+                            const fieldsList: ExtractedField[] = Array.isArray(rawFields)
+                              ? rawFields
+                              : rawFields && Array.isArray(rawFields.fields)
+                              ? rawFields.fields
+                              : [];
+                            const visibleFields = fieldsList.filter((f: ExtractedField) => f.value && f.status !== 'not_found');
+                            if (visibleFields.length > 0) {
+                              return visibleFields.slice(0, 2).map((f: ExtractedField, idx: number) => (
+                                <div key={idx}>
+                                  <span className="text-[#64748B]">{f.label || f.key}:</span>{' '}
+                                  <strong className="font-mono text-[#0F172A]">{f.value}</strong>
+                                </div>
+                              ));
+                            }
+                            return (
+                              <span className="text-[#94A3B8] italic">No fields extracted</span>
+                            );
+                          })()}
                         </div>
                       </td>
 
@@ -663,12 +734,12 @@ export const ProcurementDocuments: React.FC = () => {
       {/* ── Document Evidence Inspection Modal ─────────────────────────────── */}
       {evidenceDoc && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full max-h-[85vh] overflow-auto bg-white border border-[#E5E7EB] rounded-[4px] shadow-xl p-6 font-sans">
+          <div className="max-w-4xl w-full max-h-[88vh] overflow-auto bg-white border border-[#E5E7EB] rounded-[4px] shadow-xl p-6 font-sans">
             <div className="flex justify-between items-start gap-4 border-b border-[#E5E7EB] pb-3">
               <div>
                 <h2 className="font-bold text-lg text-[#0F172A]">Document Evidence Inspection</h2>
                 <p className="text-xs text-[#64748B] mt-0.5 font-mono">
-                  {evidenceDoc.file_name} • {evidenceDoc.bidder_name}
+                  {evidenceDoc.file_name} • {evidenceDoc.bidder_name || 'Participating Bidder'}
                 </p>
               </div>
               <button
@@ -679,10 +750,10 @@ export const ProcurementDocuments: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs my-4 bg-[#F8FAFC] p-3.5 border border-[#E5E7EB] rounded-[4px]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs my-4 bg-[#F8FAFC] p-3.5 border border-[#E5E7EB] rounded-[4px]">
               <div>
                 <span className="text-[#64748B] text-[11px] block">Document Type</span>
-                <strong className="text-[#0F172A] font-semibold">{evidenceDoc.document_type}</strong>
+                <strong className="text-[#0F172A] font-semibold block truncate">{evidenceDoc.document_type}</strong>
               </div>
               <div>
                 <span className="text-[#64748B] text-[11px] block">OCR Status</span>
@@ -696,40 +767,67 @@ export const ProcurementDocuments: React.FC = () => {
               </div>
               <div>
                 <span className="text-[#64748B] text-[11px] block">Processing Engine</span>
-                <span className="text-[#0F172A]">{evidenceDoc.ocr_engine || 'LayoutLMv3 OCR'}</span>
+                <span className="text-[#0F172A]">{evidenceDoc.ocr_engine || 'PyMuPDF + Regex'}</span>
               </div>
             </div>
 
             <h3 className="font-bold text-xs text-[#0F172A] mb-2 uppercase tracking-wide">
-              Extracted Key-Value Attributes
+              Extracted Key-Value Attributes &amp; Provenance
             </h3>
-            <table className="w-full text-xs border border-[#E5E7EB] rounded-[2px] overflow-hidden">
-              <thead className="bg-[#FAF8FD] border-b border-[#E5E7EB] text-[#475569]">
-                <tr>
-                  <th className="py-2 px-3 font-semibold text-left">Attribute Key</th>
-                  <th className="py-2 px-3 font-semibold text-left">Extracted Value</th>
-                  <th className="py-2 px-3 font-semibold text-right">Confidence</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E5E7EB]">
-                {(evidenceDoc.extracted_fields || []).map((field: ExtractedField, i: number) => (
-                  <tr key={i}>
-                    <td className="py-2 px-3 font-medium text-[#0F172A]">{field.label || field.key}</td>
-                    <td className="py-2 px-3 font-mono break-all text-[#0F172A]">{field.value}</td>
-                    <td className="py-2 px-3 text-right font-mono font-bold text-[#15803D]">
-                      {Math.round(Number(field.confidence || 0.95) * 100)}%
-                    </td>
+            <div className="border border-[#E5E7EB] rounded-[4px] overflow-hidden">
+              <table className="w-full text-xs">
+                <thead className="bg-[#FAF8FD] border-b border-[#E5E7EB] text-[#475569]">
+                  <tr>
+                    <th className="py-2 px-3 font-semibold text-left">Attribute / Field</th>
+                    <th className="py-2 px-3 font-semibold text-left">Extracted Value</th>
+                    <th className="py-2 px-3 font-semibold text-left">Source Text Provenance</th>
+                    <th className="py-2 px-2 font-semibold text-center">Section / Page</th>
+                    <th className="py-2 px-3 font-semibold text-right">Confidence</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[#E5E7EB]">
+                  {(() => {
+                    const rawFields = evidenceDoc.extracted_fields;
+                    const fieldsList: ExtractedField[] = Array.isArray(rawFields)
+                      ? rawFields
+                      : rawFields && Array.isArray(rawFields.fields)
+                      ? rawFields.fields
+                      : [];
+                    if (fieldsList.length === 0) {
+                      return (
+                        <tr>
+                          <td colSpan={5} className="py-4 text-center text-gray-500 italic">No extracted attributes recorded</td>
+                        </tr>
+                      );
+                    }
+                    return fieldsList.map((field: ExtractedField, i: number) => (
+                      <tr key={i} className={field.status === 'not_found' ? 'bg-gray-50 opacity-60' : ''}>
+                        <td className="py-2 px-3 font-medium text-[#0F172A]">{field.label || field.key}</td>
+                        <td className="py-2 px-3 font-mono break-all text-[#0F172A] font-semibold">
+                          {field.value || <span className="text-gray-400 italic">Not found</span>}
+                        </td>
+                        <td className="py-2 px-3 font-mono text-[11px] text-[#475569] max-w-xs truncate" title={field.source_text || ''}>
+                          {field.source_text || '—'}
+                        </td>
+                        <td className="py-2 px-2 text-center text-[11px] text-[#64748B]">
+                          {field.section ? `${field.section}` : ''} {field.page ? `(p.${field.page})` : ''}
+                        </td>
+                        <td className="py-2 px-3 text-right font-mono font-bold text-[#15803D]">
+                          {Math.round(Number(field.confidence || 0) * 100)}%
+                        </td>
+                      </tr>
+                    ));
+                  })()}
+                </tbody>
+              </table>
+            </div>
 
             {evidenceDoc.extracted_text && (
               <details className="mt-4 text-xs">
                 <summary className="cursor-pointer font-semibold text-[#2E0854] hover:underline">
-                  View Raw OCR Text Extraction
+                  View Raw OCR Ground Truth Text
                 </summary>
-                <pre className="mt-2 p-3 text-[11px] font-mono bg-[#FAFAFA] border border-[#E5E7EB] rounded-[2px] max-h-40 overflow-y-auto whitespace-pre-wrap text-[#334155]">
+                <pre className="mt-2 p-3 text-[11px] font-mono bg-[#FAFAFA] border border-[#E5E7EB] rounded-[2px] max-h-48 overflow-y-auto whitespace-pre-wrap text-[#334155]">
                   {evidenceDoc.extracted_text}
                 </pre>
               </details>

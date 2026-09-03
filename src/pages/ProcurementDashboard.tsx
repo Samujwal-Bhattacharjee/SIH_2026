@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ShieldAlert,
-  PlusCircle,
   ScrollText,
   AlertTriangle,
   ChevronRight,
@@ -146,18 +145,10 @@ export const ProcurementDashboard: React.FC = () => {
           <>
             <button
               onClick={() => navigate('/integrity')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/80 hover:bg-white border border-[#CBD5E1] rounded-[4px] text-xs font-semibold text-[#1F2937] transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer group gov-btn-glossy"
             >
               <ShieldAlert className="w-4 h-4 text-[#1F2937] group-hover:text-[#2E0854] group-hover:scale-110 transition-all duration-200" />
               <span>{t('page.dashboard.integrityWorkspace', 'Integrity Workspace')}</span>
-            </button>
-
-            <button
-              onClick={() => navigate('/tenders')}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#2E0854] hover:bg-[#1E053A] border border-[#2E0854] rounded-[4px] text-xs font-semibold text-white transition-all duration-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer group gov-btn-glossy"
-            >
-              <PlusCircle className="w-4 h-4 text-[#FF9933] group-hover:rotate-90 transition-transform duration-300" />
-              <span>{t('page.dashboard.createTender', 'Create Tender')}</span>
             </button>
 
             <button

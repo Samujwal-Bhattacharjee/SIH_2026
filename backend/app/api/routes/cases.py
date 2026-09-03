@@ -3,7 +3,7 @@ Cases routes — CRUD endpoints for case management.
 All business logic delegated to case_service.py.
 """
 import logging
-from typing import Optional
+from typing import Optional, Any
 from fastapi import APIRouter, HTTPException, Depends, Query, status
 from app.core.security import get_current_user
 from app.schemas import (
@@ -114,9 +114,10 @@ async def update_case(
     mapped["updated_at"] = datetime.now(timezone.utc).isoformat()
 
     result = supabase.table("cases").update(mapped).eq("id", case_id).execute()
-    if not result.data:
+    data: Any = result.data
+    if not data or not isinstance(data, list):
         raise HTTPException(status_code=500, detail="Update failed")
-    return case_service._map_db_case_to_frontend(result.data[0])
+    return case_service._map_db_case_to_frontend(data[0])
 
 
 @router.post("/{case_id}/forward", response_model=CaseOut, summary="Forward case to another officer/stage")
@@ -163,7 +164,10 @@ async def update_status(
         "updated_at": now,
     }).eq("id", case_id).execute()
 
-    return case_service._map_db_case_to_frontend(result.data[0])
+    res_data: Any = result.data
+    if not res_data or not isinstance(res_data, list):
+        raise HTTPException(status_code=500, detail="Update failed")
+    return case_service._map_db_case_to_frontend(res_data[0])
 
 
 @router.post("/{case_id}/flag", summary="Toggle case flag for review")
@@ -176,10 +180,11 @@ async def toggle_flag(
     supabase = get_supabase()
 
     existing = supabase.table("cases").select("flagged_for_review").eq("id", case_id).maybe_single().execute()
-    if not existing or not getattr(existing, "data", None):
+    data: Any = getattr(existing, "data", None)
+    if not existing or not isinstance(data, dict):
         raise HTTPException(status_code=404, detail="Case not found")
 
-    new_flag = not existing.data.get("flagged_for_review", False)
+    new_flag = not data.get("flagged_for_review", False)
     supabase.table("cases").update({"flagged_for_review": new_flag}).eq("id", case_id).execute()
     return {"caseId": case_id, "flaggedForReview": new_flag}
 

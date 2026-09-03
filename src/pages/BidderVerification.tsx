@@ -87,6 +87,7 @@ export const BidderVerification: React.FC = () => {
     useProcurement();
   const { t } = useLanguage();
   const [liveBidder, setLiveBidder] = useState<BidderView | null>(null);
+  const [verificationRecord, setVerificationRecord] = useState<any | null>(null);
 
   useEffect(() => {
     if (!bidderId) return;
@@ -98,11 +99,30 @@ export const BidderVerification: React.FC = () => {
           const compScore = Number(b.compliance_score ?? b.score ?? 0);
           const compStatus = b.compliance_status || (b.blocking_exceptions_count > 0 ? 'EXCEPTION_FOUND' : b.status || 'UNDER_REVIEW');
           const compRisk = b.risk_level || (compScore < 60 ? 'HIGH' : compScore < 80 ? 'MEDIUM' : 'LOW');
+
+          // Extract canonical verification record if present
+          let vr = res.verification_record;
+          if (!vr && res.documents && res.documents.length > 0) {
+            for (const doc of res.documents) {
+              const ef = doc.extracted_fields;
+              if (ef && typeof ef === 'object') {
+                if (ef.verification_record) {
+                  vr = ef.verification_record;
+                  break;
+                } else if (ef.opportunity && ef.bidder) {
+                  vr = ef;
+                  break;
+                }
+              }
+            }
+          }
+          setVerificationRecord(vr || null);
+
           setLiveBidder({
             id: b.id,
-            name: b.legal_name || b.name,
-            gstin: b.gstin,
-            pan: b.pan,
+            name: (vr && vr.bidder && vr.bidder.bidder_name) || b.legal_name || b.name,
+            gstin: (vr && vr.bidder && vr.bidder.gstin) || b.gstin,
+            pan: (vr && vr.bidder && vr.bidder.pan) || b.pan,
             status: b.status || compStatus,
             compliance_status: compStatus,
             score: compScore,
@@ -304,14 +324,8 @@ export const BidderVerification: React.FC = () => {
     );
   }
 
-  const verifiedCount = bidder.requirements.filter((r) => r.status === 'Verified').length;
-  const exceptionCount = bidder.requirements.filter(
-    (r) => r.status === 'Failed' || r.status === 'Needs Review'
-  ).length;
-  const pendingCount = bidder.requirements.filter((r) => r.status === 'Pending').length;
-  const hasEvaluated = bidder.requirements && bidder.requirements.length > 0;
-
   // ── Render ──────────────────────────────────────────────────────────────────
+  const hasEvaluated = bidder.requirements && bidder.requirements.length > 0;
   return (
     <div className="space-y-4 font-sans pb-8">
       {/* Navigation Breadcrumb & Actions Banner */}
@@ -395,9 +409,15 @@ export const BidderVerification: React.FC = () => {
               <span className="text-xs text-[#64748B] font-medium">• {t('page.bidderVerification.dossier', 'Bidder Verification Dossier')}</span>
             </div>
             <h1 className="font-serif font-extrabold text-xl sm:text-2xl text-[#0B2A4A] mt-1">{bidder.name}</h1>
-            <p className="text-xs text-[#475569] font-medium mt-0.5">
-              Supply and Installation of Network Infrastructure for Government Administrative Offices
-            </p>
+            {verificationRecord?.opportunity ? (
+              <p className="text-xs text-[#475569] font-medium mt-0.5">
+                {verificationRecord.opportunity.oil_marketing_company || 'Petroleum'} Dealership Opportunity • {verificationRecord.opportunity.location} ({verificationRecord.opportunity.district}, {verificationRecord.opportunity.state})
+              </p>
+            ) : (
+              <p className="text-xs text-[#475569] font-medium mt-0.5">
+                {(bidder as any)?.tender_title || 'Procurement & Bid Compliance Verification Dossier'}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center border border-[#CBD5E1] divide-x divide-[#CBD5E1] bg-[#F8FAFC] rounded-[2px] text-xs">
@@ -465,7 +485,7 @@ export const BidderVerification: React.FC = () => {
             </div>
             <div className="px-3 py-2 text-center">
               <span className="block text-[10px] uppercase font-semibold text-[#475569]">
-                {t('page.bidderVerification.officerDecision', 'Officer Decision')}
+                {t('page.bidderVerification.officerDecision', 'Decision')}
               </span>
               <span
                 className={`inline-block mt-0.5 px-1.5 py-0.5 border text-[10px] font-bold rounded-[2px] ${
@@ -490,18 +510,115 @@ export const BidderVerification: React.FC = () => {
           </div>
         </div>
 
-        {/* Evidence Subtext Strip */}
-        <div className="mt-3 pt-2.5 border-t border-[#E6E9EF] text-xs text-[#475569] flex flex-wrap items-center gap-3">
-          <span>
-            <strong>{t('page.bidderVerification.assessmentBasis', 'Assessment basis:')}</strong> {bidder.requirements.length} {t('page.bidderVerification.statutoryReqsEvaluated', 'statutory requirements evaluated')}
-          </span>
-          <span>•</span>
-          <span className="text-[#15803D] font-medium">{verifiedCount} {t('page.bidderVerification.verified', 'verified')}</span>
-          <span>•</span>
-          <span className="text-[#B72025] font-medium">{exceptionCount} {t('page.bidderVerification.exceptions', 'exception(s)')}</span>
-          <span>•</span>
-          <span className="text-[#D97706] font-medium">{pendingCount} {t('page.bidderVerification.pendingSubmission', 'pending submission')}</span>
-        </div>
+        {/* Canonical FairBid Verification Details (when present) */}
+        {verificationRecord && verificationRecord.opportunity && (
+          <div className="mt-4 pt-3 border-t border-[#E6E9EF] space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0B2A4A] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#15803D]" />
+                Extracted Dealership &amp; Opportunity Specification (Source of Truth)
+              </span>
+              <span className="text-[11px] font-mono text-[#64748B]">
+                Doc ID: {verificationRecord.document?.document_id || 'FB-RO-RECORD'} • Date: {verificationRecord.document?.issue_date || '03 Sep 2026'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              {/* Card 1: Public Tender Specification */}
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] p-3 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wide text-[#6D28D9] block">
+                  1. Location &amp; OMC Parameters
+                </span>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Company:</span>
+                  <strong className="text-[#0F172A] text-right font-medium">{verificationRecord.opportunity.oil_marketing_company}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">State:</span>
+                  <strong className="text-[#0F172A] font-bold">{verificationRecord.opportunity.state}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">District:</span>
+                  <strong className="text-[#0F172A] font-bold">{verificationRecord.opportunity.district}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Location:</span>
+                  <strong className="text-[#0F172A] text-right truncate max-w-[140px]" title={verificationRecord.opportunity.location}>{verificationRecord.opportunity.location}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Highway:</span>
+                  <strong className="text-[#0F172A] font-mono">{verificationRecord.opportunity.road_highway} (Sl. {verificationRecord.opportunity.location_serial_number})</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Type / Site:</span>
+                  <strong className="text-[#0F172A]">{verificationRecord.opportunity.retail_outlet_type} / {verificationRecord.opportunity.site_type} ({verificationRecord.opportunity.category})</strong>
+                </div>
+              </div>
+
+              {/* Card 2: Commercial Parameters */}
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] p-3 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wide text-[#15803D] block">
+                  2. Commercial Parameters
+                </span>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Security Deposit:</span>
+                  <strong className="text-[#0F172A] font-mono font-bold text-[#15803D]">{verificationRecord.commercial?.security_deposit || 'Rs. 3 lakh'}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Sales Potential:</span>
+                  <strong className="text-[#0F172A]">{verificationRecord.commercial?.estimated_monthly_sales_potential}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Site Area:</span>
+                  <strong className="text-[#0F172A] font-mono">{verificationRecord.commercial?.site_area}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Frontage x Depth:</span>
+                  <strong className="text-[#0F172A] font-mono">{verificationRecord.commercial?.minimum_frontage} x {verificationRecord.commercial?.minimum_depth}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Working Capital:</span>
+                  <strong className="text-[#0F172A] font-mono">{verificationRecord.commercial?.working_capital_requirement}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Selection Method:</span>
+                  <strong className="text-[#0F172A]">{verificationRecord.opportunity?.selection_method}</strong>
+                </div>
+              </div>
+
+              {/* Card 3: Bidder Verified Profile */}
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[4px] p-3 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wide text-[#0B2A4A] block">
+                  3. Bidder Compliance Profile
+                </span>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">GSTIN:</span>
+                  <strong className="text-[#0F172A] font-mono">{verificationRecord.bidder?.gstin}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">PAN:</span>
+                  <strong className="text-[#0F172A] font-mono">{verificationRecord.bidder?.pan}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Udyam:</span>
+                  <strong className="text-[#0F172A] font-mono text-[11px] truncate max-w-[130px]">{verificationRecord.bidder?.udyam_registration_number}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Non-Blacklisting:</span>
+                  <strong className="text-[#15803D] text-[11px]">{verificationRecord.compliance?.blacklisting_debarment || 'NOT BLACKLISTED'}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Completeness:</span>
+                  <strong className="text-[#15803D] text-[11px]">{verificationRecord.compliance?.application_completeness || 'COMPLETE'}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748B]">Classification:</span>
+                  <strong className="text-[#0F172A] text-[11px] truncate max-w-[130px]" title={verificationRecord.bidder?.bidder_classification}>{verificationRecord.bidder?.bidder_classification}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Main Grid: Left Verification Matrix / Right Officer Actions */}

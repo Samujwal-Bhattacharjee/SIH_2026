@@ -12,7 +12,7 @@ Endpoints:
   POST   /{document_id}/ocr   — trigger OCR and field extraction, persist results
 """
 import logging
-from typing import Optional
+from typing import Optional, Any
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Query
 from fastapi.responses import Response
@@ -43,10 +43,13 @@ async def upload_document(
     """
     file_bytes = await file.read()
 
+    filename = file.filename or "uploaded_document"
+    content_type = file.content_type or "application/octet-stream"
+
     # Validate before any storage operation
     error = document_service.validate_file(
-        filename=file.filename,
-        content_type=file.content_type,
+        filename=filename,
+        content_type=content_type,
         file_size=len(file_bytes),
     )
     if error:
@@ -59,8 +62,8 @@ async def upload_document(
     try:
         doc = document_service.upload_document(
             file_bytes=file_bytes,
-            filename=file.filename,
-            content_type=file.content_type,
+            filename=filename,
+            content_type=content_type,
             case_id=case_id,
             document_type=document_type,
             uploaded_by=uploaded_by,
@@ -115,7 +118,8 @@ async def list_documents(
         query = query.ilike("file_name", f"%{q}%")
 
     result = query.order("created_at", desc=True).execute()
-    return [_map_db_doc_to_frontend(d) for d in (result.data or [])]
+    data_list: Any = result.data or []
+    return [_map_db_doc_to_frontend(d) for d in data_list if isinstance(d, dict)]
 
 
 # ============================================================
@@ -135,9 +139,10 @@ async def get_document(
     from app.services.case_service import _map_db_doc_to_frontend
     supabase = get_supabase()
     result = supabase.table("documents").select("*").eq("id", document_id).maybe_single().execute()
-    if not result or not getattr(result, "data", None):
+    doc_data: Any = getattr(result, "data", None)
+    if not result or not isinstance(doc_data, dict):
         raise HTTPException(status_code=404, detail="Document not found")
-    return _map_db_doc_to_frontend(result.data)
+    return _map_db_doc_to_frontend(doc_data)
 
 
 # ============================================================
@@ -161,9 +166,9 @@ async def get_document_status(
         .eq("id", document_id)\
         .maybe_single()\
         .execute()
-    if not result or not getattr(result, "data", None):
+    d: Any = getattr(result, "data", None)
+    if not result or not isinstance(d, dict):
         raise HTTPException(status_code=404, detail="Document not found")
-    d = result.data
     return {
         "id": d.get("id"),
         "ocr_status": d.get("ocr_status", "PENDING"),

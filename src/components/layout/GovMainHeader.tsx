@@ -21,13 +21,25 @@ import { useLanguage } from '../../context/LanguageContext';
 
 export const GovMainHeader: React.FC = () => {
   const { user, signOut } = useAuth();
-  const { openSearch, alerts, unreadAlertCount, markAlertAsRead } = useSystem();
+  const { openSearch, alerts, unreadAlertCount, markAlertAsRead, markAllAlertsAsRead } = useSystem();
   const { language, setLanguage, fontSize, setFontSize, highContrast, setHighContrast, t } = useLanguage();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [bellPulse, setBellPulse] = useState(false);
+  const prevCountRef = useRef(unreadAlertCount);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (unreadAlertCount > prevCountRef.current) {
+      setBellPulse(true);
+      const timer = setTimeout(() => setBellPulse(false), 600);
+      prevCountRef.current = unreadAlertCount;
+      return () => clearTimeout(timer);
+    }
+    prevCountRef.current = unreadAlertCount;
+  }, [unreadAlertCount]);
 
   const alertRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -139,12 +151,12 @@ export const GovMainHeader: React.FC = () => {
           <div className="relative" ref={alertRef}>
             <button
               onClick={() => setIsAlertOpen((prev) => !prev)}
-              className="p-2 text-[#64748B] hover:text-[#2E0854] hover:bg-white/60 rounded-full relative transition-all duration-200 cursor-pointer active:scale-90 group"
+              className={`p-2 text-[#64748B] hover:text-[#2E0854] hover:bg-white/60 rounded-full relative transition-all duration-200 cursor-pointer active:scale-95 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E0854] ${bellPulse ? 'gov-bell-pulse text-[#2E0854]' : ''}`}
               title="Operational Alerts"
               aria-label="Notifications"
               aria-expanded={isAlertOpen}
             >
-              <Bell className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+              <Bell className={`w-4 h-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110 ${bellPulse ? 'stroke-[2.5]' : ''}`} />
               {unreadAlertCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
@@ -154,15 +166,20 @@ export const GovMainHeader: React.FC = () => {
             </button>
 
             {isAlertOpen && (
-              <div className="absolute right-0 mt-2 w-80 gov-glass-card rounded-lg shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden border border-white/60">
+              <div className="absolute right-0 mt-2 w-80 gov-glass-card rounded-lg shadow-2xl z-50 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 ease-out origin-top-right overflow-hidden border border-white/60" role="dialog" aria-label="Notifications panel" aria-live="polite">
                 <div className="px-3.5 py-2.5 bg-[#2E0854]/95 text-white flex items-center justify-between">
                   <span className="font-bold text-xs flex items-center gap-1.5">
                     <Bell className="w-3.5 h-3.5 text-purple-200" />
-                    {t('header.notifications', 'Notifications')} ({alerts.length})
+                    {t('header.notifications', 'Notifications')}{unreadAlertCount > 0 && ` (${unreadAlertCount} unread)`}
                   </span>
-                  <span className="text-[10px] text-purple-200 bg-purple-900/60 px-2 py-0.5 rounded-full font-medium">
-                    {t('header.pendingActionsTag', 'Pending Actions')}
-                  </span>
+                  {unreadAlertCount > 0 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); markAllAlertsAsRead(); }}
+                      className="text-[10px] text-purple-200 hover:text-white bg-purple-900/60 hover:bg-purple-800/80 px-2 py-0.5 rounded-full font-medium transition-colors cursor-pointer"
+                    >
+                      Mark all read
+                    </button>
+                  )}
                 </div>
                 <div className="max-h-72 overflow-y-auto divide-y divide-gray-100">
                   {alerts.length > 0 ? (
@@ -170,8 +187,10 @@ export const GovMainHeader: React.FC = () => {
                       <div
                         key={alert.id}
                         onClick={() => handleAlertClick(alert.id, alert.link)}
-                        className={`p-3 text-xs cursor-pointer hover:bg-white/80 transition-all duration-150 ${
-                          !alert.read ? 'bg-[#FFFBEB]/80 font-medium border-l-3 border-[#D97706]' : 'bg-transparent'
+                        className={`p-3 text-xs cursor-pointer hover:bg-white/80 transition-all duration-150 gov-notif-enter ${
+                          !alert.read
+                            ? 'bg-[#FFFBEB]/80 font-medium border-l-[3px] border-[#D97706]'
+                            : 'bg-transparent opacity-75'
                         }`}
                       >
                         <div className="flex items-center justify-between text-[10px] text-gray-500 mb-1">
@@ -179,16 +198,28 @@ export const GovMainHeader: React.FC = () => {
                             className={`font-semibold uppercase tracking-wider ${
                               alert.type === 'CRITICAL'
                                 ? 'text-[#DC2626]'
-                                : alert.type === 'WARNING'
+                                : alert.type === 'WARNING' || alert.type === 'COMPLIANCE_ALERT' || alert.type === 'REVIEW_REQUIRED'
                                 ? 'text-[#D97706]'
+                                : alert.type === 'NEW_TENDER'
+                                ? 'text-[#2E0854]'
+                                : alert.type === 'NEW_BIDDER'
+                                ? 'text-[#0369A1]'
+                                : alert.type === 'OCR_COMPLETED' || alert.type === 'DOCUMENT_UPLOADED'
+                                ? 'text-[#15803D]'
                                 : 'text-[#2563EB]'
                             }`}
                           >
-                            {alert.type}
+                            {alert.type === 'NEW_TENDER' ? 'NEW TENDER'
+                              : alert.type === 'NEW_BIDDER' ? 'NEW BIDDER'
+                              : alert.type === 'DOCUMENT_UPLOADED' ? 'DOCUMENTS RECEIVED'
+                              : alert.type === 'OCR_COMPLETED' ? 'OCR COMPLETE'
+                              : alert.type === 'COMPLIANCE_ALERT' ? 'COMPLIANCE ALERT'
+                              : alert.type === 'REVIEW_REQUIRED' ? 'REVIEW REQUIRED'
+                              : alert.type}
                           </span>
                           <span className="text-gray-400">{alert.timestamp}</span>
                         </div>
-                        <h4 className="font-semibold text-[#0F172A] mb-0.5">{alert.title}</h4>
+                        <h4 className={`mb-0.5 ${!alert.read ? 'font-bold text-[#0F172A]' : 'font-medium text-[#334155]'}`}>{alert.title}</h4>
                         <p className="text-[11px] text-[#64748B] leading-relaxed">
                           {alert.message}
                         </p>

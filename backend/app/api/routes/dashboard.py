@@ -3,6 +3,7 @@ Dashboard route — returns real aggregate statistics from the database.
 No hardcoded values. Every metric is computed from live data.
 """
 import logging
+from typing import Any
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends
 from app.core.security import get_current_user
@@ -26,10 +27,10 @@ async def get_dashboard_metrics(user: dict = Depends(get_current_user)):
 
     # --- Fetch all cases ---
     all_cases_result = supabase.table("cases").select("*").execute()
-    all_cases = all_cases_result.data or []
+    all_cases: list[Any] = all_cases_result.data if isinstance(all_cases_result.data, list) else []
 
     # Enrich with computed fields
-    enriched = [enrich_case_with_deadlines(c) for c in all_cases]
+    enriched = [enrich_case_with_deadlines(c) for c in all_cases if isinstance(c, dict)]
 
     # --- Compute aggregates ---
     terminal_statuses = {"DISPOSED", "APPROVED", "REJECTED", "RESOLVED"}
@@ -99,7 +100,7 @@ async def get_dashboard_metrics(user: dict = Depends(get_current_user)):
         stage_risk_count[stage] = stage_risk_count.get(stage, 0) + 1
 
     if stage_risk_count:
-        worst_stage = max(stage_risk_count, key=stage_risk_count.get)
+        worst_stage = max(stage_risk_count, key=lambda k: stage_risk_count.get(k, 0))
         worst_count = stage_risk_count[worst_stage]
         dept_for_stage = next(
             (c.get("department") for c in at_risk if c.get("current_stage") == worst_stage),

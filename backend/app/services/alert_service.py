@@ -15,7 +15,7 @@ Alerts are stored in the `alerts` table and refreshed by this service.
 """
 import logging
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Any
 from app.core.database import get_supabase
 from app.services.deadline_service import calculate_days_remaining
 
@@ -28,18 +28,17 @@ def _create_alert(case_id: str, alert_type: str, severity: str, message: str, du
     Avoids duplicate alerts for the same condition.
     """
     supabase = get_supabase()
-    # Check for existing unread alert of same type
+    # Check if active alert of this type already exists
     existing = supabase.table("alerts")\
         .select("id")\
         .eq("case_id", case_id)\
         .eq("type", alert_type)\
         .eq("is_read", False)\
         .execute()
-
     if existing.data:
-        return  # Alert already exists, don't duplicate
+        return  # Don't duplicate
 
-    supabase.table("alerts").insert({
+    alert_row = {
         "case_id": case_id,
         "type": alert_type,
         "severity": severity,
@@ -47,7 +46,8 @@ def _create_alert(case_id: str, alert_type: str, severity: str, message: str, du
         "due_date": due_date,
         "is_read": False,
         "created_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+    }
+    supabase.table("alerts").insert(alert_row).execute()
 
 
 def refresh_alerts_for_case(case: dict, legal_opinion: dict | None = None):
@@ -55,7 +55,10 @@ def refresh_alerts_for_case(case: dict, legal_opinion: dict | None = None):
     Evaluate a single case and generate/update alerts as appropriate.
     Called whenever a case is updated or movement is recorded.
     """
-    case_id = case.get("id")
+    c_id = case.get("id")
+    if not c_id:
+        return
+    case_id = str(c_id)
     days_remaining = case.get("daysRemaining", 999)
     limitation_deadline = case.get("limitation_deadline")
     assigned_officer = case.get("assigned_officer")
@@ -135,24 +138,28 @@ def run_global_alert_refresh():
     # Get all non-terminal cases
     terminal_statuses = ["DISPOSED", "APPROVED", "REJECTED", "RESOLVED", "CLOSED"]
     cases_result = supabase.table("cases").select("*").not_.in_("status", terminal_statuses).execute()
-    cases = cases_result.data or []
+    cases: list[Any] = cases_result.data or []
 
     for case in cases:
+        if not isinstance(case, dict):
+            continue
         try:
+            case_id = str(case.get("id") or "")
             # Get legal opinion if any
             lo_result = supabase.table("legal_opinions")\
                 .select("*")\
-                .eq("case_id", case["id"])\
+                .eq("case_id", case_id)\
                 .not_.in_("status", ["RECEIVED", "CLOSED"])\
                 .maybe_single()\
                 .execute()
-            legal_opinion = lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None
+            lo_data: Any = getattr(lo_result, "data", None) if lo_result else None
+            legal_opinion = lo_data if isinstance(lo_data, dict) else None
 
             # Inject computed fields
             from app.services.deadline_service import enrich_case_with_deadlines
-            case = enrich_case_with_deadlines(case)
+            enriched = enrich_case_with_deadlines(case)
 
-            refresh_alerts_for_case(case, legal_opinion)
+            refresh_alerts_for_case(enriched, legal_opinion)
         except Exception as e:
             logger.error(f"Alert refresh failed for case {case.get('id')}: {e}")
 

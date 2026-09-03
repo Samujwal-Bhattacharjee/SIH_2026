@@ -4,7 +4,7 @@ These are the data contracts between the frontend and backend.
 Designed to match the TypeScript interfaces in src/types/index.ts
 """
 from datetime import datetime, date
-from typing import Optional, List, Any, Dict
+from typing import Optional, List, Any, Dict, Union, Sequence
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from enum import Enum
 
@@ -468,7 +468,7 @@ class DashboardMetrics(BaseModel):
     disposedCount: int
     avgProcessingDays: float
     primaryBottleneck: BottleneckAnalysis
-    recentHighRiskCases: List[CaseOut]
+    recentHighRiskCases: Sequence[Any]
     activeDepartmentsCount: int
     systemDatasetSize: int
     lastUpdated: str

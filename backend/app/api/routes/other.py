@@ -4,7 +4,7 @@ legal opinions, risk, workflow, simulation, analytics.
 """
 import logging
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, Any
 from fastapi import APIRouter, Depends, Query, HTTPException
 from app.core.security import get_current_user
 from app.core.database import get_supabase
@@ -25,15 +25,16 @@ departments_router = APIRouter()
 async def list_departments(user: dict = Depends(get_current_user)):
     supabase = get_supabase()
     result = supabase.table("departments").select("*").execute()
-    rows = result.data or []
-    return [_map_dept(d, supabase) for d in rows]
+    rows: list[Any] = result.data or []
+    return [_map_dept(d, supabase) for d in rows if isinstance(d, dict)]
 
 
 @departments_router.get("/officers", summary="List all officers")
 async def list_officers(user: dict = Depends(get_current_user)):
     supabase = get_supabase()
     result = supabase.table("users").select("*").execute()
-    return [_map_officer(u) for u in (result.data or [])]
+    users: list[Any] = result.data or []
+    return [_map_officer(u) for u in users if isinstance(u, dict)]
 
 
 def _map_dept(d: dict, supabase) -> dict:
@@ -93,7 +94,8 @@ async def list_audit_logs(
     if q:
         query = query.or_(f"officer_name.ilike.%{q}%,remarks.ilike.%{q}%")
     result = query.order("created_at", desc=True).limit(200).execute()
-    return [_map_audit(a) for a in (result.data or [])]
+    audit_list: list[Any] = result.data or []
+    return [_map_audit(a) for a in audit_list if isinstance(a, dict)]
 
 
 def _map_audit(a: dict) -> dict:
@@ -133,7 +135,8 @@ async def search(
         .limit(20)\
         .execute()
     from app.services.case_service import _map_db_doc_to_frontend
-    docs = [_map_db_doc_to_frontend(d) for d in (docs_result.data or [])]
+    docs_list: list[Any] = docs_result.data or []
+    docs = [_map_db_doc_to_frontend(d) for d in docs_list if isinstance(d, dict)]
     return {"cases": cases_result["cases"], "documents": docs}
 
 
@@ -168,11 +171,13 @@ async def get_ranked_cases(
     if department and department != "ALL":
         query = query.eq("department", department)
     result = query.execute()
-    raw_cases = result.data or []
+    raw_list: list[Any] = result.data or []
+    raw_cases = [c for c in raw_list if isinstance(c, dict)]
     
     # Also fetch active legal opinions
     lo_res = supabase.table("legal_opinions").select("*").execute()
-    opinions_by_case = {lo["case_id"]: lo for lo in (lo_res.data or []) if "case_id" in lo}
+    lo_list: list[Any] = lo_res.data or []
+    opinions_by_case = {str(lo.get("case_id")): lo for lo in lo_list if isinstance(lo, dict) and "case_id" in lo}
 
     ranked = rank_cases(raw_cases, legal_opinions_by_case=opinions_by_case)
     return [_map_db_case_to_frontend(c) for c in ranked]
@@ -190,10 +195,13 @@ async def get_case_intelligence_detail(case_id: str, user: dict = Depends(get_cu
     lo_result = supabase.table("legal_opinions").select("*").eq("case_id", case_id).maybe_single().execute()
     mov_result = supabase.table("case_movements").select("*").eq("case_id", case_id).order("started_at", desc=False).execute()
     
+    c_data: Any = case_result.data
+    lo_data: Any = getattr(lo_result, "data", None) if lo_result else None
+    mov_data: Any = mov_result.data if mov_result else []
     intel = compute_case_intelligence(
-        case_data=case_result.data,
-        legal_opinion=lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None,
-        movements=mov_result.data or [],
+        case_data=c_data if isinstance(c_data, dict) else {},
+        legal_opinion=lo_data if isinstance(lo_data, dict) else None,
+        movements=list(mov_data) if isinstance(mov_data, list) else [],
     )
     return intel.model_dump()
 
@@ -205,9 +213,11 @@ async def get_risk_prediction(case_id: str, user: dict = Depends(get_current_use
     case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
     if not case_result or not getattr(case_result, "data", None):
         raise HTTPException(status_code=404, detail="Case not found")
-    case = enrich_case_with_deadlines(case_result.data)
+    c_data: Any = case_result.data
+    case = enrich_case_with_deadlines(c_data if isinstance(c_data, dict) else {})
     lo_result = supabase.table("legal_opinions").select("*").eq("case_id", case_id).maybe_single().execute()
-    legal_opinion = lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None
+    lo_data: Any = getattr(lo_result, "data", None) if lo_result else None
+    legal_opinion = lo_data if isinstance(lo_data, dict) else None
     risk_result = calculate_risk(case, legal_opinion=legal_opinion)
     return build_risk_prediction(case, risk_result, legal_opinion=legal_opinion)
 
@@ -299,13 +309,14 @@ async def get_process_map(
     query = supabase.table("cases").select("current_stage, status, created_at, department")
     if department:
         query = query.eq("department", department)
-    cases = query.execute().data or []
+    cases: list[Any] = query.execute().data or []
 
     # Count cases per stage
     stage_counts: dict = {}
     for c in cases:
-        st = c.get("current_stage", "Unknown")
-        stage_counts[st] = stage_counts.get(st, 0) + 1
+        if isinstance(c, dict):
+            st = c.get("current_stage", "Unknown")
+            stage_counts[st] = stage_counts.get(st, 0) + 1
 
     stages_order = [
         "Application Received", "Document Verification", "Department Assignment",
@@ -424,9 +435,9 @@ async def run_simulation(body: dict, user: dict = Depends(get_current_user)):
     threshold = float(body.get("threshold", 7))
 
     supabase = get_supabase()
-    cases = supabase.table("cases").select("*").execute().data or []
+    cases: list[Any] = supabase.table("cases").select("*").execute().data or []
     from app.services.deadline_service import enrich_case_with_deadlines
-    enriched = [enrich_case_with_deadlines(c) for c in cases]
+    enriched = [enrich_case_with_deadlines(c) for c in cases if isinstance(c, dict)]
 
     baseline_median = 18.0
     baseline_sla = 78.0
@@ -506,12 +517,12 @@ analytics_router = APIRouter()
 @analytics_router.get("/performance", summary="Get process performance metrics")
 async def get_performance(user: dict = Depends(get_current_user)):
     supabase = get_supabase()
-    cases = supabase.table("cases").select("current_stage,status,created_at").execute().data or []
+    cases: list[Any] = supabase.table("cases").select("current_stage,status,created_at").execute().data or []
     stages = ["Application Received", "Document Verification", "Department Assignment",
                "Officer Review", "Legal Review", "Approval", "Closure"]
     stage_breakdown = []
     for stage in stages:
-        count = sum(1 for c in cases if c.get("current_stage") == stage)
+        count = sum(1 for c in cases if isinstance(c, dict) and c.get("current_stage") == stage)
         stage_breakdown.append({
             "stage": stage, "activeProcessingDays": 3, "waitingDays": 1,
             "totalDays": 4, "queueCount": count, "slaBreachRatePct": 5.0

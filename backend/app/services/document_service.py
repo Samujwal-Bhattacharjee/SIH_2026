@@ -8,7 +8,7 @@ import logging
 import hashlib
 import time
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, Any
 
 logger = logging.getLogger(__name__)
 
@@ -103,14 +103,15 @@ def upload_document(
         "created_at": now,
     }
     insert_result = supabase.table("documents").insert(doc_row).execute()
-    doc = insert_result.data[0]
+    doc: Any = insert_result.data[0] if isinstance(insert_result.data, list) else insert_result.data
 
     # Legacy case workflow keeps its document id list; procurement documents
     # are linked through bidder_documents and deliberately have no case_id.
     if case_id:
         case_result = supabase.table("cases").select("document_ids").eq("id", case_id).maybe_single().execute()
         if case_result and getattr(case_result, "data", None):
-            existing_ids = case_result.data.get("document_ids") or []
+            case_data: Any = case_result.data
+            existing_ids = list(case_data.get("document_ids") or [])
             existing_ids.append(doc["id"])
             supabase.table("cases").update({"document_ids": existing_ids, "updated_at": now}).eq("id", case_id).execute()
 
@@ -137,7 +138,7 @@ def process_ocr(document_id: str) -> dict:
     if not doc_result or not getattr(doc_result, "data", None):
         raise ValueError(f"Document {document_id} not found")
 
-    doc = doc_result.data
+    doc: Any = doc_result.data
 
     # Mark as processing
     supabase.table("documents").update({"ocr_status": "PROCESSING"}).eq("id", document_id).execute()
@@ -228,8 +229,10 @@ def get_download_url(document_id: str) -> tuple[bytes, str]:
 
     supabase = get_supabase()
     doc_result = supabase.table("documents").select("*").eq("id", document_id).maybe_single().execute()
-    if not doc_result or not getattr(doc_result, "data", None):
+    data = getattr(doc_result, "data", None)
+    if not doc_result or not isinstance(data, dict):
         raise ValueError(f"Document {document_id} not found")
-    doc = doc_result.data
-    file_bytes = supabase.storage.from_(settings.SUPABASE_STORAGE_BUCKET).download(doc["storage_path"])
-    return file_bytes, doc["file_name"]
+    doc: dict[str, Any] = data
+    storage_path = str(doc.get("storage_path") or "")
+    file_bytes = supabase.storage.from_(settings.SUPABASE_STORAGE_BUCKET).download(storage_path)
+    return file_bytes, str(doc.get("file_name") or "document.pdf")

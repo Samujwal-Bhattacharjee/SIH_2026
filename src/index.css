@@ -322,12 +322,34 @@ body {
   border: 1px solid transparent;
   text-decoration: none;
 }
+.ux4g-btn:hover:not(:disabled), .gov-btn:hover:not(:disabled) {
+  transform: translateY(-0.5px);
+  box-shadow: var(--ux4g-elevation-2);
+}
 .ux4g-btn:active:not(:disabled), .gov-btn:active:not(:disabled) {
-  transform: translateY(0.5px);
+  transform: translateY(1px) scale(0.98);
+  box-shadow: var(--ux4g-elevation-0);
+  transition-duration: 50ms;
 }
 .ux4g-btn:disabled, .gov-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Global button tactile interaction feedback across dashboard */
+button:not(:disabled) {
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 100ms ease;
+}
+button:not(:disabled):active {
+  transform: translateY(1px) scale(0.98);
+  transition-duration: 50ms;
+}
+button:disabled {
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .ux4g-btn-primary, .gov-btn-primary {
@@ -731,3 +753,69 @@ main .bg-\[\#F5F6F8\] {
   .gov-table td { border: 1px solid #CCCCCC !important; }
 }
 
+/* ── gov-btn-glossy — Professional button interaction states ──────────────── */
+.gov-btn-glossy {
+  position: relative;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 100ms ease,
+    opacity 150ms ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+}
+.gov-btn-glossy:hover:not(:disabled) {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
+  transform: translateY(-0.5px);
+}
+.gov-btn-glossy:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  transition-duration: 60ms;
+}
+.gov-btn-glossy:focus-visible {
+  outline: 2px solid #4A154B;
+  outline-offset: 2px;
+}
+.gov-btn-glossy:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+/* ── Notification bell pulse ──────────────────────────────────────────────── */
+@keyframes govBellPulse {
+  0%   { transform: rotate(0deg) scale(1); }
+  15%  { transform: rotate(-14deg) scale(1.15); }
+  30%  { transform: rotate(11deg) scale(1.1); }
+  50%  { transform: rotate(-7deg) scale(1.04); }
+  70%  { transform: rotate(4deg) scale(1.01); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+.gov-bell-pulse {
+  animation: govBellPulse 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* ── Notification item slide-in ────────────────────────────────────────────── */
+@keyframes govNotifSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.gov-notif-enter {
+  animation: govNotifSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gov-btn-glossy { transition: opacity 150ms ease !important; }
+  .gov-btn-glossy:hover:not(:disabled),
+  .gov-btn-glossy:active:not(:disabled),
+  button:not(:disabled):active,
+  .ux4g-btn:hover:not(:disabled),
+  .ux4g-btn:active:not(:disabled),
+  .gov-btn:hover:not(:disabled),
+  .gov-btn:active:not(:disabled) { transform: none !important; }
+  .gov-bell-pulse { animation: none !important; }
+  .gov-notif-enter { animation: none !important; }
+}

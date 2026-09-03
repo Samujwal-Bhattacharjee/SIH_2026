@@ -35,6 +35,88 @@ let casesStore: Case[] = [...MOCK_CASES];
 let caseEventsStore: Record<string, CaseEvent[]> = { ...MOCK_CASE_EVENTS };
 let documentsStore: DocumentRecord[] = [...MOCK_DOCUMENTS];
 let auditLogsStore: AuditLog[] = [...MOCK_AUDIT_LOGS];
+let mockTendersStore: any[] = [
+  {
+    id: 'TEN-2026-001',
+    tender_number: 'GEM/2026/B/418207',
+    title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
+    department: 'Department of Administrative Reforms',
+    status: 'ACTIVE',
+    category: 'Network Infrastructure',
+    bid_closing_date: '2026-08-30',
+    estimated_value: 45000000.0,
+  },
+  {
+    id: 'TEN-2026-002',
+    tender_number: 'GEM/2026/B/519302',
+    title: 'Procurement of Enterprise Cloud Storage and High-Availability Backup Subsystems',
+    department: 'Department of Information Technology',
+    status: 'ACTIVE',
+    category: 'Cloud Infrastructure',
+    bid_closing_date: '2026-09-15',
+    estimated_value: 25000000.0,
+  },
+  {
+    id: 'TEN-2026-003',
+    tender_number: 'GEM/2026/B/621415',
+    title: 'Supply of Edge Routing Hardware and Structured Switching Systems',
+    department: 'Department of Information Technology',
+    status: 'ACTIVE',
+    category: 'IT & Telecommunications',
+    bid_closing_date: '2026-09-20',
+    estimated_value: 32000000.0,
+  },
+  {
+    id: 'TEN-2026-004',
+    tender_number: 'GEM/2026/B/732528',
+    title: 'Turnkey EPC Contract for 50MW Solar Photovoltaic Power Plant Expansion',
+    department: 'Ministry of New and Renewable Energy',
+    status: 'ACTIVE',
+    category: 'Renewable Energy',
+    bid_closing_date: '2026-10-05',
+    estimated_value: 350000000.0,
+  },
+  {
+    id: 'TEN-2026-005',
+    tender_number: 'GEM/2026/B/843639',
+    title: 'Statewide Network Operation Center (NOC) Annual Operation & Maintenance',
+    department: 'Department of Information Technology',
+    status: 'ACTIVE',
+    category: 'IT & Telecommunications',
+    bid_closing_date: '2026-10-18',
+    estimated_value: 50000000.0,
+  },
+  {
+    id: 'TEN-2026-006',
+    tender_number: 'GEM/2026/B/954741',
+    title: 'Comprehensive Smart City Command & Control Software Modernization',
+    department: 'Ministry of Housing and Urban Affairs',
+    status: 'ACTIVE',
+    category: 'Software Solutions',
+    bid_closing_date: '2026-11-01',
+    estimated_value: 60000000.0,
+  },
+  {
+    id: 'TEN-2026-007',
+    tender_number: 'GEM/2026/B/965852',
+    title: 'Design, Deployment & Unified Management of High-Security Cyber Defense Operations',
+    department: 'Department of Information Technology',
+    status: 'ACTIVE',
+    category: 'IT & Telecommunications',
+    bid_closing_date: '2026-11-15',
+    estimated_value: 80000000.0,
+  },
+  {
+    id: 'TEN-2026-008',
+    tender_number: 'GEM/2026/B/976963',
+    title: 'Supply of Certified Precision Survey and GIS Photogrammetry Equipment',
+    department: 'Survey of India',
+    status: 'ACTIVE',
+    category: 'Geospatial & Survey',
+    bid_closing_date: '2026-11-30',
+    estimated_value: 18000000.0,
+  },
+];
 let sessionUser: User | null = null;
 
 // Initialize session from localStorage if available
@@ -1038,80 +1120,7 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     },
     async getTenders(): Promise<any[]> {
       await delay(150);
-      return [
-        {
-          id: 'TEN-2026-001',
-          tender_number: 'GEM/2026/B/418207',
-          title: 'Supply and Installation of Network Infrastructure for Government Administrative Offices',
-          department: 'Department of Administrative Reforms',
-          status: 'ACTIVE',
-          category: 'Network Infrastructure',
-          estimated_value: 45000000.0,
-        },
-        {
-          id: 'TEN-2026-002',
-          tender_number: 'GEM/2026/B/519302',
-          title: 'Procurement of Enterprise Cloud Storage and High-Availability Backup Subsystems',
-          department: 'Department of Information Technology',
-          status: 'ACTIVE',
-          category: 'Cloud Infrastructure',
-          estimated_value: 25000000.0,
-        },
-        {
-          id: 'TEN-2026-003',
-          tender_number: 'GEM/2026/B/621415',
-          title: 'Supply of Edge Routing Hardware and Structured Switching Systems',
-          department: 'Department of Information Technology',
-          status: 'ACTIVE',
-          category: 'IT & Telecommunications',
-          estimated_value: 32000000.0,
-        },
-        {
-          id: 'TEN-2026-004',
-          tender_number: 'GEM/2026/B/732528',
-          title: 'Turnkey EPC Contract for 50MW Solar Photovoltaic Power Plant Expansion',
-          department: 'Ministry of New and Renewable Energy',
-          status: 'ACTIVE',
-          category: 'Renewable Energy',
-          estimated_value: 350000000.0,
-        },
-        {
-          id: 'TEN-2026-005',
-          tender_number: 'GEM/2026/B/843639',
-          title: 'Statewide Network Operation Center (NOC) Annual Operation & Maintenance',
-          department: 'Department of Information Technology',
-          status: 'ACTIVE',
-          category: 'IT & Telecommunications',
-          estimated_value: 50000000.0,
-        },
-        {
-          id: 'TEN-2026-006',
-          tender_number: 'GEM/2026/B/954741',
-          title: 'Comprehensive Smart City Command & Control Software Modernization',
-          department: 'Ministry of Housing and Urban Affairs',
-          status: 'ACTIVE',
-          category: 'Software Solutions',
-          estimated_value: 60000000.0,
-        },
-        {
-          id: 'TEN-2026-007',
-          tender_number: 'GEM/2026/B/965852',
-          title: 'Design, Deployment & Unified Management of High-Security Cyber Defense Operations',
-          department: 'Department of Information Technology',
-          status: 'ACTIVE',
-          category: 'IT & Telecommunications',
-          estimated_value: 80000000.0,
-        },
-        {
-          id: 'TEN-2026-008',
-          tender_number: 'GEM/2026/B/976963',
-          title: 'Supply of Certified Precision Survey and GIS Photogrammetry Equipment',
-          department: 'Survey of India',
-          status: 'ACTIVE',
-          category: 'Geospatial & Survey',
-          estimated_value: 18000000.0,
-        },
-      ];
+      return [...mockTendersStore];
     },
     async getTender(id: string): Promise<any> {
       await delay(100);
@@ -1125,7 +1134,17 @@ File recommended for immediate administrative endorsement and legal scrutiny.`;
     },
     async createTender(tender: any): Promise<any> {
       await delay(200);
-      return { id: `TEN-${Date.now()}`, ...tender, tender_number: `GEM/2026/B/${Math.floor(100000 + Math.random() * 900000)}` };
+      const newT = {
+        id: `TEN-${Date.now()}`,
+        tender_number: `GEM/2026/B/${Math.floor(100000 + Math.random() * 900000)}`,
+        status: 'ACTIVE',
+        category: 'General Procurement',
+        estimated_value: 10000000.0,
+        bid_closing_date: tender.bid_closing_date || '2026-09-15',
+        ...tender,
+      };
+      mockTendersStore = [newT, ...mockTendersStore];
+      return newT;
     },
     async getBidders(tenderId: string): Promise<any[]> {
       await delay(150);

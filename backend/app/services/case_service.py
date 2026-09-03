@@ -4,7 +4,8 @@ Database operations are kept separate from route handlers.
 """
 import logging
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional, List, Any
+from postgrest.types import CountMethod
 from app.core.database import get_supabase
 from app.services.deadline_service import (
     calculate_deadline,
@@ -16,7 +17,7 @@ from app.services.risk_service import calculate_risk, build_risk_prediction
 logger = logging.getLogger(__name__)
 
 
-def _map_db_case_to_frontend(row: dict, events: list = None, documents: list = None, include_risk: bool = True) -> dict:
+def _map_db_case_to_frontend(row: dict, events: Optional[list] = None, documents: Optional[list] = None, include_risk: bool = True) -> dict:
     """
     Map a raw database row to the format expected by the frontend (matches TypeScript Case interface).
     """
@@ -115,10 +116,10 @@ def get_cases(
         )
 
     result = query.order("created_at", desc=True).execute()
-    rows = result.data or []
+    rows: list[Any] = result.data or []
 
     # Map and enrich
-    mapped = [_map_db_case_to_frontend(r, include_risk=False) for r in rows]
+    mapped = [_map_db_case_to_frontend(r, include_risk=False) for r in rows if isinstance(r, dict)]
 
     # Apply post-query filters (computed fields like risk_level, priority)
     if risk_level:
@@ -143,9 +144,10 @@ def get_case_by_id(case_id: str) -> Optional[dict]:
 
     # Case
     case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not case_result or not getattr(case_result, "data", None):
+    row_data: Any = getattr(case_result, "data", None) if case_result else None
+    if not case_result or not isinstance(row_data, dict):
         return None
-    row = case_result.data
+    row = dict(row_data)
 
     # Events (movements)
     events_result = supabase.table("case_movements")\
@@ -153,8 +155,8 @@ def get_case_by_id(case_id: str) -> Optional[dict]:
         .eq("case_id", case_id)\
         .order("started_at", desc=False)\
         .execute()
-    raw_events = events_result.data or []
-    events = [_map_movement_to_event(e) for e in raw_events]
+    raw_events: list[Any] = events_result.data or []
+    events = [_map_movement_to_event(e) for e in raw_events if isinstance(e, dict)]
 
     # Documents
     docs_result = supabase.table("documents")\
@@ -162,8 +164,8 @@ def get_case_by_id(case_id: str) -> Optional[dict]:
         .eq("case_id", case_id)\
         .order("created_at", desc=True)\
         .execute()
-    raw_docs = docs_result.data or []
-    documents = [_map_db_doc_to_frontend(d) for d in raw_docs]
+    raw_docs: list[Any] = docs_result.data or []
+    documents = [_map_db_doc_to_frontend(d) for d in raw_docs if isinstance(d, dict)]
 
     # Legal opinion (for risk calculation)
     lo_result = supabase.table("legal_opinions")\
@@ -172,7 +174,8 @@ def get_case_by_id(case_id: str) -> Optional[dict]:
         .not_.in_("status", ["RECEIVED", "CLOSED"])\
         .maybe_single()\
         .execute()
-    legal_opinion = lo_result.data if (lo_result and getattr(lo_result, "data", None)) else None
+    lo_data: Any = getattr(lo_result, "data", None) if lo_result else None
+    legal_opinion = lo_data if isinstance(lo_data, dict) else None
 
     row = enrich_case_with_deadlines(row)
     risk_result = calculate_risk(row, legal_opinion=legal_opinion, movement_count=len(raw_events))
@@ -202,7 +205,7 @@ def create_case(data: dict, created_by_user: dict) -> dict:
         dept_code = data.get("department", "GEN")[:3].upper()
         year = datetime.now().year
         # Count existing cases for sequential number
-        count_result = supabase.table("cases").select("id", count="exact").execute()
+        count_result = supabase.table("cases").select("id", count=CountMethod.exact).execute()
         seq = (count_result.count or 0) + 1
         file_number = f"GFT/{dept_code}/{year}/{seq:06d}"
 
@@ -237,15 +240,16 @@ def create_case(data: dict, created_by_user: dict) -> dict:
     }
 
     insert_result = supabase.table("cases").insert(db_row).execute()
-    created = insert_result.data[0]
+    created_list: Any = insert_result.data or []
+    created: dict[str, Any] = created_list[0] if isinstance(created_list, list) and created_list else {}
 
     # Audit log
     _create_audit_log(
         supabase=supabase,
-        officer_id=created_by_user.get("id"),
-        officer_name=created_by_user.get("name", ""),
+        officer_id=str(created_by_user.get("id") or ""),
+        officer_name=str(created_by_user.get("name") or ""),
         action="FILE_REGISTERED",
-        file_id=created["id"],
+        file_id=str(created.get("id") or ""),
         file_number=file_number,
         new_state="REGISTERED",
         remarks=f"File registered: {data['title']}",
@@ -268,11 +272,12 @@ def forward_case(case_id: str, user: dict, target_officer: str, target_desk: str
 
     # Get current case
     case_result = supabase.table("cases").select("*").eq("id", case_id).maybe_single().execute()
-    if not case_result or not getattr(case_result, "data", None):
+    cur_data: Any = getattr(case_result, "data", None) if case_result else None
+    if not case_result or not isinstance(cur_data, dict):
         return None
-    current = case_result.data
+    current: dict[str, Any] = cur_data
 
-    from_stage = current.get("current_stage", "Application Received")
+    from_stage = str(current.get("current_stage") or "Application Received")
     to_stage = new_stage or from_stage
 
     # Record movement
@@ -300,17 +305,19 @@ def forward_case(case_id: str, user: dict, target_officer: str, target_desk: str
 
     _create_audit_log(
         supabase=supabase,
-        officer_id=user.get("id"),
-        officer_name=user.get("name", ""),
+        officer_id=str(user.get("id") or ""),
+        officer_name=str(user.get("name") or ""),
         action="FILE_FORWARDED",
         file_id=case_id,
-        file_number=current.get("file_number"),
+        file_number=str(current.get("file_number") or ""),
         previous_state=from_stage,
         new_state=to_stage,
         remarks=f"Forwarded to {target_officer} at {target_desk}. {remarks}",
     )
 
-    return _map_db_case_to_frontend(update_result.data[0])
+    up_list: Any = update_result.data or []
+    up_row: dict[str, Any] = up_list[0] if isinstance(up_list, list) and up_list else {}
+    return _map_db_case_to_frontend(up_row)
 
 
 def _map_movement_to_event(m: dict) -> dict:
