@@ -97,6 +97,14 @@ def _signal_family(signal_type_value: str) -> str:
     return "Other"
 
 
+def _signal_type_from_value(signal_value: str) -> Optional[SignalType]:
+    """Resolve a SignalType enum member from its string value safely."""
+    for st in SignalType:
+        if st.value == signal_value:
+            return st
+    return None
+
+
 def classify_integrity_score(score: float) -> str:
     """
     Derive statutory integrity risk classification from a continuous 0-100 score.
@@ -162,21 +170,21 @@ def score_integrity_benchmark(
     for sc in score_contributors:
         signal_val = sc.signal_type
         family = _signal_family(signal_val)
-        base_weight = DEFAULT_SIGNAL_WEIGHTS.get(
-            # resolve enum by value
-            next((st for st in SignalType if st.value == signal_val), signal_val),  # type: ignore[arg-type]
-            15.0,
-        )
+        signal_type = _signal_type_from_value(signal_val)
+        if signal_type is not None:
+            base_weight = DEFAULT_SIGNAL_WEIGHTS.get(signal_type, 15.0)
+            family_cap = FAMILY_CAPS.get(signal_type, 35.0)
+        else:
+            base_weight = 15.0
+            family_cap = 35.0
+
         benchmark_contributors.append(BenchmarkContributor(
             rule_id=signal_val,
             rule_name=sc.title,
             observed_value={
                 "family": family,
                 "base_weight": base_weight,
-                "family_cap": FAMILY_CAPS.get(
-                    next((st for st in SignalType if st.value == signal_val), signal_val),  # type: ignore[arg-type]
-                    35.0,
-                ),
+                "family_cap": family_cap,
                 "evidence_count": sc.evidence_count,
                 "rule_clause": sc.rule_clause,
             },
