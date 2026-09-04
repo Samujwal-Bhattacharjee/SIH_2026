@@ -1,4 +1,4 @@
-﻿"""
+"""
 FairBid Ground-Truth Integrity Benchmark -- SIH26100
 =====================================================
 FAIR BID BENCHMARK / RULE-BASED GROUND TRUTH -- Integrity scoring.
@@ -97,6 +97,33 @@ def _signal_family(signal_type_value: str) -> str:
     return "Other"
 
 
+def classify_integrity_score(score: float) -> str:
+    """
+    Derive statutory integrity risk classification from a continuous 0-100 score.
+
+    Thresholds (from risk_engine.py RISK_TIER_THRESHOLDS):
+      LOW:      score < 25.0
+      MEDIUM:   25.0 <= score < 50.0
+      HIGH:     50.0 <= score < 75.0
+      CRITICAL: score >= 75.0
+
+    Explicit boundary examples:
+      - 20.0 points -> LOW (< 25)
+      - 23.6 points -> LOW (< 25)
+      - 44.6 points -> MEDIUM (>= 25 and < 50)
+      - 56.0 points -> HIGH (>= 50 and < 75)
+      - 75.0 points -> CRITICAL (>= 75)
+    """
+    if score >= 75.0:
+        return "CRITICAL"
+    elif score >= 50.0:
+        return "HIGH"
+    elif score >= 25.0:
+        return "MEDIUM"
+    else:
+        return "LOW"
+
+
 def score_integrity_benchmark(
     findings: List[IntegrityFinding],
 ) -> IntegrityBenchmarkResult:
@@ -123,6 +150,7 @@ def score_integrity_benchmark(
     - Diminishing returns applied by the aggregator (100% / 50% / 25%).
     - Multi-family synergy applied by the aggregator (up to 1.15x).
     - Score capped at 100.0 by the aggregator.
+    - Contributor reconciliation: sum(contributor.contribution) == score (and raw_score).
     """
     aggregate = aggregate_integrity_findings(findings)
     score: float = aggregate.score
@@ -170,9 +198,12 @@ def score_integrity_benchmark(
         for f in findings
     ))
 
+    raw_score = round(sum(c.contribution for c in benchmark_contributors), 1)
+
     return IntegrityBenchmarkResult(
         score=score,
-        risk_class=risk_level.value,
+        raw_score=raw_score,
+        risk_class=classify_integrity_score(score),
         findings_count=len(findings),
         active_signal_families=active_families,
         contributors=benchmark_contributors,

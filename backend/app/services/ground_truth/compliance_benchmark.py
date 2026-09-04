@@ -1,4 +1,4 @@
-﻿"""
+"""
 FairBid Ground-Truth Compliance Benchmark — SIH26100
 =====================================================
 FAIR BID BENCHMARK / RULE-BASED GROUND TRUTH — Compliance scoring.
@@ -22,15 +22,16 @@ CB-COMPLETE    Mandatory Document Completeness     5       NO         Project: A
                -----------------------------------------------------------------
                TOTAL                              100
 
-Mandatory failure rule (FAIR BID DEMO ASSUMPTION consistent with GFR 2017 Rule 144):
-  If ANY of CB-GST, CB-PAN, CB-BLACKLIST, CB-OEM, CB-TURNOVER fail ->
-  final score is capped at 40.0 (=> CRITICAL classification).
+Mandatory failure rule (GFR 2017 Rule 144):
+  If ANY of CB-GST, CB-PAN, CB-BLACKLIST, CB-OEM, CB-TURNOVER suffer a hard failure ->
+  final score is capped at 40.0, and classification is forced to CRITICAL.
 
-Classification:
-  LOW      score >= 80
-  MEDIUM   60 <= score < 80
-  HIGH     40 <= score < 60
-  CRITICAL score < 40 OR any mandatory HARD FAIL
+Classification Semantics:
+  The benchmark compliance classification represents COMPLIANCE RISK (not compliance quality):
+    LOW Risk:      score >= 80.0 and no mandatory hard fail (minimal disqualification risk)
+    MEDIUM Risk:   60.0 <= score < 80.0 and no mandatory hard fail (moderate compliance risk)
+    HIGH Risk:     40.0 <= score < 60.0 and no mandatory hard fail (elevated compliance risk)
+    CRITICAL Risk: score < 40.0 OR any mandatory HARD FAIL (critical disqualification risk)
 """
 from __future__ import annotations
 
@@ -170,14 +171,26 @@ _COMPLIANCE_RISK_TIERS = [
 ]
 
 
-def _classify_compliance(score: float, has_hard_fail: bool) -> str:
-    """Map 0-100 score + hard-fail flag to LOW/MEDIUM/HIGH/CRITICAL."""
+def classify_compliance_score(score: float, has_hard_fail: bool) -> str:
+    """
+    Map compliance score and mandatory hard-fail flag to COMPLIANCE RISK class.
+
+    SEMANTICS: This class represents COMPLIANCE RISK (not compliance quality).
+      - LOW:      score >= 80.0 and no hard fail (minimal compliance risk of disqualification)
+      - MEDIUM:   60.0 <= score < 80.0 and no hard fail (moderate compliance risk)
+      - HIGH:     40.0 <= score < 60.0 and no hard fail (elevated compliance risk)
+      - CRITICAL: score < 40.0 OR any mandatory HARD FAIL (severe disqualification risk)
+    """
     if has_hard_fail:
         return "CRITICAL"
     for threshold, label in _COMPLIANCE_RISK_TIERS:
         if score >= threshold:
             return label
     return "CRITICAL"
+
+
+# Backward-compatible alias
+_classify_compliance = classify_compliance_score
 
 
 def _check_result_per_rule_score(status: str) -> float:
@@ -366,25 +379,36 @@ def score_compliance_benchmark(
             reason="No check result available for this rule — treated as PENDING.",
         ))
 
-    # ── Step 5: Compute total score ───────────────────────────────────────────
+    # ── Step 5: Compute raw score and reconcile contributors ───────────────────
     # NOT_APPLICABLE contributors get FULL contribution (100%), consistent with operational engine
-    raw_score = sum(c.contribution for c in contributors)
+    raw_contrib_sum = round(sum(c.contribution for c in contributors), 2)
     # Normalise: total possible = sum of all weights = 100
     total_weight = sum(r.weight for r in COMPLIANCE_BENCHMARK_RULES)
-    # raw_score already represents points earned out of total_weight
-    unbounded_score = round(min(100.0, raw_score / total_weight * 100.0), 1)
+    # raw_score represents the exact pre-cap compliance score out of 100.0
+    raw_score = round(min(100.0, (raw_contrib_sum / total_weight) * 100.0), 1)
 
     # ── Step 6: Apply mandatory HARD FAIL cap ────────────────────────────────
+    # Contributor reconciliation:
+    #   sum(c.contribution for c in contributors) == raw_score (within rounding tolerance)
+    #
+    # Mandatory cap effect:
+    #   If ANY mandatory rule suffers a hard failure (CB-GST, CB-PAN, CB-BLACKLIST, CB-OEM, CB-TURNOVER),
+    #   GFR 2017 Rule 144 requires tender disqualification.
+    #   The benchmark caps the final score at 40.0, forcing the classification into CRITICAL.
+    #   final_score = min(raw_score, 40.0)
     score_capped = False
     if mandatory_hard_fails:
-        unbounded_score = min(unbounded_score, 40.0)
+        final_score = round(min(raw_score, 40.0), 1)
         score_capped = True
+    else:
+        final_score = raw_score
 
-    final_score = round(max(0.0, unbounded_score), 1)
-    risk_class = _classify_compliance(final_score, bool(mandatory_hard_fails))
+    final_score = round(max(0.0, final_score), 1)
+    risk_class = classify_compliance_score(final_score, bool(mandatory_hard_fails))
 
     return ComplianceBenchmarkResult(
         score=final_score,
+        raw_score=raw_score,
         risk_class=risk_class,
         mandatory_hard_fails=mandatory_hard_fails,
         score_capped=score_capped,

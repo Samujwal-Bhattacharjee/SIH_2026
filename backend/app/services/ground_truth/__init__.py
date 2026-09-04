@@ -23,10 +23,12 @@ from app.services.ground_truth.models import (
 )
 from app.services.ground_truth.compliance_benchmark import (
     COMPLIANCE_BENCHMARK_RULES,
+    classify_compliance_score,
     score_compliance_benchmark,
 )
 from app.services.ground_truth.integrity_benchmark import (
     INTEGRITY_SIGNAL_FAMILIES,
+    classify_integrity_score,
     score_integrity_benchmark,
 )
 from app.services.ground_truth.dataset import (
@@ -44,8 +46,10 @@ __all__ = [
     "BenchmarkResult",
     "BenchmarkCase",
     "COMPLIANCE_BENCHMARK_RULES",
+    "classify_compliance_score",
     "score_compliance_benchmark",
     "INTEGRITY_SIGNAL_FAMILIES",
+    "classify_integrity_score",
     "score_integrity_benchmark",
     "BENCHMARK_DATASET",
     "get_benchmark_case",

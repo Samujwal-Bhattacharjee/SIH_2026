@@ -71,11 +71,22 @@ class ComplianceBenchmarkResult(BaseModel):
     """
     Compliance ground-truth benchmark for a single bidder.
 
-    score:      0-100 (may be capped at 40 if any mandatory HARD FAIL)
-    risk_class: LOW / MEDIUM / HIGH / CRITICAL  (derived from score and hard-fail flags)
+    Classification Semantics:
+    Represents COMPLIANCE RISK (not compliance quality):
+      - LOW:      score >= 80.0 and no mandatory hard fail (minimal compliance risk)
+      - MEDIUM:   60.0 <= score < 80.0 and no mandatory hard fail (moderate compliance risk)
+      - HIGH:     40.0 <= score < 60.0 and no mandatory hard fail (elevated compliance risk)
+      - CRITICAL: score < 40.0 OR any mandatory hard fail (severe disqualification risk)
+
+    Score & Contributor Reconciliation:
+      - raw_score: sum(contributor.contribution) across all benchmark rules (0.0 to 100.0).
+      - mandatory_hard_fails: list of mandatory rule IDs that suffered a hard failure.
+      - score_capped: True if a mandatory failure rule is active (capping final score <= 40.0).
+      - score: final score (0.0 to 100.0). Equals min(raw_score, 40.0) if mandatory failure, else raw_score.
     """
-    score: float = Field(..., description="Benchmark compliance score 0-100")
-    risk_class: str = Field(..., description="LOW / MEDIUM / HIGH / CRITICAL")
+    score: float = Field(..., description="Benchmark compliance score 0-100 (capped at 40 if any mandatory HARD FAIL)")
+    raw_score: float = Field(default=0.0, description="Raw compliance score: sum(contributor.contribution) before mandatory hard-fail cap")
+    risk_class: str = Field(..., description="LOW / MEDIUM / HIGH / CRITICAL (represents COMPLIANCE RISK)")
     mandatory_hard_fails: List[str] = Field(
         default_factory=list,
         description="List of rule_ids that triggered mandatory HARD FAIL"
@@ -93,12 +104,21 @@ class IntegrityBenchmarkResult(BaseModel):
     """
     Integrity ground-truth benchmark for a tender / bidder cohort.
 
-    Uses existing DEFAULT_SIGNAL_WEIGHTS and FAMILY_CAPS verbatim.
-    score:      0-100
-    risk_class: LOW / MEDIUM / HIGH / CRITICAL
+    Classification Semantics:
+    Represents PROCUREMENT INTEGRITY RISK:
+      - LOW:      score < 25.0
+      - MEDIUM:   25.0 <= score < 50.0
+      - HIGH:     50.0 <= score < 75.0
+      - CRITICAL: score >= 75.0
+
+    Score & Contributor Reconciliation:
+      - raw_score: sum(contributor.contribution) across all findings before the 100.0 cap.
+      - score: final score bounded to [0.0, 100.0].
+      - If raw_score > 100.0, score is capped at 100.0 and contributor points are reconciled proportionally.
     """
     score: float = Field(..., description="Benchmark integrity score 0-100")
-    risk_class: str = Field(..., description="LOW / MEDIUM / HIGH / CRITICAL")
+    raw_score: float = Field(default=0.0, description="Raw integrity score: sum(contributor.contribution)")
+    risk_class: str = Field(..., description="LOW / MEDIUM / HIGH / CRITICAL (represents INTEGRITY RISK)")
     findings_count: int = 0
     active_signal_families: List[str] = Field(default_factory=list)
     contributors: List[BenchmarkContributor] = Field(default_factory=list)
@@ -120,10 +140,10 @@ class BenchmarkCase(BaseModel):
     A single reproducible benchmark evaluation case.
 
     Stores structured feature objects (not filenames, not PDF scores).
-    The scores emerge from the features when the benchmark scorers are applied.
+    The scores and classes emerge exclusively from structured evidence via the benchmark rules.
     """
     case_id: str = Field(..., description="Unique case identifier")
-    case_label: str = Field(..., description="Human-readable scenario name")
+    case_label: str = Field(..., description="Human-readable scenario name (descriptive only, never used as label)")
     scenario_type: str = Field(
         ...,
         description=(
@@ -138,9 +158,9 @@ class BenchmarkCase(BaseModel):
     bidder_features_summary: List[Dict[str, Any]] = Field(default_factory=list)
     expected_compliance_class: str = Field(
         ...,
-        description="Expected classification (LOW/MEDIUM/HIGH/CRITICAL) -- derived from scenario"
+        description="Expected COMPLIANCE RISK class (LOW/MEDIUM/HIGH/CRITICAL) -- derived from calculated compliance score and hard-fail state"
     )
     expected_integrity_class: str = Field(
         ...,
-        description="Expected classification (LOW/MEDIUM/HIGH/CRITICAL) -- derived from scenario"
+        description="Expected INTEGRITY RISK class (LOW/MEDIUM/HIGH/CRITICAL) -- derived from calculated integrity score"
     )

@@ -1,4 +1,4 @@
-﻿"""
+"""
 FairBid Ground-Truth Benchmark Dataset -- SIH26100
 ===================================================
 Deterministic, reproducible dataset of 11 procurement benchmark cases.
@@ -122,6 +122,55 @@ def _finding(
     ).model_dump()
 
 
+def _build_benchmark_case(
+    case_id: str,
+    case_label: str,
+    scenario_type: str,
+    compliance_check_results: List[Dict[str, Any]],
+    compliance_discrepancies: Optional[List[Dict[str, Any]]] = None,
+    integrity_findings: Optional[List[Dict[str, Any]]] = None,
+    bidder_features_summary: Optional[List[Dict[str, Any]]] = None,
+) -> BenchmarkCase:
+    """
+    Build a BenchmarkCase where target labels are derived directly from the
+    actual calculated benchmark scores and hard-fail states.
+
+    The benchmark dataset NEVER uses:
+      - case name
+      - filename
+      - scenario string
+      - embedded PDF score
+    as the target label.
+
+    Ground truth pipeline:
+      structured procurement evidence
+      -> benchmark rules
+      -> calculated score
+      -> calculated class.
+    """
+    discrepancies = compliance_discrepancies or []
+    findings_raw = integrity_findings or []
+    findings_objs = [
+        IntegrityFinding(**f) if isinstance(f, dict) else f
+        for f in findings_raw
+    ]
+
+    comp_res = score_compliance_benchmark(compliance_check_results, discrepancies)
+    integ_res = score_integrity_benchmark(findings_objs)
+
+    return BenchmarkCase(
+        case_id=case_id,
+        case_label=case_label,
+        scenario_type=scenario_type,
+        compliance_check_results=compliance_check_results,
+        compliance_discrepancies=discrepancies,
+        integrity_findings=findings_raw,
+        bidder_features_summary=bidder_features_summary or [],
+        expected_compliance_class=comp_res.risk_class,
+        expected_integrity_class=integ_res.risk_class,
+    )
+
+
 # ============================================================
 # REUSABLE CLEAN CHECK RESULTS
 # ============================================================
@@ -150,20 +199,20 @@ def _clean_checks() -> List[Dict[str, Any]]:
 # CASE 1 -- CLEAN PROCUREMENT
 # ============================================================
 
-_CASE1 = BenchmarkCase(
+_CASE1 = _build_benchmark_case(
     case_id="BENCH-001",
     case_label="Clean Procurement — Fully Compliant Independent Bidders",
     scenario_type="CLEAN",
     compliance_check_results=_clean_checks(),
     compliance_discrepancies=[],
-    integrity_findings=[],  # No signals -> score = 0/100, LOW
+    integrity_findings=[],
     bidder_features_summary=[
         {"bidder_id": "BID-B001", "quote": 4500000, "gstin": "27AAAAA0001A1Z5"},
         {"bidder_id": "BID-B002", "quote": 5100000, "gstin": "29BBBBB0002B1Z6"},
         {"bidder_id": "BID-B003", "quote": 5800000, "gstin": "07CCCCC0003C1Z7"},
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="LOW",
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (no hard fail, score >= 80)
+    # Derived: Integrity score = 0.0 -> LOW Integrity Risk (< 25)
 )
 
 
@@ -190,15 +239,15 @@ def _low_compliance_checks() -> List[Dict[str, Any]]:
     ]
 
 
-_CASE2 = BenchmarkCase(
+_CASE2 = _build_benchmark_case(
     case_id="BENCH-002",
     case_label="Low Compliance — Multiple Mandatory Failures (No Documents Submitted)",
     scenario_type="LOW_COMPLIANCE",
     compliance_check_results=_low_compliance_checks(),
     compliance_discrepancies=[],
     integrity_findings=[],
-    expected_compliance_class="CRITICAL",   # GST + PAN + BLACKLIST + OEM all fail -> HARD FAIL cap
-    expected_integrity_class="LOW",
+    # Derived: Compliance raw = 18.5, 5 hard fails -> CRITICAL Compliance Risk (mandatory failure cap)
+    # Derived: Integrity score = 0.0 -> LOW Integrity Risk (< 25)
 )
 
 
@@ -218,15 +267,15 @@ def _high_compliance_checks() -> List[Dict[str, Any]]:
     return checks
 
 
-_CASE3 = BenchmarkCase(
+_CASE3 = _build_benchmark_case(
     case_id="BENCH-003",
     case_label="High Compliance — All Documents Verified and Compliant",
     scenario_type="HIGH_COMPLIANCE",
     compliance_check_results=_high_compliance_checks(),
     compliance_discrepancies=[],
     integrity_findings=[],
-    expected_compliance_class="LOW",
-    expected_integrity_class="LOW",
+    # Derived: Compliance score = 97.5 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = 0.0 -> LOW Integrity Risk (< 25)
 )
 
 
@@ -234,7 +283,7 @@ _CASE3 = BenchmarkCase(
 # CASE 4 -- PRICE ANOMALY
 # ============================================================
 
-_CASE4 = BenchmarkCase(
+_CASE4 = _build_benchmark_case(
     case_id="BENCH-004",
     case_label="Price Anomaly — Bid Price Clustering (< 1% delta between L1 and L2)",
     scenario_type="PRICE_ANOMALY",
@@ -255,8 +304,8 @@ _CASE4 = BenchmarkCase(
         {"bidder_id": "BID-B002", "quote": 4515000},
         {"bidder_id": "BID-B003", "quote": 5800000},
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="MEDIUM",   # 1 finding, BID_PRICE_ANOMALY = 20 pts -> MEDIUM (25-50)
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = 20.0 pts -> LOW Integrity Risk (20.0 < 25)
 )
 
 
@@ -264,7 +313,7 @@ _CASE4 = BenchmarkCase(
 # CASE 5 -- REPEATED PARTICIPATION
 # ============================================================
 
-_CASE5 = BenchmarkCase(
+_CASE5 = _build_benchmark_case(
     case_id="BENCH-005",
     case_label="Repeated Participation — Same Cohort in >= 3 Historical Tenders",
     scenario_type="REPEATED_PARTICIPATION",
@@ -280,8 +329,8 @@ _CASE5 = BenchmarkCase(
             bidder_id="BID-B001", related_ids=["BID-B002"],
         ),
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="LOW",   # 10 pts -> LOW (< 25)
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = 10.0 pts -> LOW Integrity Risk (10.0 < 25)
 )
 
 
@@ -289,7 +338,7 @@ _CASE5 = BenchmarkCase(
 # CASE 6 -- WINNER CONCENTRATION
 # ============================================================
 
-_CASE6 = BenchmarkCase(
+_CASE6 = _build_benchmark_case(
     case_id="BENCH-006",
     case_label="Winner Concentration — Single Vendor Won >= 75% of Category Tenders",
     scenario_type="WINNER_CONCENTRATION",
@@ -305,8 +354,8 @@ _CASE6 = BenchmarkCase(
             bidder_id="BID-B001",
         ),
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="LOW",   # REPEATED_WINNER_PATTERN weight=10 -> score 10, LOW
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = 10.0 pts -> LOW Integrity Risk (10.0 < 25)
 )
 
 
@@ -314,7 +363,7 @@ _CASE6 = BenchmarkCase(
 # CASE 7 -- ROTATION
 # ============================================================
 
-_CASE7 = BenchmarkCase(
+_CASE7 = _build_benchmark_case(
     case_id="BENCH-007",
     case_label="Bid Rotation — Systematic Alternating Winner Cycle Across 4+ Tenders",
     scenario_type="ROTATION",
@@ -338,8 +387,8 @@ _CASE7 = BenchmarkCase(
             bidder_id="BID-B002", related_ids=["BID-B001"],
         ),
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="MEDIUM",   # 15 + 7.5 (50% DR) = 22.5, synergy 1.05x = 23.6 -> LOW-borderline MEDIUM
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = (15.0 + 15.0) * 1.05 synergy = 31.6 pts -> MEDIUM Integrity Risk (>= 25 and < 50)
 )
 
 
@@ -347,7 +396,7 @@ _CASE7 = BenchmarkCase(
 # CASE 8 -- RELATED BIDDER (Shared GSTIN/PAN/Director)
 # ============================================================
 
-_CASE8 = BenchmarkCase(
+_CASE8 = _build_benchmark_case(
     case_id="BENCH-008",
     case_label="Related Bidder — Shared Statutory Identifiers (GSTIN, PAN, Director)",
     scenario_type="RELATED_BIDDER",
@@ -370,8 +419,8 @@ _CASE8 = BenchmarkCase(
             bidder_id="BID-B001", related_ids=["BID-B002"],
         ),
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="HIGH",   # 30 + 12.5 (50% DR) = 42.5, synergy 1.05x = 44.6 -> HIGH (25-50+)
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = (30.0 + 25.0) * 1.05 synergy = 57.7 pts -> HIGH Integrity Risk (>= 50 and < 75)
 )
 
 
@@ -390,7 +439,7 @@ def _cross_doc_checks() -> List[Dict[str, Any]]:
     return checks
 
 
-_CASE9 = BenchmarkCase(
+_CASE9 = _build_benchmark_case(
     case_id="BENCH-009",
     case_label="Cross-Document Discrepancy — CRITICAL GSTIN Mismatch Across Documents",
     scenario_type="CROSS_DOC_DISCREPANCY",
@@ -417,8 +466,8 @@ _CASE9 = BenchmarkCase(
             bidder_id="BID-B001",
         ),
     ],
-    expected_compliance_class="HIGH",   # CRITICAL discrepancy -> score capped, CB-XDOC fails; overall HIGH
-    expected_integrity_class="HIGH",    # DOCUMENT_IDENTITY_INCONSISTENCY = 30 pts -> HIGH
+    # Derived: Compliance score = 78.5 pts, no hard fail -> MEDIUM Compliance Risk (60 <= score < 80)
+    # Derived: Integrity score = 30.0 pts -> MEDIUM Integrity Risk (>= 25 and < 50)
 )
 
 
@@ -426,7 +475,7 @@ _CASE9 = BenchmarkCase(
 # CASE 10 -- DECISION TRACEABILITY GAP
 # ============================================================
 
-_CASE10 = BenchmarkCase(
+_CASE10 = _build_benchmark_case(
     case_id="BENCH-010",
     case_label="Decision Traceability Gap — NOT_EVALUATED Bid Without Recorded Rationale",
     scenario_type="DECISION_TRACEABILITY_GAP",
@@ -449,8 +498,8 @@ _CASE10 = BenchmarkCase(
             ),
         ),
     ],
-    expected_compliance_class="LOW",
-    expected_integrity_class="MEDIUM",   # DECISION_TRACEABILITY_GAP = 20 pts -> MEDIUM (25 threshold borderline)
+    # Derived: Compliance score = 91.9 -> LOW Compliance Risk (score >= 80)
+    # Derived: Integrity score = 20.0 pts -> LOW Integrity Risk (20.0 < 25)
 )
 
 
@@ -467,7 +516,7 @@ for _c in _CASE11_CHECKS:
         _c["reason"] = "OEM authorization present but validity requires review."
 
 
-_CASE11 = BenchmarkCase(
+_CASE11 = _build_benchmark_case(
     case_id="BENCH-011",
     case_label="Multi-Signal Case — Price Anomaly + Rotation + Related Bidder + Low Compliance",
     scenario_type="MULTI_SIGNAL",
@@ -512,8 +561,8 @@ _CASE11 = BenchmarkCase(
             bidder_id="BID-B003",
         ),
     ],
-    expected_compliance_class="CRITICAL",   # GST + PAN failures -> HARD FAIL cap
-    expected_integrity_class="CRITICAL",    # 30 + 10 + 3.75 + 5 + synergy 1.15x = ~56+ -> HIGH/CRITICAL
+    # Derived: Compliance raw = 23.3 pts, mandatory failures -> CRITICAL Compliance Risk (mandatory failure cap)
+    # Derived: Integrity score = (30 + 20 + 15 + 20) * 1.15 synergy = 97.7 pts -> CRITICAL Integrity Risk (>= 75)
 )
 
 

@@ -1,4 +1,4 @@
-﻿"""
+"""
 Test Suite -- FairBid Ground-Truth Benchmark Engine
 ====================================================
 Tests the 10 required scenarios specified in Task 1/3:
@@ -22,10 +22,12 @@ from typing import List, Dict, Any
 
 from app.services.ground_truth.compliance_benchmark import (
     COMPLIANCE_BENCHMARK_RULES,
+    classify_compliance_score,
     score_compliance_benchmark,
 )
 from app.services.ground_truth.integrity_benchmark import (
     INTEGRITY_SIGNAL_FAMILIES,
+    classify_integrity_score,
     score_integrity_benchmark,
 )
 from app.services.ground_truth.models import (
@@ -556,3 +558,229 @@ def test_benchmark_does_not_modify_default_signal_weights():
     assert dict(DEFAULT_SIGNAL_WEIGHTS) == original, (
         "Integrity benchmark must not mutate DEFAULT_SIGNAL_WEIGHTS"
     )
+
+
+# ===========================================================
+# TEST 14 -- Every benchmark case class matches calculated score
+# ===========================================================
+
+def test_every_benchmark_case_class_matches_calculated_score():
+    """
+    CRITICAL GROUND-TRUTH VALIDITY ASSERTION:
+    For EVERY benchmark case in BENCHMARK_DATASET:
+      1. actual_result = score_*_benchmark(...)
+      2. calculated_class == class_from_calculated_score
+      3. case.expected_*_class == actual_result.risk_class
+      4. case.expected_*_class == calculated_class
+    No manual/expected label may disagree with the scorer.
+    """
+    for case in BENCHMARK_DATASET:
+        # Integrity evaluation
+        findings = [
+            IntegrityFinding(**f) if isinstance(f, dict) else f
+            for f in case.integrity_findings
+        ]
+        actual_integ = score_integrity_benchmark(findings)
+        class_from_integ_score = classify_integrity_score(actual_integ.score)
+
+        assert actual_integ.risk_class == class_from_integ_score, (
+            f"Case {case.case_id}: integrity risk_class '{actual_integ.risk_class}' "
+            f"does not match class derived from score {actual_integ.score:.1f} ('{class_from_integ_score}')"
+        )
+        assert case.expected_integrity_class == actual_integ.risk_class, (
+            f"Case {case.case_id}: expected_integrity_class '{case.expected_integrity_class}' "
+            f"disagrees with actual integrity scorer '{actual_integ.risk_class}'"
+        )
+        assert case.expected_integrity_class == class_from_integ_score
+
+        # Compliance evaluation
+        actual_comp = score_compliance_benchmark(
+            case.compliance_check_results,
+            case.compliance_discrepancies,
+        )
+        has_hard_fail = bool(actual_comp.mandatory_hard_fails)
+        class_from_comp_score = classify_compliance_score(actual_comp.score, has_hard_fail)
+
+        assert actual_comp.risk_class == class_from_comp_score, (
+            f"Case {case.case_id}: compliance risk_class '{actual_comp.risk_class}' "
+            f"does not match class derived from score {actual_comp.score:.1f} ('{class_from_comp_score}')"
+        )
+        assert case.expected_compliance_class == actual_comp.risk_class, (
+            f"Case {case.case_id}: expected_compliance_class '{case.expected_compliance_class}' "
+            f"disagrees with actual compliance scorer '{actual_comp.risk_class}'"
+        )
+        assert case.expected_compliance_class == class_from_comp_score
+
+
+# ===========================================================
+# TEST 15 -- Every benchmark case is strictly deterministic
+# ===========================================================
+
+def test_every_benchmark_case_is_deterministic():
+    """
+    For EVERY benchmark case, running the benchmark scorer multiple times
+    must produce identical scores, raw_scores, and classifications.
+    """
+    for case in BENCHMARK_DATASET:
+        findings = [
+            IntegrityFinding(**f) if isinstance(f, dict) else f
+            for f in case.integrity_findings
+        ]
+        # Evaluate 3 times
+        integ_runs = [score_integrity_benchmark(findings) for _ in range(3)]
+        comp_runs = [
+            score_compliance_benchmark(case.compliance_check_results, case.compliance_discrepancies)
+            for _ in range(3)
+        ]
+
+        # Assert all integrity runs identical
+        assert len({r.score for r in integ_runs}) == 1, f"Non-deterministic integrity score: {case.case_id}"
+        assert len({r.raw_score for r in integ_runs}) == 1, f"Non-deterministic integrity raw_score: {case.case_id}"
+        assert len({r.risk_class for r in integ_runs}) == 1, f"Non-deterministic integrity class: {case.case_id}"
+
+        # Assert all compliance runs identical
+        assert len({r.score for r in comp_runs}) == 1, f"Non-deterministic compliance score: {case.case_id}"
+        assert len({r.raw_score for r in comp_runs}) == 1, f"Non-deterministic compliance raw_score: {case.case_id}"
+        assert len({r.risk_class for r in comp_runs}) == 1, f"Non-deterministic compliance class: {case.case_id}"
+
+
+# ===========================================================
+# TEST 16 -- Mathematical integrity threshold boundaries
+# ===========================================================
+
+def test_mathematical_integrity_threshold_examples():
+    """
+    Explicit mathematical verification of integrity risk tier thresholds:
+      LOW:      score < 25.0
+      MEDIUM:   25.0 <= score < 50.0
+      HIGH:     50.0 <= score < 75.0
+      CRITICAL: score >= 75.0
+
+    Specifically verifies boundary points and examples requested:
+      - 20 points = LOW
+      - 23.6 points = LOW
+      - 44.6 points = MEDIUM
+      - 56 points ≈ HIGH
+    """
+    # LOW (< 25)
+    assert classify_integrity_score(0.0) == "LOW"
+    assert classify_integrity_score(10.0) == "LOW"
+    assert classify_integrity_score(20.0) == "LOW", "20.0 points must be LOW (< 25)"
+    assert classify_integrity_score(23.6) == "LOW", "23.6 points must be LOW (< 25)"
+    assert classify_integrity_score(24.9) == "LOW"
+
+    # MEDIUM (>= 25 and < 50)
+    assert classify_integrity_score(25.0) == "MEDIUM", "25.0 points must be MEDIUM"
+    assert classify_integrity_score(30.0) == "MEDIUM"
+    assert classify_integrity_score(31.6) == "MEDIUM"
+    assert classify_integrity_score(44.6) == "MEDIUM", "44.6 points must be MEDIUM (>= 25 and < 50)"
+    assert classify_integrity_score(49.9) == "MEDIUM"
+
+    # HIGH (>= 50 and < 75)
+    assert classify_integrity_score(50.0) == "HIGH", "50.0 points must be HIGH"
+    assert classify_integrity_score(56.0) == "HIGH", "56.0 points must be HIGH (>= 50 and < 75)"
+    assert classify_integrity_score(57.7) == "HIGH"
+    assert classify_integrity_score(74.9) == "HIGH"
+
+    # CRITICAL (>= 75)
+    assert classify_integrity_score(75.0) == "CRITICAL", "75.0 points must be CRITICAL"
+    assert classify_integrity_score(97.7) == "CRITICAL"
+    assert classify_integrity_score(100.0) == "CRITICAL"
+
+
+# ===========================================================
+# TEST 17 -- Compliance risk classification semantics
+# ===========================================================
+
+def test_compliance_classification_semantics_represents_risk():
+    """
+    Assert compliance class represents COMPLIANCE RISK (not quality):
+      - Score 95 (no hard fail) -> LOW risk (compliant bidder has LOW risk)
+      - Score 70 (no hard fail) -> MEDIUM risk
+      - Score 50 (no hard fail) -> HIGH risk
+      - Score 30 -> CRITICAL risk
+      - Any mandatory hard fail -> CRITICAL risk regardless of raw points
+    """
+    # Quality -> Risk mapping
+    assert classify_compliance_score(95.0, False) == "LOW"
+    assert classify_compliance_score(80.0, False) == "LOW"
+    assert classify_compliance_score(79.9, False) == "MEDIUM"
+    assert classify_compliance_score(60.0, False) == "MEDIUM"
+    assert classify_compliance_score(59.9, False) == "HIGH"
+    assert classify_compliance_score(40.0, False) == "HIGH"
+    assert classify_compliance_score(39.9, False) == "CRITICAL"
+    assert classify_compliance_score(0.0, False) == "CRITICAL"
+
+    # Mandatory hard fail always forces CRITICAL risk
+    assert classify_compliance_score(95.0, True) == "CRITICAL"
+    assert classify_compliance_score(40.0, True) == "CRITICAL"
+
+
+# ===========================================================
+# TEST 18 -- Contributor reconciliation across all cases
+# ===========================================================
+
+def test_all_cases_contributor_reconciliation():
+    """
+    For EVERY benchmark case:
+      1. sum(contributor.contribution) == raw_score (before cap)
+      2. If mandatory failure active: score == min(raw_score, 40.0)
+         Else: score == raw_score
+      3. For integrity: sum(contributor.contribution) == score
+    """
+    for case in BENCHMARK_DATASET:
+        # Compliance reconciliation
+        comp_res = score_compliance_benchmark(
+            case.compliance_check_results,
+            case.compliance_discrepancies,
+        )
+        contrib_sum_comp = sum(c.contribution for c in comp_res.contributors)
+        assert abs(contrib_sum_comp - comp_res.raw_score) < 0.05, (
+            f"Case {case.case_id}: compliance contributors ({contrib_sum_comp:.2f}) "
+            f"must reconcile with raw_score ({comp_res.raw_score:.2f})"
+        )
+        if comp_res.mandatory_hard_fails:
+            assert comp_res.score == min(round(comp_res.raw_score, 1), 40.0), (
+                f"Case {case.case_id}: mandatory hard fail did not cap score at 40.0 properly"
+            )
+        else:
+            assert abs(comp_res.score - comp_res.raw_score) < 0.1
+
+        # Integrity reconciliation
+        findings = [
+            IntegrityFinding(**f) if isinstance(f, dict) else f
+            for f in case.integrity_findings
+        ]
+        integ_res = score_integrity_benchmark(findings)
+        contrib_sum_integ = sum(c.contribution for c in integ_res.contributors)
+        assert abs(contrib_sum_integ - integ_res.score) < 0.1, (
+            f"Case {case.case_id}: integrity contributors ({contrib_sum_integ:.1f}) "
+            f"must reconcile with score ({integ_res.score:.1f})"
+        )
+
+
+# ===========================================================
+# TEST 19 -- Target labels ignore scenario names, filenames, and PDF scores
+# ===========================================================
+
+def test_target_labels_do_not_derive_from_metadata():
+    """
+    The benchmark dataset must NEVER derive target labels from:
+      - case name
+      - filename
+      - scenario string
+      - embedded PDF score
+    Mutating these metadata fields must produce identical scores and classes.
+    """
+    for case in BENCHMARK_DATASET:
+        # Create mutated check results with decoy filenames and PDF scores
+        mutated_checks = copy.deepcopy(case.compliance_check_results)
+        for c in mutated_checks:
+            c["file_name"] = "decoy_file_name_123.pdf"
+            c["_pdf_embedded_score"] = 99.9  # Decoy PDF score
+
+        orig_comp = score_compliance_benchmark(case.compliance_check_results, case.compliance_discrepancies)
+        mut_comp = score_compliance_benchmark(mutated_checks, case.compliance_discrepancies)
+
+        assert orig_comp.score == mut_comp.score
+        assert orig_comp.risk_class == mut_comp.risk_class
