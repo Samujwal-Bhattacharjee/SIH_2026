@@ -47,7 +47,7 @@ from app.services.ground_truth.dataset_generator import (
 from app.services.ground_truth.features import (
     COMPLIANCE_FEATURE_NAMES,
     INTEGRITY_FEATURE_NAMES,
-    assert_no_leakage,
+    assert_no_target_leakage,
     build_compliance_dataset,
     build_integrity_dataset,
 )
@@ -142,7 +142,7 @@ def train_and_evaluate_all(
     # 2. COMPLIANCE MODEL TRAINING & EVALUATION
     # ────────────────────────────────────────────────────────────
     X_comp, y_comp_class, y_comp_score, comp_feat_names, comp_ids = build_compliance_dataset(cases)
-    assert_no_leakage(comp_feat_names)
+    assert_no_target_leakage(comp_feat_names)
 
     # 80/20 Stratified Split
     indices_comp = np.arange(len(cases))
@@ -210,7 +210,7 @@ def train_and_evaluate_all(
     # 3. INTEGRITY MODEL TRAINING & EVALUATION
     # ────────────────────────────────────────────────────────────
     X_integ, y_integ_class, y_integ_score, integ_feat_names, integ_ids = build_integrity_dataset(cases)
-    assert_no_leakage(integ_feat_names)
+    assert_no_target_leakage(integ_feat_names)
 
     # 80/20 Stratified Split
     indices_integ = np.arange(len(cases))
@@ -320,6 +320,7 @@ def train_and_evaluate_all(
             "dataset_type": "SYNTHETIC",
             "evaluation_type": "HELD_OUT_TEST_SET",
             "ground_truth": "FAIR_BID_RULE_BASED_BENCHMARK",
+            "feature_leakage_check": "PASSED",
             "metric_description": "Held-out synthetic procurement benchmark accuracy",
             "honesty_notice": "The ML model predicts the benchmark risk class; it does not prove corruption.",
             "total_dataset_samples": len(cases),

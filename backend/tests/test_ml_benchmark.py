@@ -34,6 +34,7 @@ from app.services.ground_truth.dataset_generator import (
 from app.services.ground_truth.features import (
     COMPLIANCE_FEATURE_NAMES,
     INTEGRITY_FEATURE_NAMES,
+    assert_no_target_leakage,
     assert_no_leakage,
     build_compliance_dataset,
     build_integrity_dataset,
@@ -111,27 +112,40 @@ def test_train_and_test_ids_do_not_overlap():
 # =====================================================================
 
 def test_target_columns_are_excluded_from_features():
-    """Verify that features contain no target labels, scores, or identifiers."""
+    """Verify that features contain no target labels, scores, finding outputs, or identifiers."""
     # Compliance features check
-    assert_no_leakage(COMPLIANCE_FEATURE_NAMES)
-    forbidden = [
+    assert_no_target_leakage(COMPLIANCE_FEATURE_NAMES)
+    forbidden_terms = [
         "compliance_score", "compliance_class", "ground_truth",
-        "case_id", "tender_id", "archetype_id", "scenario_type"
+        "case_id", "tender_id", "archetype_id", "scenario_type",
+        "has_common_director_finding", "has_rotation_finding",
+        "findings_count", "detector_output", "final_score",
+        "filename", "case_name"
     ]
-    for col in forbidden:
-        assert col not in COMPLIANCE_FEATURE_NAMES
+    for feat in COMPLIANCE_FEATURE_NAMES:
+        for term in forbidden_terms:
+            assert term not in feat.lower(), f"Forbidden term '{term}' found in compliance feature '{feat}'"
 
     # Integrity features check
-    assert_no_leakage(INTEGRITY_FEATURE_NAMES)
-    for col in forbidden:
-        assert col not in INTEGRITY_FEATURE_NAMES
+    assert_no_target_leakage(INTEGRITY_FEATURE_NAMES)
+    for feat in INTEGRITY_FEATURE_NAMES:
+        for term in forbidden_terms:
+            assert term not in feat.lower(), f"Forbidden term '{term}' found in integrity feature '{feat}'"
 
-    # Leakage validator must raise ValueError if forbidden column injected
-    with pytest.raises(ValueError, match="CRITICAL LEAKAGE ERROR"):
-        assert_no_leakage(["gst_status_score", "compliance_ground_truth_class"])
-
-    with pytest.raises(ValueError, match="CRITICAL LEAKAGE ERROR"):
-        assert_no_leakage(["bid_price_spread_pct", "archetype_id"])
+    # Hard validator must raise ValueError if any prohibited term is present
+    prohibited_samples = [
+        ["bid_price_spread_pct", "has_common_director_finding"],
+        ["bidder_count", "findings_count_total"],
+        ["has_gst_document", "compliance_ground_truth_score"],
+        ["has_pan_document", "ground_truth_class"],
+        ["bidder_count", "scenario_type"],
+        ["bidder_count", "filename_reference"],
+        ["bidder_count", "detector_output_score"],
+        ["bidder_count", "case_name"],
+    ]
+    for bad_list in prohibited_samples:
+        with pytest.raises(ValueError, match="CRITICAL TARGET LEAKAGE DETECTED"):
+            assert_no_target_leakage(bad_list)
 
 
 # =====================================================================
@@ -274,6 +288,7 @@ def test_benchmark_json_honesty_metadata():
     assert meta["dataset_type"] == "SYNTHETIC"
     assert meta["evaluation_type"] == "HELD_OUT_TEST_SET"
     assert meta["ground_truth"] == "FAIR_BID_RULE_BASED_BENCHMARK"
+    assert meta.get("feature_leakage_check") == "PASSED"
     assert "Held-out synthetic procurement benchmark" in meta["metric_description"]
     assert "does not prove corruption" in meta["honesty_notice"]
 

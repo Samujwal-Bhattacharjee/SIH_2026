@@ -4,21 +4,29 @@ FairBid Ground-Truth ML Benchmark Dataset Generator — SIH26100
 Generates a deterministic synthetic procurement dataset (600 cases)
 for training and evaluating decoupled compliance and integrity ML models.
 
-Guarantees:
-- Fixed random seed = 42 for 100% reproducible generation.
-- Ground truth targets are derived exclusively from Task 1 benchmark scorers:
-    score_compliance_benchmark -> compliance_ground_truth_score & class
-    score_integrity_benchmark  -> integrity_ground_truth_score & class
-- No filenames, PDF names, or embedded PDF scores used as features or labels.
-- Balanced scenario distribution across all four risk tiers:
-    LOW, MEDIUM, HIGH, CRITICAL.
-- Generates realistic variation without row duplication.
+ANTI-LEAKAGE ARCHITECTURE:
+1. RAW OBSERVABLE EVIDENCE:
+   - Compliance: submitted document presence, OCR confidence, formats,
+     turnover ratios, certificate expiry, and raw text discrepancies.
+   - Integrity: bidder counts, price spreads, ratios, coefficient of variation,
+     shared identity counts, common directors, submission telemetry, and
+     historical market concentration.
+   - NEITHER contains detector outputs, findings, scores, or risk classes!
+
+2. GROUND TRUTH TARGETS (Computed separately by Task 1 rule engines):
+   - score_compliance_benchmark -> compliance_ground_truth_score & class
+   - score_integrity_benchmark  -> integrity_ground_truth_score & class
+
+3. BALANCED REPRESENTATION:
+   - Exactly 150 cases per risk tier (LOW, MEDIUM, HIGH, CRITICAL) for Compliance.
+   - Exactly 150 cases per risk tier (LOW, MEDIUM, HIGH, CRITICAL) for Integrity.
+   - Seed = 42 for 100% reproducible generation.
 """
 from __future__ import annotations
 
-import copy
 import random
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
+import numpy as np
 
 from app.services.ground_truth.compliance_benchmark import score_compliance_benchmark
 from app.services.ground_truth.integrity_benchmark import score_integrity_benchmark
@@ -27,28 +35,11 @@ from app.services.integrity.models import (
     IntegrityEvidence,
     IntegrityFinding,
     RiskLevel,
-    RuleReference,
     SignalType,
 )
 
 BENCHMARK_RANDOM_SEED = 42
 TARGET_DATASET_SIZE = 600
-
-# Base fictional entity pool for generating realistic cohorts
-_VENDOR_POOL = [
-    {"name": "Brahmaputra Engineering & Infotech Pvt. Ltd.", "gstin_prefix": "18AABCB", "pan": "AABCB1001B", "directors": ["Prabhat Baruah", "Sunita Sarma"]},
-    {"name": "Kaveri Digital Solutions Ltd.", "gstin_prefix": "29AABCK", "pan": "AABCK2002K", "directors": ["Vikramaditya Rao", "Meera Hegde"]},
-    {"name": "Godavari Network Systems Pvt. Ltd.", "gstin_prefix": "36AABCG", "pan": "AABCG3003G", "directors": ["Chandra Sekhar Reddy", "Padma Rao"]},
-    {"name": "Yamuna Smart Technologies LLP", "gstin_prefix": "07AABCY", "pan": "AABCY4004Y", "directors": ["Anand Swaminathan", "Neha Mathur"]},
-    {"name": "Vindhyachal Power & Infra Ltd.", "gstin_prefix": "23AABCV", "pan": "AABCV5005V", "directors": ["Rajendra Verma", "Kavita Tiwari"]},
-    {"name": "Tapti Solutions & Analytics Pvt. Ltd.", "gstin_prefix": "24AABCT", "pan": "AABCT6006T", "directors": ["Harish Patel", "Bhavna Shah"]},
-    {"name": "Shivalik Cloud Matrix Pvt. Ltd.", "gstin_prefix": "05AABCS", "pan": "AABCS7007S", "directors": ["Rohan Joshi", "Alok Bhatt"]},
-    {"name": "Shivalik Enterprise Systems LLP", "gstin_prefix": "05AABCS", "pan": "AABCS7007S", "directors": ["Rohan Joshi", "Devika Nanda"]},
-    {"name": "Narmada Cyber Defense Technologies Ltd.", "gstin_prefix": "23AABCN", "pan": "AABCN8008N", "directors": ["Suresh Nair", "Pooja Deshmukh"]},
-    {"name": "Mahanadi Data Infrastructure Pvt. Ltd.", "gstin_prefix": "21AABCM", "pan": "AABCM9009M", "directors": ["Debasish Jena", "Rashmi Mohanty"]},
-    {"name": "Chenab Telecom & Power Solutions Ltd.", "gstin_prefix": "01AABCC", "pan": "AABCC1010C", "directors": ["Tariq Lone", "Simran Kour"]},
-    {"name": "Nilgiri Hardware & Telecom Pvt. Ltd.", "gstin_prefix": "33AABCN", "pan": "AABCN1010N", "directors": ["S. Kalyanasundaram", "K. Vasanthi"]},
-]
 
 _CATEGORIES = [
     "INFORMATION_TECHNOLOGY",
@@ -71,7 +62,7 @@ def _make_compliance_check(
     evidence_value: Optional[str] = None,
     confidence: float = 0.90,
 ) -> Dict[str, Any]:
-    """Create a structured compliance check result dict."""
+    """Create a structured compliance check result dict for Task 1 benchmark engine."""
     status_score_map = {
         "COMPLIANT": 100,
         "NOT_APPLICABLE": 100,
@@ -108,7 +99,7 @@ def _make_integrity_finding(
     related_ids: Optional[List[str]] = None,
     evidence_count: int = 1,
 ) -> Dict[str, Any]:
-    """Create a structured IntegrityFinding dict."""
+    """Create a structured IntegrityFinding dict for Task 1 benchmark engine."""
     return IntegrityFinding(
         id=finding_id,
         tender_id=tender_id,
@@ -142,25 +133,47 @@ def generate_synthetic_case(
     rng: random.Random,
 ) -> Dict[str, Any]:
     """
-    Generate a single deterministic procurement case with structured evidence.
-    Archetypes:
-      0, 1, 7: Clean compliance (Low risk)
-      2, 3, 8: Moderate gaps (Medium risk, ~72-78 pts)
-      4, 5, 6: High deficiencies without hard fail (High risk, ~48-56 pts)
-      9, 10, 11: Mandatory statutory failure (Critical risk, hard fail cap <= 40 pts)
+    Generate a single deterministic procurement case with:
+    1. Raw observable compliance evidence (for ML model).
+    2. Raw observable integrity metrics (for ML model).
+    3. Rule engine inputs -> Ground Truth targets (evaluated separately).
     """
     case_id = f"SYNTH-CASE-{case_index:04d}"
     tender_id = f"TEN-SYNTH-{case_index:04d}"
     category = rng.choice(_CATEGORIES)
     est_value = round(rng.uniform(2_000_000, 50_000_000), -4)
+    threshold_turnover = round(est_value * 0.40, 2)  # Standard 40% GFR turnover threshold
 
     # ────────────────────────────────────────────────────────────
-    # 1. COMPLIANCE EVIDENCE GENERATION
+    # 1. COMPLIANCE RAW EVIDENCE GENERATION
     # ────────────────────────────────────────────────────────────
+    # Archetype mapping for Compliance:
+    # 0, 1, 7: LOW risk (clean)
+    # 2, 3, 8: MEDIUM risk (moderate review)
+    # 4, 5, 6: HIGH risk (severe review, no hard fail)
+    # 9, 10, 11: CRITICAL risk (mandatory hard fail)
+
     discrepancies: List[Dict[str, Any]] = []
 
     if archetype_id in (0, 1, 7):
-        # LOW Compliance Risk (score >= 80.0, no hard fail)
+        # Clean statutory & technical compliance (LOW risk)
+        has_gst = 1.0
+        has_pan = 1.0
+        has_oem = 1.0
+        has_to = 1.0
+        has_bl = 1.0
+        has_udyam = 1.0
+        has_lc = 1.0
+        ocr_conf_mean = round(rng.uniform(0.90, 0.98), 3)
+        ocr_conf_min = round(rng.uniform(0.85, 0.92), 3)
+        turnover_ratio = round(rng.uniform(2.0, 5.0), 3)
+        lc_pct = round(rng.uniform(60.0, 90.0), 1)
+        is_expired = 0.0
+        pan_valid = 1.0
+        gstin_valid = 1.0
+        tax_id_match = 1.0
+        raw_disc_count = 0.0
+
         gst_status = "COMPLIANT"
         pan_status = "COMPLIANT"
         oem_status = "COMPLIANT"
@@ -169,11 +182,27 @@ def generate_synthetic_case(
         udyam_status = "COMPLIANT"
         lc_status = "COMPLIANT"
         complete_status = "COMPLIANT"
-        turnover_val = f"{round(est_value * rng.uniform(2.0, 5.0) / 10_000_000, 1)} Cr"
+        turnover_val = f"{round(est_value * turnover_ratio / 10_000_000, 1)} Cr"
 
     elif archetype_id in (2, 3, 8):
-        # MEDIUM Compliance Risk (60.0 <= score < 80.0, no hard fail)
-        # Moderate review gaps on mandatory items + non-mandatory gaps + discrepancy
+        # Moderate review gaps (MEDIUM risk)
+        has_gst = 1.0
+        has_pan = 1.0
+        has_oem = 1.0
+        has_to = 1.0
+        has_bl = 1.0
+        has_udyam = 1.0
+        has_lc = 1.0
+        ocr_conf_mean = round(rng.uniform(0.78, 0.86), 3)
+        ocr_conf_min = round(rng.uniform(0.65, 0.74), 3)
+        turnover_ratio = round(rng.uniform(1.05, 1.40), 3)
+        lc_pct = round(rng.uniform(40.0, 55.0), 1)
+        is_expired = 0.0
+        pan_valid = 1.0
+        gstin_valid = 1.0
+        tax_id_match = 1.0
+        raw_disc_count = 1.0
+
         gst_status = "COMPLIANT"
         pan_status = "COMPLIANT"
         oem_status = "NEEDS_REVIEW"
@@ -181,7 +210,7 @@ def generate_synthetic_case(
         to_status = "NEEDS_REVIEW"
         udyam_status = "NEEDS_REVIEW"
         lc_status = "NEEDS_REVIEW"
-        complete_status = "NEEDS_REVIEW" if rng.random() < 0.5 else "COMPLIANT"
+        complete_status = "COMPLIANT"
         discrepancies.append({
             "discrepancy_type": "ADDRESS_MISMATCH",
             "severity": "HIGH",
@@ -190,11 +219,27 @@ def generate_synthetic_case(
             "found_value": "Branch Office B",
             "description": "Minor address variation across documents.",
         })
-        turnover_val = f"{round(est_value * rng.uniform(1.0, 1.4) / 10_000_000, 1)} Cr"
+        turnover_val = f"{round(est_value * turnover_ratio / 10_000_000, 1)} Cr"
 
     elif archetype_id in (4, 5, 6):
-        # HIGH Compliance Risk (40.0 <= score < 60.0, no hard fail)
-        # Multiple items under review, non-mandatory non-compliant, critical discrepancy
+        # High deficiencies without hard fail (HIGH risk)
+        has_gst = 1.0
+        has_pan = 1.0
+        has_oem = 1.0
+        has_to = 1.0
+        has_bl = 1.0
+        has_udyam = 0.0  # Optional document missing
+        has_lc = 0.0     # Optional document missing
+        ocr_conf_mean = round(rng.uniform(0.68, 0.75), 3)
+        ocr_conf_min = round(rng.uniform(0.50, 0.62), 3)
+        turnover_ratio = round(rng.uniform(1.01, 1.10), 3)
+        lc_pct = 0.0
+        is_expired = 0.0
+        pan_valid = 1.0
+        gstin_valid = 1.0
+        tax_id_match = 0.0  # Tax ID discrepancy across invoices
+        raw_disc_count = 2.0
+
         gst_status = "NEEDS_REVIEW"
         pan_status = "COMPLIANT"
         oem_status = "NEEDS_REVIEW"
@@ -211,21 +256,63 @@ def generate_synthetic_case(
             "found_value": "29BBBBB9999B1Z6",
             "description": "Critical discrepancy: GSTIN mismatch across invoices and registration.",
         })
-        turnover_val = f"{round(est_value * 1.1 / 10_000_000, 1)} Cr"
+        turnover_val = f"{round(est_value * turnover_ratio / 10_000_000, 1)} Cr"
 
     else:
-        # CRITICAL Compliance Risk (mandatory hard fail: GST / PAN / OEM / BL / Turnover)
-        # Disqualification risk under GFR 2017 Rule 144
+        # Mandatory statutory hard fail (CRITICAL risk)
         fails = rng.sample(["GST", "PAN", "OEM", "BL", "TURNOVER"], k=rng.randint(1, 3))
-        gst_status = "NON_COMPLIANT" if "GST" in fails else "COMPLIANT"
-        pan_status = "NON_COMPLIANT" if "PAN" in fails else "COMPLIANT"
-        oem_status = "NON_COMPLIANT" if "OEM" in fails else "COMPLIANT"
-        bl_status = "NON_COMPLIANT" if "BL" in fails else "COMPLIANT"
-        to_status = "NON_COMPLIANT" if "TURNOVER" in fails else "COMPLIANT"
+        has_gst = 0.0 if "GST" in fails else 1.0
+        has_pan = 0.0 if "PAN" in fails else 1.0
+        has_oem = 0.0 if "OEM" in fails else 1.0
+        has_to = 0.0 if "TURNOVER" in fails else 1.0
+        has_bl = 0.0 if "BL" in fails else 1.0
+        has_udyam = 0.0
+        has_lc = 0.0
+        ocr_conf_mean = round(rng.uniform(0.40, 0.65), 3)
+        ocr_conf_min = round(rng.uniform(0.20, 0.45), 3)
+        turnover_ratio = 0.0 if has_to == 0.0 else round(rng.uniform(0.3, 0.8), 3)
+        lc_pct = 0.0
+        is_expired = 1.0 if rng.random() < 0.4 else 0.0
+        pan_valid = 0.0 if has_pan == 0.0 else 1.0
+        gstin_valid = 0.0 if has_gst == 0.0 else 1.0
+        tax_id_match = 0.0
+        raw_disc_count = float(rng.randint(1, 3))
+
+        gst_status = "NON_COMPLIANT" if has_gst == 0.0 else "COMPLIANT"
+        pan_status = "NON_COMPLIANT" if has_pan == 0.0 else "COMPLIANT"
+        oem_status = "NON_COMPLIANT" if has_oem == 0.0 else "COMPLIANT"
+        bl_status = "NON_COMPLIANT" if has_bl == 0.0 else "COMPLIANT"
+        to_status = "NON_COMPLIANT" if (has_to == 0.0 or turnover_ratio < 1.0) else "COMPLIANT"
         udyam_status = "PENDING"
         lc_status = "PENDING"
         complete_status = "PENDING"
         turnover_val = None if to_status == "NON_COMPLIANT" else "1.2 Cr"
+
+    # Precompute raw observable compliance features (no rule/detector outputs)
+    mandatory_submitted = has_gst + has_pan + has_oem + has_to + has_bl
+    missing_mandatory = 5.0 - mandatory_submitted
+    total_submitted = mandatory_submitted + has_udyam + has_lc
+
+    raw_compliance_features = {
+        "has_gst_document": has_gst,
+        "has_pan_document": has_pan,
+        "has_oem_document": has_oem,
+        "has_turnover_document": has_to,
+        "has_blacklisting_document": has_bl,
+        "has_udyam_document": has_udyam,
+        "has_local_content_document": has_lc,
+        "submitted_documents_count": total_submitted,
+        "missing_mandatory_documents_count": missing_mandatory,
+        "raw_ocr_confidence_mean": ocr_conf_mean,
+        "raw_ocr_confidence_min": ocr_conf_min,
+        "turnover_to_threshold_ratio": turnover_ratio,
+        "local_content_declared_pct": lc_pct,
+        "is_certificate_expired": is_expired,
+        "pan_format_valid": pan_valid,
+        "gstin_format_valid": gstin_valid,
+        "cross_document_tax_id_match": tax_id_match,
+        "raw_text_discrepancy_count": raw_disc_count,
+    }
 
     compliance_checks = [
         _make_compliance_check("GST_REQUIRED", "Valid GST Registration", "STATUTORY", True,
@@ -255,8 +342,14 @@ def generate_synthetic_case(
     ]
 
     # ────────────────────────────────────────────────────────────
-    # 2. INTEGRITY COHORT & FINDINGS GENERATION
+    # 2. INTEGRITY RAW EVIDENCE GENERATION
     # ────────────────────────────────────────────────────────────
+    # Archetype mapping for Integrity:
+    # 0, 2, 4: LOW risk (< 25 pts)
+    # 1, 3, 9: MEDIUM risk (25 <= score < 50 pts)
+    # 6, 7, 10: HIGH risk (50 <= score < 75 pts)
+    # 5, 8, 11: CRITICAL risk (>= 75 pts)
+
     num_bidders = rng.randint(3, 7)
     base_l1 = est_value * rng.uniform(0.88, 1.05)
     bids: List[float] = []
@@ -270,10 +363,20 @@ def generate_synthetic_case(
 
     findings: List[Dict[str, Any]] = []
 
-    # Map archetype to integrity risk tiers
     if archetype_id in (0, 2, 4):
         # LOW Integrity Risk (< 25.0 pts)
-        # 0 findings or single minor signal (repeated winner = 10 pts, repeated participation = 10 pts)
+        shared_pan_pairs = 0.0
+        shared_address_pairs = 0.0
+        common_director_pairs = 0.0
+        sub_spread_mins = round(rng.uniform(120.0, 360.0), 1)
+        sub_clusters = 0.0
+        max_co_part = float(rng.randint(0, 2))
+        win_rate = round(rng.uniform(0.15, 0.30), 3)
+        hhi = round(rng.uniform(0.18, 0.28), 3)
+        unique_winners = float(rng.randint(4, 6))
+        rot_freq = round(rng.uniform(0.0, 0.10), 3)
+        sole_bid = 0.0
+
         if rng.random() < 0.45:
             sig = rng.choice([SignalType.REPEATED_WINNER_PATTERN, SignalType.REPEATED_PARTICIPATION_PATTERN])
             findings.append(_make_integrity_finding(
@@ -285,9 +388,20 @@ def generate_synthetic_case(
 
     elif archetype_id in (1, 3, 9):
         # MEDIUM Integrity Risk (25.0 <= score < 50.0 pts)
-        # e.g. Rotation + losing bid (31.6 pts), or Price anomaly + narrow competition (36.8 pts)
         variant = rng.choice(["ROTATION", "PRICE_CLUSTER", "IDENTITY_DOC"])
         if variant == "ROTATION":
+            shared_pan_pairs = 0.0
+            shared_address_pairs = 0.0
+            common_director_pairs = 0.0
+            sub_spread_mins = round(rng.uniform(60.0, 180.0), 1)
+            sub_clusters = 0.0
+            max_co_part = float(rng.randint(4, 6))
+            win_rate = round(rng.uniform(0.40, 0.55), 3)
+            hhi = round(rng.uniform(0.35, 0.48), 3)
+            unique_winners = 2.0
+            rot_freq = round(rng.uniform(0.65, 0.85), 3)
+            sole_bid = 0.0
+
             findings.append(_make_integrity_finding(
                 f"F-ROT-{case_index}", tender_id,
                 SignalType.BID_ROTATION_PATTERN, RiskLevel.HIGH, 15.0,
@@ -302,6 +416,18 @@ def generate_synthetic_case(
             ))
         elif variant == "PRICE_CLUSTER":
             bids[1] = round(bids[0] * (1.0 + rng.uniform(0.0005, 0.002)), 2)
+            shared_pan_pairs = 0.0
+            shared_address_pairs = 0.0
+            common_director_pairs = 0.0
+            sub_spread_mins = round(rng.uniform(15.0, 45.0), 1)
+            sub_clusters = 2.0
+            max_co_part = float(rng.randint(2, 4))
+            win_rate = round(rng.uniform(0.25, 0.35), 3)
+            hhi = round(rng.uniform(0.25, 0.35), 3)
+            unique_winners = 3.0
+            rot_freq = round(rng.uniform(0.1, 0.3), 3)
+            sole_bid = 0.0
+
             findings.append(_make_integrity_finding(
                 f"F-PRC-{case_index}", tender_id,
                 SignalType.BID_PRICE_ANOMALY, RiskLevel.MEDIUM, 20.0,
@@ -315,6 +441,18 @@ def generate_synthetic_case(
                 bidder_id="BID-001",
             ))
         else:
+            shared_pan_pairs = 0.0
+            shared_address_pairs = 1.0  # Document identity inconsistency
+            common_director_pairs = 0.0
+            sub_spread_mins = round(rng.uniform(40.0, 120.0), 1)
+            sub_clusters = 0.0
+            max_co_part = 1.0
+            win_rate = round(rng.uniform(0.20, 0.30), 3)
+            hhi = round(rng.uniform(0.22, 0.30), 3)
+            unique_winners = 4.0
+            rot_freq = 0.0
+            sole_bid = 0.0
+
             findings.append(_make_integrity_finding(
                 f"F-DOC-{case_index}", tender_id,
                 SignalType.DOCUMENT_IDENTITY_INCONSISTENCY, RiskLevel.HIGH, 30.0,
@@ -324,7 +462,18 @@ def generate_synthetic_case(
 
     elif archetype_id in (6, 7, 10):
         # HIGH Integrity Risk (50.0 <= score < 75.0 pts)
-        # e.g. Related bidder + common director (57.7 pts)
+        shared_pan_pairs = 0.0
+        shared_address_pairs = 1.0
+        common_director_pairs = 1.0
+        sub_spread_mins = round(rng.uniform(8.0, 30.0), 1)
+        sub_clusters = 2.0
+        max_co_part = float(rng.randint(6, 9))
+        win_rate = round(rng.uniform(0.60, 0.75), 3)
+        hhi = round(rng.uniform(0.50, 0.65), 3)
+        unique_winners = 2.0
+        rot_freq = round(rng.uniform(0.35, 0.55), 3)
+        sole_bid = 0.0
+
         findings.append(_make_integrity_finding(
             f"F-REL-{case_index}", tender_id,
             SignalType.RELATED_BIDDER, RiskLevel.HIGH, 30.0,
@@ -337,18 +486,22 @@ def generate_synthetic_case(
             "Common Director Link", "Shared board members.",
             bidder_id="BID-001", related_ids=["BID-002"],
         ))
-        if rng.random() < 0.3:
-            findings.append(_make_integrity_finding(
-                f"F-WIN-{case_index}", tender_id,
-                SignalType.REPEATED_WINNER_PATTERN, RiskLevel.MEDIUM, 10.0,
-                "High Winner Concentration", "Vendor wins 80% of tenders.",
-                bidder_id="BID-001",
-            ))
 
     else:
         # CRITICAL Integrity Risk (score >= 75.0 pts) (archetypes 5, 8, 11)
-        # Multi-signal cross-family collusion
-        bids[1] = round(bids[0] * (1.0 + rng.uniform(0.0001, 0.001)), 2)
+        bids[1] = round(bids[0] * (1.0 + rng.uniform(0.0001, 0.0008)), 2)
+        shared_pan_pairs = 1.0
+        shared_address_pairs = 1.0
+        common_director_pairs = 1.0
+        sub_spread_mins = round(rng.uniform(1.0, 4.0), 1)
+        sub_clusters = 3.0
+        max_co_part = float(rng.randint(9, 14))
+        win_rate = round(rng.uniform(0.75, 0.90), 3)
+        hhi = round(rng.uniform(0.68, 0.85), 3)
+        unique_winners = 1.0
+        rot_freq = round(rng.uniform(0.85, 0.98), 3)
+        sole_bid = 1.0
+
         findings.append(_make_integrity_finding(
             f"F-REL-{case_index}", tender_id,
             SignalType.RELATED_BIDDER, RiskLevel.HIGH, 30.0,
@@ -374,39 +527,41 @@ def generate_synthetic_case(
             bidder_id="BID-003",
         ))
 
-    # ────────────────────────────────────────────────────────────
-    # 3. CALCULATE GROUND TRUTH BENCHMARK TARGETS
-    # ────────────────────────────────────────────────────────────
-    comp_res = score_compliance_benchmark(compliance_checks, discrepancies)
-    integ_objs = [IntegrityFinding(**f) for f in findings]
-    integ_res = score_integrity_benchmark(integ_objs)
-
+    # Precompute raw observable integrity metrics (no detector/finding outputs)
     bids.sort()
     l1 = bids[0]
     l2 = bids[1] if len(bids) > 1 else l1
     spread_pct = round(((l2 - l1) / l1) * 100.0, 3) if l1 > 0 else 0.0
+    bids_mean = float(np.mean(bids))
+    bids_cv = round(float(np.std(bids) / bids_mean), 4) if bids_mean > 0 else 0.0
 
-    cohort_metrics = {
-        "bidder_count": num_bidders,
-        "valid_quotes_count": len(bids),
-        "min_quote": l1,
-        "max_quote": bids[-1],
-        "mean_quote": round(sum(bids) / len(bids), 2),
+    raw_integrity_features = {
+        "bidder_count": float(num_bidders),
+        "valid_quotes_count": float(len(bids)),
         "bid_price_spread_pct": spread_pct,
+        "bid_price_cv": bids_cv,
         "bid_to_estimate_min_ratio": round(l1 / est_value, 4) if est_value > 0 else 1.0,
-        "bid_to_estimate_mean_ratio": round((sum(bids) / len(bids)) / est_value, 4) if est_value > 0 else 1.0,
-        "near_estimate_count": sum(1 for b in bids if abs(b - est_value) / est_value < 0.005),
-        "has_price_anomaly_finding": int(any(f["signal_type"] == "BID_PRICE_ANOMALY" for f in findings)),
-        "has_rotation_finding": int(any(f["signal_type"] == "BID_ROTATION_PATTERN" for f in findings)),
-        "has_related_bidder_finding": int(any(f["signal_type"] == "RELATED_BIDDER" for f in findings)),
-        "has_common_director_finding": int(any(f["signal_type"] == "COMMON_DIRECTOR_LINK" for f in findings)),
-        "has_traceability_gap_finding": int(any(f["signal_type"] == "DECISION_TRACEABILITY_GAP" for f in findings)),
-        "has_repeated_winner_finding": int(any(f["signal_type"] == "REPEATED_WINNER_PATTERN" for f in findings)),
-        "has_losing_bid_finding": int(any(f["signal_type"] == "LOSING_BID_PATTERN" for f in findings)),
-        "has_identity_doc_finding": int(any(f["signal_type"] == "DOCUMENT_IDENTITY_INCONSISTENCY" for f in findings)),
-        "has_narrow_competition_finding": int(any(f["signal_type"] == "NARROW_COMPETITION" for f in findings)),
-        "findings_count": len(findings),
+        "bid_to_estimate_mean_ratio": round(bids_mean / est_value, 4) if est_value > 0 else 1.0,
+        "near_estimate_count": float(sum(1 for b in bids if abs(b - est_value) / est_value < 0.005)),
+        "shared_pan_pair_count": shared_pan_pairs,
+        "shared_address_pair_count": shared_address_pairs,
+        "common_director_pair_count": common_director_pairs,
+        "submission_time_spread_minutes": sub_spread_mins,
+        "submission_cluster_count": sub_clusters,
+        "historical_co_participation_max": max_co_part,
+        "winner_historical_win_rate": win_rate,
+        "winner_concentration_hhi": hhi,
+        "unique_historical_winners_count": unique_winners,
+        "historical_rotation_frequency": rot_freq,
+        "unjustified_sole_bid_flag": sole_bid,
     }
+
+    # ────────────────────────────────────────────────────────────
+    # 3. CALCULATE SEPARATE GROUND TRUTH TARGETS (Task 1 Engines)
+    # ────────────────────────────────────────────────────────────
+    comp_res = score_compliance_benchmark(compliance_checks, discrepancies)
+    integ_objs = [IntegrityFinding(**f) for f in findings]
+    integ_res = score_integrity_benchmark(integ_objs)
 
     return {
         "case_id": case_id,
@@ -414,10 +569,8 @@ def generate_synthetic_case(
         "archetype_id": archetype_id,
         "estimated_value": est_value,
         "category": category,
-        "compliance_check_results": compliance_checks,
-        "compliance_discrepancies": discrepancies,
-        "integrity_findings": findings,
-        "cohort_metrics": cohort_metrics,
+        "raw_compliance_features": raw_compliance_features,
+        "raw_integrity_features": raw_integrity_features,
         "ground_truth": {
             "compliance_score": comp_res.score,
             "compliance_raw_score": comp_res.raw_score,

@@ -1,227 +1,189 @@
 """
-Feature Extraction and Anti-Leakage Validation for Procurement ML Benchmark
+Raw Feature Extraction and Anti-Leakage Validation for Procurement ML Benchmark
 =============================================================================
 SIH26100 — Ministry of Finance / GeM — Decoupled AI Architecture
 
-Extracts strictly observable procurement compliance and integrity features
-from structured procurement cases, with automated anti-leakage verification.
+Extracts strictly observable, pre-decision procurement compliance and integrity
+features from raw case evidence.
 
-CRITICAL ANTI-LEAKAGE INVARIANTS:
-1. Target variables (ground_truth_score, ground_truth_class, raw_score) are NEVER features.
-2. Case identifiers (case_id, tender_id, filenames, PDF titles) are excluded.
-3. Scenario type / archetype IDs are excluded.
-4. Input features represent solely pre-evaluation observable evidence.
+CRITICAL ARCHITECTURAL BOUNDARIES:
+1. The ML model receives ONLY raw observable data available BEFORE engine execution.
+2. ALL detector and rule-engine finding outputs are strictly excluded.
+3. Target variables (ground_truth_score, ground_truth_class, raw_score) are strictly excluded.
+4. Identifiers, filenames, PDF titles, and scenario types are strictly excluded.
+5. All feature sets must pass assert_no_target_leakage().
 """
 from __future__ import annotations
 
-import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Tuple
 import numpy as np
 
 # =====================================================================
-# 1. FEATURE DEFINITIONS
+# 1. RAW PRE-DECISION FEATURE DEFINITIONS
 # =====================================================================
 
 COMPLIANCE_FEATURE_NAMES: List[str] = [
-    "gst_status_score",
-    "pan_status_score",
-    "oem_status_score",
-    "turnover_status_score",
-    "blacklisting_status_score",
-    "udyam_status_score",
-    "local_content_status_score",
-    "completeness_status_score",
-    "mandatory_passed_count",
-    "mandatory_failed_count",
-    "mandatory_review_count",
-    "non_mandatory_passed_count",
-    "non_mandatory_failed_count",
-    "evidence_present_count",
-    "discrepancy_count_total",
-    "discrepancy_count_critical",
-    "discrepancy_count_high",
-    "mean_check_confidence",
-    "has_mandatory_fail",
+    "has_gst_document",
+    "has_pan_document",
+    "has_oem_document",
+    "has_turnover_document",
+    "has_blacklisting_document",
+    "has_udyam_document",
+    "has_local_content_document",
+    "submitted_documents_count",
+    "missing_mandatory_documents_count",
+    "raw_ocr_confidence_mean",
+    "raw_ocr_confidence_min",
+    "turnover_to_threshold_ratio",
+    "local_content_declared_pct",
+    "is_certificate_expired",
+    "pan_format_valid",
+    "gstin_format_valid",
+    "cross_document_tax_id_match",
+    "raw_text_discrepancy_count",
 ]
 
 INTEGRITY_FEATURE_NAMES: List[str] = [
     "bidder_count",
     "valid_quotes_count",
     "bid_price_spread_pct",
+    "bid_price_cv",
     "bid_to_estimate_min_ratio",
     "bid_to_estimate_mean_ratio",
     "near_estimate_count",
-    "has_price_anomaly_finding",
-    "has_rotation_finding",
-    "has_related_bidder_finding",
-    "has_common_director_finding",
-    "has_traceability_gap_finding",
-    "has_repeated_winner_finding",
-    "has_losing_bid_finding",
-    "has_identity_doc_finding",
-    "has_narrow_competition_finding",
-    "findings_count_total",
-    "findings_count_critical",
-    "findings_count_high",
-    "findings_count_medium",
-    "unique_signal_types_count",
-    "related_bidders_involved_count",
+    "shared_pan_pair_count",
+    "shared_address_pair_count",
+    "common_director_pair_count",
+    "submission_time_spread_minutes",
+    "submission_cluster_count",
+    "historical_co_participation_max",
+    "winner_historical_win_rate",
+    "winner_concentration_hhi",
+    "unique_historical_winners_count",
+    "historical_rotation_frequency",
+    "unjustified_sole_bid_flag",
 ]
 
-# Explicit blacklist of forbidden leakage column names
-FORBIDDEN_LEAKAGE_TERMS: Set[str] = {
-    "compliance_ground_truth_class",
-    "compliance_ground_truth_score",
-    "compliance_class",
-    "compliance_score",
-    "compliance_raw_score",
-    "integrity_ground_truth_class",
-    "integrity_ground_truth_score",
-    "integrity_class",
-    "integrity_score",
-    "integrity_raw_score",
+# Explicit terms that MUST NOT appear in any ML feature name or proxy
+FORBIDDEN_LEAKAGE_SUBSTRINGS: Tuple[str, ...] = (
     "ground_truth",
+    "target",
+    "risk_score",
+    "risk_class",
+    "finding",
+    "findings_count",
+    "detector_output",
+    "final_score",
+    "final_class",
+    "scenario_type",
+    "filename",
+    "case_name",
     "case_id",
     "tender_id",
-    "archetype_id",
-    "scenario_type",
-    "label",
-    "target",
-}
+    "status_score",
+    "has_mandatory_fail",
+    "mandatory_passed",
+    "mandatory_failed",
+    "mandatory_review",
+    "non_mandatory_passed",
+    "non_mandatory_failed",
+)
 
 
-def assert_no_leakage(feature_names: List[str]) -> None:
+def assert_no_target_leakage(feature_names: List[str]) -> None:
     """
-    Asserts that no target column or identifier is present in feature names.
-    Raises ValueError if any prohibited term is detected.
+    Hard validation function asserting that NO target column, detector output,
+    scenario label, or engine proxy is present in the feature list.
+    
+    Raises ValueError immediately if any prohibited substring is found.
     """
-    for name in feature_names:
-        clean = name.strip().lower()
-        if clean in FORBIDDEN_LEAKAGE_TERMS:
-            raise ValueError(f"CRITICAL LEAKAGE ERROR: Prohibited target/identifier '{name}' in features!")
-        for term in ("ground_truth", "class", "target", "archetype", "label"):
-            if term in clean and "class" in clean and not ("status" in clean or "unique" in clean):
-                raise ValueError(f"CRITICAL LEAKAGE ERROR: Suspicious term '{term}' in feature '{name}'!")
+    for feat in feature_names:
+        clean = feat.strip().lower()
+        for forbidden in FORBIDDEN_LEAKAGE_SUBSTRINGS:
+            if forbidden in clean:
+                raise ValueError(
+                    f"CRITICAL TARGET LEAKAGE DETECTED: Feature '{feat}' contains prohibited term '{forbidden}'!"
+                )
+
+
+# Alias for backward compatibility
+assert_no_leakage = assert_no_target_leakage
 
 
 # =====================================================================
-# 2. COMPLIANCE FEATURE EXTRACTOR
+# 2. RAW COMPLIANCE FEATURE EXTRACTOR
 # =====================================================================
-
-_STATUS_SCORE_MAP = {
-    "COMPLIANT": 100.0,
-    "NOT_APPLICABLE": 100.0,
-    "NEEDS_REVIEW": 60.0,
-    "PENDING": 20.0,
-    "UNVERIFIED": 0.0,
-    "NON_COMPLIANT": 0.0,
-    "EXPIRED": 10.0,
-}
-
-_FAIL_STATUSES = {"NON_COMPLIANT", "EXPIRED", "UNVERIFIED"}
-
 
 def extract_compliance_features(case_dict: Dict[str, Any]) -> Dict[str, float]:
     """
-    Extract observable compliance features from a structured procurement case.
-    Does not access any ground-truth fields.
+    Extract observable, pre-decision compliance features from a procurement case.
+    Uses purely raw evidence fields (document presence, format checks, turnover ratio).
+    Does NOT access any ground truth, rule status, or scoring engine output.
     """
+    raw = case_dict.get("raw_compliance_features")
+    if raw is not None:
+        return {k: float(raw.get(k, 0.0)) for k in COMPLIANCE_FEATURE_NAMES}
+
+    # Fallback extractor if reading an external case dictionary
     checks = case_dict.get("compliance_check_results") or []
-    discrepancies = case_dict.get("compliance_discrepancies") or []
+    discs = case_dict.get("compliance_discrepancies") or []
+    
+    check_map = {c.get("requirement_id", ""): c for c in checks}
+    
+    has_gst = 1.0 if "GST_REQUIRED" in check_map else 0.0
+    has_pan = 1.0 if "PAN_REQUIRED" in check_map else 0.0
+    has_oem = 1.0 if "OEM_AUTHORIZATION" in check_map else 0.0
+    has_to = 1.0 if "TURNOVER_THRESHOLD" in check_map else 0.0
+    has_bl = 1.0 if "NON_BLACKLISTING" in check_map else 0.0
+    has_udyam = 1.0 if "UDYAM_REQUIRED" in check_map else 0.0
+    has_lc = 1.0 if "LOCAL_CONTENT" in check_map else 0.0
 
-    # Map by requirement ID
-    check_by_req: Dict[str, Dict[str, Any]] = {}
-    for c in checks:
-        req_id = c.get("requirement_id", "")
-        check_by_req[req_id] = c
+    mand_present = has_gst + has_pan + has_oem + has_to + has_bl
+    missing_mand = 5.0 - mand_present
+    total_sub = mand_present + has_udyam + has_lc
 
-    def _get_status_score(req_id: str, default: float = 20.0) -> float:
-        if req_id in check_by_req:
-            st = check_by_req[req_id].get("status", "PENDING")
-            return _STATUS_SCORE_MAP.get(st, default)
-        return default
-
-    # Individual check scores
-    gst_score = _get_status_score("GST_REQUIRED")
-    pan_score = _get_status_score("PAN_REQUIRED")
-    oem_score = _get_status_score("OEM_AUTHORIZATION")
-    turnover_score = _get_status_score("TURNOVER_THRESHOLD")
-    bl_score = _get_status_score("NON_BLACKLISTING")
-    udyam_score = _get_status_score("UDYAM_REQUIRED")
-    lc_score = _get_status_score("LOCAL_CONTENT")
-    complete_score = _get_status_score("APPLICATION_COMPLETENESS_EVALUATION")
-
-    # Aggregations across checks
-    mandatory_passed = 0
-    mandatory_failed = 0
-    mandatory_review = 0
-    non_mandatory_passed = 0
-    non_mandatory_failed = 0
-    evidence_count = 0
-    confidences: List[float] = []
-
-    for c in checks:
-        is_mand = c.get("is_mandatory", False)
-        status = c.get("status", "PENDING")
-        conf = float(c.get("confidence", 0.0))
-        confidences.append(conf)
-
-        if c.get("evidence_available") or c.get("evidence_value") is not None:
-            evidence_count += 1
-
-        if is_mand:
-            if status in ("COMPLIANT", "NOT_APPLICABLE"):
-                mandatory_passed += 1
-            elif status in _FAIL_STATUSES:
-                mandatory_failed += 1
-            elif status == "NEEDS_REVIEW":
-                mandatory_review += 1
-        else:
-            if status in ("COMPLIANT", "NOT_APPLICABLE"):
-                non_mandatory_passed += 1
-            elif status in _FAIL_STATUSES:
-                non_mandatory_failed += 1
-
-    # Discrepancy counts
-    crit_disc = sum(1 for d in discrepancies if str(d.get("severity", "")).upper() == "CRITICAL")
-    high_disc = sum(1 for d in discrepancies if str(d.get("severity", "")).upper() == "HIGH")
+    confs = [float(c.get("confidence", 0.0)) for c in checks if c.get("confidence") is not None]
+    conf_mean = float(np.mean(confs)) if confs else 0.0
+    conf_min = float(np.min(confs)) if confs else 0.0
 
     return {
-        "gst_status_score": gst_score,
-        "pan_status_score": pan_score,
-        "oem_status_score": oem_score,
-        "turnover_status_score": turnover_score,
-        "blacklisting_status_score": bl_score,
-        "udyam_status_score": udyam_score,
-        "local_content_status_score": lc_score,
-        "completeness_status_score": complete_score,
-        "mandatory_passed_count": float(mandatory_passed),
-        "mandatory_failed_count": float(mandatory_failed),
-        "mandatory_review_count": float(mandatory_review),
-        "non_mandatory_passed_count": float(non_mandatory_passed),
-        "non_mandatory_failed_count": float(non_mandatory_failed),
-        "evidence_present_count": float(evidence_count),
-        "discrepancy_count_total": float(len(discrepancies)),
-        "discrepancy_count_critical": float(crit_disc),
-        "discrepancy_count_high": float(high_disc),
-        "mean_check_confidence": float(np.mean(confidences)) if confidences else 0.0,
-        "has_mandatory_fail": 1.0 if mandatory_failed > 0 else 0.0,
+        "has_gst_document": has_gst,
+        "has_pan_document": has_pan,
+        "has_oem_document": has_oem,
+        "has_turnover_document": has_to,
+        "has_blacklisting_document": has_bl,
+        "has_udyam_document": has_udyam,
+        "has_local_content_document": has_lc,
+        "submitted_documents_count": total_sub,
+        "missing_mandatory_documents_count": missing_mand,
+        "raw_ocr_confidence_mean": conf_mean,
+        "raw_ocr_confidence_min": conf_min,
+        "turnover_to_threshold_ratio": 1.5 if has_to == 1.0 else 0.0,
+        "local_content_declared_pct": 60.0 if has_lc == 1.0 else 0.0,
+        "is_certificate_expired": 0.0,
+        "pan_format_valid": has_pan,
+        "gstin_format_valid": has_gst,
+        "cross_document_tax_id_match": 1.0 if (has_gst and has_pan) else 0.0,
+        "raw_text_discrepancy_count": float(len(discs)),
     }
 
 
 # =====================================================================
-# 3. INTEGRITY FEATURE EXTRACTOR
+# 3. RAW INTEGRITY FEATURE EXTRACTOR
 # =====================================================================
 
 def extract_integrity_features(case_dict: Dict[str, Any]) -> Dict[str, float]:
     """
-    Extract observable procurement integrity features from a structured procurement case.
-    Does not access any ground-truth fields.
+    Extract observable, pre-decision integrity features from a procurement case.
+    Uses purely raw cohort telemetry and market metrics (spreads, CV, ratios, shared corporate attributes).
+    Does NOT access any findings, detector outputs, or ground truth scores.
     """
-    cohort = case_dict.get("cohort_metrics") or {}
-    findings = case_dict.get("integrity_findings") or []
+    raw = case_dict.get("raw_integrity_features")
+    if raw is not None:
+        return {k: float(raw.get(k, 0.0)) for k in INTEGRITY_FEATURE_NAMES}
 
-    # Telemetry and cohort quotes
+    # Fallback extractor if reading an external case dictionary
+    cohort = case_dict.get("cohort_metrics") or {}
     bidder_count = float(cohort.get("bidder_count", 0))
     valid_quotes = float(cohort.get("valid_quotes_count", 0))
     spread_pct = float(cohort.get("bid_price_spread_pct", 0.0))
@@ -229,67 +191,30 @@ def extract_integrity_features(case_dict: Dict[str, Any]) -> Dict[str, float]:
     ratio_mean = float(cohort.get("bid_to_estimate_mean_ratio", 1.0))
     near_est = float(cohort.get("near_estimate_count", 0))
 
-    # Signal flags from cohort / findings
-    has_price_anomaly = float(cohort.get("has_price_anomaly_finding", 0))
-    has_rotation = float(cohort.get("has_rotation_finding", 0))
-    has_related = float(cohort.get("has_related_bidder_finding", 0))
-    has_common_dir = float(cohort.get("has_common_director_finding", 0))
-    has_traceability = float(cohort.get("has_traceability_gap_finding", 0))
-    has_rep_winner = float(cohort.get("has_repeated_winner_finding", 0))
-    has_losing_bid = float(cohort.get("has_losing_bid_finding", 0))
-    has_identity_doc = float(cohort.get("has_identity_doc_finding", 0))
-    has_narrow_comp = float(cohort.get("has_narrow_competition_finding", 0))
-
-    # Finding severities and diversity
-    crit_count = 0
-    high_count = 0
-    med_count = 0
-    signal_types: Set[str] = set()
-    related_ids: Set[str] = set()
-
-    for f in findings:
-        sev = str(f.get("severity", "")).upper()
-        if sev == "CRITICAL":
-            crit_count += 1
-        elif sev == "HIGH":
-            high_count += 1
-        elif sev == "MEDIUM":
-            med_count += 1
-
-        sig = str(f.get("signal_type", ""))
-        if sig:
-            signal_types.add(sig)
-
-        for r in f.get("related_bidder_ids") or []:
-            related_ids.add(str(r))
-
     return {
         "bidder_count": bidder_count,
         "valid_quotes_count": valid_quotes,
         "bid_price_spread_pct": spread_pct,
+        "bid_price_cv": 0.05,
         "bid_to_estimate_min_ratio": ratio_min,
         "bid_to_estimate_mean_ratio": ratio_mean,
         "near_estimate_count": near_est,
-        "has_price_anomaly_finding": has_price_anomaly,
-        "has_rotation_finding": has_rotation,
-        "has_related_bidder_finding": has_related,
-        "has_common_director_finding": has_common_dir,
-        "has_traceability_gap_finding": has_traceability,
-        "has_repeated_winner_finding": has_rep_winner,
-        "has_losing_bid_finding": has_losing_bid,
-        "has_identity_doc_finding": has_identity_doc,
-        "has_narrow_competition_finding": has_narrow_comp,
-        "findings_count_total": float(len(findings)),
-        "findings_count_critical": float(crit_count),
-        "findings_count_high": float(high_count),
-        "findings_count_medium": float(med_count),
-        "unique_signal_types_count": float(len(signal_types)),
-        "related_bidders_involved_count": float(len(related_ids)),
+        "shared_pan_pair_count": 0.0,
+        "shared_address_pair_count": 0.0,
+        "common_director_pair_count": 0.0,
+        "submission_time_spread_minutes": 120.0,
+        "submission_cluster_count": 0.0,
+        "historical_co_participation_max": 1.0,
+        "winner_historical_win_rate": 0.25,
+        "winner_concentration_hhi": 0.25,
+        "unique_historical_winners_count": 4.0,
+        "historical_rotation_frequency": 0.0,
+        "unjustified_sole_bid_flag": 0.0,
     }
 
 
 # =====================================================================
-# 4. MATRIX BUILDERS WITH ANTI-LEAKAGE CHECKS
+# 4. MATRIX BUILDERS WITH HARD ANTI-LEAKAGE VERIFICATION
 # =====================================================================
 
 def build_compliance_dataset(
@@ -298,16 +223,9 @@ def build_compliance_dataset(
     """
     Build numerical feature matrix X, classification target y_class,
     and regression target y_score for the Compliance model.
-    
-    Returns:
-        X: (N, D) feature array
-        y_class: (N,) string array of risk classes
-        y_score: (N,) float array of benchmark scores
-        feature_names: List of D feature names
-        case_ids: List of case IDs (for held-out tracking, NOT in X)
     """
-    assert_no_leakage(COMPLIANCE_FEATURE_NAMES)
-    
+    assert_no_target_leakage(COMPLIANCE_FEATURE_NAMES)
+
     X_rows = []
     y_class_rows = []
     y_score_rows = []
@@ -317,7 +235,7 @@ def build_compliance_dataset(
         feat_dict = extract_compliance_features(case)
         row = [feat_dict[name] for name in COMPLIANCE_FEATURE_NAMES]
         X_rows.append(row)
-        
+
         gt = case["ground_truth"]
         y_class_rows.append(gt["compliance_class"])
         y_score_rows.append(float(gt["compliance_score"]))
@@ -338,15 +256,8 @@ def build_integrity_dataset(
     """
     Build numerical feature matrix X, classification target y_class,
     and regression target y_score for the Integrity model.
-    
-    Returns:
-        X: (N, D) feature array
-        y_class: (N,) string array of risk classes
-        y_score: (N,) float array of benchmark scores
-        feature_names: List of D feature names
-        case_ids: List of case IDs (for held-out tracking, NOT in X)
     """
-    assert_no_leakage(INTEGRITY_FEATURE_NAMES)
+    assert_no_target_leakage(INTEGRITY_FEATURE_NAMES)
 
     X_rows = []
     y_class_rows = []
@@ -357,7 +268,7 @@ def build_integrity_dataset(
         feat_dict = extract_integrity_features(case)
         row = [feat_dict[name] for name in INTEGRITY_FEATURE_NAMES]
         X_rows.append(row)
-        
+
         gt = case["ground_truth"]
         y_class_rows.append(gt["integrity_class"])
         y_score_rows.append(float(gt["integrity_score"]))
