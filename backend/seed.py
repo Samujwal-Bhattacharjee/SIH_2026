@@ -23,6 +23,7 @@ import uuid
 import random
 from datetime import datetime, timedelta, timezone, date
 from typing import Dict, Any, List, Set, Tuple
+from postgrest.types import CountMethod
 
 # Add backend root to path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -728,7 +729,7 @@ def main():
     summary = stats.get_summary()
     for table_name, counts in summary.items():
         try:
-            db_res = supabase.table(table_name).select("id", count="exact").execute()
+            db_res = supabase.table(table_name).select("id", count=CountMethod.exact).execute()
             total_db = db_res.count if db_res.count is not None else len(db_res.data or [])
         except Exception:
             total_db = "N/A"

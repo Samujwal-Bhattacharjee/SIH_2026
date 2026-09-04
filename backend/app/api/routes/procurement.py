@@ -196,7 +196,10 @@ async def get_bidder_detail(bidder_id: str, user: dict = Depends(get_current_use
 
     # If compliance results not computed yet, run live verification
     if not results and docs:
-        tender_id = str(bidder.get("tender_id") or "TEN-2026-001")
+        tender_id = str(bidder.get("tender_id") or "")
+        if not tender_id:
+            all_t = ps.get_tenders()
+            tender_id = all_t[0]["id"] if all_t else ""
         reqs = ps.get_tender_requirements(tender_id) or DEFAULT_TENDER_REQUIREMENTS
         assessment = run_full_verification(bidder, reqs, docs)
         ps.save_compliance_assessment(bidder_id, tender_id, assessment)
@@ -358,7 +361,10 @@ async def upload_bidder_document(
 
     # Step 5: Fetch all bidder documents & re-run compliance verification
     all_docs = ps.get_bidder_documents(bidder_id)
-    tender_id = str(bidder.get("tender_id") or "TEN-2026-001")
+    tender_id = str(bidder.get("tender_id") or "")
+    if not tender_id:
+        all_t = ps.get_tenders()
+        tender_id = all_t[0]["id"] if all_t else ""
     reqs = ps.get_tender_requirements(tender_id) or DEFAULT_TENDER_REQUIREMENTS
 
     assessment = run_full_verification(
@@ -428,7 +434,10 @@ async def verify_bidder(bidder_id: str, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Bidder not found")
 
     docs = ps.get_bidder_documents(bidder_id)
-    tender_id = str(bidder.get("tender_id") or "TEN-2026-001")
+    tender_id = str(bidder.get("tender_id") or "")
+    if not tender_id:
+        all_t = ps.get_tenders()
+        tender_id = all_t[0]["id"] if all_t else ""
     reqs = ps.get_tender_requirements(tender_id) or DEFAULT_TENDER_REQUIREMENTS
 
     assessment = run_full_verification(

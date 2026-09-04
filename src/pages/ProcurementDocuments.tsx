@@ -30,16 +30,29 @@ interface ExtractedField {
 }
 
 export const ProcurementDocuments: React.FC = () => {
-  const { bidders, uploadDocument, documents, error } = useProcurement();
+  const { bidders, uploadDocument, documents, error, tenders, tenderId, selectTender, addBidder, loading } = useProcurement();
   const { t, language } = useLanguage();
-  // bidderId is null until real bidders arrive from backend — never assume 'BID-001'
   const [bidderId, setBidderId] = useState<string | null>(null);
+  const [isAddingBidder, setIsAddingBidder] = useState(false);
+  const [newBidderName, setNewBidderName] = useState('');
+  const [newBidderGstin, setNewBidderGstin] = useState('');
+  const [newBidderPan, setNewBidderPan] = useState('');
+  const [addingError, setAddingError] = useState<string | null>(null);
 
-  // Sync to first real bidder once context loads, but don't overwrite user selection
+  // Sync to first real bidder once context loads, but don't overwrite user selection if still valid.
+  // Guard: only update bidderId when the current value is genuinely stale (not found in bidders list)
+  // or when we have no selection at all. This prevents re-render cycles when the bidders array
+  // reference changes due to ProcurementContext refreshData.
   useEffect(() => {
-    if (bidders.length > 0 && !bidderId) {
-      setBidderId(bidders[0].id);
+    if (bidders.length > 0) {
+      const currentValid = bidderId && bidders.some(b => b.id === bidderId);
+      if (!currentValid) {
+        setBidderId(bidders[0].id);
+      }
+    } else if (bidders.length === 0 && bidderId !== null) {
+      setBidderId(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bidders]);
   const [docTypeSelect, setDocTypeSelect] = useState('GST Registration Certificate');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -112,9 +125,11 @@ export const ProcurementDocuments: React.FC = () => {
     }
   };
 
-  // Status counters for top pills
-  const underReviewCount = bidders.filter((b) => b.status === 'Under Review' || b.status === 'Needs Review').length || 2;
-  const highRiskCount = bidders.filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL').length || 1;
+  // Status counters for top pills computed dynamically from real context
+  const activeTendersCount = tenders.filter((t) => !t.status || t.status.toUpperCase() === 'ACTIVE').length;
+  const underReviewCount = bidders.filter((b) => b.status === 'Under Review' || b.complianceStatus === 'UNDER_REVIEW' || b.status === 'Needs Review').length;
+  const highRiskCount = bidders.filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL' || b.complianceRisk === 'HIGH' || b.complianceRisk === 'CRITICAL').length;
+  const pendingCount = bidders.filter((b) => b.status === 'Pending' || b.complianceStatus === 'PENDING_DOCUMENTS').length;
 
   // Compute progress bar percentage for the stepper line animation
   const progressPercent = useMemo(() => {
@@ -147,7 +162,7 @@ export const ProcurementDocuments: React.FC = () => {
           <div className="flex items-center flex-wrap gap-2 text-xs">
             <span className="px-3 py-1 bg-white/80 text-[#6D28D9] border border-[#E9D5FF] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#6D28D9]" />
-              {t('status.activeTenders', 'Active tenders')} (04)
+              {t('status.activeTenders', 'Active tenders')} ({String(activeTendersCount).padStart(2, '0')})
             </span>
 
             <span className="px-3 py-1 bg-white/80 text-[#B45309] border border-[#FDE68A] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
@@ -162,7 +177,7 @@ export const ProcurementDocuments: React.FC = () => {
 
             <span className="px-3 py-1 bg-white/80 text-[#64748B] border border-[#E2E8F0] rounded-full font-semibold inline-flex items-center gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-[#64748B]" />
-              {t('status.pending', 'Pending')} (01)
+              {t('status.pending', 'Pending')} ({String(pendingCount).padStart(2, '0')})
             </span>
           </div>
         }
@@ -281,7 +296,24 @@ export const ProcurementDocuments: React.FC = () => {
           </h2>
 
           <div className="mt-4 space-y-4 text-xs">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block font-semibold text-[#0F172A] mb-1.5">
+                  Tender reference <span className="text-[#DC2626]">*</span>
+                </label>
+                <select
+                  value={tenderId ?? ''}
+                  onChange={(e) => selectTender(e.target.value)}
+                  className="w-full bg-white border border-[#CBD5E1] rounded-[2px] p-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                >
+                  {tenders.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.title} ({t.id})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div>
                 <label className="block font-semibold text-[#0F172A] mb-1.5">
                   Document type <span className="text-[#DC2626]">*</span>
@@ -303,17 +335,28 @@ export const ProcurementDocuments: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-[#0F172A] mb-1.5">
-                  Participating bidder <span className="text-[#DC2626]">*</span>
-                </label>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="font-semibold text-[#0F172A]">
+                    Participating bidder <span className="text-[#DC2626]">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingBidder(!isAddingBidder)}
+                    className="text-[11px] text-[#2E0854] hover:underline font-semibold"
+                  >
+                    {isAddingBidder ? 'Cancel' : '+ Add Bidder'}
+                  </button>
+                </div>
                 <select
                   value={bidderId ?? ''}
                   onChange={(e) => setBidderId(e.target.value)}
                   className="w-full bg-white border border-[#CBD5E1] rounded-[2px] p-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
-                  disabled={bidders.length === 0}
+                  disabled={loading || bidders.length === 0}
                 >
-                  {bidders.length === 0 ? (
+                  {loading ? (
                     <option value="">Loading bidders…</option>
+                  ) : bidders.length === 0 ? (
+                    <option value="">No bidders in tender — click + Add Bidder</option>
                   ) : (
                     bidders.map((b) => (
                       <option key={b.id} value={b.id}>
@@ -324,6 +367,67 @@ export const ProcurementDocuments: React.FC = () => {
                 </select>
               </div>
             </div>
+
+            {isAddingBidder && (
+              <div className="bg-[#F8FAFC] border border-[#CBD5E1] rounded-[4px] p-3 text-xs space-y-2">
+                <div className="font-semibold text-[#0F172A]">Register New Bidder for Tender {tenderId}</div>
+                {addingError && <div className="text-[#DC2626] text-[11px]">{addingError}</div>}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <input
+                    type="text"
+                    placeholder="Bidder Legal Name *"
+                    value={newBidderName}
+                    onChange={(e) => setNewBidderName(e.target.value)}
+                    className="bg-white border border-[#CBD5E1] rounded-[2px] p-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                  />
+                  <input
+                    type="text"
+                    placeholder="GSTIN (optional)"
+                    value={newBidderGstin}
+                    onChange={(e) => setNewBidderGstin(e.target.value)}
+                    className="bg-white border border-[#CBD5E1] rounded-[2px] p-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                  />
+                  <input
+                    type="text"
+                    placeholder="PAN (optional)"
+                    value={newBidderPan}
+                    onChange={(e) => setNewBidderPan(e.target.value)}
+                    className="bg-white border border-[#CBD5E1] rounded-[2px] p-1.5 text-xs text-[#0F172A] focus:outline-none focus:border-[#2E0854]"
+                  />
+                </div>
+                <div className="flex gap-2 justify-end pt-1">
+                  <button
+                    type="button"
+                    onClick={() => { setIsAddingBidder(false); setAddingError(null); }}
+                    className="px-2.5 py-1 text-xs border border-[#CBD5E1] rounded-[2px] text-[#475569] hover:bg-slate-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!newBidderName.trim()) {
+                        setAddingError('Bidder name is required.');
+                        return;
+                      }
+                      try {
+                        setAddingError(null);
+                        await addBidder(newBidderName.trim(), newBidderGstin.trim() || undefined, newBidderPan.trim() || undefined);
+                        setNewBidderName('');
+                        setNewBidderGstin('');
+                        setNewBidderPan('');
+                        setIsAddingBidder(false);
+                      } catch (err: any) {
+                        setAddingError(err?.message || 'Failed to add bidder.');
+                      }
+                    }}
+                    className="px-3 py-1 text-xs bg-[#2E0854] text-white rounded-[2px] hover:bg-[#1E0538] font-medium"
+                  >
+                    Save Bidder
+                  </button>
+                </div>
+              </div>
+            )}
 
             <input
               ref={fileInputRef}

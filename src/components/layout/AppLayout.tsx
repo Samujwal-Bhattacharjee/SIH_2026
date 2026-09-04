@@ -6,6 +6,7 @@ import { GovFooter } from './GovFooter';
 import { GlobalSearchModal } from './GlobalSearchModal';
 import { PetroleumBackground } from '../background/PetroleumBackground';
 import { usePetroleumBackground } from '../../context/BackgroundContext';
+import { ErrorBoundary } from '../common/ErrorBoundary';
 
 export const AppLayout: React.FC = () => {
   const { isPeekMode, glassIntensity } = usePetroleumBackground();
@@ -39,7 +40,9 @@ export const AppLayout: React.FC = () => {
           isPeekMode ? 'opacity-10 pointer-events-none' : 'opacity-100'
         }`}
       >
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
       {/* 4. Institutional Footer (Translucent Frosted Glass) */}

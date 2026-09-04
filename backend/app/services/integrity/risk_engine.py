@@ -450,7 +450,10 @@ def assess_bidder_integrity(
     if not bidder:
         raise ValueError(f"Bidder '{bidder_id}' not found in procurement registry.")
 
-    t_id = tender_id or bidder.get("tender_id") or "TEN-2026-001"
+    t_id = tender_id or bidder.get("tender_id") or ""
+    if not t_id:
+        all_t = ps.get_tenders()
+        t_id = all_t[0]["id"] if all_t else ""
     tender_assessment = assess_tender_integrity(t_id)
 
     # Filter findings relevant to this specific bidder

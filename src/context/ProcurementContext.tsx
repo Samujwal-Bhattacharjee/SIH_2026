@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient, isUsingMockApi } from '../services/api/apiClient';
 
 export type CheckStatus = 'Verified' | 'Failed' | 'Pending' | 'Needs Review' | 'Not Applicable';
@@ -78,13 +78,15 @@ interface ProcurementContextValue {
   audit: AuditEvent[];
   loading: boolean;
   addTender: (title: string, department?: string, closingDate?: string) => Promise<any>;
-  addBidder: (name: string, gstin?: string, pan?: string) => Promise<void>;
+  addBidder: (name: string, gstin?: string, pan?: string, targetTenderId?: string) => Promise<void>;
   uploadDocument: (bidderId: string, fileName: string, file?: File, documentType?: string) => Promise<any>;
   runVerification: (bidderId: string) => Promise<any>;
   decide: (bidderId: string, decision: string, note: string) => Promise<void>;
   updateRequirement: (bidderId: string, requirementId: string, status: CheckStatus) => Promise<void>;
   recordIntegrityReview: (findingId: string, status: string, note?: string, tenderId?: string, bidderId?: string, action?: string) => Promise<any>;
-  refreshData: () => Promise<void>;
+  refreshData: (targetTenderId?: string | null) => Promise<void>;
+  selectTender: (id: string) => void;
+  setTenderId: (id: string | null) => void;
   tenderId: string | null;
   documents: any[];
   error: string | null;
@@ -187,6 +189,15 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [tenderId, setTenderId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // ── Request cancellation & staleness guards ──────────────────────────────
+  // Monotonic version counter: incremented on every refreshData call.
+  // When an async response arrives, it checks if the version is still current;
+  // if a newer refreshData was called, the stale response is discarded.
+  const refreshVersionRef = useRef(0);
+  // AbortController ref: allows aborting in-flight fetch requests when
+  // a new refreshData call supersedes them (e.g., navigation to a different tender).
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const activeTenders = React.useMemo(() => {
     return tenders
       .filter((t) => !t.status || t.status.toUpperCase() === 'ACTIVE')
@@ -197,7 +208,7 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setAudit((items) => [{ id: crypto.randomUUID(), time: nowTime(), action, actor, detail }, ...items]);
   };
 
-  const mapBidder = (row: any, detail?: any): Bidder => {
+  const mapBidder = useCallback((row: any, detail?: any): Bidder => {
     const rawScore = Number(row.compliance_score ?? row.score ?? detail?.bidder?.compliance_score ?? 0);
     const complianceRisk = (row.risk_level || row.risk || detail?.bidder?.risk_level || 'MEDIUM') as RiskLevel;
     const blockingExceptions = Number(
@@ -269,39 +280,125 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
       integrityScore: detail?.integrity?.overall_risk_score,
       mandatorySummary: detail?.mandatory_summary,
     };
-  };
+  }, []);
 
   // Backend/database is authoritative in live mode. Mock mode deliberately
   // retains the existing fixture adapter for offline SIH demos.
-  const refreshData = async () => {
+  //
+  // Staleness protection: each call increments a version counter.
+  // When async responses arrive, they are discarded if a newer refreshData
+  // was triggered in the meantime (e.g., user navigated to a different tender).
+  // AbortController cancels in-flight fetch requests from the previous call.
+  const refreshData = useCallback(async (targetTenderId?: string | null) => {
+    // Increment version and capture it for this invocation
+    const version = ++refreshVersionRef.current;
+
+    // Abort any in-flight requests from a previous refreshData call
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setLoading(true);
     setError(null);
     try {
       const procurement = (apiClient as any).procurement;
       const rawTenders = await procurement.getTenders();
+
+      // Staleness check: if a newer refreshData was called, discard this response
+      if (version !== refreshVersionRef.current) return;
+
       const allTenders = rawTenders || [];
       setTenders(allTenders);
-      const activeTender = allTenders.find((t: any) => !t.status || t.status.toUpperCase() === 'ACTIVE') || allTenders[0];
-      if (!activeTender) { setTenderId(null); setBidders([]); setDocuments([]); setAudit([]); return; }
+
+      const effectiveId = targetTenderId || tenderId;
+      const activeTender = (effectiveId ? allTenders.find((t: any) => t.id === effectiveId) : null)
+        || allTenders.find((t: any) => !t.status || t.status.toUpperCase() === 'ACTIVE')
+        || allTenders[0];
+
+      if (!activeTender) {
+        if (version !== refreshVersionRef.current) return;
+        setTenderId(null);
+        setBidders([]);
+        setDocuments([]);
+        setAudit([]);
+        return;
+      }
+
       setTenderId(activeTender.id);
       const [remoteBidders, remoteAudit, remoteDocuments] = await Promise.all([
-        procurement.getBidders(activeTender.id), procurement.getAuditTrail(activeTender.id), procurement.getDocuments?.(activeTender.id) ?? Promise.resolve([]),
+        procurement.getBidders(activeTender.id),
+        procurement.getAuditTrail(activeTender.id),
+        procurement.getDocuments?.(activeTender.id) ?? Promise.resolve([]),
       ]);
-      const details = await Promise.all(remoteBidders.map((bidder: any) => procurement.getBidder(bidder.id).catch(() => null)));
-      setBidders(remoteBidders.map((bidder: any, index: number) => mapBidder(bidder, details[index])));
-      setDocuments(remoteDocuments);
-      setAudit((remoteAudit || []).map((event: any) => ({ id: event.id, time: new Date(event.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false }), action: event.action, actor: event.actor, detail: event.description || '' })));
+
+      // Staleness check after parallel fetch
+      if (version !== refreshVersionRef.current) return;
+
+      const biddersList = remoteBidders || [];
+      if (biddersList.length === 0) {
+        setBidders([]);
+      } else {
+        const details = await Promise.all(
+          biddersList.map((bidder: any) => procurement.getBidder(bidder.id).catch(() => null))
+        );
+        // Final staleness check after N+1 bidder detail fetches
+        if (version !== refreshVersionRef.current) return;
+        setBidders(biddersList.map((bidder: any, index: number) => mapBidder(bidder, details[index])));
+      }
+
+      setDocuments(remoteDocuments || []);
+      setAudit(
+        (remoteAudit || []).map((event: any) => ({
+          id: event.id,
+          time: new Date(event.created_at).toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }),
+          action: event.action,
+          actor: event.actor,
+          detail: event.description || '',
+        }))
+      );
     } catch (e) {
+      // Ignore AbortError — this is expected when a newer refreshData supersedes
+      if (e instanceof DOMException && e.name === 'AbortError') return;
+      // Ignore stale errors
+      if (version !== refreshVersionRef.current) return;
       const message = e instanceof Error ? e.message : 'Unable to load persistent procurement data.';
       setError(message);
-      if (!isUsingMockApi()) { setBidders([]); setDocuments([]); setAudit([]); }
+      if (!isUsingMockApi()) {
+        setBidders([]);
+        setDocuments([]);
+        setAudit([]);
+      }
     } finally {
-      setLoading(false);
+      // Only clear loading if this is still the latest request
+      if (version === refreshVersionRef.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [tenderId, mapBidder]);
+
+  const selectTender = useCallback((id: string) => {
+    setTenderId(id);
+    // Abort any in-flight requests before starting new tender fetch
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    refreshData(id);
+  }, [refreshData]);
 
   useEffect(() => {
     refreshData();
+    // Cleanup: abort in-flight requests when provider unmounts
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
   const addTender = async (title: string, department?: string, closingDate?: string) => {
@@ -311,8 +408,9 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         department: department || 'Department of Administrative Reforms',
         bid_closing_date: closingDate || '2026-09-15',
       });
+      const newTenderId = res?.id || res?.tender?.id;
       if (isUsingMockApi()) log('Tender created', title);
-      await refreshData();
+      await refreshData(newTenderId);
       return res;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to create tender.');
@@ -320,8 +418,9 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
-  const addBidder = async (name: string, gstin?: string, pan?: string) => {
-    if (!tenderId && !isUsingMockApi()) throw new Error('Create or select a tender before adding a bidder.');
+  const addBidder = async (name: string, gstin?: string, pan?: string, targetTenderId?: string) => {
+    const activeTenderId = targetTenderId || tenderId;
+    if (!activeTenderId && !isUsingMockApi()) throw new Error('Create or select a tender before adding a bidder.');
     const newId = `BID-${String(bidders.length + 1).padStart(3, '0')}`;
     const newBidder: Bidder = {
       id: newId,
@@ -349,9 +448,9 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     };
 
     try {
-      await (apiClient as any).procurement.addBidder(tenderId!, { legal_name: name, gstin, pan });
+      await (apiClient as any).procurement.addBidder(activeTenderId!, { legal_name: name, gstin, pan });
       if (isUsingMockApi()) { setBidders((items) => [...items, newBidder]); log('Bidder added', `${name} added to tender.`); }
-      else await refreshData();
+      else await refreshData(activeTenderId);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unable to add bidder.');
       throw e;
@@ -563,6 +662,8 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         updateRequirement,
         recordIntegrityReview,
         refreshData,
+        selectTender,
+        setTenderId,
         tenderId,
         documents,
         error,

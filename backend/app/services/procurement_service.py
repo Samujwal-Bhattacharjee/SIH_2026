@@ -567,19 +567,62 @@ def check_blacklisting_declaration(all_fields: list[dict], documents: list[dict]
             conf = ev["confidence"]
             val_upper = (ev["value"] or "").upper()
             doc_name = ev["doc_name"]
-            is_valid_bl = ("NOT BLACKLISTED" in val_upper or "DECLARATION" in val_upper or "NO BLACKLISTING" in val_upper)
-            return {
-                "status": "COMPLIANT" if is_valid_bl else "NEEDS_REVIEW",
-                "severity": "LOW" if is_valid_bl else "MEDIUM",
-                "score": 100 if is_valid_bl else 50,
-                "evidence_value": ev["value"] or "Non-blacklisting declaration confirmed",
-                "evidence_doc_id": ev["doc_id"],
-                "evidence_field_key": ev.get("field_key") or "blacklistingDeclaration",
-                "evidence_source": ev.get("source_text") or doc_name,
-                "evidence_available": True,
-                "confidence": conf,
-                "reason": f"Non-blacklisting declaration verified from {doc_name} ('{ev['value']}') with {int(conf * 100)}% confidence.",
-            }
+            is_absent = any(kw in val_upper for kw in ["NOT PRESENT", "NOT SUBMITTED", "NO DECLARATION", "ABSENT", "DECLARATION NOT PRESENT"])
+            is_unverified = any(kw in val_upper for kw in ["NOT VERIFIED", "UNVERIFIED", "SELF-CERTIFICATION NOT VERIFIED"])
+            is_valid_bl = ("NOT BLACKLISTED" in val_upper or "NO BLACKLISTING" in val_upper or "NOT DEBARRED" in val_upper)
+
+            if is_absent:
+                return {
+                    "status": "NON_COMPLIANT",
+                    "severity": "HIGH",
+                    "score": 0,
+                    "evidence_value": ev["value"],
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": ev.get("field_key") or "blacklisting_debarment",
+                    "evidence_source": ev.get("source_text") or doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Non-blacklisting declaration absent ('{ev['value']}') in {doc_name}. Statutory disqualification risk.",
+                }
+            elif is_unverified:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": ev["value"],
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": ev.get("field_key") or "blacklisting_debarment",
+                    "evidence_source": ev.get("source_text") or doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Non-blacklisting declaration present but unverified ('{ev['value']}') in {doc_name}. Officer review required.",
+                }
+            elif is_valid_bl or "DECLARATION PRESENT" in val_upper:
+                return {
+                    "status": "COMPLIANT",
+                    "severity": "LOW",
+                    "score": 100,
+                    "evidence_value": ev["value"],
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": ev.get("field_key") or "blacklisting_debarment",
+                    "evidence_source": ev.get("source_text") or doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Non-blacklisting declaration verified from {doc_name} ('{ev['value']}') with {int(conf * 100)}% confidence.",
+                }
+            else:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": ev["value"],
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": ev.get("field_key") or "blacklisting_debarment",
+                    "evidence_source": ev.get("source_text") or doc_name,
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Non-blacklisting declaration status '{ev['value']}' requires officer review.",
+                }
 
     blacklist_docs = [d for d in documents if
                       any(kw in (d.get("document_type") or "").upper()
@@ -634,6 +677,24 @@ def check_turnover_threshold(all_fields: list[dict], documents: list[dict],
     for doc in documents:
         doc_type = (doc.get("document_type") or "").upper()
         if "RETAIL OUTLET" in doc_type or "DEALERSHIP" in doc_type:
+            ev_fe = _extract_field_with_evidence(doc, "financial_eligibility")
+            if ev_fe:
+                fe_val = (ev_fe["value"] or "").upper()
+                fe_conf = ev_fe["confidence"]
+                if any(kw in fe_val for kw in ["NOT ESTABLISHED", "NOT SATISFIED", "MISSING", "BELOW TEST THRESHOLD", "INSUFFICIENT"]):
+                    return {
+                        "status": "NON_COMPLIANT",
+                        "severity": "HIGH",
+                        "score": 0,
+                        "evidence_value": ev_fe["value"],
+                        "evidence_doc_id": ev_fe.get("doc_id"),
+                        "evidence_field_key": "financial_eligibility",
+                        "evidence_source": ev_fe.get("source_text") or doc.get("file_name"),
+                        "evidence_available": True,
+                        "confidence": fe_conf,
+                        "reason": f"Dealership financial eligibility criteria not satisfied: '{ev_fe['value']}' extracted from {ev_fe.get('doc_name')}.",
+                    }
+
             ev_sd = _extract_field_with_evidence(doc, "security_deposit") or _extract_field_with_evidence(doc, "working_capital_requirement")
             return {
                 "status": "COMPLIANT",
@@ -783,6 +844,290 @@ def check_local_content(all_fields: list[dict], documents: list[dict]) -> dict:
     }
 
 
+def check_experience_status(all_fields: list[dict], documents: list[dict]) -> dict:
+    """Check: Documented past experience satisfies criteria."""
+    for doc in documents:
+        ev = _extract_field_with_evidence(doc, "experience_status") or _extract_field_with_evidence(doc, "experience")
+        if ev:
+            val = ev["value"].strip()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            val_upper = val.upper()
+            if any(k in val_upper for k in ["INSUFFICIENT", "NOT PROVIDED", "NOT SATISFIED", "ABSENT", "MISSING"]):
+                return {
+                    "status": "NON_COMPLIANT",
+                    "severity": "HIGH",
+                    "score": 0,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "experience_status",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Required experience criteria not met: '{val}' extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
+                }
+            elif any(k in val_upper for k in ["SATISFIED", "VERIFIED", "EXPERIENCE CRITERIA SATISFIED", "ADEQUATE", "COMPLIANT", "WORKFLOW FAMILIARITY", "DEMONSTRATED", "RELEVANT EXPERIENCE"]):
+                return {
+                    "status": "COMPLIANT",
+                    "severity": "LOW",
+                    "score": 100,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "experience_status",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Documented past experience verified from {doc_name} ('{val}') with {int(conf * 100)}% confidence.",
+                }
+            else:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "experience_status",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Experience status '{val}' requires officer review.",
+                }
+    return {
+        "status": "PENDING",
+        "severity": "MEDIUM",
+        "score": 0,
+        "evidence_value": None,
+        "evidence_doc_id": None,
+        "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
+        "confidence": 0.0,
+        "reason": "Experience documentation not submitted.",
+    }
+
+
+def check_land_availability(all_fields: list[dict], documents: list[dict]) -> dict:
+    """Check: Land ownership, lease tenure, or site availability verified."""
+    for doc in documents:
+        ev = _extract_field_with_evidence(doc, "land_availability") or _extract_field_with_evidence(doc, "land_ownership_lease")
+        if ev:
+            val = ev["value"].strip()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            val_upper = val.upper()
+            if any(k in val_upper for k in ["EXPIRED", "UNVERIFIED", "NOT PRESENT", "NOT ESTABLISHED", "INSUFFICIENT"]):
+                return {
+                    "status": "NON_COMPLIANT",
+                    "severity": "HIGH",
+                    "score": 0,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "land_availability",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Site / land availability verification failed: '{val}' extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
+                }
+            elif any(k in val_upper for k in ["SATISFIED", "VERIFIED", "OWNED", "REGISTERED LEASE", "VALID LEASE", "AVAILABLE", "PLACEHOLDER PRESENT", "DOCUMENT PRESENT"]):
+                return {
+                    "status": "COMPLIANT",
+                    "severity": "LOW",
+                    "score": 100,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "land_availability",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Site / land availability verified from {doc_name} ('{val}') with {int(conf * 100)}% confidence.",
+                }
+            else:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "land_availability",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Land availability status '{val}' requires officer review.",
+                }
+    return {
+        "status": "PENDING",
+        "severity": "HIGH",
+        "score": 0,
+        "evidence_value": None,
+        "evidence_doc_id": None,
+        "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
+        "confidence": 0.0,
+        "reason": "Site / land availability documentation not submitted.",
+    }
+
+
+def check_statutory_compliance(all_fields: list[dict], documents: list[dict]) -> dict:
+    """Check: Statutory compliance permissions and local authority clearances."""
+    for doc in documents:
+        ev = _extract_field_with_evidence(doc, "statutory_compliance") or _extract_field_with_evidence(doc, "statutory_permissions")
+        if ev:
+            val = ev["value"].strip()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            val_upper = val.upper()
+            if any(k in val_upper for k in ["INCOMPLETE", "NOT PROVIDED", "MISSING", "REQUIRED SUPPORTING EVIDENCE MISSING"]):
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "HIGH",
+                    "score": 25,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "statutory_compliance",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Statutory compliance incomplete: '{val}' extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
+                }
+            elif any(k in val_upper for k in ["ALL STATUTORY CERTIFICATES VERIFIED", "VERIFIED", "COMPLIANT", "SATISFIED", "DOCUMENT-SET PLACEHOLDER PRESENT", "ALL PRESENT"]):
+                return {
+                    "status": "COMPLIANT",
+                    "severity": "LOW",
+                    "score": 100,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "statutory_compliance",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Statutory compliance clearances verified from {doc_name} ('{val}') with {int(conf * 100)}% confidence.",
+                }
+            else:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "statutory_compliance",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Statutory compliance status '{val}' requires officer review.",
+                }
+    return {
+        "status": "PENDING",
+        "severity": "MEDIUM",
+        "score": 0,
+        "evidence_value": None,
+        "evidence_doc_id": None,
+        "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
+        "confidence": 0.0,
+        "reason": "Statutory permissions documentation not submitted.",
+    }
+
+
+def check_application_completeness(all_fields: list[dict], documents: list[dict]) -> dict:
+    """Check: Application completeness and mandatory checklist submission."""
+    for doc in documents:
+        ev = _extract_field_with_evidence(doc, "application_completeness") or _extract_field_with_evidence(doc, "digital_document_availability")
+        if ev:
+            val = ev["value"].strip()
+            conf = ev["confidence"]
+            doc_name = ev["doc_name"]
+            val_upper = val.upper()
+            if any(k in val_upper for k in ["INCOMPLETE", "MISSING", "PARTIAL", "CHECKLIST ITEMS PRESENT"]):
+                return {
+                    "status": "NON_COMPLIANT",
+                    "severity": "HIGH",
+                    "score": 0,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "application_completeness",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Application documentation incomplete: '{val}' extracted from {doc_name} with {int(conf * 100)}% extraction confidence.",
+                }
+            elif any(k in val_upper for k in ["COMPLETE", "ALL PRESENT", "SATISFIED"]):
+                return {
+                    "status": "COMPLIANT",
+                    "severity": "LOW",
+                    "score": 100,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "application_completeness",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Application dossier completeness verified from {doc_name} ('{val}') with {int(conf * 100)}% confidence.",
+                }
+            else:
+                return {
+                    "status": "NEEDS_REVIEW",
+                    "severity": "MEDIUM",
+                    "score": 50,
+                    "evidence_value": val,
+                    "evidence_doc_id": ev["doc_id"],
+                    "evidence_field_key": "application_completeness",
+                    "evidence_source": doc_name,
+                    "source_text": ev.get("source_text"),
+                    "page": ev.get("page"),
+                    "section": ev.get("section"),
+                    "evidence_available": True,
+                    "confidence": conf,
+                    "reason": f"Application completeness status '{val}' requires review.",
+                }
+    return {
+        "status": "PENDING",
+        "severity": "HIGH",
+        "score": 0,
+        "evidence_value": None,
+        "evidence_doc_id": None,
+        "evidence_field_key": None,
+        "evidence_source": None,
+        "evidence_available": False,
+        "confidence": 0.0,
+        "reason": "Application completeness checklist not verified.",
+    }
+
+
 # ============================================================
 # COMPLIANCE RULE DISPATCHER
 # ============================================================
@@ -795,6 +1140,11 @@ COMPLIANCE_CHECKS = {
     "BLACKLISTING_DECLARATION_PRESENT": check_blacklisting_declaration,
     "TURNOVER_ABOVE_THRESHOLD": check_turnover_threshold,
     "LOCAL_CONTENT_DECLARED": check_local_content,
+    "EXPERIENCE_EVALUATION": check_experience_status,
+    "FINANCIAL_ELIGIBILITY_EVALUATION": check_turnover_threshold,
+    "LAND_AVAILABILITY_EVALUATION": check_land_availability,
+    "STATUTORY_COMPLIANCE_EVALUATION": check_statutory_compliance,
+    "APPLICATION_COMPLETENESS_EVALUATION": check_application_completeness,
 }
 
 
@@ -1042,10 +1392,34 @@ def run_cross_document_validation(documents: list[dict], bidder: dict) -> list[d
                 })
 
     # -----------------------------------------------
+    # -----------------------------------------------
     # Check 5: GSTIN prefix matches state (optional)
     # -----------------------------------------------
     if doc_gstins and bidder.get("registered_address"):
         pass  # Skip state code check in prototype — would require address parsing
+
+    # -----------------------------------------------
+    # Check 6: Mandatory checklist items flagged as NOT PRESENT
+    # -----------------------------------------------
+    for doc in documents:
+        doc_fields = doc.get("extracted_fields") or []
+        if isinstance(doc_fields, list):
+            for f in doc_fields:
+                if isinstance(f, dict):
+                    f_key = (f.get("key") or f.get("field") or "").lower()
+                    f_val = str(f.get("value") or "").upper().strip()
+                    if f_key in ["land_ownership_lease", "financial_documents", "category_certificate", "statutory_permissions"] and f_val == "NOT PRESENT":
+                        discrepancies.append({
+                            "discrepancy_type": "MISSING_MANDATORY_DOCUMENT",
+                            "severity": "HIGH",
+                            "field_name": f.get("label") or f_key.replace("_", " ").title(),
+                            "expected_value": "PRESENT",
+                            "found_value": "NOT PRESENT",
+                            "source_doc_1_id": doc.get("id"),
+                            "source_doc_2_id": None,
+                            "description": f"Mandatory requirement document '{f.get('label') or f_key}' was recorded as NOT PRESENT in the submitted dossier.",
+                            "recommendation": "Officer review required. Bidder must submit the missing document before qualification.",
+                        })
 
     return discrepancies
 
@@ -1075,7 +1449,8 @@ def calculate_compliance_score(check_results: list[dict]) -> dict:
         status = check.get("status", "PENDING")
         category = check.get("category", "STATUTORY")
         weight = float(check.get("weight", 1.0))
-        check_score = SEVERITY_SCORE_MAP.get(status, 0)
+        raw_val = check.get("score")
+        check_score: float = float(raw_val) if raw_val is not None else float(SEVERITY_SCORE_MAP.get(status, 0) or 0)
         is_mandatory = check.get("is_mandatory", True)
 
         # NOT_APPLICABLE: exclude from scoring
@@ -1090,8 +1465,8 @@ def calculate_compliance_score(check_results: list[dict]) -> dict:
 
         if status == "COMPLIANT":
             reasons.append(f"+ {check.get('requirement_name', 'Requirement')}: Verified")
-        elif status in ("NON_COMPLIANT", "EXPIRED"):
-            reasons.append(f"- {check.get('requirement_name', 'Requirement')}: {'Expired' if status == 'EXPIRED' else 'Not compliant'}")
+        elif status in ("NON_COMPLIANT", "EXPIRED", "UNVERIFIED"):
+            reasons.append(f"- {check.get('requirement_name', 'Requirement')}: {'Expired' if status == 'EXPIRED' else ('Unverified' if status == 'UNVERIFIED' else 'Not compliant')}")
             if is_mandatory:
                 mandatory_failures += 1
         elif status == "PENDING":
@@ -1388,8 +1763,71 @@ def run_full_verification(
 
     This is the main entry point called by the API route.
     """
+    active_reqs = list(requirements)
+    is_dealership_evidence = False
+    for doc in documents:
+        doc_type = (doc.get("document_type") or "").upper()
+        doc_name = (doc.get("file_name") or "").upper()
+        raw_fields = doc.get("extracted_fields") or []
+        if isinstance(raw_fields, str):
+            try:
+                raw_fields = json.loads(raw_fields)
+            except Exception:
+                raw_fields = []
+        if isinstance(raw_fields, dict):
+            raw_fields = raw_fields.get("fields") or raw_fields.get("extracted_fields") or []
+        keys = {f.get("key") or f.get("field") for f in raw_fields if isinstance(f, dict)}
+        if ("RETAIL OUTLET" in doc_type or "DEALERSHIP" in doc_type or "FAIRBID" in doc_name or
+            bool({"experience_status", "land_availability", "financial_eligibility", "statutory_compliance", "application_completeness"}.intersection(keys))):
+            is_dealership_evidence = True
+            break
+
+    if is_dealership_evidence:
+        existing_rules = {r.get("verification_rule") for r in active_reqs}
+        dealership_extra_reqs = [
+            {
+                "requirement_id": "LAND_AVAILABILITY",
+                "name": "Site / Land Availability & Valid Tenure",
+                "category": "STATUTORY",
+                "is_mandatory": True,
+                "description": "Valid land ownership, registered lease, or site possession required.",
+                "verification_rule": "LAND_AVAILABILITY_EVALUATION",
+                "weight": 4.0,
+            },
+            {
+                "requirement_id": "EXPERIENCE_CRITERIA",
+                "name": "Past Experience & Technical Capability",
+                "category": "TECHNICAL",
+                "is_mandatory": True,
+                "description": "Bidder must satisfy documented dealership experience criteria.",
+                "verification_rule": "EXPERIENCE_EVALUATION",
+                "weight": 3.0,
+            },
+            {
+                "requirement_id": "STATUTORY_PERMISSIONS",
+                "name": "Statutory Permissions & Clearances",
+                "category": "STATUTORY",
+                "is_mandatory": True,
+                "description": "Fire, local authority, and statutory compliance clearances.",
+                "verification_rule": "STATUTORY_COMPLIANCE_EVALUATION",
+                "weight": 3.0,
+            },
+            {
+                "requirement_id": "APPLICATION_COMPLETENESS",
+                "name": "Application Dossier Completeness & Checklist",
+                "category": "MANDATORY",
+                "is_mandatory": True,
+                "description": "All mandatory checklist items and supporting documents must be submitted.",
+                "verification_rule": "APPLICATION_COMPLETENESS_EVALUATION",
+                "weight": 4.0,
+            },
+        ]
+        for extra in dealership_extra_reqs:
+            if extra["verification_rule"] not in existing_rules:
+                active_reqs.append(extra)
+
     # Step 1: Compliance checks
-    check_results = run_compliance_checks(requirements, documents, bidder)
+    check_results = run_compliance_checks(active_reqs, documents, bidder)
 
     # Step 2: Cross-document validation
     discrepancies = run_cross_document_validation(documents, bidder)
@@ -1416,6 +1854,13 @@ def run_full_verification(
         if c.get("status") == "PENDING" and c.get("is_mandatory")
     ]
 
+    declared_score = None
+    for doc in documents:
+        ev = _extract_field_with_evidence(doc, "declared_source_score")
+        if ev:
+            declared_score = ev["value"]
+            break
+
     return {
         "bidder_id": bidder.get("id"),
         "bidder_name": bidder.get("legal_name"),
@@ -1423,6 +1868,7 @@ def run_full_verification(
         "compliance_status": compliance_status,
         "compliance_risk_level": risk_result["risk_level"],
         "risk_level": risk_result["risk_level"],  # Kept for backward compatibility
+        "declared_source_score": declared_score,
         "blocking_exceptions": compliance_summary["blocking_exceptions"],
         "mandatory_summary": compliance_summary,
         "checks": check_results,

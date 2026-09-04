@@ -126,12 +126,13 @@ def test_scenario_7_high_integrity_does_not_auto_disqualify():
     if bidder:
         if not ps.get_compliance_results("BID-173"):
             docs = ps.get_bidder_documents("BID-173")
-            reqs = ps.get_tender_requirements(bidder.get("tender_id")) or DEFAULT_TENDER_REQUIREMENTS
+            reqs = ps.get_tender_requirements(bidder["tender_id"]) or DEFAULT_TENDER_REQUIREMENTS
             assessment = run_full_verification(bidder, reqs, docs)
             ps.save_compliance_assessment("BID-173", bidder["tender_id"], assessment)
             bidder = ps.get_bidder_by_id("BID-173")
 
         # Compliance status reflects requirement checks, not integrity engine output
+        assert bidder is not None
         assert bidder["compliance_status"] in ("EXCEPTION_FOUND", "UNDER_REVIEW", "COMPLIANT", "PENDING_DOCUMENTS")
 
 
@@ -141,7 +142,7 @@ def test_scenario_8_low_integrity_does_not_auto_qualify():
     if bidder_174:
         if not ps.get_compliance_results("BID-174"):
             docs = ps.get_bidder_documents("BID-174")
-            reqs = ps.get_tender_requirements(bidder_174.get("tender_id")) or DEFAULT_TENDER_REQUIREMENTS
+            reqs = ps.get_tender_requirements(bidder_174["tender_id"]) or DEFAULT_TENDER_REQUIREMENTS
             assessment = run_full_verification(bidder_174, reqs, docs)
             ps.save_compliance_assessment("BID-174", bidder_174["tender_id"], assessment)
             bidder_174 = ps.get_bidder_by_id("BID-174")
@@ -149,6 +150,7 @@ def test_scenario_8_low_integrity_does_not_auto_qualify():
         # BID-174 has non-critical integrity risk (26.3, MEDIUM), but has missing OEM MAF -> EXCEPTION_FOUND
         ia = assess_bidder_integrity("BID-174")
         assert ia.risk_level.value in ("LOW", "MEDIUM")
+        assert bidder_174 is not None
         assert bidder_174["compliance_status"] == "EXCEPTION_FOUND"
         assert bidder_174["officer_decision"] is None
 
@@ -191,6 +193,7 @@ def test_scenario_11_refresh_preserves_results():
     bidders = ps.get_bidders()
     for b in bidders[:5]:
         b_fresh = ps.get_bidder_by_id(b["id"])
+        assert b_fresh is not None
         assert b_fresh["compliance_status"] == b["compliance_status"]
         assert b_fresh["blocking_exceptions_count"] == b["blocking_exceptions_count"]
 
@@ -377,6 +380,7 @@ def test_re_evaluation_persists_fresh_results():
     """Re-running verification pipeline updates and persists compliance results in database."""
     ps.reset_and_seed_procurement_data()
     bidder = ps.get_bidder_by_id("BID-173")
+    assert bidder is not None
     docs = ps.get_bidder_documents("BID-173")
     reqs = ps.get_tender_requirements(bidder["tender_id"])
 

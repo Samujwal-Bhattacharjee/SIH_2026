@@ -1,4 +1,4 @@
-﻿"""
+"""
 Session-Ephemeral Data Behavior Tests (SIH26100)
 Validates DEMO_SESSION_MODE reset mechanism.
 All tests use a temp-dir SQLite DB and never touch procurement.db.
@@ -133,6 +133,7 @@ class TestSessionEphemeralBehavior:
 
         _update_bidder(db, bidder_id, {"legal_name": "MODIFIED_IN_SESSION_Corp."})
         modified = _get_bidder_by_id(db, bidder_id)
+        assert modified is not None
         assert modified["legal_name"] == "MODIFIED_IN_SESSION_Corp.", "Modification visible during session."
 
         _reset(db)

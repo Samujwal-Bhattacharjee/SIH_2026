@@ -7,7 +7,7 @@ python-jose[cryptography]==3.3.0
 python-multipart==0.0.20
 supabase==2.11.0
 httpx==0.28.1
-PyMuPDF==1.25.1
+PyMuPDF>=1.28.2
 pytesseract==0.3.13
 Pillow==11.1.0
 python-dotenv==1.0.1

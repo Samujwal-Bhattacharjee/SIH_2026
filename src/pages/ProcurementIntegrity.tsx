@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   ShieldAlert,
@@ -167,7 +167,7 @@ export const ProcurementIntegrity: React.FC = () => {
   }, []);
 
   // 2. Fetch Integrity Assessment from Real API
-  const loadIntegrityData = async () => {
+  const _loadIntegrityData = useCallback(async (mounted: { current: boolean }) => {
     if (!selectedTenderId) return;
     setLoading(true);
     setError(null);
@@ -184,22 +184,35 @@ export const ProcurementIntegrity: React.FC = () => {
         data = await procurement.getTenderIntegrity(selectedTenderId);
       }
 
+      // Guard: discard response if component unmounted or IDs changed
+      if (!mounted.current) return;
+
       setAssessment(data);
       if (data?.findings && data.findings.length > 0) {
         setSelectedFinding(data.findings[0]);
       }
     } catch (err: any) {
+      if (!mounted.current) return;
       const msg = err?.message || 'Unable to load procurement integrity assessment.';
       setError(msg);
       setAssessment(null);
     } finally {
-      setLoading(false);
+      if (mounted.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [selectedTenderId, selectedBidderId]);
+
+  // Public handler for button click (no mounted guard needed — component is mounted during click)
+  const loadIntegrityData = useCallback(() => {
+    _loadIntegrityData({ current: true });
+  }, [_loadIntegrityData]);
 
   useEffect(() => {
-    loadIntegrityData();
-  }, [selectedTenderId, selectedBidderId]);
+    const mounted = { current: true };
+    _loadIntegrityData(mounted);
+    return () => { mounted.current = false; };
+  }, [selectedTenderId, selectedBidderId, _loadIntegrityData]);
 
   // Filter findings
   const filteredFindings = useMemo(() => {

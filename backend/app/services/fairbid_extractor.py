@@ -48,11 +48,13 @@ ALL_KNOWN_LABELS = [
     "SECURITY DEPOSIT", "MODE OF SELECTION", "FINANCE REQUIREMENT", "BIDDER NAME",
     "BIDDER CLASSIFICATION", "GST IDENTIFICATION NUMBER", "GSTIN", "PERMANENT ACCOUNT NUMBER",
     "PAN", "CORPORATE IDENTIFICATION NUMBER", "CIN", "UDYAM REGISTRATION NUMBER",
-    "UDYAM", "EXPERIENCE STATUS", "FINANCIAL ELIGIBILITY", "LAND AVAILABILITY",
+    "UDYAM", "EXPERIENCE STATUS", "EXPERIENCE", "FINANCIAL ELIGIBILITY", "LAND AVAILABILITY",
     "STATUTORY COMPLIANCE", "BLACKLISTING / DEBARMENT", "DIGITAL DOCUMENT AVAILABILITY",
     "APPLICATION COMPLETENESS", "DOCUMENT TYPE", "DOCUMENT ID", "DOCUMENT REFERENCE",
     "ISSUE DATE", "STATUS", "SOURCE", "PURPOSE", "PARAMETER", "VALUE", "RECORDED VALUE",
-    "PROVENANCE", "SOURCE STATUS", "FIELD", "VERIFICATION RESULT"
+    "PROVENANCE", "SOURCE STATUS", "FIELD", "VERIFICATION RESULT", "COMPLIANCE SCORE",
+    "COMPLIANCE RISK SCORE", "COMPLIANCE RESULT", "COMPLIANCE RISK LEVEL",
+    "CHECKLIST ITEM", "TRACEABILITY RULE", "SECONDARY RISK DRIVER"
 ]
 
 
@@ -83,7 +85,7 @@ def _split_pages(raw_text: str) -> List[Tuple[int, str]]:
 def _identify_sections(page_text: str) -> List[Tuple[str, str]]:
     """Break page text into numbered/titled sections."""
     sections = []
-    header_pattern = r'(?m)^(?:\s*(\d+\.\s+[A-Z0-9\s/&—\-]+)|(FAIRBID AI EXTRACTION DATA|LOCATION / DEALERSHIP PARTICULARS|SITE & COMMERCIAL PARAMETERS|BIDDER / APPLICANT COMPLIANCE PROFILE|ELIGIBILITY VERIFICATION MATRIX|DOCUMENT CHECKLIST|FAIRBID VALIDATION SUMMARY|DEMONSTRATION NOTICE))\s*$'
+    header_pattern = r'(?m)^[ \t]*(?:(\d+\.\s+[A-Z0-9 /&—\-]+)|(FAIRBID AI EXTRACTION DATA|LOCATION / DEALERSHIP PARTICULARS|SITE & COMMERCIAL PARAMETERS|BIDDER / APPLICANT COMPLIANCE PROFILE|ELIGIBILITY VERIFICATION MATRIX|DOCUMENT CHECKLIST|FAIRBID VALIDATION SUMMARY|DEMONSTRATION NOTICE))[ \t]*$'
     matches = list(re.finditer(header_pattern, page_text))
 
     if not matches:
@@ -139,13 +141,20 @@ def _parse_label_value_sequence(lines: List[str]) -> Dict[str, Tuple[str, str]]:
                     continue
 
                 val = next_line
+                if next_line_upper in ("PRESENT", "NOT PRESENT", "PASS", "FAIL", "COMPLETE", "INCOMPLETE", "YES", "NO"):
+                    res[label_name.upper()] = (next_line, f"{line}: {next_line}")
+                    i += 2
+                    continue
+
                 val_parts = [val]
                 lookahead = i + 2
                 while lookahead < len(lines):
                     cand_line = _clean_str(lines[lookahead])
                     if not cand_line or cand_line.upper() in norm_labels_upper:
                         break
-                    if re.match(r'^\d+\.\s+[A-Z]', cand_line) or cand_line.startswith("Page "):
+                    if re.match(r'^\d+\.\s+[A-Z]', cand_line) or cand_line.startswith("Page ") or cand_line.startswith("FAIRBID"):
+                        break
+                    if re.search(r'^(?:All bidder identifiers|Note:|Disclaimer:|Synthetic status:|Synthetic test|The high score)', cand_line, re.IGNORECASE):
                         break
                     if len(cand_line) > 0 and not cand_line.endswith(':'):
                         val_parts.append(cand_line)
@@ -187,7 +196,7 @@ def _parse_three_column_table(text: str) -> Dict[str, Dict[str, str]]:
     if rows:
         return rows
 
-    # Fallback to 3 sequential lines (col1 \n col2 \n col3)
+    # Check 3 sequential lines (col1 \n col2 \n col3)
     hdr_idx = -1
     for idx, l in enumerate(lines):
         if re.search(r'\b(Field|Parameter)\b', l, re.IGNORECASE) and idx + 2 < len(lines):
@@ -214,6 +223,54 @@ def _parse_three_column_table(text: str) -> Dict[str, Dict[str, str]]:
                 "source_text": f"{col1} | {col2} | {col3}"
             }
             idx += 3
+        if rows:
+            return rows
+
+    # Also support 2-column sequential lines (col1 \n col2) e.g., Checklist Item \n Value / Verification Result
+    hdr_idx2 = -1
+    for idx, l in enumerate(lines):
+        if re.search(r'^\b(Field|Parameter|Checklist Item)\b$', l, re.IGNORECASE) and idx + 1 < len(lines):
+            hdr_cand2 = f"{l} | {lines[idx+1]}"
+            if re.search(r'^\b(Value|Recorded Value|Verification Result|Status)\b$', lines[idx+1], re.IGNORECASE):
+                hdr_idx2 = idx + 2
+                break
+
+    if hdr_idx2 != -1:
+        idx = hdr_idx2
+        while idx + 1 < len(lines):
+            col1 = lines[idx]
+            col2 = lines[idx + 1]
+
+            if re.match(r'^\d+\.\s+[A-Z]', col1) or col1.startswith("Page ") or col1.startswith("FAIRBID") or col1.startswith("Synthetic test") or re.search(r'^(?:Note|Disclaimer)', col1, re.I):
+                break
+
+            norm_k = col1.upper()
+            rows[norm_k] = {
+                "field": col1,
+                "value": col2,
+                "provenance": "",
+                "source_text": f"{col1}: {col2}"
+            }
+            idx += 2
+
+    # If rows still empty, detect alternating item \n (PRESENT | NOT PRESENT | PASS | FAIL | VERIFIED)
+    if not rows:
+        idx = 0
+        while idx + 1 < len(lines):
+            c1 = lines[idx]
+            c2 = lines[idx + 1]
+            c2_upper = c2.upper().strip()
+            if c2_upper in ("PRESENT", "NOT PRESENT", "PASS", "FAIL", "VERIFIED", "UNVERIFIED", "PENDING", "COMPLIANT", "NON-COMPLIANT"):
+                norm_k = c1.upper()
+                rows[norm_k] = {
+                    "field": c1,
+                    "value": c2,
+                    "provenance": "",
+                    "source_text": f"{c1}: {c2}"
+                }
+                idx += 2
+                continue
+            idx += 1
 
     return rows
 
@@ -252,14 +309,23 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
     for page_num, p_text in pages:
         sections = _identify_sections(p_text)
         for sec_name, sec_content in sections:
-            if "CHECKLIST" in sec_name.upper():
+            if any(s in sec_name.upper() for s in ["RISK FACTOR BREAKDOWN", "DEMONSTRATION NOTICE"]):
                 continue
             t_rows = _parse_three_column_table(sec_content)
-            table_rows.update(t_rows)
+            for k, row_data in t_rows.items():
+                if k not in table_rows:
+                    table_rows[k] = row_data
+                else:
+                    if row_data["value"].upper() in ("PASS", "FAIL", "VERIFIED", "UNVERIFIED") and table_rows[k]["value"].upper() not in ("PASS", "FAIL", "VERIFIED", "UNVERIFIED"):
+                        continue
+                    if len(row_data["value"]) > len(table_rows[k]["value"]):
+                        table_rows[k] = row_data
 
             explicit_kv = _parse_explicit_key_values(sec_content)
             for k, (v, src) in explicit_kv.items():
                 clean_v = _clean_cross_field_contamination(v)
+                if clean_v.upper() in ("PASS", "FAIL") and k in label_values and label_values[k][0].upper() not in ("PASS", "FAIL"):
+                    continue
                 if k not in label_values or len(clean_v) > len(label_values[k][0]):
                     label_values[k] = (clean_v, src, page_num, sec_name)
 
@@ -267,26 +333,46 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
             seq_kv = _parse_label_value_sequence(lines)
             for k, (v, src) in seq_kv.items():
                 clean_v = _clean_cross_field_contamination(v)
-                if k not in label_values:
+                if clean_v.upper() in ("PASS", "FAIL") and k in label_values and label_values[k][0].upper() not in ("PASS", "FAIL"):
+                    continue
+                if k not in label_values or len(clean_v) > len(label_values[k][0]):
                     label_values[k] = (clean_v, src, page_num, sec_name)
 
     def get_field_val(candidates: List[str], default: Optional[str] = None) -> Tuple[Optional[str], float, Optional[str], Optional[int], Optional[str], str]:
+        best_val = None
+        best_conf = 0.0
+        best_src = None
+        best_pg = None
+        best_sec = None
+
         for c in candidates:
             c_upper = c.upper()
+            cand_list = []
             if c_upper in table_rows:
                 row = table_rows[c_upper]
-                val = _clean_cross_field_contamination(row["value"])
-                if val:
-                    conf = min(0.98, max(0.85, ocr_engine_conf + 0.03))
-                    return val, conf, row["source_text"], 1, "Location / Commercial Parameters", "extracted"
+                v = _clean_cross_field_contamination(row["value"])
+                if v and v.upper() not in [l.upper() for l in ALL_KNOWN_LABELS]:
+                    cand_list.append((v, min(0.98, max(0.85, ocr_engine_conf + 0.03)), row["source_text"], 1, "Table Row"))
 
             if c_upper in label_values:
-                val, src, p_num, s_name = label_values[c_upper]
-                if val:
-                    if val.upper() in [l.upper() for l in ALL_KNOWN_LABELS]:
-                        continue
-                    conf = min(0.98, max(0.85, ocr_engine_conf + 0.02))
-                    return val, conf, src, p_num, s_name, "extracted"
+                v, src, p_num, s_name = label_values[c_upper]
+                if "RISK FACTOR" not in (s_name or "").upper() and "DEMONSTRATION NOTICE" not in (s_name or "").upper():
+                    if v and v.upper() not in [l.upper() for l in ALL_KNOWN_LABELS]:
+                        cand_list.append((v, min(0.98, max(0.85, ocr_engine_conf + 0.02)), src, p_num, s_name))
+
+            for v, conf, src, p_num, s_name in cand_list:
+                # Prefer more detailed descriptions over simple one-word status, but reject risk factor weights
+                if re.search(r'\b(?:Statutory permissions|Net worth evidence|Lease document expired)\s+\d+', v):
+                    continue
+                if best_val is None or (len(v) > len(best_val) and (" - " in v or len(best_val) < 15)):
+                    best_val = v
+                    best_conf = conf
+                    best_src = src
+                    best_pg = p_num
+                    best_sec = s_name
+
+        if best_val is not None:
+            return best_val, best_conf, best_src, best_pg, best_sec, "extracted"
 
         if default is not None:
             return default, 0.70, f"Derived/Default: {default}", 1, "Derived", "derived"
@@ -509,13 +595,6 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
     blacklisting, bl_conf, bl_src, bl_pg, bl_sec, bl_st = get_field_val(
         ["BLACKLISTING / DEBARMENT", "BLACKLISTING / DEBARMENT DECLARATION", "BLACKLISTING"]
     )
-    if not blacklisting or "NOT BLACKLISTED" in str(blacklisting).upper():
-        blacklisting = "NOT BLACKLISTED / NOT DEBARRED"
-        bl_conf = 0.95
-        bl_src = "Synthetic status: NOT BLACKLISTED / NOT DEBARRED"
-        bl_pg = 2
-        bl_sec = "Bidder / Applicant Compliance Profile"
-        bl_st = "extracted"
 
     digital_doc, dd_conf, dd_src, dd_pg, dd_sec, dd_st = get_field_val(
         ["DIGITAL DOCUMENT AVAILABILITY"]
@@ -523,6 +602,48 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
     app_comp, ac_conf, ac_src, ac_pg, ac_sec, ac_st = get_field_val(
         ["APPLICATION COMPLETENESS"]
     )
+
+    def _sanitize_val(v: Optional[str]) -> Optional[str]:
+        if not v:
+            return v
+        cleaned = re.split(r'(?i)\b(?:All bidder identifiers|Note:|Synthetic status:|Synthetic test|The high score)\b', str(v))[0]
+        cleaned = re.split(r'(?i)\b(?:COMPLIANCE\s*SCORE|COMPLIANCE\s*RESULT|COMPLIANCE\s*RISK)\b', cleaned)[0]
+        return _clean_str(cleaned)
+
+    experience = _sanitize_val(experience)
+    financial_elig = _sanitize_val(financial_elig)
+    land_avail = _sanitize_val(land_avail)
+    stat_comp = _sanitize_val(stat_comp)
+    blacklisting = _sanitize_val(blacklisting)
+    digital_doc = _sanitize_val(digital_doc)
+    app_comp = _sanitize_val(app_comp)
+
+    # Sanitize blacklisting without fabricating evidence if missing
+    if blacklisting:
+        bl_upper = str(blacklisting).upper()
+        if "NOT BLACKLISTED" in bl_upper or "NOT DEBARRED" in bl_upper:
+            blacklisting = "NOT BLACKLISTED / NOT DEBARRED"
+            bl_conf = max(bl_conf, 0.95)
+        elif "DECLARATION NOT PRESENT" in bl_upper or "NOT PRESENT" in bl_upper:
+            blacklisting = "DECLARATION NOT PRESENT"
+        elif "SUPPORTING SELF-CERTIFICATION NOT VERIFIED" in bl_upper or "NOT VERIFIED" in bl_upper:
+            blacklisting = "DECLARATION PRESENT - SUPPORTING SELF-CERTIFICATION NOT VERIFIED"
+
+    # Extract declared source score from test/synthetic document (e.g., 86/100 or 34/100)
+    # This must NEVER override the application's independently calculated score.
+    m_score = re.search(r'(?i)(?:compliance\s*(?:risk)?\s*score)\s*[:\-]?\s*(\d+(?:\.\d+)?\s*(?:/\s*100)?)', raw_text)
+    declared_source_score = None
+    dscore_conf = 0.0
+    dscore_src = ""
+    dscore_pg = 1
+    dscore_sec = "Compliance Risk Score"
+    dscore_st = "not_found"
+    if m_score:
+        s_val = m_score.group(1).strip()
+        declared_source_score = s_val if "/" in s_val else f"{s_val} / 100"
+        dscore_conf = 0.95
+        dscore_src = m_score.group(0).strip()
+        dscore_st = "extracted"
 
     # 6. DOCUMENT CHECKLIST
     app_form, af_conf, af_src, af_pg, af_sec, af_st = get_field_val(
@@ -535,7 +656,7 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
         ["IDENTITY PROOF"]
     )
     pan_doc, pd_conf, pd_src, pd_pg, pd_sec, pd_st = get_field_val(
-        ["PAN DOCUMENT"]
+        ["PAN DOCUMENT", "PAN"]
     )
     fin_docs, fd_conf, fd_src, fd_pg, fd_sec, fd_st = get_field_val(
         ["FINANCIAL DOCUMENTS"]
@@ -596,6 +717,7 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
         {"field": "blacklisting_debarment", "key": "blacklisting_debarment", "label": "Non-Blacklisting Declaration", "value": blacklisting, "confidence": bl_conf, "source_text": bl_src, "page": bl_pg, "section": bl_sec, "status": bl_st},
         {"field": "digital_document_availability", "key": "digital_document_availability", "label": "Digital Document Availability", "value": digital_doc, "confidence": dd_conf, "source_text": dd_src, "page": dd_pg, "section": dd_sec, "status": dd_st},
         {"field": "application_completeness", "key": "application_completeness", "label": "Application Completeness", "value": app_comp, "confidence": ac_conf, "source_text": ac_src, "page": ac_pg, "section": ac_sec, "status": ac_st},
+        {"field": "declared_source_score", "key": "declared_source_score", "label": "Declared Source Score", "value": declared_source_score, "confidence": dscore_conf, "source_text": dscore_src, "page": dscore_pg, "section": dscore_sec, "status": dscore_st, "is_declared_score": True},
 
         {"field": "application_form", "key": "application_form", "label": "Application Form", "value": app_form, "confidence": af_conf, "source_text": af_src, "page": af_pg, "section": af_sec, "status": af_st},
         {"field": "land_ownership_lease", "key": "land_ownership_lease", "label": "Land Ownership / Lease", "value": land_lease, "confidence": ll_conf, "source_text": ll_src, "page": ll_pg, "section": ll_sec, "status": ll_st},
@@ -660,6 +782,7 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
             "blacklisting_debarment": blacklisting,
             "digital_document_availability": digital_doc,
             "application_completeness": app_comp,
+            "declared_source_score": declared_source_score,
         },
         "checklist": {
             "application_form": app_form,

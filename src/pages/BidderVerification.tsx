@@ -91,9 +91,12 @@ export const BidderVerification: React.FC = () => {
 
   useEffect(() => {
     if (!bidderId) return;
+    let mounted = true;
     const fetchLiveBidder = async () => {
       try {
         const res = await (apiClient as any).procurement.getBidder(bidderId);
+        // Guard: discard response if bidderId changed or component unmounted
+        if (!mounted) return;
         if (res?.bidder) {
           const b = res.bidder;
           const compScore = Number(b.compliance_score ?? b.score ?? 0);
@@ -116,6 +119,7 @@ export const BidderVerification: React.FC = () => {
               }
             }
           }
+          if (!mounted) return;
           setVerificationRecord(vr || null);
 
           setLiveBidder({
@@ -159,10 +163,15 @@ export const BidderVerification: React.FC = () => {
           });
         }
       } catch (err) {
+        if (!mounted) return;
         console.warn('Could not fetch live bidder:', err);
       }
     };
+    // Reset state when switching bidders to avoid showing stale data
+    setLiveBidder(null);
+    setVerificationRecord(null);
     fetchLiveBidder();
+    return () => { mounted = false; };
   }, [bidderId]);
 
   const matchedBidder = bidders.find((item) => item.id === bidderId);

@@ -15,30 +15,36 @@ import { useLanguage } from '../context/LanguageContext';
 import { GovPageHeader } from '../components/common/GovPageHeader';
 
 export const ProcurementDashboard: React.FC = () => {
-  const { bidders, refreshData, error } = useProcurement();
+  const { bidders, audit, isLiveDatabase, tenders, tenderId, error } = useProcurement();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [metrics, setMetrics] = useState<any>(null);
 
+  // Fetch dashboard-specific metrics (KPI endpoint).
+  // NOTE: We deliberately do NOT call refreshData() here. The ProcurementContext
+  // already performs the authoritative data fetch on mount. Calling refreshData()
+  // here was triggering N+1 bidder-detail requests on every dashboard visit,
+  // causing a fetch→state→re-render cascade that contributed to the white-screen bug.
   useEffect(() => {
-    refreshData();
+    let mounted = true;
     const fetchDashboard = async () => {
       try {
         const data = await (apiClient as any).procurement.getDashboard();
-        if (data) setMetrics(data);
+        if (mounted && data) setMetrics(data);
       } catch {
         // Fallback gracefully to dynamic context counts
       }
     };
     fetchDashboard();
+    return () => { mounted = false; };
   }, []);
 
-  // Compute live real metrics dynamically
-  const activeTendersCount = metrics?.active_tenders ?? (bidders.length > 0 ? 4 : 0);
+  // Compute live real metrics dynamically without arbitrary fake fallbacks
+  const activeTendersCount = metrics?.active_tenders ?? tenders.filter((t) => !t.status || t.status.toUpperCase() === 'ACTIVE').length;
   const underVerificationCount =
     metrics?.bids_under_verification ??
-    bidders.filter((b) => b.status === 'Needs Review' || b.status === 'Pending' || b.status === 'Under Review').length;
+    bidders.filter((b) => b.status === 'Needs Review' || b.status === 'Pending' || b.status === 'Under Review' || b.complianceStatus === 'UNDER_REVIEW').length;
   const integrityReviews: any[] = metrics?.integrity_reviews ?? [];
   const integritySummary = metrics?.integrity_summary ?? {
     reviews_requiring_attention: integrityReviews.length,
@@ -48,7 +54,7 @@ export const ProcurementDashboard: React.FC = () => {
   const patternAlertsCount = integritySummary.reviews_requiring_attention ?? integrityReviews.length;
   const complianceExceptionsCount =
     metrics?.compliance_exceptions ??
-    bidders.filter((b) => b.complianceStatus === 'EXCEPTION_FOUND' || b.blockingExceptions > 0).length;
+    bidders.filter((b) => b.complianceStatus === 'EXCEPTION_FOUND' || b.blockingExceptions > 0 || b.risk === 'HIGH' || b.risk === 'CRITICAL').length;
 
   const formatSignalLabel = (sig: string) => {
     switch (sig) {
@@ -73,34 +79,33 @@ export const ProcurementDashboard: React.FC = () => {
     const items: any[] = [];
 
     if (integrityReviews && integrityReviews.length > 0) {
-      integrityReviews.forEach((rev) => {
+      integrityReviews.forEach((rev: any) => {
         items.push({
-          id: `INT-${rev.tender_id}`,
-          tender_number: rev.tender_number || rev.tender_id,
-          tender_id: rev.tender_id,
-          tender_title: rev.title || 'Government Administrative Procurement',
-          bidder_names: rev.bidders?.join(', ') || 'Participating Vendors',
-          secondary_bidder: rev.bidders && rev.bidders.length > 1 ? rev.bidders.slice(1).join(', ') : '',
+          id: rev.id,
+          tender_number: rev.tender_id || 'TENDER-REF',
+          tender_id: rev.tender_id || '',
+          tender_title: rev.tender_title || 'Active Procurement Tender',
+          bidder_names: rev.bidder_name || '',
+          secondary_bidder: rev.contributing_signals?.[0] ? formatSignalLabel(rev.contributing_signals[0]) : '',
           risk_level: rev.risk_level || 'HIGH',
-          risk_score: rev.risk_score != null ? Math.round(rev.risk_score) : 70,
-          issue: rev.contributing_signals?.length
-            ? `${rev.contributing_signals.map(formatSignalLabel).join(', ')} (${rev.findings_count} finding${rev.findings_count > 1 ? 's' : ''})`
-            : `${rev.findings_count || 1} integrity signals requiring officer review`,
-          action_url: `/integrity?tender=${rev.tender_id}`,
+          risk_score: rev.risk_score || 80,
+          issue: rev.summary || rev.description || 'Integrity anomaly pattern detected',
+          action_url: `/procurement/integrity?tender=${rev.tender_id || ''}&finding=${rev.id}`,
         });
       });
     }
 
     // Include high-risk exception bidders from live bidder list
     bidders
-      .filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL' || b.status === 'Exception Found')
+      .filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL' || b.status === 'Exception Found' || b.complianceStatus === 'EXCEPTION_FOUND')
       .forEach((b) => {
-        if (!items.some((it) => it.bidder_names.includes(b.name))) {
+        if (!items.some((it) => (it.bidder_names || '').includes(b.name))) {
+          const tMatch = tenders.find((t) => t.id === (b as any).tender_id || t.id === tenderId);
           items.push({
             id: `BID-${b.id}`,
-            tender_number: (b as any).tender_number || 'GEM/2026/B/418207',
-            tender_id: (b as any).tender_id || '',
-            tender_title: 'Network Infrastructure Procurement',
+            tender_number: (b as any).tender_number || tMatch?.id || tenderId || 'TENDER-REF',
+            tender_id: (b as any).tender_id || tMatch?.id || tenderId || '',
+            tender_title: tMatch?.title || 'Active Procurement Tender',
             bidder_names: b.name,
             secondary_bidder: '',
             risk_level: b.risk || 'HIGH',
@@ -112,26 +117,29 @@ export const ProcurementDashboard: React.FC = () => {
       });
 
     return items;
-  }, [integrityReviews, bidders]);
+  }, [integrityReviews, bidders, tenders, tenderId]);
 
   // ── Recent Assessments Dataset computed from real live bidders
   const recentAssessments = useMemo(() => {
-    return bidders.map((b) => ({
-      id: b.id,
-      tender_id: (b as any).tender_number || 'GEM/2026/B/418207',
-      name: b.name,
-      category: 'Network infrastructure',
-      documents: b.documents || 0,
-      status: b.status || 'Under Review',
-      compliance_status: b.complianceStatus || (b.blockingExceptions > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW'),
-      score: b.complianceScore !== undefined ? b.complianceScore : b.score,
-      compliance_risk: (b.complianceRisk || b.risk || 'MEDIUM').toUpperCase(),
-      integrity_risk: (b.integrityRisk || 'LOW').toUpperCase(),
-      officer_decision: b.officerDecision,
-      blocking_exceptions: b.blockingExceptions,
-      action_url: `/verification/${b.id}`,
-    }));
-  }, [bidders]);
+    return bidders.map((b) => {
+      const tMatch = tenders.find((t) => t.id === (b as any).tender_id || t.id === tenderId);
+      return {
+        id: b.id,
+        tender_id: (b as any).tender_number || tMatch?.id || tenderId || 'TENDER-REF',
+        name: b.name,
+        category: tMatch?.category || 'Procurement',
+        documents: b.documents || 0,
+        status: b.status || 'Under Review',
+        compliance_status: b.complianceStatus || (b.blockingExceptions > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW'),
+        score: b.complianceScore !== undefined ? b.complianceScore : b.score,
+        compliance_risk: (b.complianceRisk || b.risk || 'MEDIUM').toUpperCase(),
+        integrity_risk: (b.integrityRisk || 'LOW').toUpperCase(),
+        officer_decision: b.officerDecision,
+        blocking_exceptions: b.blockingExceptions,
+        action_url: `/verification/${b.id}`,
+      };
+    });
+  }, [bidders, tenders, tenderId]);
 
   return (
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
