@@ -288,9 +288,25 @@ def _clean_cross_field_contamination(val: str) -> str:
     return cleaned
 
 
+def extract_case_reference(text: str) -> Optional[str]:
+    """Extract a deterministic FairBid case reference from OCR text.
+
+    Looks for patterns like ``FB-CASE-JBMD-001`` or ``FB-CASE-NDMC-001``.
+    Uses the structured reference only — never filename or keywords.
+    Returns the first match or None.
+    """
+    if not text:
+        return None
+    m = re.search(r'FB-CASE-[A-Z]{2,10}-\d{3}', text)
+    return m.group(0) if m else None
+
+
 def is_fairbid_document(text: str) -> bool:
     if not text:
         return False
+    # Also recognise case-fixture documents as FairBid documents
+    if extract_case_reference(text) is not None:
+        return True
     keywords = [
         "FAIRBID", "PETROLEUM DEALERSHIP", "RETAIL OUTLET DEALERSHIP",
         "OIL MARKETING COMPANY", "FB-TN-RO", "GUMMIDIPOONDI", "TIRUVALLUR",
@@ -797,6 +813,7 @@ def extract_fairbid_canonical(raw_text: str, filename: str = "FairBid_Simulation
         },
         "fields": canonical_fields,
         "extracted_fields": extracted_only,
+        "case_reference": extract_case_reference(raw_text),
     }
 
     return verification_record

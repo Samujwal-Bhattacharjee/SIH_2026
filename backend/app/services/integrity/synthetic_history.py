@@ -1383,3 +1383,459 @@ def _preseed_compliance_results(conn, now: str) -> None:
     except Exception as e:
         import logging
         logging.getLogger(__name__).warning(f"Pre-seeding compliance results failed: {e}", exc_info=True)
+
+
+# ============================================================
+# DORMANT CASE FIXTURES — JBMD + NDMC/CCS DEMO SCENARIOS
+# ============================================================
+
+def seed_dormant_case_fixtures(conn) -> None:
+    """
+    Seed demonstration case fixtures that remain hidden (dormant) until a
+    matching document is uploaded.  Each fixture contains:
+
+    - A complete tender record
+    - Bidder(s) with documents, compliance results, and discrepancies
+    - Historical tenders for integrity-engine context
+    - Evidence metadata for the compliance / integrity screens
+
+    IMPORTANT: All data is 100% SYNTHETIC.  Labels clearly state this.
+    """
+    import logging as _log
+    _logger = _log.getLogger(__name__)
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Check if fixtures already exist (idempotent)
+    existing = conn.execute("SELECT COUNT(*) FROM demo_case_fixtures").fetchone()
+    if existing and existing[0] > 0:
+        _logger.info("Dormant case fixtures already seeded — skipping.")
+        return
+
+    from app.services.procurement_service import DEFAULT_TENDER_REQUIREMENTS
+
+    # ================================================================
+    # CASE 1 — JBMD: DECISION TRACEABILITY GAP
+    # ================================================================
+    jbmd_tender_id = "TEN-CASE-JBMD-001"
+    jbmd_bidder_id = "BID-CASE-JBMD-001"
+    jbmd_bidder2_id = "BID-CASE-JBMD-002"
+    jbmd_bidder3_id = "BID-CASE-JBMD-003"
+
+    jbmd_tender = {
+        "id": jbmd_tender_id,
+        "tender_number": "SYNTH/JBMD/2026/001",
+        "title": "[SYNTHETIC DEMO] JBMD — Decision Traceability Review",
+        "department": "Synthetic Demonstration — Not a Real Department",
+        "description": (
+            "SYNTHETIC FAIRBID DEMONSTRATION SCENARIO. "
+            "JBMD Enterprises submitted all required documents. Multiple bids were "
+            "marked 'Not Evaluated' with no recorded reason in the available procurement record. "
+            "This scenario tests decision-traceability gap detection."
+        ),
+        "bid_closing_date": "2026-06-15",
+        "estimated_value": 25000000.0,
+        "category": "IT Equipment & Services",
+        "status": "ACTIVE",
+        "local_content_class": "CLASS_I",
+        "created_by": "FairBid Demo System",
+        "created_at": "2026-06-01T10:00:00+00:00",
+        "requirements": DEFAULT_TENDER_REQUIREMENTS,
+    }
+
+    jbmd_bidders = [
+        {
+            "id": jbmd_bidder_id,
+            "legal_name": "JBMD Enterprises Pvt. Ltd.",
+            "trade_name": "JBMD Enterprises",
+            "gstin": "07AABCJ7001J1Z3",
+            "pan": "AABCJ7001J",
+            "cin": "U74999DL2014PTC271234",
+            "udyam_number": "UDYAM-DL-03-0071234",
+            "registered_address": "Block C, Nehru Place Business Centre, New Delhi 110019",
+            "contact_email": "tenders@jbmd.in",
+            "contact_phone": "9811070001",
+            "enterprise_category": "Medium Enterprise",
+            "status": "NOT_EVALUATED",
+            "compliance_status": "COMPLIANT",
+            "compliance_score": 92.0,
+            "risk_level": "MEDIUM",
+            "quote_amount": 22500000.0,
+            "created_at": "2026-06-05T10:00:00+00:00",
+            "documents": [
+                {
+                    "id": f"DOC-{jbmd_bidder_id}-GST",
+                    "file_name": "JBMD_GST_Registration.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 120000,
+                    "document_type": "GST Registration",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": "GSTIN: 07AABCJ7001J1Z3\nLegal Name: JBMD ENTERPRISES PVT LTD\nState: Delhi",
+                    "extracted_fields": [
+                        {"key": "gstin", "value": "07AABCJ7001J1Z3", "confidence": 0.97, "isExtracted": True},
+                        {"key": "legalName", "value": "JBMD Enterprises Pvt. Ltd.", "confidence": 0.95, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.97,
+                },
+                {
+                    "id": f"DOC-{jbmd_bidder_id}-PAN",
+                    "file_name": "JBMD_PAN_Card.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 95000,
+                    "document_type": "PAN Card",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": "PAN: AABCJ7001J\nName: JBMD ENTERPRISES PVT LTD",
+                    "extracted_fields": [
+                        {"key": "pan", "value": "AABCJ7001J", "confidence": 0.98, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.98,
+                },
+                {
+                    "id": f"DOC-{jbmd_bidder_id}-FIN",
+                    "file_name": "JBMD_Turnover_Certificate.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 130000,
+                    "document_type": "Turnover Certificate",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": "Annual Turnover FY 2024-25: INR 9,50,00,000\nCA: Kumar & Associates",
+                    "extracted_fields": [
+                        {"key": "annualTurnover", "value": "95000000", "confidence": 0.91, "isExtracted": True},
+                        {"key": "fiscalYear", "value": "FY 2024-25", "confidence": 0.96, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.93,
+                },
+                {
+                    "id": f"DOC-{jbmd_bidder_id}-OEM",
+                    "file_name": "JBMD_OEM_Authorization.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 110000,
+                    "document_type": "OEM Authorization",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": "OEM Authorization for JBMD Enterprises Pvt. Ltd.\nProduct Category: IT Equipment\nValid until: 31/12/2027",
+                    "extracted_fields": [
+                        {"key": "oemReference", "value": "OEM-HP-2026-JBMD-001", "confidence": 0.90, "isExtracted": True},
+                        {"key": "expiryDate", "value": "31/12/2027", "confidence": 0.92, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.91,
+                },
+                {
+                    "id": f"DOC-{jbmd_bidder_id}-BL",
+                    "file_name": "JBMD_Non_Blacklisting.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 85000,
+                    "document_type": "Non-Blacklisting Declaration",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": "Declaration: JBMD Enterprises Pvt. Ltd. is not blacklisted or debarred.",
+                    "extracted_fields": [
+                        {"key": "blacklistingDeclaration", "value": "Not blacklisted or debarred", "confidence": 0.94, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.94,
+                },
+            ],
+            "compliance_results": [
+                {"requirement_id": "REQ-GST", "requirement_name": "GST Registration", "category": "STATUTORY", "status": "COMPLIANT", "severity": "HIGH", "score": 100, "confidence": 0.97, "reason": "GSTIN extracted and validated."},
+                {"requirement_id": "REQ-PAN", "requirement_name": "PAN Verification", "category": "STATUTORY", "status": "COMPLIANT", "severity": "HIGH", "score": 100, "confidence": 0.98, "reason": "PAN card submitted and verified."},
+                {"requirement_id": "REQ-OEM", "requirement_name": "OEM Authorization", "category": "TENDER_SPECIFIC", "status": "COMPLIANT", "severity": "HIGH", "score": 100, "confidence": 0.91, "reason": "Valid OEM authorization letter submitted."},
+                {"requirement_id": "REQ-TURNOVER", "requirement_name": "Annual Turnover", "category": "FINANCIAL", "status": "COMPLIANT", "severity": "MEDIUM", "score": 100, "confidence": 0.91, "reason": "Turnover ₹9.5 crore exceeds threshold."},
+                {"requirement_id": "REQ-BLACKLIST", "requirement_name": "Non-Blacklisting Declaration", "category": "STATUTORY", "status": "COMPLIANT", "severity": "HIGH", "score": 100, "confidence": 0.94, "reason": "Non-blacklisting declaration submitted."},
+                {"requirement_id": "REQ-UDYAM", "requirement_name": "Udyam/MSME Registration", "category": "GOVERNMENT_RECOGNITION", "status": "COMPLIANT", "severity": "MEDIUM", "score": 100, "confidence": 0.90, "reason": "Udyam registration verified."},
+                {"requirement_id": "REQ-LOCAL", "requirement_name": "Local Content Compliance", "category": "MAKE_IN_INDIA", "status": "COMPLIANT", "severity": "MEDIUM", "score": 80, "confidence": 0.85, "reason": "Local content declaration submitted."},
+            ],
+            "discrepancies": [],
+        },
+        {
+            "id": jbmd_bidder2_id,
+            "legal_name": "Apex IT Solutions Ltd.",
+            "gstin": "07AABCA2002A1Z5",
+            "pan": "AABCA2002A",
+            "status": "NOT_EVALUATED",
+            "compliance_status": "UNDER_REVIEW",
+            "compliance_score": 70.0,
+            "risk_level": "MEDIUM",
+            "quote_amount": 23800000.0,
+            "created_at": "2026-06-06T10:00:00+00:00",
+            "documents": [],
+            "compliance_results": [],
+            "discrepancies": [],
+        },
+        {
+            "id": jbmd_bidder3_id,
+            "legal_name": "Metro Digital Services Pvt. Ltd.",
+            "gstin": "07AABCM3003M1Z7",
+            "pan": "AABCM3003M",
+            "status": "AWARDED",
+            "compliance_status": "COMPLIANT",
+            "compliance_score": 88.0,
+            "risk_level": "LOW",
+            "quote_amount": 24500000.0,
+            "created_at": "2026-06-07T10:00:00+00:00",
+            "documents": [],
+            "compliance_results": [],
+            "discrepancies": [],
+        },
+    ]
+
+    jbmd_evidence = {
+        "case_narrative": (
+            "JBMD Enterprises submitted all required documents, but its bid, along with "
+            "other bids, was marked 'Not Evaluated'. No reason was recorded in the available "
+            "procurement record. JBMD requested clarification. The available record contains "
+            "no recorded rationale for the non-evaluation decision."
+        ),
+        "decision_traceability": {
+            "bid_status": "NOT_EVALUATED",
+            "reason_field": "ABSENT / NOT RECORDED",
+            "bidder_action": "Clarification requested by bidder",
+            "recorded_rationale": "None found in available procurement record",
+        },
+        "synthetic_label": "SYNTHETIC FAIRBID DEMONSTRATION — NOT AN OFFICIAL GOVERNMENT RECORD",
+    }
+
+    # Historical tenders for JBMD integrity context
+    # (to provide meaningful historical data for integrity detectors)
+    jbmd_history = [
+        {
+            "id": "TEN-CASE-JBMD-HIST-001",
+            "tender_number": "SYNTH/JBMD/2025/H01",
+            "title": "[SYNTH] Historical IT Procurement Q1 2025",
+            "department": "Synthetic Demo",
+            "category": "IT Equipment & Services",
+            "status": "CLOSED",
+            "estimated_value": 18000000.0,
+            "bid_closing_date": "2025-03-15",
+            "created_at": "2025-02-01T10:00:00+00:00",
+            "bidders": [
+                {"id": "BID-JBMD-H1-01", "legal_name": "JBMD Enterprises Pvt. Ltd.", "gstin": "07AABCJ7001J1Z3", "pan": "AABCJ7001J", "status": "EVALUATED", "quote_amount": 17200000.0},
+                {"id": "BID-JBMD-H1-02", "legal_name": "Metro Digital Services Pvt. Ltd.", "gstin": "07AABCM3003M1Z7", "pan": "AABCM3003M", "status": "AWARDED", "quote_amount": 16800000.0},
+            ],
+        },
+        {
+            "id": "TEN-CASE-JBMD-HIST-002",
+            "tender_number": "SYNTH/JBMD/2025/H02",
+            "title": "[SYNTH] Historical IT Procurement Q3 2025",
+            "department": "Synthetic Demo",
+            "category": "IT Equipment & Services",
+            "status": "CLOSED",
+            "estimated_value": 22000000.0,
+            "bid_closing_date": "2025-09-15",
+            "created_at": "2025-08-01T10:00:00+00:00",
+            "bidders": [
+                {"id": "BID-JBMD-H2-01", "legal_name": "JBMD Enterprises Pvt. Ltd.", "gstin": "07AABCJ7001J1Z3", "pan": "AABCJ7001J", "status": "NOT_EVALUATED", "quote_amount": 20500000.0},
+                {"id": "BID-JBMD-H2-02", "legal_name": "Metro Digital Services Pvt. Ltd.", "gstin": "07AABCM3003M1Z7", "pan": "AABCM3003M", "status": "AWARDED", "quote_amount": 21000000.0},
+                {"id": "BID-JBMD-H2-03", "legal_name": "Apex IT Solutions Ltd.", "gstin": "07AABCA2002A1Z5", "pan": "AABCA2002A", "status": "NOT_EVALUATED", "quote_amount": 21500000.0},
+            ],
+        },
+    ]
+
+    conn.execute("""
+        INSERT INTO demo_case_fixtures (case_id, case_type, display_name, description,
+            activation_key, is_dormant, tender_fixture, bidder_fixtures,
+            history_fixtures, evidence_metadata, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "CASE-JBMD",
+        "DECISION_TRACEABILITY",
+        "JBMD Enterprises — Decision Traceability Review",
+        "Bid marked 'Not Evaluated' with no recorded reason. All required documents were submitted.",
+        "FB-CASE-JBMD-001",
+        1,
+        json.dumps(jbmd_tender),
+        json.dumps(jbmd_bidders),
+        json.dumps(jbmd_history),
+        json.dumps(jbmd_evidence),
+        now,
+    ))
+
+    # ================================================================
+    # CASE 2 — NDMC vs CCS: CROSS-SOURCE TURNOVER DISCREPANCY
+    # ================================================================
+    ndmc_tender_id = "TEN-CASE-NDMC-001"
+    ndmc_bidder_id = "BID-CASE-NDMC-CCS-001"
+    ndmc_bidder2_id = "BID-CASE-NDMC-002"
+
+    ndmc_tender = {
+        "id": ndmc_tender_id,
+        "tender_number": "SYNTH/NDMC/2026/001",
+        "title": "[SYNTHETIC DEMO] NDMC IT Equipment Procurement — Cross-Source Verification",
+        "department": "Synthetic Demonstration — Not a Real Department",
+        "description": (
+            "SYNTHETIC FAIRBID DEMONSTRATION SCENARIO. "
+            "A bidder's claimed financial turnover (₹128 crore) is materially different "
+            "from the value verified from an authorized source / simulated verification "
+            "record (₹28 crore). Delta: ₹100 crore. "
+            "NOT AN OFFICIAL GOVERNMENT RECORD. NOT A REAL VERIFICATION."
+        ),
+        "bid_closing_date": "2026-07-20",
+        "estimated_value": 45000000.0,
+        "category": "IT Equipment & Services",
+        "status": "ACTIVE",
+        "local_content_class": "CLASS_I",
+        "created_by": "FairBid Demo System",
+        "created_at": "2026-07-01T10:00:00+00:00",
+        "requirements": DEFAULT_TENDER_REQUIREMENTS,
+    }
+
+    ndmc_bidders = [
+        {
+            "id": ndmc_bidder_id,
+            "legal_name": "CCS Computers Pvt. Ltd.",
+            "trade_name": "CCS Computers",
+            "gstin": "07AABCC8008C1Z9",
+            "pan": "AABCC8008C",
+            "cin": "U72200DL2010PTC205678",
+            "registered_address": "Floor 4, Bhikaji Cama Place, New Delhi 110066",
+            "contact_email": "bids@ccscomputers.in",
+            "contact_phone": "9811080002",
+            "enterprise_category": "Large Enterprise",
+            "status": "UNDER_REVIEW",
+            "compliance_status": "EXCEPTION_FOUND",
+            "compliance_score": 45.0,
+            "risk_level": "HIGH",
+            "quote_amount": 42000000.0,
+            "created_at": "2026-07-05T10:00:00+00:00",
+            "documents": [
+                {
+                    "id": f"DOC-{ndmc_bidder_id}-GST",
+                    "file_name": "CCS_GST_Registration.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 115000,
+                    "document_type": "GST Registration",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": "GSTIN: 07AABCC8008C1Z9\nLegal Name: CCS COMPUTERS PVT LTD",
+                    "extracted_fields": [
+                        {"key": "gstin", "value": "07AABCC8008C1Z9", "confidence": 0.97, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.97,
+                },
+                {
+                    "id": f"DOC-{ndmc_bidder_id}-FIN-CLAIMED",
+                    "file_name": "CCS_Turnover_Certificate_Claimed.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 140000,
+                    "document_type": "Turnover Certificate",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": (
+                        "TURNOVER CERTIFICATE\n"
+                        "CCS Computers Pvt. Ltd.\n"
+                        "Annual Turnover FY 2024-25: INR 128,00,00,000 (One Hundred Twenty-Eight Crore)\n"
+                        "CA Firm: ABC & Associates\n"
+                        "Note: This is the CLAIMED turnover submitted by the bidder."
+                    ),
+                    "extracted_fields": [
+                        {"key": "annualTurnover", "value": "1280000000", "confidence": 0.92, "isExtracted": True},
+                        {"key": "fiscalYear", "value": "FY 2024-25", "confidence": 0.96, "isExtracted": True},
+                        {"key": "turnoverCertificate", "value": "Certified gross revenue INR 128,00,00,000", "confidence": 0.92, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.93,
+                },
+                {
+                    "id": f"DOC-{ndmc_bidder_id}-FIN-VERIFIED",
+                    "file_name": "CCS_Verified_Turnover_Source.pdf",
+                    "file_type": "application/pdf",
+                    "file_size": 100000,
+                    "document_type": "Authorized Source Verification",
+                    "ocr_status": "COMPLETED",
+                    "extracted_text": (
+                        "AUTHORIZED SOURCE / SIMULATED VERIFICATION RECORD\n"
+                        "SYNTHETIC FAIRBID DEMONSTRATION — NOT A REAL VERIFICATION\n\n"
+                        "Entity: CCS Computers Pvt. Ltd. (PAN: AABCC8008C)\n"
+                        "Verified Annual Turnover FY 2024-25: INR 28,00,00,000 (Twenty-Eight Crore)\n"
+                        "Source: Simulated authorized verification source\n"
+                        "Verification Date: 2026-07-10\n\n"
+                        "NOTE: FairBid did NOT actually contact any OEM or regulatory authority. "
+                        "This is a simulated verification record for demonstration purposes only."
+                    ),
+                    "extracted_fields": [
+                        {"key": "verifiedTurnover", "value": "280000000", "confidence": 0.95, "isExtracted": True},
+                        {"key": "verificationSource", "value": "Authorized Source / Simulated Verification Record", "confidence": 0.90, "isExtracted": True},
+                    ],
+                    "ocr_engine": "PyMuPDF + Regex Parser",
+                    "ocr_confidence": 0.95,
+                },
+            ],
+            "compliance_results": [
+                {"requirement_id": "REQ-GST", "requirement_name": "GST Registration", "category": "STATUTORY", "status": "COMPLIANT", "severity": "HIGH", "score": 100, "confidence": 0.97, "reason": "GSTIN verified."},
+                {"requirement_id": "REQ-TURNOVER", "requirement_name": "Annual Turnover", "category": "FINANCIAL", "status": "NON_COMPLIANT", "severity": "CRITICAL", "score": 0, "confidence": 0.95, "reason": "MATERIAL DISCREPANCY: Claimed turnover ₹128 crore vs verified turnover ₹28 crore (delta ₹100 crore). Cross-source verification shows material inconsistency."},
+                {"requirement_id": "REQ-PAN", "requirement_name": "PAN Verification", "category": "STATUTORY", "status": "COMPLIANT", "severity": "HIGH", "score": 100, "confidence": 0.95, "reason": "PAN verified against GSTIN."},
+                {"requirement_id": "REQ-OEM", "requirement_name": "OEM Authorization", "category": "TENDER_SPECIFIC", "status": "PENDING", "severity": "HIGH", "score": 0, "confidence": 0.0, "reason": "OEM authorization not submitted."},
+                {"requirement_id": "REQ-BLACKLIST", "requirement_name": "Non-Blacklisting Declaration", "category": "STATUTORY", "status": "PENDING", "severity": "HIGH", "score": 0, "confidence": 0.0, "reason": "Declaration not submitted."},
+            ],
+            "discrepancies": [
+                {
+                    "discrepancy_type": "CROSS_SOURCE_VERIFICATION",
+                    "severity": "CRITICAL",
+                    "field_name": "Annual Turnover",
+                    "expected_value": "₹128,00,00,000 (Claimed by Bidder)",
+                    "found_value": "₹28,00,00,000 (Authorized Source / Simulated Verification)",
+                    "source_doc_1_id": f"DOC-{ndmc_bidder_id}-FIN-CLAIMED",
+                    "source_doc_2_id": f"DOC-{ndmc_bidder_id}-FIN-VERIFIED",
+                    "description": "MATERIAL DISCREPANCY — Bidder claimed annual turnover of ₹128 crore. Authorized source / simulated verification record shows ₹28 crore. Difference: ₹100 crore. REVIEW REQUIRED.",
+                    "recommendation": "Verify turnover with original CA certificate and cross-reference against ROC/MCA filings.",
+                },
+            ],
+        },
+        {
+            "id": ndmc_bidder2_id,
+            "legal_name": "TechVista Solutions Ltd.",
+            "gstin": "07AABCT9009T1Z1",
+            "pan": "AABCT9009T",
+            "status": "UNDER_REVIEW",
+            "compliance_status": "UNDER_REVIEW",
+            "compliance_score": 75.0,
+            "risk_level": "MEDIUM",
+            "quote_amount": 43500000.0,
+            "created_at": "2026-07-06T10:00:00+00:00",
+            "documents": [],
+            "compliance_results": [],
+            "discrepancies": [],
+        },
+    ]
+
+    ndmc_evidence = {
+        "case_narrative": (
+            "CCS Computers submitted financial documents claiming annual turnover of ₹128 crore. "
+            "A simulated authorized source verification record shows actual turnover of ₹28 crore. "
+            "Material discrepancy of ₹100 crore identified."
+        ),
+        "cross_source_verification": {
+            "claimed_turnover": "₹128 crore",
+            "verified_turnover": "₹28 crore",
+            "delta": "₹100 crore",
+            "result": "MATERIAL DISCREPANCY — REVIEW REQUIRED",
+            "verification_source": "AUTHORIZED SOURCE / SIMULATED VERIFICATION RECORD",
+        },
+        "synthetic_label": (
+            "SYNTHETIC FAIRBID DEMONSTRATION. NOT AN OFFICIAL GOVERNMENT RECORD. "
+            "NOT A REAL VERIFICATION. FairBid did NOT contact any OEM."
+        ),
+    }
+
+    ndmc_history = []  # NDMC case is primarily a cross-document finding, not a historical pattern
+
+    conn.execute("""
+        INSERT INTO demo_case_fixtures (case_id, case_type, display_name, description,
+            activation_key, is_dormant, tender_fixture, bidder_fixtures,
+            history_fixtures, evidence_metadata, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "CASE-NDMC",
+        "CROSS_SOURCE_VERIFICATION",
+        "NDMC vs CCS Computers — Turnover Cross-Source Verification",
+        "Claimed turnover ₹128 crore vs verified ₹28 crore. Material discrepancy ₹100 crore.",
+        "FB-CASE-NDMC-001",
+        1,
+        json.dumps(ndmc_tender),
+        json.dumps(ndmc_bidders),
+        json.dumps(ndmc_history),
+        json.dumps(ndmc_evidence),
+        now,
+    ))
+
+    _logger.info("Dormant case fixtures seeded: CASE-JBMD, CASE-NDMC")

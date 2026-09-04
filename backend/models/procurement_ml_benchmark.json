@@ -1,0 +1,710 @@
+{
+  "benchmark_metadata": {
+    "dataset_type": "SYNTHETIC",
+    "evaluation_type": "HELD_OUT_TEST_SET",
+    "ground_truth": "FAIR_BID_RULE_BASED_BENCHMARK",
+    "metric_description": "Held-out synthetic procurement benchmark accuracy",
+    "honesty_notice": "The ML model predicts the benchmark risk class; it does not prove corruption.",
+    "total_dataset_samples": 600,
+    "train_samples": 480,
+    "test_samples": 120,
+    "train_test_split_ratio": "80/20",
+    "random_seed": 42,
+    "trained_at": "2026-09-04T08:37:20.881038+00:00",
+    "dataset_version": "1.0.0"
+  },
+  "compliance": {
+    "model_name": "procurement_compliance_rf",
+    "version": "1.0.0",
+    "train_samples": 480,
+    "test_samples": 120,
+    "feature_count": 19,
+    "feature_names": [
+      "gst_status_score",
+      "pan_status_score",
+      "oem_status_score",
+      "turnover_status_score",
+      "blacklisting_status_score",
+      "udyam_status_score",
+      "local_content_status_score",
+      "completeness_status_score",
+      "mandatory_passed_count",
+      "mandatory_failed_count",
+      "mandatory_review_count",
+      "non_mandatory_passed_count",
+      "non_mandatory_failed_count",
+      "evidence_present_count",
+      "discrepancy_count_total",
+      "discrepancy_count_critical",
+      "discrepancy_count_high",
+      "mean_check_confidence",
+      "has_mandatory_fail"
+    ],
+    "classes": [
+      "CRITICAL",
+      "HIGH",
+      "LOW",
+      "MEDIUM"
+    ],
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_macro": 1.0,
+    "confusion_matrix": {
+      "classes": [
+        "CRITICAL",
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "matrix": [
+        [
+          30,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          30,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          30,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          30
+        ]
+      ]
+    },
+    "regression_metrics": {
+      "mae": 0.003583333333367082,
+      "rmse": 0.039253449954543364,
+      "r2": 0.9999970516535626
+    },
+    "top_features": [
+      {
+        "feature": "mean_check_confidence",
+        "importance": 0.12980818258545984
+      },
+      {
+        "feature": "local_content_status_score",
+        "importance": 0.10055868370885043
+      },
+      {
+        "feature": "udyam_status_score",
+        "importance": 0.08986464482968065
+      },
+      {
+        "feature": "completeness_status_score",
+        "importance": 0.08141136025407171
+      },
+      {
+        "feature": "mandatory_review_count",
+        "importance": 0.06887437924005568
+      },
+      {
+        "feature": "discrepancy_count_high",
+        "importance": 0.06541398997304697
+      },
+      {
+        "feature": "non_mandatory_passed_count",
+        "importance": 0.06011588958187632
+      },
+      {
+        "feature": "discrepancy_count_total",
+        "importance": 0.059147509101428
+      },
+      {
+        "feature": "discrepancy_count_critical",
+        "importance": 0.05589768109898716
+      },
+      {
+        "feature": "evidence_present_count",
+        "importance": 0.0558381319026037
+      }
+    ],
+    "sample_held_out_predictions": [
+      {
+        "case_id": "SYNTH-CASE-0571",
+        "ground_truth_class": "HIGH",
+        "predicted_class": "HIGH",
+        "correct": true,
+        "ground_truth_score": 54.0,
+        "predicted_score": 54.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 1.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0370",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 40.0,
+        "predicted_score": 40.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0517",
+        "ground_truth_class": "LOW",
+        "predicted_class": "LOW",
+        "correct": true,
+        "ground_truth_score": 100.0,
+        "predicted_score": 100.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 1.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0448",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 77.8,
+        "predicted_score": 77.80000000000013,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 1.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0253",
+        "ground_truth_class": "LOW",
+        "predicted_class": "LOW",
+        "correct": true,
+        "ground_truth_score": 100.0,
+        "predicted_score": 100.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 1.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0364",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 77.8,
+        "predicted_score": 77.80000000000013,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 1.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0557",
+        "ground_truth_class": "HIGH",
+        "predicted_class": "HIGH",
+        "correct": true,
+        "ground_truth_score": 54.0,
+        "predicted_score": 54.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 1.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0340",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 75.8,
+        "predicted_score": 75.80000000000013,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 1.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0063",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 75.8,
+        "predicted_score": 75.80000000000013,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 1.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0506",
+        "ground_truth_class": "LOW",
+        "predicted_class": "LOW",
+        "correct": true,
+        "ground_truth_score": 100.0,
+        "predicted_score": 100.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 1.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0215",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 40.0,
+        "predicted_score": 40.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0418",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 40.0,
+        "predicted_score": 40.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0534",
+        "ground_truth_class": "HIGH",
+        "predicted_class": "HIGH",
+        "correct": true,
+        "ground_truth_score": 54.0,
+        "predicted_score": 54.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 1.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0239",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 40.0,
+        "predicted_score": 40.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0406",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 40.0,
+        "predicted_score": 40.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      }
+    ]
+  },
+  "integrity": {
+    "model_name": "procurement_integrity_rf",
+    "version": "1.0.0",
+    "train_samples": 480,
+    "test_samples": 120,
+    "feature_count": 21,
+    "feature_names": [
+      "bidder_count",
+      "valid_quotes_count",
+      "bid_price_spread_pct",
+      "bid_to_estimate_min_ratio",
+      "bid_to_estimate_mean_ratio",
+      "near_estimate_count",
+      "has_price_anomaly_finding",
+      "has_rotation_finding",
+      "has_related_bidder_finding",
+      "has_common_director_finding",
+      "has_traceability_gap_finding",
+      "has_repeated_winner_finding",
+      "has_losing_bid_finding",
+      "has_identity_doc_finding",
+      "has_narrow_competition_finding",
+      "findings_count_total",
+      "findings_count_critical",
+      "findings_count_high",
+      "findings_count_medium",
+      "unique_signal_types_count",
+      "related_bidders_involved_count"
+    ],
+    "classes": [
+      "CRITICAL",
+      "HIGH",
+      "LOW",
+      "MEDIUM"
+    ],
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_macro": 1.0,
+    "confusion_matrix": {
+      "classes": [
+        "CRITICAL",
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "matrix": [
+        [
+          30,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          30,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          30,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          30
+        ]
+      ]
+    },
+    "regression_metrics": {
+      "mae": 3.6533738996998484e-14,
+      "rmse": 5.51338736300256e-14,
+      "r2": 1.0
+    },
+    "top_features": [
+      {
+        "feature": "unique_signal_types_count",
+        "importance": 0.15906681728259459
+      },
+      {
+        "feature": "has_common_director_finding",
+        "importance": 0.14727849483101124
+      },
+      {
+        "feature": "findings_count_total",
+        "importance": 0.13398086847057403
+      },
+      {
+        "feature": "has_related_bidder_finding",
+        "importance": 0.12463016403661596
+      },
+      {
+        "feature": "has_traceability_gap_finding",
+        "importance": 0.09290960642562143
+      },
+      {
+        "feature": "has_identity_doc_finding",
+        "importance": 0.08848118836173585
+      },
+      {
+        "feature": "bid_price_spread_pct",
+        "importance": 0.05573149950423831
+      },
+      {
+        "feature": "related_bidders_involved_count",
+        "importance": 0.054456910141247726
+      },
+      {
+        "feature": "has_price_anomaly_finding",
+        "importance": 0.04405541528955566
+      },
+      {
+        "feature": "has_rotation_finding",
+        "importance": 0.029422809187972136
+      }
+    ],
+    "sample_held_out_predictions": [
+      {
+        "case_id": "SYNTH-CASE-0575",
+        "ground_truth_class": "HIGH",
+        "predicted_class": "HIGH",
+        "correct": true,
+        "ground_truth_score": 57.7,
+        "predicted_score": 57.69999999999989,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 1.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0366",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 97.7,
+        "predicted_score": 97.70000000000003,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0517",
+        "ground_truth_class": "LOW",
+        "predicted_class": "LOW",
+        "correct": true,
+        "ground_truth_score": 0.0,
+        "predicted_score": 0.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.99,
+          "MEDIUM": 0.01
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0448",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 36.8,
+        "predicted_score": 36.80000000000006,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.01,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.99
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0253",
+        "ground_truth_class": "LOW",
+        "predicted_class": "LOW",
+        "correct": true,
+        "ground_truth_score": 10.0,
+        "predicted_score": 10.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.965,
+          "MEDIUM": 0.035
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0364",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 30.0,
+        "predicted_score": 30.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.14,
+          "MEDIUM": 0.86
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0559",
+        "ground_truth_class": "HIGH",
+        "predicted_class": "HIGH",
+        "correct": true,
+        "ground_truth_score": 71.5,
+        "predicted_score": 71.5,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 1.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0340",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 30.0,
+        "predicted_score": 30.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.11,
+          "MEDIUM": 0.89
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0062",
+        "ground_truth_class": "MEDIUM",
+        "predicted_class": "MEDIUM",
+        "correct": true,
+        "ground_truth_score": 30.0,
+        "predicted_score": 30.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.05,
+          "MEDIUM": 0.95
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0507",
+        "ground_truth_class": "LOW",
+        "predicted_class": "LOW",
+        "correct": true,
+        "ground_truth_score": 0.0,
+        "predicted_score": 0.0,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 0.0,
+          "LOW": 0.995,
+          "MEDIUM": 0.005
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0213",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 97.7,
+        "predicted_score": 97.70000000000003,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0414",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 97.7,
+        "predicted_score": 97.70000000000003,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0536",
+        "ground_truth_class": "HIGH",
+        "predicted_class": "HIGH",
+        "correct": true,
+        "ground_truth_score": 71.5,
+        "predicted_score": 71.5,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 0.0,
+          "HIGH": 1.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0237",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 97.7,
+        "predicted_score": 97.70000000000003,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      },
+      {
+        "case_id": "SYNTH-CASE-0402",
+        "ground_truth_class": "CRITICAL",
+        "predicted_class": "CRITICAL",
+        "correct": true,
+        "ground_truth_score": 97.7,
+        "predicted_score": 97.70000000000003,
+        "score_error": 0.0,
+        "class_probabilities": {
+          "CRITICAL": 1.0,
+          "HIGH": 0.0,
+          "LOW": 0.0,
+          "MEDIUM": 0.0
+        }
+      }
+    ]
+  }
+}

@@ -35,6 +35,9 @@ class SignalType(str, Enum):
     SUBMISSION_TIMING_ANOMALY = "SUBMISSION_TIMING_ANOMALY"
     DOCUMENT_IDENTITY_INCONSISTENCY = "DOCUMENT_IDENTITY_INCONSISTENCY"
 
+    # Dormant case fixture signal types
+    DECISION_TRACEABILITY_GAP = "DECISION_TRACEABILITY_GAP"
+
 
 class RiskLevel(str, Enum):
     """Standard 4-tier risk classification matching government procurement tiers."""

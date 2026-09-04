@@ -19,9 +19,11 @@ from app.services.integrity.models import (
     BidderFeature,
     FindingStatus,
     IntegrityAssessment,
+    IntegrityEvidence,
     IntegrityFinding,
     RiskBasis,
     RiskLevel,
+    RuleReference,
     ScoreContributor,
     SignalType,
 )
@@ -80,6 +82,7 @@ DEFAULT_SIGNAL_WEIGHTS = {
     SignalType.NON_COMPETITION_PATTERN: 10.0,
     SignalType.SUBMISSION_TIMING_ANOMALY: 10.0,
     SignalType.TENDER_CHANGE_PATTERN: 10.0,
+    SignalType.DECISION_TRACEABILITY_GAP: 20.0,
 }
 
 # Maximum score points any single signal family can contribute (anti-explosion)
@@ -101,6 +104,7 @@ FAMILY_CAPS = {
     SignalType.SUBMISSION_TIMING_ANOMALY: 15.0,
     SignalType.TENDER_CHANGE_PATTERN: 15.0,
     SignalType.CONFLICT_OF_INTEREST: 20.0,
+    SignalType.DECISION_TRACEABILITY_GAP: 25.0,
 }
 
 RISK_TIER_THRESHOLDS = [
@@ -281,6 +285,71 @@ def generate_executive_summary(
     )
 
 
+def analyze_decision_traceability_gap(
+    bidders: List[BidderFeature],
+    tender_id: str,
+    raw_bidders: Optional[List[Dict[str, Any]]] = None
+) -> List[IntegrityFinding]:
+    """
+    Detect bids marked 'NOT_EVALUATED' without any recorded reason or administrative justification
+    in the procurement record, particularly when documents were submitted.
+    """
+    findings: List[IntegrityFinding] = []
+    if raw_bidders is None:
+        raw_bidders = ps.get_bidders(tender_id)
+
+    for rb in raw_bidders:
+        status = str(rb.get("status") or "").upper()
+        officer_note = rb.get("officer_note")
+        officer_decision = rb.get("officer_decision")
+        if status in ("NOT_EVALUATED", "UNEVALUATED"):
+            if not officer_note and not officer_decision:
+                b_id = rb.get("id", "")
+                b_name = rb.get("legal_name", "Unknown Bidder")
+                findings.append(IntegrityFinding(
+                    id=f"INT-GAP-{tender_id}-{b_id}",
+                    tender_id=tender_id,
+                    bidder_id=b_id,
+                    related_bidder_ids=[b.bidder_id for b in bidders if b.bidder_id != b_id],
+                    signal_type=SignalType.DECISION_TRACEABILITY_GAP,
+                    severity=RiskLevel.MEDIUM,
+                    score_impact=20.0,
+                    confidence=0.90,
+                    title=f"Decision Traceability Gap — Non-Evaluation Without Recorded Rationale ({b_name})",
+                    reason=(
+                        f"Bidder '{b_name}' ({b_id}) has bid status '{status}' in the procurement record, "
+                        "but no administrative justification, disqualification clause, or officer rationale "
+                        "is recorded. Where bids are bypassed without recorded rationale, procurement "
+                        "traceability and competition transparency are impaired."
+                    ),
+                    evidence=[
+                        IntegrityEvidence(
+                            source_type="AUDIT_LOG",
+                            source_id=b_id,
+                            field="status",
+                            value=status,
+                            description=f"Bid status recorded as '{status}' with no evaluation rationale"
+                        ),
+                        IntegrityEvidence(
+                            source_type="TENDER_METADATA",
+                            source_id=tender_id,
+                            field="officer_note",
+                            value="None",
+                            description="Administrative justification field is absent or blank in procurement record"
+                        )
+                    ],
+                    rule_reference=RuleReference(
+                        clause_id="GFR-2017-R173-XXII",
+                        title="General Financial Rules 2017 / CVC Guidelines",
+                        description="Reasons for rejection or non-evaluation of any bid must be recorded on file to maintain audit traceability.",
+                        applicability="Mandatory for all public procurement competitive evaluations under GFR Rule 173(xxii)."
+                    ),
+                    recommended_action="Review procurement file and require recording of the formal administrative rationale for non-evaluation of this bid.",
+                    status=FindingStatus.OPEN,
+                ))
+    return findings
+
+
 def assess_tender_integrity(
     tender_id: str,
     custom_bidders: Optional[List[BidderFeature]] = None,
@@ -299,6 +368,7 @@ def assess_tender_integrity(
     tender_cat = tender.get("category") if tender else None
 
     # 1. Load bidders
+    raw_bidders: Optional[List[Dict[str, Any]]] = None
     if custom_bidders is not None:
         bidders = custom_bidders
     else:
@@ -383,6 +453,9 @@ def assess_tender_integrity(
 
     # 14. Submission Timing Patterns
     all_findings.extend(analyze_submission_timing(bidders, tender_id))
+
+    # 15. Decision Traceability Gap (Non-evaluated bids without recorded reason)
+    all_findings.extend(analyze_decision_traceability_gap(bidders, tender_id, raw_bidders=raw_bidders if custom_bidders is None else None))
 
     # ── Risk Aggregation & Decomposition ─────────────────────────
     res = aggregate_integrity_findings(all_findings)

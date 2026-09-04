@@ -25,6 +25,15 @@ logger = logging.getLogger(__name__)
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "procurement.db")
 
+# ── Session-scoped dormant case activation ────────────────────────────────
+# These module-level sets track which demo case fixtures are activated in the
+# current backend session.  They reset to empty on restart (ephemeral).
+# _dormant_tender_ids caches tender IDs owned by dormant fixtures so normal
+# queries can efficiently skip them.
+_activated_case_ids: set = set()
+_dormant_tender_ids: set = set()
+_dormant_bidder_ids: set = set()
+
 
 @contextmanager
 def get_db():
@@ -259,6 +268,22 @@ def init_db(_force_seed: bool = False):
 
         CREATE INDEX IF NOT EXISTS idx_integrity_reviews_finding ON integrity_finding_reviews(finding_id);
         CREATE INDEX IF NOT EXISTS idx_integrity_reviews_tender ON integrity_finding_reviews(tender_id);
+
+        CREATE TABLE IF NOT EXISTS demo_case_fixtures (
+            case_id             TEXT PRIMARY KEY,
+            case_type           TEXT NOT NULL,
+            display_name        TEXT NOT NULL,
+            description         TEXT,
+            activation_key      TEXT NOT NULL UNIQUE,
+            is_dormant          INTEGER NOT NULL DEFAULT 1,
+            tender_fixture      TEXT NOT NULL,
+            bidder_fixtures     TEXT NOT NULL,
+            history_fixtures    TEXT,
+            evidence_metadata   TEXT,
+            created_at          TEXT NOT NULL
+        );
+
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_fixture_activation_key ON demo_case_fixtures(activation_key);
         """)
 
         # Migration: ensure quote_amount and compliance_status columns exist on bidders table
@@ -290,6 +315,15 @@ def seed_initial_data(conn: sqlite3.Connection):
         logger.info("Procurement persistent database initialized with synthetic history dataset.")
     except Exception as e:
         logger.error(f"Error seeding synthetic procurement data: {e}", exc_info=True)
+
+    # Seed dormant case fixtures (JBMD + NDMC demo scenarios)
+    try:
+        from app.services.integrity.synthetic_history import seed_dormant_case_fixtures
+        seed_dormant_case_fixtures(conn)
+        _rebuild_dormant_id_caches(conn)
+        logger.info("Dormant case fixtures seeded.")
+    except Exception as e:
+        logger.error(f"Error seeding dormant case fixtures: {e}", exc_info=True)
 
 
 def reset_and_seed_procurement_data() -> Dict[str, int]:
@@ -328,18 +362,37 @@ def reset_session_db(db_path: Optional[str] = None, *, enabled: bool = True) -> 
         logger.info("reset_session_db: DEMO_SESSION_MODE is disabled — skipping ephemeral reset (production mode).")
         return
 
+    # Clear session-scoped activation state
+    _activated_case_ids.clear()
+    _dormant_tender_ids.clear()
+    _dormant_bidder_ids.clear()
+
     # global must be declared before first use of DB_PATH in this function scope
     global DB_PATH
     target = db_path or DB_PATH
 
     # ── 1. Delete the existing runtime database ──────────────────────────────
+    import gc
+    gc.collect()
+
     if os.path.exists(target):
         try:
             os.remove(target)
             logger.info(f"reset_session_db: Deleted runtime database at '{target}'.")
         except OSError as exc:
-            logger.error(f"reset_session_db: Could not delete '{target}': {exc}")
-            raise
+            logger.warning(f"reset_session_db: Could not remove file '{target}' ({exc}) — resetting via SQL.")
+            try:
+                with sqlite3.connect(target, timeout=10.0) as conn:
+                    conn.execute("PRAGMA foreign_keys = OFF")
+                    tbls = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchall()
+                    for t in tbls:
+                        conn.execute(f"DROP TABLE IF EXISTS \"{t[0]}\"")
+                    conn.execute("PRAGMA foreign_keys = ON")
+                    conn.commit()
+                logger.info(f"reset_session_db: Dropped all tables in '{target}'.")
+            except Exception as e:
+                logger.error(f"reset_session_db: Fallback table drop failed: {e}")
+                raise exc
     else:
         logger.info(f"reset_session_db: No existing database at '{target}' — starting fresh.")
 
@@ -355,21 +408,399 @@ def reset_session_db(db_path: Optional[str] = None, *, enabled: bool = True) -> 
 
 
 # ============================================================
+# DORMANT CASE FIXTURE MANAGEMENT
+# ============================================================
+
+def _rebuild_dormant_id_caches(conn: sqlite3.Connection) -> None:
+    """Populate _dormant_tender_ids and _dormant_bidder_ids from demo_case_fixtures."""
+    global _dormant_tender_ids, _dormant_bidder_ids
+    _dormant_tender_ids.clear()
+    _dormant_bidder_ids.clear()
+    rows = conn.execute("SELECT tender_fixture, bidder_fixtures FROM demo_case_fixtures").fetchall()
+    for row in rows:
+        try:
+            t_fix = json.loads(row[0]) if isinstance(row[0], str) else row[0]
+            if isinstance(t_fix, dict) and "id" in t_fix:
+                _dormant_tender_ids.add(t_fix["id"])
+        except Exception:
+            pass
+        try:
+            b_fixes = json.loads(row[1]) if isinstance(row[1], str) else row[1]
+            if isinstance(b_fixes, list):
+                for b in b_fixes:
+                    if isinstance(b, dict) and "id" in b:
+                        _dormant_bidder_ids.add(b["id"])
+        except Exception:
+            pass
+
+
+def _ensure_dormant_caches() -> None:
+    """Ensure dormant ID caches are populated if empty."""
+    if not _dormant_tender_ids:
+        try:
+            with get_db() as conn:
+                tbl = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='demo_case_fixtures'").fetchone()
+                if tbl:
+                    _rebuild_dormant_id_caches(conn)
+        except Exception as e:
+            logger.debug(f"_ensure_dormant_caches error: {e}")
+
+
+def _activated_case_tender_ids() -> set:
+    """Return set of tender IDs corresponding to currently activated cases."""
+    if not _activated_case_ids:
+        return set()
+    result = set()
+    try:
+        with get_db() as conn:
+            for cid in _activated_case_ids:
+                row = conn.execute("SELECT tender_fixture FROM demo_case_fixtures WHERE case_id = ?", (cid,)).fetchone()
+                if row and row[0]:
+                    t_fix = json.loads(row[0]) if isinstance(row[0], str) else row[0]
+                    if isinstance(t_fix, dict) and "id" in t_fix:
+                        result.add(t_fix["id"])
+    except Exception as e:
+        logger.warning(f"Error getting activated case tender IDs: {e}")
+    return result
+
+
+def get_dormant_fixtures() -> List[Dict[str, Any]]:
+    """Return all demo case fixture records (admin only)."""
+    init_db()
+    with get_db() as conn:
+        rows = conn.execute("SELECT * FROM demo_case_fixtures ORDER BY created_at").fetchall()
+        return rows_to_list(rows)
+
+
+def lookup_fixture_by_activation_key(activation_key: str) -> Optional[Dict[str, Any]]:
+    """Find a dormant fixture by its activation key (e.g. 'FB-CASE-JBMD-001')."""
+    init_db()
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT * FROM demo_case_fixtures WHERE activation_key = ?",
+            (activation_key.strip(),)
+        ).fetchone()
+        return row_to_dict(row)
+
+
+def is_case_activated(case_id: str) -> bool:
+    """Check if a case is currently activated in this session."""
+    return case_id in _activated_case_ids
+
+
+def get_activated_case_ids() -> set:
+    """Return a copy of the activated case ID set."""
+    return set(_activated_case_ids)
+
+
+def deactivate_all_cases() -> None:
+    """Clear all session-activated cases."""
+    _activated_case_ids.clear()
+
+
+def activate_case_fixture(case_id: str) -> Dict[str, Any]:
+    """
+    Activate a dormant demo case fixture for the current backend session.
+    Idempotently injects the fixture's tender, bidders, documents,
+    compliance results, discrepancies, and historical tenders into live DB tables.
+    Marks the case_id as active in _activated_case_ids.
+    """
+    init_db()
+    _activated_case_ids.add(case_id)
+
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM demo_case_fixtures WHERE case_id = ?", (case_id,)).fetchone()
+        if not row:
+            logger.error(f"Cannot activate unknown case fixture: {case_id}")
+            return {"case_id": case_id, "activated": False, "error": "Fixture not found"}
+
+        fix = row_to_dict(row)
+        if not fix:
+            logger.error(f"Cannot activate fixture with invalid row: {case_id}")
+            return {"case_id": case_id, "activated": False, "error": "Invalid fixture data"}
+
+        tender_data = json.loads(fix.get("tender_fixture") or "{}")
+        bidders_data = json.loads(fix.get("bidder_fixtures") or "[]")
+        history_data = json.loads(fix.get("history_fixtures") or "[]")
+        evidence_meta = json.loads(fix.get("evidence_metadata") or "{}")
+
+        now = datetime.now(timezone.utc).isoformat()
+
+        # 1. Insert Tender
+        t_id = tender_data.get("id")
+        existing_t = conn.execute("SELECT id FROM tenders WHERE id = ?", (t_id,)).fetchone()
+        if not existing_t:
+            conn.execute("""
+                INSERT INTO tenders (id, tender_number, title, department, description,
+                    bid_closing_date, estimated_value, category, status, local_content_class,
+                    created_by, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                t_id,
+                tender_data.get("tender_number", f"SYNTH/{case_id}/001"),
+                tender_data.get("title", "Demo Tender"),
+                tender_data.get("department", "Demo Department"),
+                tender_data.get("description", ""),
+                tender_data.get("bid_closing_date", "2026-12-31"),
+                tender_data.get("estimated_value", 10000000.0),
+                tender_data.get("category", "General"),
+                tender_data.get("status", "ACTIVE"),
+                tender_data.get("local_content_class", "CLASS_I"),
+                tender_data.get("created_by", "FairBid Demo System"),
+                tender_data.get("created_at", now),
+                now,
+            ))
+
+        # 2. Insert Tender Requirements
+        reqs = tender_data.get("requirements", [])
+        for req in reqs:
+            req_code = req.get("requirement_id")
+            existing_r = conn.execute(
+                "SELECT id FROM tender_requirements WHERE tender_id = ? AND requirement_id = ?",
+                (t_id, req_code)
+            ).fetchone()
+            if not existing_r:
+                conn.execute("""
+                    INSERT INTO tender_requirements (id, tender_id, requirement_id, name,
+                        category, is_mandatory, description, verification_rule, threshold_value,
+                        threshold_unit, weight, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    str(uuid.uuid4()),
+                    t_id,
+                    req_code,
+                    req.get("name", req_code),
+                    req.get("category", "STATUTORY"),
+                    1 if req.get("is_mandatory", True) else 0,
+                    req.get("description", ""),
+                    req.get("verification_rule", ""),
+                    req.get("threshold_value"),
+                    req.get("threshold_unit"),
+                    req.get("weight", 1.0),
+                    now,
+                ))
+
+        # 3. Insert Bidders & nested documents, compliance, discrepancies
+        primary_bidder_id = bidders_data[0]["id"] if bidders_data else None
+
+        for b in bidders_data:
+            b_id = b.get("id")
+            existing_b = conn.execute("SELECT id FROM bidders WHERE id = ?", (b_id,)).fetchone()
+            if not existing_b:
+                conn.execute("""
+                    INSERT INTO bidders (id, tender_id, legal_name, trade_name, gstin, pan,
+                        udyam_number, cin, registered_address, contact_email, contact_phone,
+                        enterprise_category, status, compliance_status, compliance_score,
+                        risk_level, quote_amount, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    b_id,
+                    t_id,
+                    b.get("legal_name", "Demo Bidder"),
+                    b.get("trade_name"),
+                    b.get("gstin"),
+                    b.get("pan"),
+                    b.get("udyam_number"),
+                    b.get("cin"),
+                    b.get("registered_address"),
+                    b.get("contact_email"),
+                    b.get("contact_phone"),
+                    b.get("enterprise_category"),
+                    b.get("status", "UNDER_REVIEW"),
+                    b.get("compliance_status", "UNDER_REVIEW"),
+                    b.get("compliance_score", 0.0),
+                    b.get("risk_level", "MEDIUM"),
+                    b.get("quote_amount", 0.0),
+                    b.get("created_at", now),
+                    now,
+                ))
+
+            # Documents
+            for doc in b.get("documents", []):
+                d_id = doc.get("id")
+                existing_d = conn.execute("SELECT id FROM documents WHERE id = ?", (d_id,)).fetchone()
+                if not existing_d:
+                    conn.execute("""
+                        INSERT INTO documents (id, case_id, file_name, storage_path, file_url,
+                            file_type, file_size, document_type, page_count, ocr_status,
+                            extracted_text, extracted_fields, ocr_engine, ocr_confidence,
+                            created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        d_id,
+                        case_id,
+                        doc.get("file_name", "document.pdf"),
+                        doc.get("storage_path", ""),
+                        doc.get("file_url", ""),
+                        doc.get("file_type", "application/pdf"),
+                        doc.get("file_size", 100000),
+                        doc.get("document_type", "General"),
+                        doc.get("page_count", 1),
+                        doc.get("ocr_status", "COMPLETED"),
+                        doc.get("extracted_text", ""),
+                        json.dumps(doc.get("extracted_fields", [])),
+                        doc.get("ocr_engine", "PyMuPDF"),
+                        doc.get("ocr_confidence", 0.95),
+                        now,
+                    ))
+
+                # Link document to bidder
+                conn.execute("""
+                    INSERT OR IGNORE INTO bidder_documents (id, bidder_id, document_id, document_type, is_primary, created_at)
+                    VALUES (?, ?, ?, ?, 1, ?)
+                """, (
+                    f"BD-{b_id}-{d_id}",
+                    b_id,
+                    d_id,
+                    doc.get("document_type", "General"),
+                    now,
+                ))
+
+            # Compliance results
+            for cr in b.get("compliance_results", []):
+                req_id = cr.get("requirement_id")
+                existing_cr = conn.execute(
+                    "SELECT id FROM compliance_results WHERE bidder_id = ? AND requirement_id = ?",
+                    (b_id, req_id)
+                ).fetchone()
+                if not existing_cr:
+                    conn.execute("""
+                        INSERT INTO compliance_results (id, bidder_id, tender_id, requirement_id,
+                            requirement_name, category, status, severity, score, confidence,
+                            reason, verified_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        str(uuid.uuid4()),
+                        b_id,
+                        t_id,
+                        req_id,
+                        cr.get("requirement_name", req_id),
+                        cr.get("category", "STATUTORY"),
+                        cr.get("status", "COMPLIANT"),
+                        cr.get("severity", "MEDIUM"),
+                        cr.get("score", 100),
+                        cr.get("confidence", 0.95),
+                        cr.get("reason", ""),
+                        now,
+                        now,
+                    ))
+
+            # Discrepancies
+            for disc in b.get("discrepancies", []):
+                field_name = disc.get("field_name", "")
+                existing_disc = conn.execute(
+                    "SELECT id FROM discrepancies WHERE bidder_id = ? AND field_name = ?",
+                    (b_id, field_name)
+                ).fetchone()
+                if not existing_disc:
+                    conn.execute("""
+                        INSERT INTO discrepancies (id, bidder_id, discrepancy_type, severity,
+                            field_name, expected_value, found_value, source_doc_1_id,
+                            source_doc_2_id, description, recommendation, is_resolved, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)
+                    """, (
+                        str(uuid.uuid4()),
+                        b_id,
+                        disc.get("discrepancy_type", "CROSS_SOURCE_VERIFICATION"),
+                        disc.get("severity", "CRITICAL"),
+                        field_name,
+                        disc.get("expected_value", ""),
+                        disc.get("found_value", ""),
+                        disc.get("source_doc_1_id", ""),
+                        disc.get("source_doc_2_id", ""),
+                        disc.get("description", ""),
+                        disc.get("recommendation", ""),
+                        now,
+                    ))
+
+        # 4. Insert Historical Tenders (if any)
+        for ht in history_data:
+            ht_id = ht.get("id")
+            existing_ht = conn.execute("SELECT id FROM tenders WHERE id = ?", (ht_id,)).fetchone()
+            if not existing_ht:
+                conn.execute("""
+                    INSERT INTO tenders (id, tender_number, title, department, description,
+                        bid_closing_date, estimated_value, category, status, local_content_class,
+                        created_by, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    ht_id,
+                    ht.get("tender_number", f"SYNTH/HIST/{ht_id}"),
+                    ht.get("title", "Historical Tender"),
+                    ht.get("department", "Demo Department"),
+                    "Historical tender context for integrity engine",
+                    ht.get("bid_closing_date", "2025-01-01"),
+                    ht.get("estimated_value", 10000000.0),
+                    ht.get("category", "General"),
+                    "CLOSED",
+                    "CLASS_I",
+                    "FairBid Demo System",
+                    ht.get("created_at", now),
+                    now,
+                ))
+            for hb in ht.get("bidders", []):
+                hb_id = hb.get("id")
+                existing_hb = conn.execute("SELECT id FROM bidders WHERE id = ?", (hb_id,)).fetchone()
+                if not existing_hb:
+                    conn.execute("""
+                        INSERT INTO bidders (id, tender_id, legal_name, gstin, pan,
+                            status, quote_amount, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        hb_id,
+                        ht_id,
+                        hb.get("legal_name", "Historical Bidder"),
+                        hb.get("gstin"),
+                        hb.get("pan"),
+                        hb.get("status", "CLOSED"),
+                        hb.get("quote_amount", 0.0),
+                        now,
+                        now,
+                    ))
+
+    logger.info(f"Activated demo case fixture: {case_id} (tender={t_id})")
+    return {
+        "case_id": case_id,
+        "activated": True,
+        "case_type": fix.get("case_type"),
+        "activation_key": fix.get("activation_key"),
+        "tender_id": t_id,
+        "primary_bidder_id": primary_bidder_id,
+        "bidder_ids": [b.get("id") for b in bidders_data],
+        "display_name": fix.get("display_name"),
+        "evidence_metadata": evidence_meta,
+    }
+
+
+# ============================================================
 # TENDER REPOSITORY
 # ============================================================
 
 def get_tenders() -> List[Dict[str, Any]]:
     init_db()
+    _ensure_dormant_caches()
     with get_db() as conn:
         rows = conn.execute("SELECT * FROM tenders ORDER BY created_at DESC").fetchall()
-        return rows_to_list(rows)
+        result = rows_to_list(rows)
+        # Filter out dormant fixture tenders that are NOT activated
+        hidden = _dormant_tender_ids - _activated_case_tender_ids()
+        if hidden:
+            result = [t for t in result if t.get("id") not in hidden]
+        return result
 
 
 def get_tender_by_id(tender_id: str) -> Optional[Dict[str, Any]]:
     init_db()
+    _ensure_dormant_caches()
+    hidden = _dormant_tender_ids - _activated_case_tender_ids()
+    if tender_id in hidden:
+        return None
     with get_db() as conn:
         row = conn.execute("SELECT * FROM tenders WHERE id = ? OR tender_number = ?", (tender_id, tender_id)).fetchone()
-        return row_to_dict(row)
+        t = row_to_dict(row)
+        if t and t.get("id") in hidden:
+            return None
+        return t
 
 
 def create_tender_record(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -438,6 +869,10 @@ def create_tender_record(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def get_tender_requirements(tender_id: str) -> List[Dict[str, Any]]:
     init_db()
+    _ensure_dormant_caches()
+    hidden = _dormant_tender_ids - _activated_case_tender_ids()
+    if tender_id in hidden:
+        return []
     with get_db() as conn:
         rows = conn.execute("SELECT * FROM tender_requirements WHERE tender_id = ? ORDER BY created_at", (tender_id,)).fetchall()
         return rows_to_list(rows)
@@ -449,6 +884,10 @@ def get_tender_requirements(tender_id: str) -> List[Dict[str, Any]]:
 
 def get_bidders(tender_id: Optional[str] = None) -> List[Dict[str, Any]]:
     init_db()
+    _ensure_dormant_caches()
+    hidden_tenders = _dormant_tender_ids - _activated_case_tender_ids()
+    if tender_id and tender_id != "ALL" and tender_id in hidden_tenders:
+        return []
     with get_db() as conn:
         if tender_id and tender_id != "ALL":
             rows = conn.execute("SELECT * FROM bidders WHERE tender_id = ? ORDER BY created_at", (tender_id,)).fetchall()
@@ -456,6 +895,11 @@ def get_bidders(tender_id: Optional[str] = None) -> List[Dict[str, Any]]:
             rows = conn.execute("SELECT * FROM bidders ORDER BY created_at").fetchall()
 
         bidders = rows_to_list(rows)
+
+        # Filter out dormant fixture bidders that are NOT activated
+        if hidden_tenders and not (tender_id and tender_id != "ALL"):
+            bidders = [b for b in bidders if b.get("tender_id") not in hidden_tenders]
+
         # Hydrate document counts, exception counts, and blocking exceptions
         for b in bidders:
             b_id = b["id"]
@@ -479,12 +923,16 @@ def get_bidders(tender_id: Optional[str] = None) -> List[Dict[str, Any]]:
 
 def get_bidder_by_id(bidder_id: str) -> Optional[Dict[str, Any]]:
     init_db()
+    _ensure_dormant_caches()
+    hidden_tenders = _dormant_tender_ids - _activated_case_tender_ids()
     with get_db() as conn:
         row = conn.execute("SELECT * FROM bidders WHERE id = ?", (bidder_id,)).fetchone()
         if not row:
             return None
         b = row_to_dict(row)
         if b is None:
+            return None
+        if b.get("tender_id") in hidden_tenders:
             return None
         doc_row = conn.execute("SELECT COUNT(*) FROM bidder_documents WHERE bidder_id = ?", (bidder_id,)).fetchone()
         exc_row = conn.execute("SELECT COUNT(*) FROM discrepancies WHERE bidder_id = ? AND is_resolved = 0", (bidder_id,)).fetchone()
@@ -760,12 +1208,13 @@ def save_compliance_assessment(bidder_id: str, tender_id: str, assessment: Dict[
         compliance_status_val = assessment.get("compliance_status") or comp_summary["status"]
         risk = assessment.get("risk_level", "MEDIUM")
 
-        # Check if officer has already made a decision
-        existing_row = conn.execute("SELECT officer_decision FROM bidders WHERE id = ?", (bidder_id,)).fetchone()
+        # Check if officer has already made a decision or bidder has designated administrative status
+        existing_row = conn.execute("SELECT officer_decision, status FROM bidders WHERE id = ?", (bidder_id,)).fetchone()
         has_officer_decision = bool(existing_row and existing_row[0])
+        current_status = existing_row[1] if existing_row else None
 
-        if has_officer_decision:
-            # Preserve the officer's decision in `status`, while updating objective `compliance_status`
+        if has_officer_decision or current_status == "NOT_EVALUATED":
+            # Preserve administrative status, while updating objective compliance_status
             conn.execute("""
                 UPDATE bidders
                 SET compliance_score = ?, risk_level = ?, compliance_status = ?, updated_at = ?
@@ -962,8 +1411,12 @@ def get_integrity_finding_reviews(tender_id: Optional[str] = None, finding_id: O
 
 def get_dashboard_summary() -> Dict[str, Any]:
     init_db()
+    _ensure_dormant_caches()
     with get_db() as conn:
-        tenders = rows_to_list(conn.execute("SELECT * FROM tenders").fetchall())
+        all_tenders_raw = rows_to_list(conn.execute("SELECT * FROM tenders").fetchall())
+        # Filter out dormant fixture tenders that are NOT activated
+        hidden = _dormant_tender_ids - _activated_case_tender_ids()
+        tenders = [t for t in all_tenders_raw if t.get("id") not in hidden] if hidden else all_tenders_raw
         bidders = get_bidders()
         disc_row = conn.execute("SELECT COUNT(*) FROM discrepancies WHERE is_resolved = 0").fetchone()
         discrepancies = disc_row[0] if disc_row else 0
@@ -1020,6 +1473,7 @@ def get_dashboard_summary() -> Dict[str, Any]:
         )
 
         return {
+            "total_tenders": len(tenders),
             "active_tenders": active_tenders_count,
             "bids_under_verification": under_verification,
             "completed_assessments": completed_assessments,
