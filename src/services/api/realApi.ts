@@ -17,13 +17,42 @@ import {
 } from '../../types';
 import { supabase, isSupabaseConfigured, mapSupabaseUserToAppUser } from '../../lib/supabaseClient';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+
+export function getValidAuthToken(): string | null {
+  const token = localStorage.getItem('gov_session_token');
+  if (!token) return null;
+  // Discard mock tokens, whitespace, or stringified null/undefined
+  if (
+    token === 'gov_nic_session_token_2026' ||
+    token.trim() === '' ||
+    token === 'null' ||
+    token === 'undefined'
+  ) {
+    localStorage.removeItem('gov_session_token');
+    return null;
+  }
+  // Must follow JWT structure (header.payload.signature)
+  const parts = token.split('.');
+  if (parts.length !== 3 || parts.some(p => p.length === 0)) {
+    localStorage.removeItem('gov_session_token');
+    return null;
+  }
+  return token;
+}
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = localStorage.getItem('gov_session_token');
+  const isAuthPublicRoute =
+    endpoint === '/api/v1/auth/login' ||
+    endpoint === '/api/v1/auth/register';
+
+  const token = isAuthPublicRoute ? null : getValidAuthToken();
+  if (!isAuthPublicRoute && !token) {
+    throw new Error('[401] Authentication credentials are required. Please log in.');
+  }
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    Authorization: `Bearer ${token}`,
     ...((options.headers as Record<string, string>) || {}),
   };
 
@@ -33,6 +62,11 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   });
 
   if (!response.ok) {
+    // Only clear the session if the authoritative /me session check itself is rejected as 401
+    if (response.status === 401 && endpoint === '/api/v1/auth/me') {
+      localStorage.removeItem('gov_session_token');
+      localStorage.removeItem('gov_session_user');
+    }
     let errorDetail = 'API request failed';
     try {
       const err = await response.json();
@@ -49,13 +83,23 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const realApi = {
   auth: {
     async signIn(email: string, password?: string): Promise<{ user: User; token: string }> {
-      // If direct Supabase client is configured, we can also use supabase.auth.signInWithPassword as fallback
+      localStorage.removeItem('gov_session_token');
+      localStorage.removeItem('gov_session_user');
+
       try {
         const data = await request<{ user: User; token: string }>('/api/v1/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email, password }),
         });
-        localStorage.setItem('gov_session_token', data.token);
+        if (data && data.token) {
+          localStorage.setItem('gov_session_token', data.token);
+          if (data.user) {
+            localStorage.setItem('gov_session_user', JSON.stringify(data.user));
+          }
+          // Clear any stale Supabase session to prevent onAuthStateChange from
+          // firing later with an invalid token and clobbering this fresh JWT.
+          localStorage.removeItem('sb_gov_auth_token');
+        }
         return data;
       } catch (err) {
         if (isSupabaseConfigured() && password) {
@@ -67,6 +111,7 @@ export const realApi = {
           if (authData.session && authData.user) {
             localStorage.setItem('gov_session_token', authData.session.access_token);
             const user = mapSupabaseUserToAppUser(authData.user);
+            localStorage.setItem('gov_session_user', JSON.stringify(user));
             return { user, token: authData.session.access_token };
           }
         }
@@ -82,13 +127,21 @@ export const realApi = {
       designation?: string,
       role?: string
     ): Promise<{ user: User; token: string }> {
+      localStorage.removeItem('gov_session_token');
+      localStorage.removeItem('gov_session_user');
+
       try {
         const data = await request<{ user: User; token: string }>('/api/v1/auth/register', {
           method: 'POST',
           body: JSON.stringify({ email, password, name, department, designation, role }),
         });
-        if (data.token) {
+        if (data && data.token) {
           localStorage.setItem('gov_session_token', data.token);
+          if (data.user) {
+            localStorage.setItem('gov_session_user', JSON.stringify(data.user));
+          }
+          // Clear any stale Supabase session to prevent token clobbering
+          localStorage.removeItem('sb_gov_auth_token');
         }
         return data;
       } catch (err) {
@@ -156,12 +209,18 @@ export const realApi = {
     },
 
     async getCurrentUser(): Promise<User | null> {
+      const token = getValidAuthToken();
+      if (!token) return null;
+
       // Try backend endpoint first
       try {
         const user = await request<User>('/api/v1/auth/me');
-        if (user) return user;
+        if (user) {
+          localStorage.setItem('gov_session_user', JSON.stringify(user));
+          return user;
+        }
       } catch {
-        // Backend not reachable or error; fallback to direct Supabase session
+        // Backend not reachable or error
       }
 
       if (isSupabaseConfigured()) {
@@ -179,18 +238,10 @@ export const realApi = {
     },
 
     async getSession(): Promise<{ user: User | null; token: string | null }> {
-      let token = localStorage.getItem('gov_session_token');
-      
-      if (!token && isSupabaseConfigured()) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
-          token = session.access_token;
-          localStorage.setItem('gov_session_token', token);
-        }
-      }
-
+      let token = getValidAuthToken();
       if (!token) return { user: null, token: null };
       const user = await this.getCurrentUser();
+      if (!user) return { user: null, token: null };
       return { user, token };
     },
   },
@@ -264,7 +315,7 @@ export const realApi = {
       formData.append('file', file);
       formData.append('document_type', documentType);
 
-      const token = localStorage.getItem('gov_session_token');
+      const token = getValidAuthToken();
       const response = await fetch(`${API_BASE_URL}/api/v1/projects/${projectId}/documents`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -381,7 +432,7 @@ export const realApi = {
       formData.append('case_id', caseId);
       formData.append('document_type', documentType);
 
-      const token = localStorage.getItem('gov_session_token');
+      const token = getValidAuthToken();
       const response = await fetch(`${API_BASE_URL}/api/v1/documents/upload`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -393,7 +444,7 @@ export const realApi = {
     },
 
     async downloadDocument(docId: string): Promise<{ blob: Blob; fileName: string }> {
-      const token = localStorage.getItem('gov_session_token');
+      const token = getValidAuthToken();
       const response = await fetch(`${API_BASE_URL}/api/v1/documents/${docId}/download`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
@@ -412,7 +463,7 @@ export const realApi = {
     async processDocument(file: File): Promise<OCRResult> {
       const formData = new FormData();
       formData.append('file', file);
-      const token = localStorage.getItem('gov_session_token');
+      const token = getValidAuthToken();
       const response = await fetch(`${API_BASE_URL}/api/v1/ocr/process`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -522,10 +573,13 @@ export const realApi = {
       formData.append('file', file);
       formData.append('document_type', documentType);
 
-      const token = localStorage.getItem('gov_session_token');
+      const token = getValidAuthToken();
+      if (!token) {
+        throw new Error('[401] Authentication credentials are required to upload documents. Please log in.');
+      }
       const response = await fetch(`${API_BASE_URL}/api/v1/procurement/bidders/${bidderId}/documents`, {
         method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 

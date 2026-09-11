@@ -26,8 +26,12 @@ async def get_dashboard_metrics(user: dict = Depends(get_current_user)):
     supabase = get_supabase()
 
     # --- Fetch all cases ---
-    all_cases_result = supabase.table("cases").select("*").execute()
-    all_cases: list[Any] = all_cases_result.data if isinstance(all_cases_result.data, list) else []
+    all_cases: list[Any] = []
+    try:
+        all_cases_result = supabase.table("cases").select("*").execute()
+        all_cases = all_cases_result.data if isinstance(all_cases_result.data, list) else []
+    except Exception as e:
+        logger.debug(f"Cases table lookup failed (Supabase unverified or offline): {e}")
 
     # Enrich with computed fields
     enriched = [enrich_case_with_deadlines(c) for c in all_cases if isinstance(c, dict)]

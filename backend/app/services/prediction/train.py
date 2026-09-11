@@ -23,10 +23,28 @@ import os
 import sys
 import json
 import logging
-from typing import Any
+from datetime import datetime, timezone
+from typing_extensions import TypedDict
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
+
+class ModelMetrics(TypedDict):
+    model_version: str
+    accuracy: float
+    precision: float
+    recall: float
+    f1: float
+    roc_auc: float
+    train_samples: int
+    test_samples: int
+    n_features: int
+    n_estimators: int
+    random_state: int
+    trained_at: str
+    dataset_size: int
+    delayed_pct: float
+    disclaimer: str
 
 # Add backend root to Python path when running as script
 _backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
@@ -59,6 +77,7 @@ def train():
     8. Print feature importance
     """
     try:
+        import numpy as np
         import pandas as pd
         from sklearn.ensemble import RandomForestClassifier
         from sklearn.model_selection import train_test_split
@@ -69,7 +88,7 @@ def train():
         import joblib
     except ImportError as e:
         logger.error(f"Missing dependency: {e}")
-        logger.error("Install with: pip install scikit-learn joblib pandas")
+        logger.error("Install with: pip install scikit-learn joblib pandas numpy")
         sys.exit(1)
 
     from app.services.prediction.features import FEATURE_NAMES, TARGET_COLUMN
@@ -157,7 +176,8 @@ def train():
     # Step 6: Evaluate — DO NOT hardcode these values
     # ============================================================
     y_pred = clf.predict(X_test)
-    proba: Any = clf.predict_proba(X_test)
+    raw_proba = clf.predict_proba(X_test)
+    proba: np.ndarray = raw_proba[0] if isinstance(raw_proba, list) else raw_proba
     y_proba = proba[:, 1]
 
     accuracy  = float(accuracy_score(y_test, y_pred))
@@ -166,7 +186,10 @@ def train():
     f1        = float(f1_score(y_test, y_pred, zero_division="warn"))
     roc_auc   = float(roc_auc_score(y_test, y_proba))
 
-    metrics = {
+    n_estimators = clf.n_estimators
+    assert isinstance(n_estimators, int)
+
+    metrics: ModelMetrics = {
         "model_version":    MODEL_VERSION,
         "accuracy":         round(accuracy, 4),
         "precision":        round(precision, 4),
@@ -176,9 +199,9 @@ def train():
         "train_samples":    len(X_train),
         "test_samples":     len(X_test),
         "n_features":       len(FEATURE_NAMES),
-        "n_estimators":     clf.n_estimators,
+        "n_estimators":     n_estimators,
         "random_state":     RANDOM_STATE,
-        "trained_at":       __import__("datetime").datetime.utcnow().isoformat(),
+        "trained_at":       datetime.now(timezone.utc).isoformat(),
         "dataset_size":     len(df),
         "delayed_pct":      round(100 * float(y.mean()), 1),
         "disclaimer":       "Trained on synthetic prototype data. Not validated on real government project data.",

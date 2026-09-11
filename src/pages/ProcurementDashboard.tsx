@@ -10,35 +10,36 @@ import {
   Check,
 } from 'lucide-react';
 import { useProcurement } from '../context/ProcurementContext';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../services/api/apiClient';
 import { useLanguage } from '../context/LanguageContext';
 import { GovPageHeader } from '../components/common/GovPageHeader';
+import { getValidAuthToken } from '../services/api/realApi';
 
 export const ProcurementDashboard: React.FC = () => {
   const { bidders, audit, isLiveDatabase, tenders, tenderId, error } = useProcurement();
+  const { isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [metrics, setMetrics] = useState<any>(null);
 
   // Fetch dashboard-specific metrics (KPI endpoint).
-  // NOTE: We deliberately do NOT call refreshData() here. The ProcurementContext
-  // already performs the authoritative data fetch on mount. Calling refreshData()
-  // here was triggering N+1 bidder-detail requests on every dashboard visit,
-  // causing a fetch→state→re-render cascade that contributed to the white-screen bug.
   useEffect(() => {
     let mounted = true;
+    const hasToken = !!getValidAuthToken();
+    if (!isAuthenticated && !hasToken) return;
     const fetchDashboard = async () => {
       try {
         const data = await (apiClient as any).procurement.getDashboard();
         if (mounted && data) setMetrics(data);
-      } catch {
-        // Fallback gracefully to dynamic context counts
+      } catch (err) {
+        console.error('Failed to fetch procurement dashboard metrics:', err);
       }
     };
     fetchDashboard();
     return () => { mounted = false; };
-  }, []);
+  }, [isAuthenticated]);
 
   // Compute live real metrics dynamically without arbitrary fake fallbacks
   const activeTendersCount = metrics?.active_tenders ?? tenders.filter((t) => !t.status || t.status.toUpperCase() === 'ACTIVE').length;
@@ -74,6 +75,32 @@ export const ProcurementDashboard: React.FC = () => {
     }
   };
 
+  // Effective bidders: context bidders take precedence; fallback seamlessly to metrics.bidders
+  const effectiveBidders = useMemo(() => {
+    if (bidders && bidders.length > 0) return bidders;
+    if (metrics?.bidders && metrics.bidders.length > 0) {
+      return metrics.bidders.map((b: any) => ({
+        id: b.id,
+        name: b.legal_name || b.name,
+        tender_id: b.tender_id,
+        score: b.compliance_score ?? b.score ?? 70,
+        complianceScore: b.compliance_score ?? b.score ?? 70,
+        risk: (b.risk_level || b.risk || 'MEDIUM').toUpperCase() as any,
+        complianceRisk: (b.risk_level || b.risk || 'MEDIUM').toUpperCase() as any,
+        status: b.status || 'Under Review',
+        complianceStatus: b.compliance_status || (b.blocking_exceptions_count > 0 ? 'EXCEPTION_FOUND' : 'UNDER_REVIEW'),
+        documents: b.documents_count ?? b.documents ?? 0,
+        exceptions: b.exceptions_count ?? b.exceptions ?? 0,
+        blockingExceptions: b.blocking_exceptions_count ?? b.blockingExceptions ?? 0,
+        requirements: [],
+        officerDecision: b.officer_decision,
+        officerNote: b.officer_note,
+        integrityRisk: (b.integrity_risk || 'LOW').toUpperCase() as any,
+      }));
+    }
+    return [];
+  }, [bidders, metrics?.bidders]);
+
   // ── Actionable Procurement Queue items computed dynamically from live integrity reviews & high-risk bidders
   const actionableItems = useMemo(() => {
     const items: any[] = [];
@@ -96,9 +123,9 @@ export const ProcurementDashboard: React.FC = () => {
     }
 
     // Include high-risk exception bidders from live bidder list
-    bidders
-      .filter((b) => b.risk === 'HIGH' || b.risk === 'CRITICAL' || b.status === 'Exception Found' || b.complianceStatus === 'EXCEPTION_FOUND')
-      .forEach((b) => {
+    effectiveBidders
+      .filter((b: any) => b.risk === 'HIGH' || b.risk === 'CRITICAL' || b.status === 'Exception Found' || b.complianceStatus === 'EXCEPTION_FOUND')
+      .forEach((b: any) => {
         if (!items.some((it) => (it.bidder_names || '').includes(b.name))) {
           const tMatch = tenders.find((t) => t.id === (b as any).tender_id || t.id === tenderId);
           items.push({
@@ -117,11 +144,11 @@ export const ProcurementDashboard: React.FC = () => {
       });
 
     return items;
-  }, [integrityReviews, bidders, tenders, tenderId]);
+  }, [integrityReviews, effectiveBidders, tenders, tenderId]);
 
   // ── Recent Assessments Dataset computed from real live bidders
   const recentAssessments = useMemo(() => {
-    return bidders.map((b) => {
+    return effectiveBidders.map((b: any) => {
       const tMatch = tenders.find((t) => t.id === (b as any).tender_id || t.id === tenderId);
       return {
         id: b.id,
@@ -139,7 +166,7 @@ export const ProcurementDashboard: React.FC = () => {
         action_url: `/verification/${b.id}`,
       };
     });
-  }, [bidders, tenders, tenderId]);
+  }, [effectiveBidders, tenders, tenderId]);
 
   return (
     <div className="space-y-6 font-sans pb-10 max-w-7xl mx-auto">
@@ -383,7 +410,7 @@ export const ProcurementDashboard: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200/50 bg-white/50 backdrop-blur-xs">
               {recentAssessments.length > 0 ? (
-                recentAssessments.map((b) => (
+                recentAssessments.map((b: any) => (
                   <tr key={b.id} className="hover:bg-sky-50/60 transition-colors">
                     {/* Tender ID */}
                     <td className="py-3.5 px-4 font-bold text-sm text-[#0F172A] font-mono">

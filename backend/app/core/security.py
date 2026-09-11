@@ -142,9 +142,9 @@ async def get_current_user(
         "id": user_id,
         "email": email or f"{user_id[:8]}@gov.local",
         "name": name,
-        "role": "OPERATIONS_OFFICER",
-        "department": "General Administration",
-        "designation": "Operations Officer",
+        "role": user_metadata.get("role") or "OPERATIONS_OFFICER",
+        "department": user_metadata.get("department") or "Department of Administrative Reforms",
+        "designation": user_metadata.get("designation") or "Procurement Officer",
         "badge_number": f"GOI-{user_id[:8].upper()}",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -152,7 +152,7 @@ async def get_current_user(
         supabase.table("users").upsert(new_profile).execute()
         return new_profile
     except Exception as e:
-        logger.warning(f"Could not auto-insert profile for OAuth user {user_id}: {e}")
+        logger.debug(f"Could not auto-insert profile for OAuth user {user_id}: {e}")
         return new_profile
 
 

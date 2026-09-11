@@ -85,8 +85,14 @@ async def register(request_body: RegisterRequest):
         except Exception as login_err:
             logger.warning(f"Auto-login after register failed: {login_err}")
 
-    # 2. Insert user profile into `users` table
     name = request_body.name or request_body.email.split("@")[0].replace(".", " ").title()
+    if not access_token:
+        access_token = create_local_jwt(
+            user_id=str(supabase_user.id),
+            email=request_body.email,
+            role=request_body.role or "SECTION_OFFICER",
+            name=name,
+        )
     profile = {
         "id": str(supabase_user.id),
         "email": request_body.email,

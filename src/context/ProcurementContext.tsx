@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient, isUsingMockApi } from '../services/api/apiClient';
+import { useAuth } from './AuthContext';
+import { getValidAuthToken } from '../services/api/realApi';
 
 export type CheckStatus = 'Verified' | 'Failed' | 'Pending' | 'Needs Review' | 'Not Applicable';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -176,6 +178,7 @@ const ProcurementContext = createContext<ProcurementContextValue | undefined>(un
 const nowTime = () => new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
 
 export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [bidders, setBidders] = useState<Bidder[]>(isUsingMockApi() ? initialBidders : []);
   const [tenders, setTenders] = useState<TenderRecord[]>([]);
   const isLiveDatabase = !isUsingMockApi();
@@ -293,6 +296,12 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
     // Increment version and capture it for this invocation
     const version = ++refreshVersionRef.current;
 
+    // Guard: Do not make procurement requests if unauthenticated and no valid session token exists in live mode
+    const hasToken = !!getValidAuthToken();
+    if (!isUsingMockApi() && !isAuthenticated && !hasToken) {
+      return;
+    }
+
     // Abort any in-flight requests from a previous refreshData call
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -380,7 +389,7 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setLoading(false);
       }
     }
-  }, [tenderId, mapBidder]);
+  }, [tenderId, mapBidder, isAuthenticated]);
 
   const selectTender = useCallback((id: string) => {
     setTenderId(id);
@@ -392,14 +401,23 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [refreshData]);
 
   useEffect(() => {
-    refreshData();
+    const hasToken = !!getValidAuthToken();
+    if (isUsingMockApi() || ((isAuthenticated || hasToken) && !authLoading)) {
+      refreshData();
+    } else if (!isAuthenticated && !hasToken && !authLoading) {
+      setTenders([]);
+      setBidders([]);
+      setDocuments([]);
+      setAudit([]);
+      setError(null);
+    }
     // Cleanup: abort in-flight requests when provider unmounts
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, []);
+  }, [isAuthenticated, authLoading, refreshData]);
 
   const addTender = async (title: string, department?: string, closingDate?: string) => {
     try {

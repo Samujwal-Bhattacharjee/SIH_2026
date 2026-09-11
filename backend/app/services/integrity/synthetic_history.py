@@ -23,9 +23,11 @@ Guarantees:
     11. BIDDER-OFFICER ADMINISTRATIVE ASSOCIATION (Dedicated fixture for administrative linkage)
 """
 import random
+import sqlite3
 import uuid
 import json
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
+from typing_extensions import NotRequired, TypedDict
 from datetime import datetime, timezone
 
 # Fix seed for strict reproducibility
@@ -33,11 +35,72 @@ RANDOM_SEED = 42
 random.seed(RANDOM_SEED)
 
 
+class FictionalBidderProfile(TypedDict):
+    legal_name: str
+    trade_name: NotRequired[Optional[str]]
+    gstin: NotRequired[Optional[str]]
+    pan: NotRequired[Optional[str]]
+    cin: NotRequired[Optional[str]]
+    udyam_number: NotRequired[Optional[str]]
+    registered_address: NotRequired[Optional[str]]
+    contact_email: NotRequired[Optional[str]]
+    contact_phone: NotRequired[Optional[str]]
+    enterprise_category: NotRequired[Optional[str]]
+    directors: NotRequired[Optional[List[str]]]
+
+
+class ExtractedFieldSpec(TypedDict):
+    key: str
+    value: Optional[str]
+    confidence: float
+    isExtracted: bool
+
+
+class DocScenarioSpec(TypedDict, total=False):
+    include: bool
+    fields: List[ExtractedFieldSpec]
+    ocr_status: str
+    extracted_text: Optional[str]
+
+
+class BidderScenarioSpec(TypedDict, total=False):
+    gst_ocr_status: str
+    pan: DocScenarioSpec
+    oem: DocScenarioSpec
+    turnover: DocScenarioSpec
+    blacklisting: DocScenarioSpec
+    local_content: DocScenarioSpec
+
+
+class SyntheticBidSpec(TypedDict):
+    bidder_key: str
+    quote: float
+    status: NotRequired[str]
+    decision: NotRequired[Optional[str]]
+    directors_override: NotRequired[List[str]]
+    inconsistent_pan: NotRequired[str]
+
+
+class SyntheticTenderSpec(TypedDict):
+    id: str
+    tender_number: str
+    title: str
+    department: str
+    description: NotRequired[str]
+    bid_closing_date: NotRequired[str]
+    estimated_value: NotRequired[float]
+    category: NotRequired[str]
+    status: NotRequired[str]
+    created_by: NotRequired[str]
+    created_at: NotRequired[str]
+    bids: NotRequired[List[SyntheticBidSpec]]
+
+
 # ============================================================
 # FICTIONAL INDIAN CORPORATE REGISTRY (12 DISTINCT ENTITIES)
 # ============================================================
 
-FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
+FICTIONAL_BIDDERS_CATALOG: Dict[str, FictionalBidderProfile] = {
     "BRAHMAPUTRA": {
         "legal_name": "Brahmaputra Engineering & Infotech Pvt. Ltd.",
         "trade_name": "Brahmaputra Infotech",
@@ -208,7 +271,7 @@ FICTIONAL_BIDDERS_CATALOG: Dict[str, Dict[str, Any]] = {
 # default minimal set (GST + Financial + Udyam-if-applicable).
 # ============================================================
 
-ACTIVE_BIDDER_DOC_SCENARIOS: Dict[str, Dict[str, Any]] = {
+ACTIVE_BIDDER_DOC_SCENARIOS: Dict[str, BidderScenarioSpec] = {
     # TEN-2026-001 SCENARIO 1 (Clean Baseline)
     # NILGIRI — Full compliant set → all requirements COMPLIANT
     "TEN-2026-001:NILGIRI": {
@@ -397,7 +460,7 @@ ACTIVE_BIDDER_DOC_SCENARIOS: Dict[str, Dict[str, Any]] = {
 # SYNTHETIC TENDERS DATASET (23 TENDERS TOTAL)
 # ============================================================
 
-SYNTHETIC_TENDERS_SPEC = [
+SYNTHETIC_TENDERS_SPEC: List[SyntheticTenderSpec] = [
     # ── 1. HISTORICAL IT TENDERS (Tenders 1 to 5): Rotation & Cohort ───────────
     {
         "id": "TEN-HIST-01",
@@ -915,7 +978,7 @@ SYNTHETIC_TENDERS_SPEC = [
 # SEED POPULATION HELPER
 # ============================================================
 
-def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
+def seed_synthetic_procurement_history(conn: sqlite3.Connection) -> Dict[str, int]:
     """
     Populate the SQLite database with the complete deterministic procurement dataset.
     Returns counts of inserted records across all tables.
@@ -1003,7 +1066,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             bidder_id_counter += 1
             b_id = f"BID-{bidder_id_counter}"
             b_key = bid_info["bidder_key"]
-            b_profile = dict(FICTIONAL_BIDDERS_CATALOG[b_key])
+            b_profile: FictionalBidderProfile = FICTIONAL_BIDDERS_CATALOG[b_key].copy()
             
             quote = bid_info["quote"]
             b_status = bid_info.get("status", "UNDER_REVIEW")
@@ -1057,7 +1120,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
             bidder_scenario = ACTIVE_BIDDER_DOC_SCENARIOS.get(scenario_key, {})
             gst_ocr_override = bidder_scenario.get("gst_ocr_status", "COMPLETED")
 
-            gst_fields = [
+            gst_fields: List[ExtractedFieldSpec] = [
                 {"key": "gstin", "value": b_profile.get("gstin"), "confidence": 0.98, "isExtracted": True},
                 {"key": "legalName", "value": b_profile["legal_name"], "confidence": 0.95, "isExtracted": True},
                 {"key": "pan", "value": pan_to_embed, "confidence": 0.98, "isExtracted": True},
@@ -1246,7 +1309,7 @@ def seed_synthetic_procurement_history(conn) -> Dict[str, int]:
     return counts
 
 
-def _preseed_compliance_results(conn, now: str) -> None:
+def _preseed_compliance_results(conn: sqlite3.Connection, now: str) -> None:
     """
     Pre-compute and persist compliance results for all ACTIVE tender bidders.
     This ensures the UI shows correct requirement statuses on first load.
@@ -1291,7 +1354,7 @@ def _preseed_compliance_results(conn, now: str) -> None:
                     # Deserialise extracted_fields JSON
                     if isinstance(d.get("extracted_fields"), str):
                         try:
-                            d["extracted_fields"] = __import__("json").loads(d["extracted_fields"])
+                            d["extracted_fields"] = json.loads(d["extracted_fields"])
                         except Exception:
                             d["extracted_fields"] = []
                     documents.append(d)
@@ -1389,7 +1452,7 @@ def _preseed_compliance_results(conn, now: str) -> None:
 # DORMANT CASE FIXTURES — JBMD + NDMC/CCS DEMO SCENARIOS
 # ============================================================
 
-def seed_dormant_case_fixtures(conn) -> None:
+def seed_dormant_case_fixtures(conn: sqlite3.Connection) -> None:
     """
     Seed demonstration case fixtures that remain hidden (dormant) until a
     matching document is uploaded.  Each fixture contains:

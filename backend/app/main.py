@@ -67,7 +67,11 @@ async def lifespan(app: FastAPI):
             else:
                 logger.info(f"DEMO_SESSION_MODE: Storage bucket '{bucket}' is already empty.")
         except Exception as e:
-            logger.warning(f"DEMO_SESSION_MODE: Could not clear storage bucket (non-fatal): {e}")
+            err_str = str(e)
+            if "signature verification failed" in err_str or "Unauthorized" in err_str or "Invalid API key" in err_str:
+                logger.info("DEMO_SESSION_MODE: Supabase Storage not yet verified or using local credentials. Skipping bucket clear.")
+            else:
+                logger.warning(f"DEMO_SESSION_MODE: Could not clear storage bucket (non-fatal): {e}")
     else:
         logger.info("DEMO_SESSION_MODE is DISABLED — procurement database state persists across restarts (production mode).")
 
@@ -84,7 +88,11 @@ async def lifespan(app: FastAPI):
         else:
             logger.info(f"Storage bucket '{bucket_name}' already exists.")
     except Exception as e:
-        logger.warning(f"Could not verify/create storage bucket on startup: {e}")
+        err_str = str(e)
+        if "signature verification failed" in err_str or "Unauthorized" in err_str or "Invalid API key" in err_str:
+            logger.info("Supabase Storage bucket check skipped (unverified or local credentials). Continuing in local mode.")
+        else:
+            logger.warning(f"Could not verify/create storage bucket on startup: {e}")
 
     # Ensure ML model is loaded
     try:

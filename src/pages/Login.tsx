@@ -115,7 +115,7 @@ export const Login: React.FC = () => {
   const handleDemoSignIn = async (demoEmail: string) => {
     setAuthMode('login');
     setEmail(demoEmail);
-    const demoPassword = (import.meta as any).env?.VITE_DEMO_PASSWORD || '';
+    const demoPassword = (import.meta as any).env?.VITE_DEMO_PASSWORD || 'GovOfficer@2026';
     setPassword(demoPassword);
     setCaptchaInput(captchaCode);
     setError(null);
