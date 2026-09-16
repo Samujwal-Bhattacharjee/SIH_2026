@@ -46,6 +46,12 @@ backend/.venv/
 .venv/
 venv/
 
+# Database files
+backend/*.db
+
+# Graphify generated cache
+graphify-out/cache/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

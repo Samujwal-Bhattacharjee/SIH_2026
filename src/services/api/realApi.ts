@@ -52,7 +52,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    // Only attach Authorization header when a real token exists (public login/register
+    // routes have no auth requirement so sending "Bearer null" would be misleading).
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...((options.headers as Record<string, string>) || {}),
   };
 

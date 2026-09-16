@@ -65,7 +65,7 @@ This creates ~40 realistic litigation cases with varied deadlines, statuses, and
 ### 8. Start the backend
 
 ```bash
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8001
 ```
 
 ### 9. Start the frontend

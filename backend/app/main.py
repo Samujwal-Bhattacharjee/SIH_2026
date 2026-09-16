@@ -3,10 +3,10 @@ GOIP — Government File Tracking & Administrative Intelligence System
 FastAPI Backend — Main Application Entry Point
 
 Startup:
-    uvicorn app.main:app --reload
+    uvicorn app.main:app --reload --host 127.0.0.1 --port 8001
 
 API Docs:
-    http://localhost:8000/docs
+    http://localhost:8001/docs
 """
 import logging
 from contextlib import asynccontextmanager
