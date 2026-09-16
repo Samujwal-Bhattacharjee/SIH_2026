@@ -35,14 +35,34 @@ def create_local_jwt(user_id: str, email: str, role: str = "OPERATIONS_OFFICER",
     return jwt.encode(payload, DEV_JWT_SECRET, algorithm="HS256")
 
 
+import jwt as pyjwt
+from jwt import PyJWKClient
+
+_jwks_client: PyJWKClient | None = None
+
+
+def get_jwks_client() -> PyJWKClient | None:
+    """Return the singleton PyJWKClient for verifying Supabase asymmetric JWTs (ES256/RS256)."""
+    global _jwks_client
+    if _jwks_client is None and settings.SUPABASE_URL:
+        try:
+            jwks_url = f"{settings.SUPABASE_URL.rstrip('/')}/auth/v1/.well-known/jwks.json"
+            _jwks_client = PyJWKClient(jwks_url, cache_jwk_set=True, lifespan=3600)
+            logger.info("Supabase JWKS client initialized")
+        except Exception as e:
+            logger.warning(f"Could not initialize Supabase JWKS client: {e}")
+    return _jwks_client
+
+
 def decode_supabase_jwt(token: str) -> dict:
     """
     Decode and verify a Supabase-issued or locally signed JWT.
-    1. Attempts local signature verification with DEV_JWT_SECRET / SUPABASE_JWT_SECRET.
-    2. Falls back to direct Supabase Auth API token verification.
-    Returns the payload dict with 'sub', 'email', 'user_metadata' if valid.
+    1. Local HS256 JWT signature verification (for local officer email/password auth).
+    2. Supabase token verification via JWKS (for Supabase asymmetric ES256/RS256 keys).
+    3. Supabase Auth API verification fallback (get_claims / get_user).
+    Returns the verified payload dict with 'sub', 'email', 'user_metadata' if valid.
     """
-    # 1. Attempt local JWT decode
+    # 1. Attempt local JWT decode (local officer login)
     try:
         payload = jwt.decode(
             token,
@@ -55,9 +75,47 @@ def decode_supabase_jwt(token: str) -> dict:
     except Exception as e:
         logger.debug(f"Local JWT decode failed: {e}")
 
-    # 2. Direct Supabase Auth API token verification
+    # 2. Supabase JWKS signature verification (ES256/RS256)
+    try:
+        jwks_client = get_jwks_client()
+        if jwks_client:
+            signing_key = jwks_client.get_signing_key_from_jwt(token)
+            payload = pyjwt.decode(
+                token,
+                signing_key.key,
+                algorithms=["ES256", "RS256"],
+                options={"verify_aud": False},
+            )
+            if payload.get("sub"):
+                return {
+                    "sub": str(payload.get("sub")),
+                    "email": payload.get("email") or "",
+                    "user_metadata": payload.get("user_metadata") or {},
+                    "app_metadata": payload.get("app_metadata") or {},
+                    "role": payload.get("role") or "authenticated",
+                }
+    except Exception as e:
+        logger.debug(f"JWKS token verification failed: {e}")
+
+    # 3. Direct Supabase Auth API token verification
     try:
         supabase = get_supabase()
+        if hasattr(supabase.auth, "get_claims"):
+            try:
+                claims_resp = supabase.auth.get_claims(token)
+                if claims_resp and claims_resp.claims:
+                    c = claims_resp.claims
+                    if c.get("sub"):
+                        return {
+                            "sub": str(c.get("sub")),
+                            "email": c.get("email") or "",
+                            "user_metadata": c.get("user_metadata") or {},
+                            "app_metadata": c.get("app_metadata") or {},
+                            "role": c.get("role") or "authenticated",
+                        }
+            except Exception as e_claims:
+                logger.debug(f"Supabase get_claims failed: {e_claims}")
+
         user_resp = supabase.auth.get_user(token)
         if user_resp and user_resp.user:
             u = user_resp.user
